@@ -1,0 +1,27 @@
+{
+  "name": "temporary-rocketlets-server",
+  "version": "0.0.1",
+  "description": "Temporary location for the server's piece for the Rocketlets, it manages, runs, translates, and coordinates and all of that.",
+  "main": "index.js",
+  "typings": "index",
+  "keywords": [
+    "rocketlets",
+    "rocket.chat"
+  ],
+  "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^8.0.7",
+    "del": "^3.0.0",
+    "eslint": "^4.1.1",
+    "gulp": "^3.9.1",
+    "gulp-shell": "^0.6.3",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-tslint": "^8.1.1",
+    "gulp-typescript": "^3.1.7"
+  },
+  "dependencies": {
+    "temporary-rocketlets-ts-definition": "^0.5.3",
+    "typescript": "^2.4.1"
+  }
+}
