@@ -1,0 +1,13 @@
+{
+  "extends": "tslint:recommended",
+  "rules": {
+    "array-type": [true, "generic"],
+    "no-console": [false],
+    "no-duplicate-variable": true,
+    "object-literal-sort-keys": false,
+    "quotemark": [true, "single"]
+  },
+  "jsRules": {
+    "quotemark": [true, "single"]
+  }
+}

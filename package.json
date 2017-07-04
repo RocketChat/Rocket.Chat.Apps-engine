@@ -18,7 +18,8 @@
     "gulp-shell": "^0.6.3",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-tslint": "^8.1.1",
-    "gulp-typescript": "^3.1.7"
+    "gulp-typescript": "^3.1.7",
+    "tslint": "^5.4.3"
   },
   "dependencies": {
     "temporary-rocketlets-ts-definition": "^0.5.3",
