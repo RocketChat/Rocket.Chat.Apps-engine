@@ -1,23 +1,35 @@
 import { RocketletCompiler } from './compiler';
 import { IGetRocketletsFilter } from './interfaces';
+import { RocketletStorage } from './storage';
 
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata/IRocketletInfo';
+import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import * as ts from 'typescript';
+import * as uuidv4 from 'uuid/v4';
 import * as vm from 'vm';
 
 export class RocketletManager {
+    // tslint:disable-next-line
+    private static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     private readonly activeRocketlets: Map<string, Rocketlet>;
     private readonly inactiveRocketlets: Map<string, Rocketlet>;
+    private readonly storage: RocketletStorage;
     private readonly compiler: RocketletCompiler;
 
-    constructor() {
+    constructor(rlStorage: RocketletStorage) {
         this.activeRocketlets = new Map<string, Rocketlet>();
         this.inactiveRocketlets = new Map<string, Rocketlet>();
         this.compiler = new RocketletCompiler();
+
+        if (rlStorage instanceof RocketletStorage) {
+            this.storage = rlStorage;
+        } else {
+            throw new Error('Invalid instance of the RocketletStorage.');
+        }
+
         console.log('Constructed the RocketletManager.');
     }
 
@@ -58,14 +70,17 @@ export class RocketletManager {
         if (infoZip && !infoZip.isDirectory) {
             try {
                 info = JSON.parse(infoZip.getData().toString()) as IRocketletInfo;
+
+                if (!RocketletManager.uuid4Regex.test(info.id)) {
+                    info.id = uuidv4();
+                    console.log(info.name, 'is being assigned the id:', info.id);
+                }
             } catch (e) {
                 throw new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.');
             }
         } else {
             throw new Error('Invalid Rocketlet package. No "rocketlet.json" file.');
         }
-
-        console.log('Loading:', info.name);
 
         const mainZip = zip.getEntry(info.classFile);
 
@@ -76,7 +91,7 @@ export class RocketletManager {
             throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
         }
 
-        this.activeRocketlets.set('thing', rocketlet);
+        this.activeRocketlets.set(info.id, rocketlet);
         return rocketlet;
     }
 
