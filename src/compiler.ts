@@ -1,7 +1,9 @@
+import { MustContainFunctionError, MustExtendRocketletError } from './errors';
 import { ICompilerFile } from './interfaces';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import * as ts from 'typescript';
 import * as vm from 'vm';
@@ -53,13 +55,9 @@ export class RocketletCompiler {
         throw new Error('Not implemented yet.');
     }
 
-    public toJs(source: string): any {
-        const files: { [s: string]: ICompilerFile } = {
-            'rocketlet.ts': {
-                version: 0,
-                content: source,
-            },
-        };
+    public toJs(info: IRocketletInfo, source: string): any {
+        const files: { [s: string]: ICompilerFile } = {};
+        files[info.classFile] = { version: 0, content: source };
 
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(files),
@@ -110,7 +108,6 @@ export class RocketletCompiler {
             });
         }
 
-        const checker = languageService.getProgram().getTypeChecker();
         const src = languageService.getProgram().getSourceFile('rocketlet.ts');
         ts.forEachChild(src, (n) => {
             if (n.kind === ts.SyntaxKind.ClassDeclaration) {
@@ -119,19 +116,19 @@ export class RocketletCompiler {
                         const e = node as ts.HeritageClause;
                         if (e.token === ts.SyntaxKind.ImplementsKeyword) {
                             console.log('Implements the following:');
-                        } else if (e.token === ts.SyntaxKind.ExtendsKeyword) {
-                            console.log('Extends the following:');
                         }
 
                         ts.forEachChild(node, (nn) => {
-                            // console.log(ts.SyntaxKind[nn.kind]);
-                            console.log(nn.getText());
+                            if (e.token === ts.SyntaxKind.ExtendsKeyword) {
+                                if (nn.getText() !== 'Rocketlet') {
+                                    throw new MustExtendRocketletError();
+                                }
+                            } else {
+                                console.log(nn.getText());
+                            }
                         });
                     }
                 });
-                // console.log(n);
-                // const sym = checker.getSymbolAtLocation((n as ts.ClassDeclaration).name);
-                // console.log(sym);
             }
         });
 
@@ -142,19 +139,12 @@ export class RocketletCompiler {
             logErrors('rocketlet.ts');
         }
 
-        output.outputFiles.forEach((o) => console.log(o.name, 'output is:', o.text));
-
-        // const result = ts.transpileModule(source, { compilerOptions: this.compilerOptions });
-
         // TODO: implement the `ts.createProject` so that we get `result.diagnostics`
 
-        // return result.outputText;
-        return {
-            success: true,
-        };
+        return output.outputFiles[0].text;
     }
 
-    public toSandBox(js: string): Rocketlet {
+    public toSandBox(info: IRocketletInfo, js: string): Rocketlet {
         const script = new vm.Script(js);
         const context = vm.createContext({ require, exports });
 
@@ -164,30 +154,34 @@ export class RocketletCompiler {
             throw new Error('The provided script is not valid.');
         }
 
-        const rl = new result();
+        const rl = new result(info);
 
         if (!(rl instanceof Rocketlet)) {
-            throw new Error('The script must extend BaseRocketlet.');
+            throw new MustExtendRocketletError();
         }
 
         if (typeof rl.getName !== 'function') {
-            throw new Error ('The Rocketlet doesn\'t have a `getName` function, this is required.');
+            throw new MustContainFunctionError(info.classFile, 'getName');
+        }
+
+        if (typeof rl.getNameSlug !== 'function') {
+            throw new MustContainFunctionError(info.classFile, 'getNameSlug');
         }
 
         if (typeof rl.getVersion !== 'function') {
-            throw new Error ('The Rocketlet doesn\'t have a `getVersion` function, this is required.');
+            throw new MustContainFunctionError(info.classFile, 'getVersion');
         }
 
         if (typeof rl.getID !== 'function') {
-            throw new Error ('The Rocketlet doesn\'t have a `getID` function, this is required.');
+            throw new MustContainFunctionError(info.classFile, 'getID');
         }
 
         if (typeof rl.getDescription !== 'function') {
-            throw new Error ('The Rocketlet doesn\'t have a `getDescription` function, this is required.');
+            throw new MustContainFunctionError(info.classFile, 'getDescription');
         }
 
         if (typeof rl.getRequiredApiVersion !== 'function') {
-            throw new Error ('The Rocketlet doesn\'t have a `getRequiredApiVersion` function, this is required.');
+            throw new MustContainFunctionError(info.classFile, 'getRequiredApiVersion');
         }
 
         return rl as Rocketlet;
