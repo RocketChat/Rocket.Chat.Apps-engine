@@ -10,6 +10,9 @@
   ],
   "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
   "license": "MIT",
+  "scripts": {
+      "go-publish": "gulp publish"
+  },
   "devDependencies": {
     "@types/node": "^8.0.7",
     "del": "^3.0.0",

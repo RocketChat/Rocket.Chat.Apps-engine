@@ -8,8 +8,7 @@ const shell = require('gulp-shell');
 const tsp = tsc.createProject('tsconfig.json');
 
 gulp.task('clean-generated', function _cleanTypescript() {
-    const distFiles = ['./dist/**/*.*'];
-    return del(distFiles);
+    return del(['./dist/**/*.*']);
 });
 
 gulp.task('lint-ts', function _lintTypescript() {
