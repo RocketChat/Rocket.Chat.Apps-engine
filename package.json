@@ -16,6 +16,7 @@
   "devDependencies": {
     "@types/adm-zip": "^0.4.31",
     "@types/node": "^8.0.7",
+    "@types/uuid": "^3.0.0",
     "del": "^3.0.0",
     "eslint": "^4.1.1",
     "gulp": "^3.9.1",
@@ -23,6 +24,7 @@
     "gulp-sourcemaps": "^2.6.0",
     "gulp-tslint": "^8.1.1",
     "gulp-typescript": "^3.1.7",
+    "nedb": "^1.8.0",
     "tslint": "^5.4.3"
   },
   "dependencies": {

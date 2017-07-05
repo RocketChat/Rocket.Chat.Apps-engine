@@ -9,7 +9,7 @@ const spawn = require('child_process').spawn;
 const tsp = tsc.createProject('tsconfig.json');
 
 gulp.task('clean-generated', function _cleanTypescript() {
-    return del(['./dist/**/*.*']);
+    return del(['./dist/**', './dev-dist/**']);
 });
 
 gulp.task('lint-ts', function _lintTypescript() {
@@ -23,12 +23,18 @@ gulp.task('compile-ts', ['clean-generated'], function _compileTypescript() {
             .pipe(gulp.dest('dist'));
 });
 
-gulp.task('run-dev', ['lint-ts', 'compile-ts'], function _runTheDevThing() {
-    spawn('node', ['testing.js'], { stdio: 'inherit' });
+gulp.task('compile-dev-ts', ['clean-generated', 'compile-ts'], function _compileDevTypescript() {
+    const project = tsc.createProject('dev/tsconfig.json');
+
+    return project.src().pipe(sourcemaps.init()).pipe(project()).pipe(sourcemaps.write('.')).pipe(gulp.dest('dev-dist'));
 });
 
-gulp.task('default', ['clean-generated', 'lint-ts', 'compile-ts', 'run-dev'], function _watchAndRun() {
-    return gulp.watch('src/**/*.ts', ['clean-generated', 'lint-ts', 'compile-ts', 'run-dev']);
+gulp.task('run-dev', ['lint-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing() {
+    spawn('node', ['dev-dist/server.js'], { stdio: 'inherit' });
+});
+
+gulp.task('default', ['clean-generated', 'lint-ts', 'compile-ts', 'compile-dev-ts', 'run-dev'], function _watchAndRun() {
+    return gulp.watch(['src/**/*.ts', 'dev/**/*.ts'], ['clean-generated', 'lint-ts', 'compile-ts', 'compile-dev-ts', 'run-dev']);
 });
 
 //Tasks for getting it ready and publishing

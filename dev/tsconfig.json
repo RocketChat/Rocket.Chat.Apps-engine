@@ -13,14 +13,6 @@
         "lib": ["es2017", "dom"],
         "outDir": "dist"
     },
-    "exclude": [
-        "node_modules",
-        "dist",
-        "examples"
-    ],
-    "include": [
-        "src"
-    ],
     "atom": {
         "rewriteTsconfig": false
     }

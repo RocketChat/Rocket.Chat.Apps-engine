@@ -46,4 +46,7 @@ jspm_packages
 
 ## Ignore distribution folder
 dist/
+
+## dev environment stuff
 examples/
+dev-dist/
