@@ -3,6 +3,7 @@ const del = require('del');
 const sourcemaps = require('gulp-sourcemaps');
 const tsc = require('gulp-typescript');
 const tslint = require('gulp-tslint');
+const gReplace = require('gulp-replace');
 const shell = require('gulp-shell');
 const spawn = require('child_process').spawn;
 
@@ -26,7 +27,12 @@ gulp.task('compile-ts', ['clean-generated'], function _compileTypescript() {
 gulp.task('compile-dev-ts', ['clean-generated', 'compile-ts'], function _compileDevTypescript() {
     const project = tsc.createProject('dev/tsconfig.json');
 
-    return project.src().pipe(sourcemaps.init()).pipe(project()).pipe(sourcemaps.write('.')).pipe(gulp.dest('dev-dist'));
+    return project.src()
+            .pipe(sourcemaps.init())
+            .pipe(gReplace('../src', '../dist'))
+            .pipe(project())
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest('dev-dist'));
 });
 
 gulp.task('run-dev', ['lint-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing() {

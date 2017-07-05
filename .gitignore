@@ -50,3 +50,4 @@ dist/
 ## dev environment stuff
 examples/
 dev-dist/
+data/

@@ -1,6 +1,6 @@
 import { RocketletCompiler } from './compiler';
 import { IGetRocketletsFilter } from './interfaces';
-import { RocketletStorage } from './storage';
+import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
@@ -38,7 +38,22 @@ export class RocketletManager {
     }
 
     public load(): Promise<Array<Rocketlet>> {
-        throw new Error('Not implemented yet.');
+        return this.storage.retrieveAll().then((items: Array<IRocketletStorageItem>) => {
+            return items.map((item: IRocketletStorageItem) => {
+                return this.getCompiler().toSandBox(item.info, item.compiled);
+            });
+        }).then((rcs: Array<Rocketlet>) => {
+            return rcs.map((rc: Rocketlet) => {
+                this.activeRocketlets.set(rc.getID(), rc);
+                return rc;
+            });
+        });
+    }
+
+    public loadOne(id: string): Promise<Rocketlet> {
+        return new Promise((resolve, reject) => {
+            reject(new Error('Not implemented yet.'));
+        });
     }
 
     public get(filter?: IGetRocketletsFilter): Array<Rocketlet> {
@@ -61,38 +76,51 @@ export class RocketletManager {
         throw new Error('Not implemented yet.');
     }
 
-    public add(zipContentsBase64d: string): Rocketlet {
-        const zip = new AdmZip(new Buffer(zipContentsBase64d, 'base64'));
-        const infoZip = zip.getEntry('rocketlet.json');
-        let info: IRocketletInfo;
-        let rocketlet: Rocketlet;
+    public add(zipContentsBase64d: string): Promise<Rocketlet> {
+        return new Promise((resolve, reject) => {
+            const zip = new AdmZip(new Buffer(zipContentsBase64d, 'base64'));
+            const infoZip = zip.getEntry('rocketlet.json');
+            let info: IRocketletInfo;
+            let compiledJs: string;
+            let rocketlet: Rocketlet;
 
-        if (infoZip && !infoZip.isDirectory) {
-            try {
-                info = JSON.parse(infoZip.getData().toString()) as IRocketletInfo;
+            if (infoZip && !infoZip.isDirectory) {
+                try {
+                    info = JSON.parse(infoZip.getData().toString()) as IRocketletInfo;
 
-                if (!RocketletManager.uuid4Regex.test(info.id)) {
-                    info.id = uuidv4();
-                    console.log(info.name, 'is being assigned the id:', info.id);
+                    if (!RocketletManager.uuid4Regex.test(info.id)) {
+                        info.id = uuidv4();
+                        console.log(info.name, 'is being assigned the id:', info.id);
+                    }
+                } catch (e) {
+                    reject(new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.'));
+                    return;
                 }
-            } catch (e) {
-                throw new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.');
+            } else {
+                reject(new Error('Invalid Rocketlet package. No "rocketlet.json" file.'));
+                return;
             }
-        } else {
-            throw new Error('Invalid Rocketlet package. No "rocketlet.json" file.');
-        }
 
-        const mainZip = zip.getEntry(info.classFile);
+            const mainZip = zip.getEntry(info.classFile);
 
-        if (mainZip && !mainZip.isDirectory) {
-            const js = this.getCompiler().toJs(info, mainZip.getData().toString());
-            rocketlet = this.getCompiler().toSandBox(info, js);
-        } else {
-            throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
-        }
+            if (mainZip && !mainZip.isDirectory) {
+                compiledJs = this.getCompiler().toJs(info, mainZip.getData().toString());
+                rocketlet = this.getCompiler().toSandBox(info, compiledJs);
+            } else {
+                reject(new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`));
+                return;
+            }
 
-        this.activeRocketlets.set(info.id, rocketlet);
-        return rocketlet;
+            this.storage.create({
+                id: info.id,
+                info,
+                zip: zipContentsBase64d,
+                compiled: compiledJs,
+            }).then((item: IRocketletStorageItem) => {
+                this.activeRocketlets.set(info.id, rocketlet);
+                resolve(rocketlet);
+            }).catch((err: Error) => reject(err));
+        });
     }
 
     public remove(id: string): Rocketlet {

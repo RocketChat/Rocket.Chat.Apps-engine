@@ -11,15 +11,18 @@
   "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
   "license": "MIT",
   "scripts": {
+    "start": "gulp",
     "go-publish": "gulp publish"
   },
   "devDependencies": {
     "@types/adm-zip": "^0.4.31",
+    "@types/nedb": "^1.8.3",
     "@types/node": "^8.0.7",
     "@types/uuid": "^3.0.0",
     "del": "^3.0.0",
     "eslint": "^4.1.1",
     "gulp": "^3.9.1",
+    "gulp-replace": "^0.6.1",
     "gulp-shell": "^0.6.3",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-tslint": "^8.1.1",
