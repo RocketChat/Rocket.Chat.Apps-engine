@@ -15,7 +15,8 @@ export class TestingStorage extends RocketletStorage {
             item.createdAt = new Date();
             item.updatedAt = new Date();
 
-            this.db.findOne({ id: item.id }, (err: Error, doc: IRocketletStorageItem) => {
+            // tslint:disable-next-line
+            this.db.findOne({ $or: [{ id: item.id }, { 'info.nameSlug': item.info.nameSlug }] }, (err: Error, doc: IRocketletStorageItem) => {
                 if (err) {
                     reject(err);
                 } else if (doc) {
@@ -58,7 +59,15 @@ export class TestingStorage extends RocketletStorage {
     }
 
     public update(item: IRocketletStorageItem): Promise<IRocketletStorageItem> {
-        throw new Error('Method not implemented.');
+        return new Promise((resolve, reject) => {
+            this.db.update({ id: item.id }, { $set: item }, (err: Error) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    return this.retrieveOne(item.id);
+                }
+            });
+        });
     }
 
     public remove(id: string): Promise<{ success: boolean}> {

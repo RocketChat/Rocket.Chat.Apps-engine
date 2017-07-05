@@ -17,6 +17,12 @@ gulp.task('lint-ts', function _lintTypescript() {
     return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
 });
 
+gulp.task('lint-dev-ts', function _lintDevTypescript() {
+    const project = tsc.createProject('dev/tsconfig.json');
+
+    return project.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
+});
+
 gulp.task('compile-ts', ['clean-generated'], function _compileTypescript() {
     return tsp.src().pipe(sourcemaps.init())
             .pipe(tsp())
@@ -35,16 +41,16 @@ gulp.task('compile-dev-ts', ['clean-generated', 'compile-ts'], function _compile
             .pipe(gulp.dest('dev-dist'));
 });
 
-gulp.task('run-dev', ['lint-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing() {
+gulp.task('run-dev', ['lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing() {
     spawn('node', ['dev-dist/server.js'], { stdio: 'inherit' });
 });
 
-gulp.task('default', ['clean-generated', 'lint-ts', 'compile-ts', 'compile-dev-ts', 'run-dev'], function _watchAndRun() {
-    return gulp.watch(['src/**/*.ts', 'dev/**/*.ts'], ['clean-generated', 'lint-ts', 'compile-ts', 'compile-dev-ts', 'run-dev']);
+gulp.task('default', ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts', 'run-dev'], function _watchAndRun() {
+    return gulp.watch(['src/**/*.ts', 'dev/**/*.ts'], ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts', 'run-dev']);
 });
 
 //Tasks for getting it ready and publishing
-gulp.task('npm-files', function _npmFileGathering() {
+gulp.task('npm-files', ['clean-generated'], function _npmFileGathering() {
     return gulp.src(['README.md', 'LICENSE', 'package.json']).pipe(gulp.dest('dist'));
 });
 

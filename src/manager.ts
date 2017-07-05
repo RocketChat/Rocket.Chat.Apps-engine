@@ -14,12 +14,14 @@ import * as vm from 'vm';
 export class RocketletManager {
     // tslint:disable-next-line
     private static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    private readonly availableRocketlets: Map<string, Rocketlet>;
     private readonly activeRocketlets: Map<string, Rocketlet>;
     private readonly inactiveRocketlets: Map<string, Rocketlet>;
     private readonly storage: RocketletStorage;
     private readonly compiler: RocketletCompiler;
 
     constructor(rlStorage: RocketletStorage) {
+        this.availableRocketlets = new Map<string, Rocketlet>();
         this.activeRocketlets = new Map<string, Rocketlet>();
         this.inactiveRocketlets = new Map<string, Rocketlet>();
         this.compiler = new RocketletCompiler();
@@ -44,7 +46,7 @@ export class RocketletManager {
             });
         }).then((rcs: Array<Rocketlet>) => {
             return rcs.map((rc: Rocketlet) => {
-                this.activeRocketlets.set(rc.getID(), rc);
+                this.availableRocketlets.set(rc.getID(), rc);
                 return rc;
             });
         });
@@ -62,8 +64,7 @@ export class RocketletManager {
         }
 
         const rls = new Array<Rocketlet>();
-        this.activeRocketlets.forEach((rc, id) => rls.push(rc));
-        this.inactiveRocketlets.forEach((rc, id) => rls.push(rc));
+        this.availableRocketlets.forEach((rc, id) => rls.push(rc));
 
         return rls;
     }
@@ -77,8 +78,40 @@ export class RocketletManager {
     }
 
     public add(zipContentsBase64d: string): Promise<Rocketlet> {
+        return this.parseZip(zipContentsBase64d).then((result) => {
+            return this.storage.create({
+                id: result.info.id,
+                info: result.info,
+                zip: zipContentsBase64d,
+                compiled: result.compiledJs,
+            }).then((item: IRocketletStorageItem) => {
+                this.availableRocketlets.set(result.info.id, result.rocketlet);
+                return result.rocketlet;
+            });
+        });
+    }
+
+    public update(id: string, zipContentsBase64d: string): Promise<Rocketlet> {
+        return this.parseZip(zipContentsBase64d).then((result) => {
+            return this.storage.update({
+                id: result.info.id,
+                info: result.info,
+                zip: zipContentsBase64d,
+                compiled: result.compiledJs,
+            }).then(() => {
+                this.availableRocketlets.set(result.info.id, result.rocketlet);
+                return result.rocketlet;
+            });
+        });
+    }
+
+    public remove(id: string): Rocketlet {
+        throw new Error('Not implemented nor architected.');
+    }
+
+    private parseZip(zipBase64: string): Promise<{ info: IRocketletInfo, compiledJs: string, rocketlet: Rocketlet}> {
         return new Promise((resolve, reject) => {
-            const zip = new AdmZip(new Buffer(zipContentsBase64d, 'base64'));
+            const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
             const infoZip = zip.getEntry('rocketlet.json');
             let info: IRocketletInfo;
             let compiledJs: string;
@@ -111,19 +144,11 @@ export class RocketletManager {
                 return;
             }
 
-            this.storage.create({
-                id: info.id,
+            resolve({
                 info,
-                zip: zipContentsBase64d,
-                compiled: compiledJs,
-            }).then((item: IRocketletStorageItem) => {
-                this.activeRocketlets.set(info.id, rocketlet);
-                resolve(rocketlet);
-            }).catch((err: Error) => reject(err));
+                compiledJs,
+                rocketlet,
+            });
         });
-    }
-
-    public remove(id: string): Rocketlet {
-        throw new Error('Not implemented nor architected.');
     }
 }
