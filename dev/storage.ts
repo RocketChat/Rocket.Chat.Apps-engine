@@ -39,8 +39,10 @@ export class TestingStorage extends RocketletStorage {
             this.db.findOne({ id }, (err: Error, doc: IRocketletStorageItem) => {
                 if (err) {
                     reject(err);
-                } else {
+                } else if (doc) {
                     resolve(doc);
+                } else {
+                    reject(new Error(`Nothing found by the id: ${id}`));
                 }
             });
         });
