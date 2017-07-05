@@ -91,8 +91,10 @@ export class RocketletManager {
         });
     }
 
-    public update(id: string, zipContentsBase64d: string): Promise<Rocketlet> {
-        return this.storage.retrieveOne(id).then(() => this.parseZip(zipContentsBase64d)).then((result) => {
+    public update(zipContentsBase64d: string): Promise<Rocketlet> {
+        return this.parseZip(zipContentsBase64d).then((result) => {
+            return this.storage.retrieveOne(result.info.id).then(() => result);
+        }).then((result) => {
             return this.storage.update({
                 id: result.info.id,
                 info: result.info,
