@@ -1,5 +1,6 @@
 import { RocketletCompiler } from './compiler';
 import { IGetRocketletsFilter } from './interfaces';
+import { RocketletLoggerManager } from './logger';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import * as AdmZip from 'adm-zip';
@@ -18,13 +19,14 @@ export class RocketletManager {
     private readonly activeRocketlets: Map<string, Rocketlet>;
     private readonly inactiveRocketlets: Map<string, Rocketlet>;
     private readonly storage: RocketletStorage;
+    private readonly logger: RocketletLoggerManager;
     private readonly compiler: RocketletCompiler;
 
     constructor(rlStorage: RocketletStorage) {
         this.availableRocketlets = new Map<string, Rocketlet>();
         this.activeRocketlets = new Map<string, Rocketlet>();
         this.inactiveRocketlets = new Map<string, Rocketlet>();
-        this.compiler = new RocketletCompiler();
+        this.logger = new RocketletLoggerManager();
 
         if (rlStorage instanceof RocketletStorage) {
             this.storage = rlStorage;
@@ -32,6 +34,7 @@ export class RocketletManager {
             throw new Error('Invalid instance of the RocketletStorage.');
         }
 
+        this.compiler = new RocketletCompiler(this.logger);
         console.log('Constructed the RocketletManager.');
     }
 
@@ -45,6 +48,8 @@ export class RocketletManager {
                 return this.getCompiler().toSandBox(item.info, item.compiled);
             });
         }).then((rcs: Array<Rocketlet>) => {
+            this.logger.retrieveAll().forEach((v, k) => console.log('Item:', k, ':', v.getAllEntries()));
+
             return rcs.map((rc: Rocketlet) => {
                 this.availableRocketlets.set(rc.getID(), rc);
                 return rc;
@@ -125,7 +130,9 @@ export class RocketletManager {
 
                     if (!RocketletManager.uuid4Regex.test(info.id)) {
                         info.id = uuidv4();
-                        console.log(info.name, 'is being assigned the id:', info.id);
+                        console.warn('WARNING: We automatically generated a uuid v4 id for',
+                            info.name, 'since it did not provide us an id. This is NOT',
+                            'recommended as the same Rocketlet can be installed several times.');
                     }
                 } catch (e) {
                     reject(new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.'));

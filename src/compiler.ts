@@ -1,5 +1,7 @@
+import { RocketletConsole } from './context/console';
 import { MustContainFunctionError, MustExtendRocketletError } from './errors';
 import { ICompilerFile } from './interfaces';
+import { RocketletLoggerManager } from './logger';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -12,7 +14,7 @@ export class RocketletCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
     private libraryFiles: { [s: string]: ICompilerFile };
 
-    constructor() {
+    constructor(private readonly logger: RocketletLoggerManager) {
         this.compilerOptions = {
             target: ts.ScriptTarget.ES2016,
             module: ts.ModuleKind.CommonJS,
@@ -154,7 +156,11 @@ export class RocketletCompiler {
             throw new Error('The provided script is not valid.');
         }
 
-        const rl = new result(info);
+        const rl = vm.runInNewContext('new Rocketlet(info, rcLogger);', vm.createContext({
+            rcLogger: this.logger.retrieve(info.id),
+            info,
+            Rocketlet: result,
+        }), { timeout: 100, filename: `Rocketlet_${info.nameSlug}.js` });
 
         if (!(rl instanceof Rocketlet)) {
             throw new MustExtendRocketletError();
