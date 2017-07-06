@@ -8,25 +8,15 @@ import * as path from 'path';
 const storage = new TestingStorage();
 const manager = new RocketletManager(storage);
 
-storage.retrieveAll().then((items: Array<IRocketletStorageItem>) => {
-    if (items.length === 0) {
-        throw new Error('No items.');
-    } else {
-        return manager.load();
-    }
-}).catch((err: Error) => {
-    if (err.message === 'No items.') {
-        return Promise.all(fs.readdirSync('examples')
-                .filter((file) => file.endsWith('.zip') && fs.statSync(path.join('examples', file)).isFile())
-                .map((file) => fs.readFileSync(path.join('examples', file), 'base64'))
-                .map((zip) => manager.add(zip).catch((err2: Error) => {
-                    if (err2.message === 'Rocketlet already exists.') {
-                        return manager.update(zip);
-                    } else {
-                        throw err2;
-                    }
-                })));
-    } else {
-        console.error(err);
-    }
+manager.load().then(() => {
+    return Promise.all(fs.readdirSync('examples')
+            .filter((file) => file.endsWith('.zip') && fs.statSync(path.join('examples', file)).isFile())
+            .map((file) => fs.readFileSync(path.join('examples', file), 'base64'))
+            .map((zip) => manager.add(zip).catch((err2: Error) => {
+                if (err2.message === 'Rocketlet already exists.') {
+                    return manager.update(zip);
+                } else {
+                    throw err2;
+                }
+            })));
 }).then(() => manager.get().forEach((rl) => console.log('Successfully loaded:', rl.getName())));

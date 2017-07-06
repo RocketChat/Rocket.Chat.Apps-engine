@@ -48,8 +48,6 @@ export class RocketletManager {
                 return this.getCompiler().toSandBox(item.info, item.compiled);
             });
         }).then((rcs: Array<Rocketlet>) => {
-            this.logger.retrieveAll().forEach((v, k) => console.log('Item:', k, ':', v.getAllEntries()));
-
             return rcs.map((rc: Rocketlet) => {
                 this.availableRocketlets.set(rc.getID(), rc);
                 return rc;

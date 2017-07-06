@@ -61,15 +61,7 @@ export class TestingStorage extends RocketletStorage {
     }
 
     public update(item: IRocketletStorageItem): Promise<IRocketletStorageItem> {
-        return new Promise((resolve, reject) => {
-            this.db.update({ id: item.id }, { $set: item }, (err: Error) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    return this.retrieveOne(item.id);
-                }
-            });
-        });
+        return this.remove(item.id).then(() => this.create(item));
     }
 
     public remove(id: string): Promise<{ success: boolean}> {
