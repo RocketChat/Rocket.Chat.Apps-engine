@@ -46,6 +46,7 @@ export class RocketletCompiler {
         }
 
         this.libraryFiles[norm] = {
+            name: norm,
             content: fs.readFileSync(fileName).toString(),
             version: 0,
         };
@@ -57,15 +58,27 @@ export class RocketletCompiler {
         throw new Error('Not implemented yet.');
     }
 
-    public toJs(info: IRocketletInfo, source: string): any {
-        const files: { [s: string]: ICompilerFile } = {};
-        files[info.classFile] = { version: 0, content: source };
+    public toJs(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {
+        if (!files || !files[info.classFile] || this.isValidFile(files[info.classFile])) {
+            throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
+        }
+
+        // Verify all file names are normalized
+        // and that the files are valid
+        Object.keys(files).forEach((key) => {
+            if (!this.isValidFile(files[key])) {
+                throw new Error(`Invalid TypeScript file in the Rocketlet ${info.name} in the file "${key}".`);
+            }
+
+            files[key].name = path.normalize(files[key].name);
+        });
 
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(files),
             getScriptVersion: (fileName) => {
                 fileName = path.normalize(fileName);
-                return files[fileName] && files[fileName].version.toString();
+                const file = files[fileName] || this.getLibraryFile(fileName);
+                return file && file.version.toString();
             },
             getScriptSnapshot: (fileName) => {
                 fileName = path.normalize(fileName);
@@ -87,10 +100,9 @@ export class RocketletCompiler {
         // const dia = languageService.getProgram().getGlobalDiagnostics();
         const dia = languageService.getCompilerOptionsDiagnostics();
         if (dia.length !== 0) {
-            return {
-                success: false,
-                others: dia,
-            };
+            console.log(dia);
+            throw new Error('The Compiler Options Diagnostics return some values' + ' ' +
+                'please report this with a screenshot of above!');
         }
 
         function logErrors(fileName: string) {
@@ -110,7 +122,7 @@ export class RocketletCompiler {
             });
         }
 
-        const src = languageService.getProgram().getSourceFile('rocketlet.ts');
+        const src = languageService.getProgram().getSourceFile(info.classFile);
         ts.forEachChild(src, (n) => {
             if (n.kind === ts.SyntaxKind.ClassDeclaration) {
                 ts.forEachChild(n, (node) => {
@@ -134,26 +146,30 @@ export class RocketletCompiler {
             }
         });
 
-        const output = languageService.getEmitOutput('rocketlet.ts');
+        Object.keys(files).forEach((key) => {
+            const file: ICompilerFile = files[key];
+            const output: ts.EmitOutput = languageService.getEmitOutput(file.name);
 
-        if (output.emitSkipped) {
-            console.log('Emitting failed...');
-            logErrors('rocketlet.ts');
-        }
+            if (output.emitSkipped) {
+                console.log('Emitting failed for:', file.name);
+                logErrors(file.name);
+            }
 
-        // TODO: implement the `ts.createProject` so that we get `result.diagnostics`
+            file.compiled = output.outputFiles[0].text;
+        });
 
-        return output.outputFiles[0].text;
+        return files;
     }
 
-    public toSandBox(info: IRocketletInfo, js: string): Rocketlet {
-        const script = new vm.Script(js);
-        const context = vm.createContext({ require, exports });
+    public toSandBox(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): Rocketlet {
+        const customRequire = this.buildCustomRequire(info, files);
+        const context = vm.createContext({ require: customRequire, exports });
 
+        const script = new vm.Script(files[path.normalize(info.classFile)].compiled);
         const result = script.runInContext(context);
 
         if (typeof result !== 'function') {
-            throw new Error('The provided script is not valid.');
+            throw new Error(`The Rocketlet's main class for ${info.name} is not valid ("${info.classFile}").`);
         }
 
         const rl = vm.runInNewContext('new Rocketlet(info, rcLogger);', vm.createContext({
@@ -191,5 +207,23 @@ export class RocketletCompiler {
         }
 
         return rl as Rocketlet;
+    }
+
+    private isValidFile(file: ICompilerFile): boolean {
+        return file.name && file.name.trim() && path.normalize(file.name) && !file.content && !file.content.trim();
+    }
+
+    private buildCustomRequire(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): (mod: string) => {} {
+        const context = vm.createContext({ require, exports });
+
+        return function _requirer(mod: string): any {
+            if (files[path.normalize(mod + '.ts')]) {
+                const script = new vm.Script(files[path.normalize(mod + '.ts')].compiled);
+
+                return script.runInContext(context);
+            } else {
+                return require(mod);
+            }
+        };
     }
 }

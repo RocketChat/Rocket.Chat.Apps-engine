@@ -4,6 +4,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const tsc = require('gulp-typescript');
 const tslint = require('gulp-tslint');
 const gReplace = require('gulp-replace');
+const gutil = require('gulp-util');
 const shell = require('gulp-shell');
 const spawn = require('child_process').spawn;
 
@@ -41,8 +42,26 @@ gulp.task('compile-dev-ts', ['clean-generated', 'compile-ts'], function _compile
             .pipe(gulp.dest('dev-dist'));
 });
 
-gulp.task('run-dev', ['lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing() {
-    spawn('node', ['dev-dist/server.js'], { stdio: 'inherit' });
+gulp.task('run-dev', ['lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts'], function _runTheDevThing(cb) {
+    const server = spawn('node', ['dev-dist/server.js']);
+
+    server.stdout.on('data', (msg) => {
+        gutil.log(gutil.colors.blue('Server:'), msg.toString().trim());
+
+        if (msg.toString().startsWith('Completed the loading')) {
+            cb();
+        }
+    });
+
+    server.stderr.on('data', (msg) => {
+        gutil.log(gutil.colors.blue('Server:'), msg.toString().trim());
+    });
+
+    server.on('close', (code) => {
+        if (code === 8) {
+            gulp.log('Error detected, waiting for changes....');
+        }
+    });
 });
 
 gulp.task('default', ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts', 'run-dev'], function _watchAndRun() {

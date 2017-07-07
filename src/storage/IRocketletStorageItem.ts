@@ -7,5 +7,5 @@ export interface IRocketletStorageItem {
     updatedAt?: Date;
     info: IRocketletInfo;
     zip: string;
-    compiled: string;
+    compiled: { [s: string]: string };
 }

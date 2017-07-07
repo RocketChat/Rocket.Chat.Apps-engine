@@ -19,4 +19,5 @@ manager.load().then(() => {
                     throw err2;
                 }
             })));
-}).then(() => manager.get().forEach((rl) => console.log('Successfully loaded:', rl.getName())));
+}).then(() => manager.get().forEach((rl) => console.log('Successfully loaded:', rl.getName())))
+    .then(() => console.log('Completed the loading.'));
