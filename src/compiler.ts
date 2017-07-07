@@ -59,7 +59,7 @@ export class RocketletCompiler {
     }
 
     public toJs(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {
-        if (!files || !files[info.classFile] || this.isValidFile(files[info.classFile])) {
+        if (!files || !files[info.classFile] || !this.isValidFile(files[info.classFile])) {
             throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
         }
 
@@ -210,7 +210,11 @@ export class RocketletCompiler {
     }
 
     private isValidFile(file: ICompilerFile): boolean {
-        return file.name && file.name.trim() && path.normalize(file.name) && !file.content && !file.content.trim();
+        return file.name
+            && file.name.trim() !== ''
+            && path.normalize(file.name)
+            && file.content
+            && file.content.trim() !== '';
     }
 
     private buildCustomRequire(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): (mod: string) => {} {
