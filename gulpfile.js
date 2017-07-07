@@ -48,7 +48,7 @@ gulp.task('run-dev', ['lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts'],
     server.stdout.on('data', (msg) => {
         gutil.log(gutil.colors.blue('Server:'), msg.toString().trim());
 
-        if (msg.toString().startsWith('Completed the loading')) {
+        if (msg.toString().includes('Completed the loading')) {
             cb();
         }
     });
