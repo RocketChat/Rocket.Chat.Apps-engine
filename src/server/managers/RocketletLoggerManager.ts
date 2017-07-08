@@ -1,4 +1,4 @@
-import { RocketletConsole } from './context/console';
+import { RocketletConsole } from '../logging';
 
 export class RocketletLoggerManager {
     private loggers: Map<string, RocketletConsole>;

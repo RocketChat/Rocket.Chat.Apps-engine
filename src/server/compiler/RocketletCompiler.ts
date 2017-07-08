@@ -1,11 +1,12 @@
-import { RocketletConsole } from './context/console';
-import { MustContainFunctionError, MustExtendRocketletError } from './errors';
-import { ICompilerFile } from './interfaces';
-import { RocketletLoggerManager } from './logger';
+import { MustContainFunctionError, MustExtendRocketletError } from '../errors';
+import { RocketletLoggerManager } from '../managers';
+import { ICompilerFile } from './ICompilerFile';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
+import { ILogger } from 'temporary-rocketlets-ts-definition/accessors';
+import { IRocketlet } from 'temporary-rocketlets-ts-definition/IRocketlet';
+import { IRocketletAuthorInfo, IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import * as ts from 'typescript';
 import * as vm from 'vm';
@@ -161,8 +162,8 @@ export class RocketletCompiler {
         return files;
     }
 
-    public toSandBox(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): Rocketlet {
-        const customRequire = this.buildCustomRequire(info, files);
+    public toSandBox(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): ProxiedRocketlet {
+        const customRequire = this.buildCustomRequire(files);
         const context = vm.createContext({ require: customRequire, exports });
 
         const script = new vm.Script(files[path.normalize(info.classFile)].compiled);
@@ -206,7 +207,7 @@ export class RocketletCompiler {
             throw new MustContainFunctionError(info.classFile, 'getRequiredApiVersion');
         }
 
-        return rl as Rocketlet;
+        return new ProxiedRocketlet(rl as Rocketlet, customRequire);
     }
 
     private isValidFile(file: ICompilerFile): boolean {
@@ -217,17 +218,68 @@ export class RocketletCompiler {
             && file.content.trim() !== '';
     }
 
-    private buildCustomRequire(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): (mod: string) => {} {
-        const context = vm.createContext({ require, exports });
-
+    private buildCustomRequire(files: { [s: string]: ICompilerFile }): (mod: string) => {} {
         return function _requirer(mod: string): any {
             if (files[path.normalize(mod + '.ts')]) {
-                const script = new vm.Script(files[path.normalize(mod + '.ts')].compiled);
+                const ourExport = {};
+                const context = vm.createContext({ require, exports: ourExport });
+                vm.runInContext(files[path.normalize(mod + '.ts')].compiled, context);
 
-                return script.runInContext(context);
+                return ourExport;
             } else {
                 return require(mod);
             }
         };
+    }
+}
+
+// tslint:disable-next-line
+export class ProxiedRocketlet implements IRocketlet {
+    constructor(private readonly rocketlet: Rocketlet, private readonly customRequire: (mod: string) => {}) { }
+
+    public call(method: string, ...args: Array<any>): any {
+        const context = vm.createContext({
+            rocketlet: this.rocketlet,
+            args,
+            require: this.customRequire,
+        });
+
+        console.log('calling:', method);
+        vm.runInContext(`rocketlet.${method}(...args)`, context, { timeout: 100 });
+    }
+
+    public getName(): string {
+        return this.rocketlet.getName();
+    }
+
+    public getNameSlug(): string {
+        return this.rocketlet.getNameSlug();
+    }
+
+    public getID(): string {
+        return this.rocketlet.getID();
+    }
+
+    public getVersion(): string {
+        return this.rocketlet.getVersion();
+    }
+
+    public getDescription(): string {
+        return this.rocketlet.getDescription();
+    }
+
+    public getRequiredApiVersion(): string {
+        return this.rocketlet.getRequiredApiVersion();
+    }
+    public getAuthorInfo(): IRocketletAuthorInfo {
+        return this.rocketlet.getAuthorInfo();
+    }
+
+    public getInfo(): IRocketletInfo {
+        return this.rocketlet.getInfo();
+    }
+
+    public getLogger(): ILogger {
+        return this.rocketlet.getLogger();
     }
 }

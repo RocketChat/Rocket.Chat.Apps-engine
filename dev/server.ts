@@ -1,12 +1,15 @@
-import { RocketletManager } from '../src/manager';
-import { IRocketletStorageItem } from '../src/storage/IRocketletStorageItem';
+import { ProxiedRocketlet } from '../src/server/compiler/RocketletCompiler';
+import { RocketletManager } from '../src/server/RocketletManager';
+import { DevRocketletBridges } from './bridges/DevRocketletBridges';
 import { TestingStorage } from './storage';
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 
 const storage = new TestingStorage();
-const manager = new RocketletManager(storage);
+const bridges = new DevRocketletBridges();
+const manager = new RocketletManager(storage, bridges);
 
 manager.load().then(() => {
     return Promise.all(fs.readdirSync('examples')
@@ -19,5 +22,5 @@ manager.load().then(() => {
                     throw err2;
                 }
             })));
-}).then(() => manager.get().forEach((rl) => console.log('Successfully loaded:', rl.getName())))
+}).then(() => manager.get().forEach((rl: ProxiedRocketlet) => console.log('Successfully loaded:', rl.getName())))
     .then(() => console.log('Completed the loading.'));

@@ -1,6 +1,14 @@
-import { RocketletCompiler } from './compiler';
-import { ICompilerFile, IGetRocketletsFilter, IParseZipResult } from './interfaces';
-import { RocketletLoggerManager } from './logger';
+import { RocketletBridges } from './bridges';
+import { ICompilerFile, IParseZipResult, RocketletCompiler } from './compiler';
+import { ProxiedRocketlet } from './compiler/RocketletCompiler';
+import { RocketletMethod } from './compiler/RocketletMethod';
+import { IGetRocketletsFilter } from './IGetRocketletsFilter';
+import {
+    RocketletAccessorManager,
+    RocketletListenerManger,
+    RocketletLoggerManager,
+    RocketletSlashCommandManager,
+} from './managers';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import * as AdmZip from 'adm-zip';
@@ -13,20 +21,22 @@ import * as uuidv4 from 'uuid/v4';
 import * as vm from 'vm';
 
 export class RocketletManager {
-    // tslint:disable-next-line
+    // tslint:disable-next-line:max-line-length
     private static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    private readonly availableRocketlets: Map<string, Rocketlet>;
-    private readonly activeRocketlets: Map<string, Rocketlet>;
-    private readonly inactiveRocketlets: Map<string, Rocketlet>;
+    private readonly availableRocketlets: Map<string, ProxiedRocketlet>;
+    private readonly activeRocketlets: Map<string, ProxiedRocketlet>;
+    private readonly inactiveRocketlets: Map<string, ProxiedRocketlet>;
     private readonly storage: RocketletStorage;
-    private readonly logger: RocketletLoggerManager;
+    private readonly bridges: RocketletBridges;
     private readonly compiler: RocketletCompiler;
 
-    constructor(rlStorage: RocketletStorage) {
-        this.availableRocketlets = new Map<string, Rocketlet>();
-        this.activeRocketlets = new Map<string, Rocketlet>();
-        this.inactiveRocketlets = new Map<string, Rocketlet>();
-        this.logger = new RocketletLoggerManager();
+    private readonly accessorManager: RocketletAccessorManager;
+    private readonly listenerManager: RocketletListenerManger;
+    private readonly logger: RocketletLoggerManager;
+    private readonly commandManager: RocketletSlashCommandManager;
+
+    constructor(rlStorage: RocketletStorage, rlBridges: RocketletBridges) {
+        console.log('Constructed the RocketletManager.');
 
         if (rlStorage instanceof RocketletStorage) {
             this.storage = rlStorage;
@@ -34,17 +44,52 @@ export class RocketletManager {
             throw new Error('Invalid instance of the RocketletStorage.');
         }
 
+        if (rlBridges instanceof RocketletBridges) {
+            this.bridges = rlBridges;
+        } else {
+            throw new Error('Invalid instance of the RocketletBridges');
+        }
+
+        this.availableRocketlets = new Map<string, ProxiedRocketlet>();
+        this.activeRocketlets = new Map<string, ProxiedRocketlet>();
+        this.inactiveRocketlets = new Map<string, ProxiedRocketlet>();
+
+        this.logger = new RocketletLoggerManager();
         this.compiler = new RocketletCompiler(this.logger);
-        console.log('Constructed the RocketletManager.');
+        this.accessorManager = new RocketletAccessorManager(this);
+        this.listenerManager = new RocketletListenerManger(this);
+        this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge());
     }
 
+    /** Gets the compiler instance. */
     public getCompiler(): RocketletCompiler {
         return this.compiler;
     }
 
-    public async load(): Promise<Array<Rocketlet>> {
-        const items = await this.storage.retrieveAll();
-        const rcs = items.map((item: IRocketletStorageItem) => {
+    /** Gets the accessor manager instance. */
+    public getAccessorManager(): RocketletAccessorManager {
+        return this.accessorManager;
+    }
+
+    /** Gets the instance of the listener manager. */
+    public getListenerManager(): RocketletListenerManger {
+        return this.listenerManager;
+    }
+
+    /** Gets the command manager's instance. */
+    public getCommandManager(): RocketletSlashCommandManager {
+        return this.commandManager;
+    }
+
+    /**
+     * Goes through the entire loading up process.
+     * Except this to take some time, as it goes through a very
+     * long process of loading all the Rocketlets up.
+     */
+    public async load(): Promise<Array<ProxiedRocketlet>> {
+        const items: Map<string, IRocketletStorageItem> = await this.storage.retrieveAll();
+
+        items.forEach((item: IRocketletStorageItem) => {
             const files: { [key: string]: ICompilerFile} = {};
             Object.keys(item.compiled).forEach((key) => {
                 const name = key.replace(/\$/g, '.');
@@ -56,25 +101,28 @@ export class RocketletManager {
                 };
             });
 
-            return this.getCompiler().toSandBox(item.info, files);
+            this.availableRocketlets.set(item.id, this.getCompiler().toSandBox(item.info, files));
         });
 
-        return rcs.map((rc: Rocketlet) => {
-            this.availableRocketlets.set(rc.getID(), rc);
-            return rc;
-        });
+        // Let's initialize them
+        this.availableRocketlets.forEach((rl) =>
+            rl.call(RocketletMethod.INITIALIZE, this.getAccessorManager().getConfigurationExtend(rl.getID())));
+
+        // TODO: Enabling!
+
+        return Array.from(this.availableRocketlets.values());
     }
 
-    public async loadOne(id: string): Promise<Rocketlet> {
+    public async loadOne(id: string): Promise<ProxiedRocketlet> {
         throw new Error('Not implemented yet.');
     }
 
-    public get(filter?: IGetRocketletsFilter): Array<Rocketlet> {
+    public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
         if (filter) {
             console.warn('The filter is not yet implemented.');
         }
 
-        const rls = new Array<Rocketlet>();
+        const rls = new Array<ProxiedRocketlet>();
         this.availableRocketlets.forEach((rc, id) => rls.push(rc));
 
         return rls;
@@ -88,13 +136,14 @@ export class RocketletManager {
         throw new Error('Not implemented yet.');
     }
 
-    public async add(zipContentsBase64d: string): Promise<Rocketlet> {
+    public async add(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
         const result = await this.parseZip(zipContentsBase64d);
         const created = await this.storage.create({
             id: result.info.id,
             info: result.info,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
+            settings: {},
         });
 
         if (!created) {
@@ -105,7 +154,7 @@ export class RocketletManager {
         return result.rocketlet;
     }
 
-    public async update(zipContentsBase64d: string): Promise<Rocketlet> {
+    public async update(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
         const result = await this.parseZip(zipContentsBase64d);
         const old = await this.storage.retrieveOne(result.info.id);
 
@@ -114,10 +163,12 @@ export class RocketletManager {
         }
 
         const stored = await this.storage.update({
+            createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
+            settings: old.settings,
         });
 
         this.availableRocketlets.set(stored.id, result.rocketlet);
