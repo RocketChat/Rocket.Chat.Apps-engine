@@ -35,7 +35,7 @@
   "dependencies": {
     "adm-zip": "^0.4.7",
     "stack-trace": "0.0.10",
-    "temporary-rocketlets-ts-definition": "^0.5.19",
+    "temporary-rocketlets-ts-definition": "^0.5.22",
     "typescript": "^2.4.1",
     "uuid": "^3.1.0"
   }

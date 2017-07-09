@@ -1,6 +1,6 @@
-import { ConfigurationExtend } from '../accessors/ConfigurationExtend';
-import { SlashCommandsExtend } from '../accessors/SlashCommandsExtend';
+import { ConfigurationExtend, SettingsExtend, SlashCommandsExtend } from '../accessors';
 import { RocketletManager } from '../RocketletManager';
+import { IRocketletStorageItem } from '../storage';
 
 import { IConfigurationExtend } from 'temporary-rocketlets-ts-definition/accessors';
 
@@ -11,15 +11,15 @@ export class RocketletAccessorManager {
         this.configExtenders = new Map<string, IConfigurationExtend>();
     }
 
-    public getConfigurationExtend(rocketletId: string): IConfigurationExtend {
-        if (!this.configExtenders.has(rocketletId)) {
-            const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), rocketletId);
-            const ext = new ConfigurationExtend(undefined, cmds);
+    public getConfigurationExtend(storageItem: IRocketletStorageItem): IConfigurationExtend {
+        if (!this.configExtenders.has(storageItem.id)) {
+            const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), storageItem.id);
+            const sets = new SettingsExtend(storageItem);
+            const ext = new ConfigurationExtend(sets, cmds);
 
-            this.configExtenders.set(rocketletId, ext);
+            this.configExtenders.set(storageItem.id, ext);
         }
 
-        return this.configExtenders.get(rocketletId);
+        return this.configExtenders.get(storageItem.id);
     }
-
 }

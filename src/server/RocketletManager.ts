@@ -1,6 +1,5 @@
 import { RocketletBridges } from './bridges';
 import { ICompilerFile, IParseZipResult, RocketletCompiler } from './compiler';
-import { ProxiedRocketlet } from './compiler/RocketletCompiler';
 import { RocketletMethod } from './compiler/RocketletMethod';
 import { IGetRocketletsFilter } from './IGetRocketletsFilter';
 import {
@@ -9,6 +8,7 @@ import {
     RocketletLoggerManager,
     RocketletSlashCommandManager,
 } from './managers';
+import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import * as AdmZip from 'adm-zip';
@@ -61,6 +61,11 @@ export class RocketletManager {
         this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge());
     }
 
+    /** Gets the instance of the storage connector. */
+    public getStorage(): RocketletStorage {
+        return this.storage;
+    }
+
     /** Gets the compiler instance. */
     public getCompiler(): RocketletCompiler {
         return this.compiler;
@@ -105,10 +110,42 @@ export class RocketletManager {
         });
 
         // Let's initialize them
-        this.availableRocketlets.forEach((rl) =>
-            rl.call(RocketletMethod.INITIALIZE, this.getAccessorManager().getConfigurationExtend(rl.getID())));
+        this.availableRocketlets.forEach((rl) => {
+            const storageItem: IRocketletStorageItem = items.get(rl.getID());
+            const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem);
+            rl.call(RocketletMethod.INITIALIZE, configExtend);
 
-        // TODO: Enabling!
+            // This is async, but we don't care since it only updates in the database
+            // and it should not mutate any properties we care about
+            this.storage.update(storageItem);
+        });
+
+        this.availableRocketlets.forEach((rl) => {
+            let enable: boolean;
+
+            try {
+                // TODO: do the arguments
+                enable = rl.call(RocketletMethod.ONENABLE) as boolean;
+            } catch (e) {
+                enable = false;
+
+                if (e.name === 'NotEnoughMethodArgumentsError') {
+                    console.warn('Please report the following error:');
+                }
+
+                console.error(e);
+            }
+
+            if (enable) {
+                console.log(`Enabled ${rl.getName()}`);
+                this.activeRocketlets.set(rl.getID(), rl);
+
+                // TODO: Register all of the listeners
+            } else {
+                console.log(`Not enabling ${rl.getName()}`);
+                this.inactiveRocketlets.set(rl.getID(), rl);
+            }
+        });
 
         return Array.from(this.availableRocketlets.values());
     }

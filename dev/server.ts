@@ -1,4 +1,4 @@
-import { ProxiedRocketlet } from '../src/server/compiler/RocketletCompiler';
+import { ProxiedRocketlet } from '../src/server/ProxiedRocketlet';
 import { RocketletManager } from '../src/server/RocketletManager';
 import { DevRocketletBridges } from './bridges/DevRocketletBridges';
 import { TestingStorage } from './storage';

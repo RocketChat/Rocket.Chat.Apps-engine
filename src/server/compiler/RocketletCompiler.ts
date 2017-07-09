@@ -1,5 +1,6 @@
 import { MustContainFunctionError, MustExtendRocketletError } from '../errors';
 import { RocketletLoggerManager } from '../managers';
+import { ProxiedRocketlet } from '../ProxiedRocketlet';
 import { ICompilerFile } from './ICompilerFile';
 
 import * as fs from 'fs';
@@ -230,56 +231,5 @@ export class RocketletCompiler {
                 return require(mod);
             }
         };
-    }
-}
-
-// tslint:disable-next-line
-export class ProxiedRocketlet implements IRocketlet {
-    constructor(private readonly rocketlet: Rocketlet, private readonly customRequire: (mod: string) => {}) { }
-
-    public call(method: string, ...args: Array<any>): any {
-        const context = vm.createContext({
-            rocketlet: this.rocketlet,
-            args,
-            require: this.customRequire,
-        });
-
-        console.log('calling:', method);
-        vm.runInContext(`rocketlet.${method}(...args)`, context, { timeout: 100 });
-    }
-
-    public getName(): string {
-        return this.rocketlet.getName();
-    }
-
-    public getNameSlug(): string {
-        return this.rocketlet.getNameSlug();
-    }
-
-    public getID(): string {
-        return this.rocketlet.getID();
-    }
-
-    public getVersion(): string {
-        return this.rocketlet.getVersion();
-    }
-
-    public getDescription(): string {
-        return this.rocketlet.getDescription();
-    }
-
-    public getRequiredApiVersion(): string {
-        return this.rocketlet.getRequiredApiVersion();
-    }
-    public getAuthorInfo(): IRocketletAuthorInfo {
-        return this.rocketlet.getAuthorInfo();
-    }
-
-    public getInfo(): IRocketletInfo {
-        return this.rocketlet.getInfo();
-    }
-
-    public getLogger(): ILogger {
-        return this.rocketlet.getLogger();
     }
 }
