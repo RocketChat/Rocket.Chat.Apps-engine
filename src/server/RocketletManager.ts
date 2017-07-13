@@ -1,6 +1,7 @@
 import { RocketletBridges } from './bridges';
-import { ICompilerFile, IParseZipResult, RocketletCompiler } from './compiler';
+import { ICompilerFile, RocketletCompiler } from './compiler';
 import { RocketletMethod } from './compiler/RocketletMethod';
+import { RocketletPackageParser } from './compiler/RocketletPackageParser';
 import { IGetRocketletsFilter } from './IGetRocketletsFilter';
 import {
     RocketletAccessorManager,
@@ -11,23 +12,16 @@ import {
 import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
-import * as AdmZip from 'adm-zip';
-import * as fs from 'fs';
-import * as path from 'path';
 import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
-import * as ts from 'typescript';
-import * as uuidv4 from 'uuid/v4';
-import * as vm from 'vm';
 
 export class RocketletManager {
-    // tslint:disable-next-line:max-line-length
-    private static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     private readonly availableRocketlets: Map<string, ProxiedRocketlet>;
     private readonly activeRocketlets: Map<string, ProxiedRocketlet>;
     private readonly inactiveRocketlets: Map<string, ProxiedRocketlet>;
     private readonly storage: RocketletStorage;
     private readonly bridges: RocketletBridges;
+    private readonly parser: RocketletPackageParser;
     private readonly compiler: RocketletCompiler;
 
     private readonly accessorManager: RocketletAccessorManager;
@@ -54,6 +48,7 @@ export class RocketletManager {
         this.activeRocketlets = new Map<string, ProxiedRocketlet>();
         this.inactiveRocketlets = new Map<string, ProxiedRocketlet>();
 
+        this.parser = new RocketletPackageParser(this);
         this.logger = new RocketletLoggerManager();
         this.compiler = new RocketletCompiler(this.logger);
         this.accessorManager = new RocketletAccessorManager(this);
@@ -66,6 +61,11 @@ export class RocketletManager {
         return this.storage;
     }
 
+    /** Gets the instance of the Rocketlet package parser. */
+    public getParser(): RocketletPackageParser {
+        return this.parser;
+    }
+
     /** Gets the compiler instance. */
     public getCompiler(): RocketletCompiler {
         return this.compiler;
@@ -74,6 +74,11 @@ export class RocketletManager {
     /** Gets the accessor manager instance. */
     public getAccessorManager(): RocketletAccessorManager {
         return this.accessorManager;
+    }
+
+    /** Gets the instance of the Bridge manager. */
+    public getBridgeManager(): RocketletBridges {
+        return this.bridges;
     }
 
     /** Gets the instance of the listener manager. */
@@ -95,63 +100,26 @@ export class RocketletManager {
         const items: Map<string, IRocketletStorageItem> = await this.storage.retrieveAll();
 
         items.forEach((item: IRocketletStorageItem) => {
-            const files: { [key: string]: ICompilerFile} = {};
-            Object.keys(item.compiled).forEach((key) => {
-                const name = key.replace(/\$/g, '.');
-                files[name] = {
-                    name,
-                    content: item.compiled[key],
-                    version: 0,
-                    compiled: item.compiled[key],
-                };
-            });
+            const files: { [key: string]: ICompilerFile} = this.compiler.storageFilesToCompiler(item.compiled);
 
             this.availableRocketlets.set(item.id, this.getCompiler().toSandBox(item.info, files));
         });
 
         // Let's initialize them
         this.availableRocketlets.forEach((rl) => {
-            const storageItem: IRocketletStorageItem = items.get(rl.getID());
-            const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem);
-            rl.call(RocketletMethod.INITIALIZE, configExtend);
+            const isInitialized = this.initializeRocketlet(items.get(rl.getID()), rl);
 
-            // This is async, but we don't care since it only updates in the database
-            // and it should not mutate any properties we care about
-            this.storage.update(storageItem);
-        });
-
-        this.availableRocketlets.forEach((rl) => {
-            let enable: boolean;
-
-            try {
-                // TODO: do the arguments
-                enable = rl.call(RocketletMethod.ONENABLE) as boolean;
-            } catch (e) {
-                enable = false;
-
-                if (e.name === 'NotEnoughMethodArgumentsError') {
-                    console.warn('Please report the following error:');
-                }
-
-                console.error(e);
-            }
-
-            if (enable) {
-                console.log(`Enabled ${rl.getName()}`);
-                this.activeRocketlets.set(rl.getID(), rl);
-
-                // TODO: Register all of the listeners
-            } else {
-                console.log(`Not enabling ${rl.getName()}`);
+            if (!isInitialized) {
                 this.inactiveRocketlets.set(rl.getID(), rl);
             }
         });
 
-        return Array.from(this.availableRocketlets.values());
-    }
+        // Now let's enable all of the rocketlets
+        this.availableRocketlets.forEach((rl) => this.enableRocketlet(items.get(rl.getID()), rl));
 
-    public async loadOne(id: string): Promise<ProxiedRocketlet> {
-        throw new Error('Not implemented yet.');
+        // TODO: Register all of the listeners
+
+        return Array.from(this.activeRocketlets.values()).concat(Array.from(this.inactiveRocketlets.values()));
     }
 
     public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
@@ -160,26 +128,49 @@ export class RocketletManager {
         }
 
         const rls = new Array<ProxiedRocketlet>();
-        this.availableRocketlets.forEach((rc, id) => rls.push(rc));
+        this.availableRocketlets.forEach((rl) => rls.push(rl));
+        this.activeRocketlets.forEach((rl) => rls.push(rl));
+        this.inactiveRocketlets.forEach((rl) => rls.push(rl));
 
         return rls;
     }
 
-    public enable(id: string): boolean {
-        throw new Error('Not implemented yet.');
+    public async enable(id: string): Promise<boolean> {
+        if (this.activeRocketlets.has(id)) {
+            throw new Error(`The Rocketlet with the id "${id}" is already enabled.`);
+        }
+
+        if (!this.inactiveRocketlets.has(id)) {
+            throw new Error(`No Rocketlet by the id "${id}" is inactive.`);
+        }
+
+        const rocketlet = this.inactiveRocketlets.get(id);
+        const storageItem = await this.storage.retrieveOne(id);
+        if (!storageItem) {
+            throw new Error(`Could not enable a Rocketlet with the id of "${id}" as it doesn't exist.`);
+        }
+
+        const isSetup = this.runStartUpProcess(storageItem, rocketlet);
+        if (isSetup) {
+            this.activeRocketlets.set(storageItem.id, rocketlet);
+            this.inactiveRocketlets.delete(storageItem.id);
+        }
+
+        return isSetup;
     }
 
-    public disable(id: string): boolean {
+    public async disable(id: string): Promise<boolean> {
         throw new Error('Not implemented yet.');
     }
 
     public async add(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
-        const result = await this.parseZip(zipContentsBase64d);
+        const result = await this.getParser().parseZip(zipContentsBase64d);
         const created = await this.storage.create({
             id: result.info.id,
             info: result.info,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
+            languageFiles: result.languageFiles,
             settings: {},
         });
 
@@ -187,28 +178,9 @@ export class RocketletManager {
             throw new Error('Failed to create the Rocketlet, the storage did not return it.');
         }
 
-        this.availableRocketlets.set(result.info.id, result.rocketlet);
-        return result.rocketlet;
-    }
+        // Start up the rocketlet
+        this.runStartUpProcess(created, result.rocketlet);
 
-    public async update(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
-        const result = await this.parseZip(zipContentsBase64d);
-        const old = await this.storage.retrieveOne(result.info.id);
-
-        if (!old) {
-            throw new Error('Can not update a Rocketlet that does not currently exist.');
-        }
-
-        const stored = await this.storage.update({
-            createdAt: old.createdAt,
-            id: result.info.id,
-            info: result.info,
-            zip: zipContentsBase64d,
-            compiled: result.compiledFiles,
-            settings: old.settings,
-        });
-
-        this.availableRocketlets.set(stored.id, result.rocketlet);
         return result.rocketlet;
     }
 
@@ -216,73 +188,100 @@ export class RocketletManager {
         throw new Error('Not implemented nor architected.');
     }
 
-    private async parseZip(zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
-        const infoZip = zip.getEntry('rocketlet.json');
-        let info: IRocketletInfo;
+    public async update(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
+        const result = await this.getParser().parseZip(zipContentsBase64d);
+        const old = await this.storage.retrieveOne(result.info.id);
 
-        if (infoZip && !infoZip.isDirectory) {
-            try {
-                info = JSON.parse(infoZip.getData().toString()) as IRocketletInfo;
+        if (!old) {
+            throw new Error('Can not update a Rocketlet that does not currently exist.');
+        }
 
-                if (!RocketletManager.uuid4Regex.test(info.id)) {
-                    info.id = uuidv4();
-                    console.warn('WARNING: We automatically generated a uuid v4 id for',
-                        info.name, 'since it did not provide us an id. This is NOT',
-                        'recommended as the same Rocketlet can be installed several times.');
-                }
-            } catch (e) {
-                throw new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.');
+        this.disable(old.id);
+
+        const stored = await this.storage.update({
+            createdAt: old.createdAt,
+            id: result.info.id,
+            info: result.info,
+            zip: zipContentsBase64d,
+            compiled: result.compiledFiles,
+            languageFiles: result.languageFiles,
+            settings: old.settings,
+        });
+
+        // Start up the rocketlet
+        this.runStartUpProcess(stored, result.rocketlet);
+
+        return result.rocketlet;
+    }
+
+    private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
+        const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
+        if (!isInitialized) {
+            this.inactiveRocketlets.set(storageItem.id, rocketlet);
+            return false;
+        }
+
+        const isEnabled = this.enableRocketlet(storageItem, rocketlet);
+        if (!isEnabled) {
+            return false;
+        }
+
+        // TODO: Register all of the listeners
+
+        return true;
+    }
+
+    private initializeRocketlet(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
+        let result: boolean;
+        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem);
+
+        try {
+            rocketlet.call(RocketletMethod.INITIALIZE, configExtend);
+            result = true;
+        } catch (e) {
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                console.warn('Please report the following error:');
             }
+
+            console.error(e);
+            this.bridges.getCommandBridge().unregisterCommands(storageItem.id);
+            result = false;
+        }
+
+        // This is async, but we don't care since it only updates in the database
+        // and it should not mutate any properties we care about
+        this.storage.update(storageItem);
+
+        return result;
+    }
+
+    private enableRocketlet(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
+        let enable: boolean;
+
+        try {
+            enable = rocketlet.call(RocketletMethod.ONENABLE,
+                this.getAccessorManager().getEnvironmentRead(storageItem),
+                this.getAccessorManager().getConfigurationModify(storageItem)) as boolean;
+        } catch (e) {
+            enable = false;
+
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                console.warn('Please report the following error:');
+            }
+
+            console.error(e);
+        }
+
+        if (enable) {
+            console.log(`Enabled ${rocketlet.getName()}`);
+            this.activeRocketlets.set(rocketlet.getID(), rocketlet);
         } else {
-            throw new Error('Invalid Rocketlet package. No "rocketlet.json" file.');
+            console.log(`Not enabling ${rocketlet.getName()}`);
+            this.inactiveRocketlets.set(rocketlet.getID(), rocketlet);
         }
 
-        // Load all of the TypeScript only files
-        const tsFiles: { [s: string]: ICompilerFile } = {};
+        this.availableRocketlets.delete(rocketlet.getID());
 
-        zip.getEntries().forEach((entry) => {
-            if (!entry.entryName.endsWith('.ts') || entry.isDirectory) {
-                return;
-            }
-
-            const norm = path.normalize(entry.entryName);
-
-            // Files which start with `.` are supposed to be hidden
-            if (norm.startsWith('.')) {
-                return;
-            }
-
-            tsFiles[norm] = {
-                name: norm,
-                content: entry.getData().toString(),
-                version: 0,
-            };
-        });
-
-        // Ensure that the main class file exists
-        if (!tsFiles[path.normalize(info.classFile)]) {
-            throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
-        }
-
-        // Compile all the typescript files to javascript
-        // this actually modifies the `tsFiles` object
-        this.getCompiler().toJs(info, tsFiles);
-
-        // Now that is has all been compiled, let's get the
-        // the Rocketlet instance from the source.
-        const rocketlet = this.getCompiler().toSandBox(info, tsFiles);
-
-        const compiledFiles: { [s: string]: string } = {};
-        Object.keys(tsFiles).forEach((name) => {
-            const norm = path.normalize(name);
-            compiledFiles[norm.replace(/\./g, '$')] = tsFiles[norm].compiled;
-        });
-
-        return {
-            info,
-            compiledFiles,
-            rocketlet,
-        };
+        return enable;
     }
 }

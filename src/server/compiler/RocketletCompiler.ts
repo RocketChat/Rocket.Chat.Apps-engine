@@ -32,6 +32,22 @@ export class RocketletCompiler {
         this.libraryFiles = {};
     }
 
+    public storageFilesToCompiler(files: { [key: string]: string }): { [key: string]: ICompilerFile } {
+        const result: { [key: string]: ICompilerFile } = {};
+
+        Object.keys(files).forEach((key) => {
+            const name = key.replace(/\$/g, '.');
+            result[name] = {
+                name,
+                content: files[key],
+                version: 0,
+                compiled: files[key],
+            };
+        });
+
+        return result;
+    }
+
     public getLibraryFile(fileName: string): ICompilerFile {
         if (!fileName.endsWith('.d.ts')) {
             return undefined;
@@ -54,10 +70,6 @@ export class RocketletCompiler {
         };
 
         return this.libraryFiles[norm];
-    }
-
-    public linttTs(source: string): void {
-        throw new Error('Not implemented yet.');
     }
 
     public toJs(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {

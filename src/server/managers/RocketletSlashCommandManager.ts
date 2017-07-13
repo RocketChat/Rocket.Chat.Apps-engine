@@ -30,7 +30,7 @@ export class RocketletSlashCommandManager {
     public addCommand(rocketletId: string, command: ISlashCommand): void {
         command.command = command.command.toLowerCase().trim();
 
-        if (this.bridge.doesCommandExist(command.command) || this.isAlreadyDefined(command.command)) {
+        if (this.bridge.doesCommandExist(command.command, rocketletId) || this.isAlreadyDefined(command.command)) {
             throw new CommandAlreadyExistsError(command.command);
         }
 
@@ -65,7 +65,7 @@ export class RocketletSlashCommandManager {
      * @param command the command to disable in the bridged system
      */
     public disableCommand(rocketletId: string, command: string): void {
-        if (!this.bridge.doesCommandExist(command)) {
+        if (!this.bridge.doesCommandExist(command, rocketletId)) {
             throw new Error(`The command "${command}" does not exist to disable.`);
         }
 
@@ -85,7 +85,7 @@ export class RocketletSlashCommandManager {
 
         this.rlCommands.get(rocketletId).forEach((cmd) => {
             this.commands.set(cmd.command, cmd);
-            this.bridge.registerCommand(cmd.command, this.commandExecutor.bind(this));
+            this.bridge.registerCommand(cmd.command, rocketletId, this.commandExecutor.bind(this));
         });
     }
 
@@ -96,7 +96,7 @@ export class RocketletSlashCommandManager {
 
         this.rlCommands.get(rocketletId).forEach((cmd) => {
             this.commands.delete(cmd.command);
-            this.bridge.unregisterCommand(cmd.command);
+            this.bridge.unregisterCommand(cmd.command, rocketletId);
         });
     }
 
@@ -128,7 +128,7 @@ export class RocketletSlashCommandManager {
             return;
         }
 
-        // TODO: UMMM YEAH THIS!
-        this.commands.get(command).executor(context, undefined, undefined, undefined, undefined);
+        // TODO: UMMM YEAH THIS! context it
+        this.commands.get(command).executor(context, undefined, undefined, undefined);
     }
 }

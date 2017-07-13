@@ -10,30 +10,52 @@ export interface IRocketletCommandBridge {
      * system which is being bridged.
      *
      * @param command the command to check if it exists
+     * @param rocketletId the id of the rocketlet calling this
      * @return whether the command is already in the system
      */
-    doesCommandExist(command: string): boolean;
+    doesCommandExist(command: string, rocketletId: string): boolean;
+
+    /**
+     * Disables an existing command from the bridged system.
+     *
+     * @param command the command which to disable
+     * @param rocketletId the id of the rocketlet calling this
+     */
+    disableCommand(command: string, rocketletId: string): void;
+
+    /**
+     * Changes how an existing slash command behaves, so you can provide
+     * different executor per configuration.
+     *
+     * @param command the modified slash command
+     * @param rocketletId the id of the rocketlet calling this
+     */
+    modifyCommand(command: ISlashCommand, rocketletId: string): void;
 
     /**
      * Registers a command with the system which is being bridged.
      *
      * @param command the command to register
+     * @param rocketletId the id of the rocketlet calling this
      * @param toRun the executor which is called when the command is ran
      */
-    registerCommand(command: string, executor: (command: string, context: ISlashCommandContext) => {}): void;
+    // tslint:disable-next-line:max-line-length
+    registerCommand(command: string, rocketletId: string, executor: (command: string, context: ISlashCommandContext) => {}): void;
 
     /**
      * Unregisters the provided command from the bridged system.
      *
      * @param command the command to unregister
+     * @param rocketletId the id of the rocketlet calling this
      */
-    unregisterCommand(command: string): void;
+    unregisterCommand(command: string, rocketletId: string): void;
 
     /**
-     * Disables an existing command from the bridged system.
+     * Unregisters all of the commands which were registered by the
+     * provided rocketlet.
      *
-     * @param rocketletId the id of the rocketlet which is disabling this command
-     * @param command the command which to disable
+     * @param rocketletId the rocketlet's id to unregister the commands
+     * @return the amount of commands unregistered
      */
-    disableCommand(rocketletId: string, command: string): void;
+    unregisterCommands(rocketletId: string): number;
 }

@@ -4,6 +4,7 @@ import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 
 export interface IParseZipResult {
     info: IRocketletInfo;
-    compiledFiles: { [s: string]: string };
+    compiledFiles: { [key: string]: string };
+    languageFiles: { [key: string]: string };
     rocketlet: ProxiedRocketlet;
 }

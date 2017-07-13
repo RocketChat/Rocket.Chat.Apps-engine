@@ -3,14 +3,20 @@ import { IRocketlet } from 'temporary-rocketlets-ts-definition/IRocketlet';
 import { IRocketletAuthorInfo, IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 
-import { NotEnoughMethodArgumentsError } from './errors/index';
+import { RocketletMethod } from './compiler';
+import { NotEnoughMethodArgumentsError } from './errors';
 
 import * as vm from 'vm';
 
 export class ProxiedRocketlet implements IRocketlet {
     constructor(private readonly rocketlet: Rocketlet, private readonly customRequire: (mod: string) => {}) { }
 
-    public call(method: string, ...args: Array<any>): any {
+    public hasMethod(method: RocketletMethod): boolean {
+        console.log('Checking:', method);
+        return typeof (this.rocketlet as any)[method] === 'function';
+    }
+
+    public call(method: RocketletMethod, ...args: Array<any>): any {
         if (typeof (this.rocketlet as any)[method] !== 'function') {
             throw new Error(`The Rocketlet ${this.rocketlet.getName()} (${this.rocketlet.getID()}`
                 + ` does not have the method: "${method}"`);
@@ -18,8 +24,7 @@ export class ProxiedRocketlet implements IRocketlet {
 
         // tslint:disable-next-line
         const methodDeclartion = (this.rocketlet as any)[method] as Function;
-        console.log(methodDeclartion, methodDeclartion.length);
-        if (args.length !== methodDeclartion.length) {
+        if (args.length < methodDeclartion.length) {
             throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
         }
 
@@ -27,6 +32,7 @@ export class ProxiedRocketlet implements IRocketlet {
             rocketlet: this.rocketlet,
             args,
             require: this.customRequire,
+            console: this.rocketlet.getLogger(),
         });
 
         this.rocketlet.getLogger().debug(`${method} is being called...`);
