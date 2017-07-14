@@ -59,7 +59,7 @@ export class RocketletAccessorManager {
     public getConfigurationModify(storageItem: IRocketletStorageItem): IConfigurationModify {
         if (!this.configModifiers.has(storageItem.id)) {
             const sets = new ServerSettingsModify(this.bridges.getServerSettingBridge(), storageItem.id);
-            const cmds = new SlashCommandsModify(this.bridges.getCommandBridge(), storageItem.id);
+            const cmds = new SlashCommandsModify(this.manager.getCommandManager(), storageItem.id);
 
             this.configModifiers.set(storageItem.id, new ConfigurationModify(sets, cmds));
         }

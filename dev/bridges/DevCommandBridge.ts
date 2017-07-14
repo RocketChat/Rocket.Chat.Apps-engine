@@ -32,15 +32,10 @@ export class DevCommandBridge implements IRocketletCommandBridge {
     }
 
     public unregisterCommand(command: string, rocketletId: string): void {
-        if (!this.commands.has(command)) {
-            throw new Error(`The command "${command}" was not registered.`);
+        const removed = this.commands.delete(command);
+
+        if (removed) {
+            console.log(`Unregistered the command "${command}".`);
         }
-
-        this.commands.delete(command);
-        console.log(`Unregistered the command "${command}".`);
-    }
-
-    public unregisterCommands(rocketletId: string): number {
-        return 0;
     }
 }

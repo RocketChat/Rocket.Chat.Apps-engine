@@ -42,8 +42,9 @@ export class RocketletSlashCommandManager {
     }
 
     /**
-     * Modifies an existing command.
-     * Note: The command must have been previously registered to be able to modify it.
+     * Modifies an existing command. The command must either be your Rocketlet's
+     * own command or a system command. One Rocketlet can not modify another
+     * Rocketlet's command.
      *
      * @param rocketletId the rocketlet's id of the command to modify
      * @param command the modified command to replace the current one with
@@ -51,11 +52,17 @@ export class RocketletSlashCommandManager {
     public modifyCommand(rocketletId: string, command: ISlashCommand): void {
         // tslint:disable-next-line:max-line-length
         if (!this.rlCommands.has(rocketletId) || this.rlCommands.get(rocketletId).filter((c) => c.command === command.command).length === 0) {
-            throw new Error('You must first register a command before you can modify it.');
+            if (!this.bridge.doesCommandExist(command.command, rocketletId)) {
+                throw new Error('You must first register a command before you can modify it.');
+            }
         }
 
         const index = this.rlCommands.get(rocketletId).findIndex((c) => c.command === command.command);
-        this.rlCommands.get(rocketletId)[index] = command;
+        if (index === -1) {
+            this.bridge.modifyCommand(command, rocketletId);
+        } else {
+            this.rlCommands.get(rocketletId)[index] = command;
+        }
     }
 
     /**
@@ -98,6 +105,8 @@ export class RocketletSlashCommandManager {
             this.commands.delete(cmd.command);
             this.bridge.unregisterCommand(cmd.command, rocketletId);
         });
+
+        this.rlCommands.delete(rocketletId);
     }
 
     /**

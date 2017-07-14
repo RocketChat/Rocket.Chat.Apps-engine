@@ -49,13 +49,4 @@ export interface IRocketletCommandBridge {
      * @param rocketletId the id of the rocketlet calling this
      */
     unregisterCommand(command: string, rocketletId: string): void;
-
-    /**
-     * Unregisters all of the commands which were registered by the
-     * provided rocketlet.
-     *
-     * @param rocketletId the rocketlet's id to unregister the commands
-     * @return the amount of commands unregistered
-     */
-    unregisterCommands(rocketletId: string): number;
 }

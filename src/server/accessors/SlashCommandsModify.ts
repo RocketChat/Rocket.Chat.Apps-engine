@@ -1,16 +1,16 @@
-import { IRocketletCommandBridge } from '../bridges/IRocketletCommandBridge';
+import { RocketletSlashCommandManager } from '../managers';
 
 import { ISlashCommandsModify } from 'temporary-rocketlets-ts-definition/accessors';
 import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 export class SlashCommandsModify implements ISlashCommandsModify {
-    constructor(private readonly bridge: IRocketletCommandBridge, private readonly rocketletId: string) { }
+    constructor(private readonly manager: RocketletSlashCommandManager, private readonly rocketletId: string) { }
 
     public modifySlashCommand(slashCommand: ISlashCommand): void {
-        this.bridge.modifyCommand(slashCommand, this.rocketletId);
+        this.manager.modifyCommand(this.rocketletId, slashCommand);
     }
 
     public disableSlashCommand(command: string): void {
-        this.bridge.disableCommand(command, this.rocketletId);
+        this.manager.disableCommand(command, this.rocketletId);
     }
 }

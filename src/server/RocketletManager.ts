@@ -160,7 +160,32 @@ export class RocketletManager {
     }
 
     public async disable(id: string): Promise<boolean> {
-        throw new Error('Not implemented yet.');
+        if (this.inactiveRocketlets.has(id)) {
+            throw new Error(`The Rocketlet with the id of "${id}" is already disabled.`);
+        }
+
+        if (!this.activeRocketlets.has(id)) {
+            throw new Error(`No Rocketlet by the id of "${id}" is enabled."`);
+        }
+
+        const rocketlet = this.activeRocketlets.get(id);
+        const storageItem = await this.storage.retrieveOne(id);
+        if (!storageItem) {
+            throw new Error(`Could not disable a Rocketlet with the id of "${id}" as it doesn't exist.`);
+        }
+
+        try {
+            rocketlet.call(RocketletMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem));
+        } catch (e) {
+            console.warn('Error while disabling:', e);
+        }
+
+        this.commandManager.unregisterCommands(storageItem.id);
+
+        this.inactiveRocketlets.set(storageItem.id, rocketlet);
+        this.activeRocketlets.delete(storageItem.id);
+
+        return true;
     }
 
     public async add(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
@@ -196,7 +221,8 @@ export class RocketletManager {
             throw new Error('Can not update a Rocketlet that does not currently exist.');
         }
 
-        this.disable(old.id);
+        await this.disable(old.id);
+        this.inactiveRocketlets.delete(old.id);
 
         const stored = await this.storage.update({
             createdAt: old.createdAt,
@@ -244,7 +270,7 @@ export class RocketletManager {
             }
 
             console.error(e);
-            this.bridges.getCommandBridge().unregisterCommands(storageItem.id);
+            this.commandManager.unregisterCommands(storageItem.id);
             result = false;
         }
 
@@ -264,6 +290,7 @@ export class RocketletManager {
                 this.getAccessorManager().getConfigurationModify(storageItem)) as boolean;
         } catch (e) {
             enable = false;
+            this.commandManager.unregisterCommands(storageItem.id);
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -273,10 +300,8 @@ export class RocketletManager {
         }
 
         if (enable) {
-            console.log(`Enabled ${rocketlet.getName()}`);
             this.activeRocketlets.set(rocketlet.getID(), rocketlet);
         } else {
-            console.log(`Not enabling ${rocketlet.getName()}`);
             this.inactiveRocketlets.set(rocketlet.getID(), rocketlet);
         }
 
