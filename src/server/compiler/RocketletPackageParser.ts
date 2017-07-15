@@ -1,17 +1,29 @@
+import { RequiredApiVersionError } from '../errors';
 import { RocketletManager } from '../RocketletManager';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
 import * as AdmZip from 'adm-zip';
+import * as fs from 'fs';
 import * as path from 'path';
+import * as semver from 'semver';
 import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata/IRocketletInfo';
 import * as uuidv4 from 'uuid/v4';
 
 export class RocketletPackageParser {
     // tslint:disable-next-line:max-line-length
     public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    private rocketletsTsDefVer: string;
 
-    constructor(private readonly manager: RocketletManager) {}
+    constructor(private readonly manager: RocketletManager) {
+        const file = 'node_modules/temporary-rocketlets-ts-definition/package.json';
+        if (fs.existsSync(file)) {
+            const info = JSON.parse(fs.readFileSync(file, 'utf8'));
+            this.rocketletsTsDefVer = info.version as string;
+        } else {
+            throw new Error('Could not find the file: ' + file);
+        }
+    }
 
     public async parseZip(zipBase64: string): Promise<IParseZipResult> {
         const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
@@ -33,6 +45,10 @@ export class RocketletPackageParser {
             }
         } else {
             throw new Error('Invalid Rocketlet package. No "rocketlet.json" file.');
+        }
+
+        if (!semver.satisfies(this.rocketletsTsDefVer, info.requiredApiVersion)) {
+            throw new RequiredApiVersionError(info, this.rocketletsTsDefVer);
         }
 
         // Load all of the TypeScript only files

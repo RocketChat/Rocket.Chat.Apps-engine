@@ -19,8 +19,8 @@ manager.load().then(() => {
                 if (err2.message === 'Rocketlet already exists.') {
                     return manager.update(zip);
                 } else {
-                    throw err2;
+                    return Promise.reject(err2);
                 }
             })));
 }).then(() => manager.get().forEach((rl: ProxiedRocketlet) => console.log('Successfully loaded:', rl.getName())))
-    .then(() => console.log('Completed the loading.'));
+    .then(() => console.log('Completed the loading.')).catch((err) => console.log('Error caught:', err));
