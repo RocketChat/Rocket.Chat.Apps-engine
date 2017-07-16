@@ -176,6 +176,11 @@ export class RocketletCompiler {
     }
 
     public toSandBox(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): ProxiedRocketlet {
+        if (typeof files[path.normalize(info.classFile)] === 'undefined') {
+            throw new Error(`Invalid Rocketlet package for "${info.name}". ` +
+                `Could not find the classFile (${info.classFile}) file.`);
+        }
+
         const customRequire = this.buildCustomRequire(files);
         const context = vm.createContext({ require: customRequire, exports });
 
