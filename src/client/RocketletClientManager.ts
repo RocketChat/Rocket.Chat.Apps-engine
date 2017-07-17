@@ -1,16 +1,16 @@
-import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
+import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 
 import { RocketletServerCommunicator } from './RocketletServerCommunicator';
 
 export class RocketletClientManager {
-    private rocketlets: Array<Rocketlet>;
+    private rocketlets: Array<IRocketletInfo>;
 
     constructor(private readonly communicator: RocketletServerCommunicator) {
         if (!(communicator instanceof RocketletServerCommunicator)) {
             throw new Error('The communicator must extend RocketletServerCommunicator');
         }
 
-        this.rocketlets = new Array<Rocketlet>();
+        this.rocketlets = new Array<IRocketletInfo>();
     }
 
     public async load(): Promise<void> {
