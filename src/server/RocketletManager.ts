@@ -124,6 +124,14 @@ export class RocketletManager {
 
     public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
         let rls = new Array<ProxiedRocketlet>();
+
+        if (typeof filter === 'undefined') {
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+
+            return rls;
+        }
+
         let nothing = true;
 
         if (typeof filter.enabled === 'boolean' && filter.enabled) {
