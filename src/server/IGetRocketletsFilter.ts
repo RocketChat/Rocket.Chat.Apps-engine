@@ -1,7 +1,6 @@
 export interface IGetRocketletsFilter {
-    ids?: Array<number>;
+    ids?: Array<string>;
     name?: string | RegExp;
-    count?: number;
     enabled?: boolean;
     disabled?: boolean;
 }

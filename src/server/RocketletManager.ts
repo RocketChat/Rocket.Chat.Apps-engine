@@ -123,14 +123,33 @@ export class RocketletManager {
     }
 
     public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
-        if (filter) {
-            console.warn('The filter is not yet implemented.');
+        let rls = new Array<ProxiedRocketlet>();
+        let nothing = true;
+
+        if (typeof filter.enabled === 'boolean' && filter.enabled) {
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            nothing = false;
         }
 
-        const rls = new Array<ProxiedRocketlet>();
-        this.availableRocketlets.forEach((rl) => rls.push(rl));
-        this.activeRocketlets.forEach((rl) => rls.push(rl));
-        this.inactiveRocketlets.forEach((rl) => rls.push(rl));
+        if (typeof filter.disabled === 'boolean' && filter.disabled) {
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            nothing = false;
+        }
+
+        if (nothing) {
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.activeRocketlets.forEach((rl) => rls.push(rl));
+        }
+
+        if (typeof filter.ids !== 'undefined') {
+            rls = rls.filter((rl) => filter.ids.includes(rl.getID()));
+        }
+
+        if (typeof filter.name === 'string') {
+            rls = rls.filter((rl) => rl.getName() === filter.name);
+        } else if (filter.name instanceof RegExp) {
+            rls = rls.filter((rl) => (filter.name as RegExp).test(rl.getName()));
+        }
 
         return rls;
     }
