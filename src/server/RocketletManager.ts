@@ -29,6 +29,8 @@ export class RocketletManager {
     private readonly logger: RocketletLoggerManager;
     private readonly commandManager: RocketletSlashCommandManager;
 
+    private isLoaded: boolean;
+
     constructor(rlStorage: RocketletStorage, rlBridges: RocketletBridges) {
         console.log('Constructed the RocketletManager.');
 
@@ -54,6 +56,8 @@ export class RocketletManager {
         this.accessorManager = new RocketletAccessorManager(this);
         this.listenerManager = new RocketletListenerManger(this);
         this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge());
+
+        this.isLoaded = false;
     }
 
     /** Gets the instance of the storage connector. */
@@ -91,6 +95,11 @@ export class RocketletManager {
         return this.commandManager;
     }
 
+    /** Gets whether the Rocketlets have been loaded or not. */
+    public areRocketletsLoaded(): boolean {
+        return this.isLoaded;
+    }
+
     /**
      * Goes through the entire loading up process.
      * Except this to take some time, as it goes through a very
@@ -119,6 +128,7 @@ export class RocketletManager {
 
         // TODO: Register all of the listeners
 
+        this.isLoaded = true;
         return Array.from(this.activeRocketlets.values()).concat(Array.from(this.inactiveRocketlets.values()));
     }
 
