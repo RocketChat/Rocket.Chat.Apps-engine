@@ -24,14 +24,14 @@ gulp.task('lint-dev-ts', function _lintDevTypescript() {
     return project.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
 });
 
-gulp.task('compile-ts', ['clean-generated'], function _compileTypescript() {
+gulp.task('compile-ts', ['clean-generated', 'lint-ts'], function _compileTypescript() {
     return tsp.src().pipe(sourcemaps.init())
             .pipe(tsp())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('dist'));
 });
 
-gulp.task('compile-dev-ts', ['clean-generated', 'compile-ts'], function _compileDevTypescript() {
+gulp.task('compile-dev-ts', ['clean-generated', 'lint-dev-ts', 'compile-ts'], function _compileDevTypescript() {
     const project = tsc.createProject('dev/tsconfig.json');
 
     return project.src()

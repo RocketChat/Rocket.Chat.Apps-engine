@@ -137,7 +137,7 @@ export class RocketletManager {
 
         if (typeof filter === 'undefined') {
             this.activeRocketlets.forEach((rl) => rls.push(rl));
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
 
             return rls;
         }
@@ -150,13 +150,13 @@ export class RocketletManager {
         }
 
         if (typeof filter.disabled === 'boolean' && filter.disabled) {
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
             nothing = false;
         }
 
         if (nothing) {
             this.activeRocketlets.forEach((rl) => rls.push(rl));
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
         }
 
         if (typeof filter.ids !== 'undefined') {
