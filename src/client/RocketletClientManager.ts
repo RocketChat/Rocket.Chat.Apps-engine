@@ -15,5 +15,6 @@ export class RocketletClientManager {
 
     public async load(): Promise<void> {
          this.rocketlets = await this.communicator.getEnabledRocketlets();
+         console.log('Enabled rocketlets:', this.rocketlets);
     }
 }
