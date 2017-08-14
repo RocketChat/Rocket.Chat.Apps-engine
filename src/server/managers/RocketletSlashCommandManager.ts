@@ -1,4 +1,4 @@
-import { ISlashCommand, ISlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
 import { IRocketletCommandBridge } from '../bridges/IRocketletCommandBridge';
 import { CommandAlreadyExistsError } from '../errors/CommandAlreadyExistsError';
 
@@ -132,7 +132,7 @@ export class RocketletSlashCommandManager {
      * @param command the command to execute
      * @param context the context in which the command was entered
      */
-    private commandExecutor(command: string, context: ISlashCommandContext): void {
+    private commandExecutor(command: string, context: SlashCommandContext): void {
         if (!this.commands.has(command)) {
             return;
         }

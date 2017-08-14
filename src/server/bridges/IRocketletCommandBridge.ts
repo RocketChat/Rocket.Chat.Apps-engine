@@ -1,4 +1,4 @@
-import { ISlashCommand, ISlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 /**
  * The interface which should be implemented for the commands to be
@@ -42,7 +42,7 @@ export interface IRocketletCommandBridge {
      * @param toRun the executor which is called when the command is ran
      */
     // tslint:disable-next-line:max-line-length
-    registerCommand(command: string, rocketletId: string, executor: (command: string, context: ISlashCommandContext) => {}): void;
+    registerCommand(command: string, rocketletId: string, executor: (command: string, context: SlashCommandContext) => {}): void;
 
     /**
      * Unregisters the provided command from the bridged system.
