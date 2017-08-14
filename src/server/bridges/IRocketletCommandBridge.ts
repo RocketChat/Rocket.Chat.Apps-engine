@@ -7,7 +7,9 @@ import { ISlashCommand, ISlashCommandContext } from 'temporary-rocketlets-ts-def
 export interface IRocketletCommandBridge {
     /**
      * Checks if the provided command already exists inside of the
-     * system which is being bridged.
+     * system which is being bridged. This does not check if the rocketlet
+     * registered it but it should return whether the supplied command is
+     * already defined by something else or not.
      *
      * @param command the command to check if it exists
      * @param rocketletId the id of the rocketlet calling this
