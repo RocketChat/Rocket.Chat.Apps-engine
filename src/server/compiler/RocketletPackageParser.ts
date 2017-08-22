@@ -16,13 +16,7 @@ export class RocketletPackageParser {
     private rocketletsTsDefVer: string;
 
     constructor(private readonly manager: RocketletManager) {
-        const file = 'node_modules/temporary-rocketlets-ts-definition/package.json';
-        if (fs.existsSync(file)) {
-            const info = JSON.parse(fs.readFileSync(file, 'utf8'));
-            this.rocketletsTsDefVer = info.version as string;
-        } else {
-            throw new Error('Could not find the file: ' + file);
-        }
+        this.rocketletsTsDefVer = this.getTsDefVersion();
     }
 
     public async parseZip(zipBase64: string): Promise<IParseZipResult> {
@@ -111,5 +105,21 @@ export class RocketletPackageParser {
         });
 
         return languageFiles;
+    }
+
+    private getTsDefVersion(): string {
+        const devLocation = 'node_modules/temporary-rocketlets-ts-definition/package.json';
+        // tslint:disable-next-line
+        const prodLocation = __dirname.split('temporary-rocketlets-server')[0] + 'temporary-rocketlets-ts-definition/package.json';
+
+        if (fs.existsSync(devLocation)) {
+            const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
+            return info.version as string;
+        } else if (fs.existsSync(prodLocation)) {
+            const info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
+            return info.version as string;
+        } else {
+            throw new Error('Could not find the Rocketlets TypeScript Definition Package Version!');
+        }
     }
 }
