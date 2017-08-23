@@ -42,7 +42,7 @@ export class TestingStorage extends RocketletStorage {
                 } else if (doc) {
                     resolve(doc);
                 } else {
-                    reject(new Error(`Nothing found by the id: ${id}`));
+                    reject(new Error(`No Rocketlet found by the id: ${id}`));
                 }
             });
         });

@@ -36,7 +36,8 @@ export class ProxiedRocketlet implements IRocketlet {
         });
 
         this.rocketlet.getLogger().debug(`${method} is being called...`);
-        const result = vm.runInContext(`rocketlet.${method}(...args)`, context, { timeout: 100 });
+        // tslint:disable-next-line:max-line-length
+        const result = vm.runInContext(`rocketlet.${method}.apply(rocketlet.${method}, args)`, context, { timeout: 100 });
         this.rocketlet.getLogger().debug(`${method} was successfully called!`);
 
         return result;
