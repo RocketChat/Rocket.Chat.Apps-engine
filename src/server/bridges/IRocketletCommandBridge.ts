@@ -41,8 +41,7 @@ export interface IRocketletCommandBridge {
      * @param rocketletId the id of the rocketlet calling this
      * @param toRun the executor which is called when the command is ran
      */
-    // tslint:disable-next-line:max-line-length
-    registerCommand(command: string, rocketletId: string, executor: (command: string, context: SlashCommandContext) => {}): void;
+    registerCommand(command: ISlashCommand, rocketletId: string): void;
 
     /**
      * Unregisters the provided command from the bridged system.

@@ -92,7 +92,7 @@ export class RocketletSlashCommandManager {
 
         this.rlCommands.get(rocketletId).forEach((cmd) => {
             this.commands.set(cmd.command, cmd);
-            this.bridge.registerCommand(cmd.command, rocketletId, this.commandExecutor.bind(this));
+            this.bridge.registerCommand(cmd, rocketletId);
         });
     }
 

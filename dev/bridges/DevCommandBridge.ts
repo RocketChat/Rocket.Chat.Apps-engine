@@ -1,12 +1,14 @@
+import { IBuilder, IHttp, IRead } from 'temporary-rocketlets-ts-definition/accessors';
 import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 import { IRocketletCommandBridge } from '../../src/server/bridges';
 
 export class DevCommandBridge implements IRocketletCommandBridge {
-    private commands: Map<string, (command: string, context: SlashCommandContext) => {}>;
+    private commands: Map<string, (context: SlashCommandContext, builder: IBuilder, read: IRead, http: IHttp) => void>;
 
     constructor() {
-        this.commands = new Map<string, (command: string, context: SlashCommandContext) => {}>();
+        // tslint:disable-next-line:max-line-length
+        this.commands = new Map<string, (context: SlashCommandContext, builder: IBuilder, read: IRead, http: IHttp) => void>();
     }
 
     public doesCommandExist(command: string, rocketletId: string): boolean {
@@ -21,13 +23,12 @@ export class DevCommandBridge implements IRocketletCommandBridge {
         throw new Error('Not implemented.');
     }
 
-    // tslint:disable-next-line:max-line-length
-    public registerCommand(command: string, rocketletId: string, executor: (command: string, context: SlashCommandContext) => {}): void {
-        if (this.commands.has(command)) {
-            throw new Error(`Command "${command}" has already been registered.`);
+    public registerCommand(command: ISlashCommand, rocketletId: string): void {
+        if (this.commands.has(command.command)) {
+            throw new Error(`Command "${command.command}" has already been registered.`);
         }
 
-        this.commands.set(command, executor);
+        this.commands.set(command.command, command.executor);
         console.log(`Registered the command "${command}".`);
     }
 
