@@ -29,7 +29,7 @@ export class DevCommandBridge implements IRocketletCommandBridge {
         }
 
         this.commands.set(command.command, command.executor);
-        console.log(`Registered the command "${command}".`);
+        console.log(`Registered the command "${command.command}".`);
     }
 
     public unregisterCommand(command: string, rocketletId: string): void {

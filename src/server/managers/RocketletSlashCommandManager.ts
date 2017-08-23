@@ -12,6 +12,7 @@ import { CommandAlreadyExistsError } from '../errors/CommandAlreadyExistsError';
 export class RocketletSlashCommandManager {
     // commands by rocketlet id
     private rlCommands: Map<string, Array<ISlashCommand>>;
+    // loaded commands
     private commands: Map<string, ISlashCommand>;
 
     constructor(private readonly bridge: IRocketletCommandBridge) {

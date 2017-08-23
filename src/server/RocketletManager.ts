@@ -16,8 +16,11 @@ import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 
 export class RocketletManager {
+    // availableRocketlets contains the rocketlets which haven't tried to start
     private readonly availableRocketlets: Map<string, ProxiedRocketlet>;
+    // activeRocketlets contains the rocketlets which are active and enabled
     private readonly activeRocketlets: Map<string, ProxiedRocketlet>;
+    // inactiveRocketlets contains the rocketlets which failed to load or are disabled
     private readonly inactiveRocketlets: Map<string, ProxiedRocketlet>;
     private readonly storage: RocketletStorage;
     private readonly bridges: RocketletBridges;
@@ -327,7 +330,6 @@ export class RocketletManager {
                 this.getAccessorManager().getConfigurationModify(storageItem)) as boolean;
         } catch (e) {
             enable = false;
-            this.commandManager.unregisterCommands(storageItem.id);
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -337,8 +339,10 @@ export class RocketletManager {
         }
 
         if (enable) {
+            this.commandManager.registerCommands(rocketlet.getID());
             this.activeRocketlets.set(rocketlet.getID(), rocketlet);
         } else {
+            this.commandManager.unregisterCommands(storageItem.id);
             this.inactiveRocketlets.set(rocketlet.getID(), rocketlet);
         }
 
