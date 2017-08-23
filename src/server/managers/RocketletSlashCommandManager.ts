@@ -111,6 +111,21 @@ export class RocketletSlashCommandManager {
     }
 
     /**
+     * Executes a Rocketlet's command.
+     *
+     * @param command the command to execute
+     * @param context the context in which the command was entered
+     */
+    public executeCommand(command: string, context: SlashCommandContext): void {
+        if (!this.commands.has(command)) {
+            return;
+        }
+
+        // TODO: UMMM YEAH THIS! context it
+        this.commands.get(command).executor(context, undefined, undefined, undefined);
+    }
+
+    /**
      * Determines whether the provided command is already defined internally or not.
      *
      * @param command the command to check if it exists or not
@@ -125,20 +140,5 @@ export class RocketletSlashCommandManager {
         }));
 
         return exists;
-    }
-
-    /**
-     * Executes a Rocketlet's command.
-     *
-     * @param command the command to execute
-     * @param context the context in which the command was entered
-     */
-    private commandExecutor(command: string, context: SlashCommandContext): void {
-        if (!this.commands.has(command)) {
-            return;
-        }
-
-        // TODO: UMMM YEAH THIS! context it
-        this.commands.get(command).executor(context, undefined, undefined, undefined);
     }
 }
