@@ -41,52 +41,63 @@ export class RocketletAccessorManager {
         this.readers = new Map<string, IRead>();
     }
 
-    public getConfigurationExtend(storageItem: IRocketletStorageItem): IConfigurationExtend {
-        if (!this.configExtenders.has(storageItem.id)) {
-            const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), storageItem.id);
-            const sets = new SettingsExtend(storageItem);
+    public getConfigurationExtend(rocketletId: string): IConfigurationExtend {
+        if (!this.configExtenders.has(rocketletId)) {
+            const rl = this.manager.getOneById(rocketletId);
 
-            this.configExtenders.set(storageItem.id, new ConfigurationExtend(sets, cmds));
+            if (!rl) {
+                throw new Error(`No Rocketlet found by the provided id: ${ rocketletId }`);
+            }
+
+            const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), rocketletId);
+            const sets = new SettingsExtend(rl.getStorageItem());
+
+            this.configExtenders.set(rocketletId, new ConfigurationExtend(sets, cmds));
         }
 
-        return this.configExtenders.get(storageItem.id);
+        return this.configExtenders.get(rocketletId);
     }
 
-    public getEnvironmentRead(storageItem: IRocketletStorageItem): IEnvironmentRead {
-        if (!this.envReaders.has(storageItem.id)) {
-            const sets = new SettingRead(storageItem);
-            const servsets = new ServerSettingRead(this.bridges.getServerSettingBridge(), storageItem.id);
-            const env = new EnvironmentalVariableRead(this.bridges.getEnvironmentalVariableBridge(), storageItem.id);
+    public getEnvironmentRead(rocketletId: string): IEnvironmentRead {
+        if (!this.envReaders.has(rocketletId)) {
+            const rl = this.manager.getOneById(rocketletId);
 
-            this.envReaders.set(storageItem.id, new EnvironmentRead(sets, servsets, env));
+            if (!rl) {
+                throw new Error(`No Rocketlet found by the provided id: ${ rocketletId }`);
+            }
+
+            const sets = new SettingRead(rl.getStorageItem());
+            const servsets = new ServerSettingRead(this.bridges.getServerSettingBridge(), rocketletId);
+            const env = new EnvironmentalVariableRead(this.bridges.getEnvironmentalVariableBridge(), rocketletId);
+
+            this.envReaders.set(rocketletId, new EnvironmentRead(sets, servsets, env));
         }
 
-        return this.envReaders.get(storageItem.id);
+        return this.envReaders.get(rocketletId);
     }
 
-    public getConfigurationModify(storageItem: IRocketletStorageItem): IConfigurationModify {
-        if (!this.configModifiers.has(storageItem.id)) {
-            const sets = new ServerSettingsModify(this.bridges.getServerSettingBridge(), storageItem.id);
-            const cmds = new SlashCommandsModify(this.manager.getCommandManager(), storageItem.id);
+    public getConfigurationModify(rocketletId: string): IConfigurationModify {
+        if (!this.configModifiers.has(rocketletId)) {
+            const sets = new ServerSettingsModify(this.bridges.getServerSettingBridge(), rocketletId);
+            const cmds = new SlashCommandsModify(this.manager.getCommandManager(), rocketletId);
 
-            this.configModifiers.set(storageItem.id, new ConfigurationModify(sets, cmds));
+            this.configModifiers.set(rocketletId, new ConfigurationModify(sets, cmds));
         }
 
-        return this.configModifiers.get(storageItem.id);
+        return this.configModifiers.get(rocketletId);
     }
 
-    public getReader(storageItem: IRocketletStorageItem): IRead {
-        if (!this.readers.has(storageItem.id)) {
-            // Create new one
-            const env = this.getEnvironmentRead(storageItem);
-            const msg = new MessageRead(this.bridges.getMessageBridge(), storageItem.id);
-            const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), storageItem.id);
-            const room = new RoomRead(this.bridges.getRoomBridge(), storageItem.id);
-            const user = new UserRead(this.bridges.getUserBridge(), storageItem.id);
+    public getReader(rocketletId: string): IRead {
+        if (!this.readers.has(rocketletId)) {
+            const env = this.getEnvironmentRead(rocketletId);
+            const msg = new MessageRead(this.bridges.getMessageBridge(), rocketletId);
+            const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), rocketletId);
+            const room = new RoomRead(this.bridges.getRoomBridge(), rocketletId);
+            const user = new UserRead(this.bridges.getUserBridge(), rocketletId);
 
-            this.readers.set(storageItem.id, new Reader(env, msg, persist, room, user));
+            this.readers.set(rocketletId, new Reader(env, msg, persist, room, user));
         }
 
-        return this.readers.get(storageItem.id);
+        return this.readers.get(rocketletId);
     }
 }

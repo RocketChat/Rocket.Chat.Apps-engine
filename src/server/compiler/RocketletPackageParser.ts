@@ -75,10 +75,6 @@ export class RocketletPackageParser {
         // this actually modifies the `tsFiles` object
         this.manager.getCompiler().toJs(info, tsFiles);
 
-        // Now that is has all been compiled, let's get the
-        // the Rocketlet instance from the source.
-        const rocketlet = this.manager.getCompiler().toSandBox(info, tsFiles);
-
         const compiledFiles: { [s: string]: string } = {};
         Object.keys(tsFiles).forEach((name) => {
             const norm = path.normalize(name);
@@ -89,7 +85,6 @@ export class RocketletPackageParser {
             info,
             compiledFiles,
             languageFiles,
-            rocketlet,
         };
     }
 

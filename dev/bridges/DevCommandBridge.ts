@@ -1,14 +1,14 @@
-import { IBuilder, IHttp, IRead } from 'temporary-rocketlets-ts-definition/accessors';
+import { IHttp, IModify, IRead } from 'temporary-rocketlets-ts-definition/accessors';
 import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 import { IRocketletCommandBridge } from '../../src/server/bridges';
 
 export class DevCommandBridge implements IRocketletCommandBridge {
-    private commands: Map<string, (context: SlashCommandContext, builder: IBuilder, read: IRead, http: IHttp) => void>;
+    private commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp) => void>;
 
     constructor() {
         // tslint:disable-next-line:max-line-length
-        this.commands = new Map<string, (context: SlashCommandContext, builder: IBuilder, read: IRead, http: IHttp) => void>();
+        this.commands = new Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp) => void>();
     }
 
     public doesCommandExist(command: string, rocketletId: string): boolean {

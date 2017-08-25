@@ -6,5 +6,4 @@ export interface IParseZipResult {
     info: IRocketletInfo;
     compiledFiles: { [key: string]: string };
     languageFiles: { [key: string]: string };
-    rocketlet: ProxiedRocketlet;
 }

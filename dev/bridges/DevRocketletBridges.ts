@@ -1,7 +1,11 @@
 import {
     IEnvironmentalVariableBridge,
+    IMessageBridge,
+    IPersistenceBridge,
     IRocketletCommandBridge,
+    IRoomBridge,
     IServerSettingBridge,
+    IUserBridge,
     RocketletBridges,
 } from '../../src/server/bridges';
 import { DevCommandBridge } from './DevCommandBridge';
@@ -30,5 +34,21 @@ export class DevRocketletBridges extends RocketletBridges {
 
     public getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge {
         return this.envBridge;
+    }
+
+    public getMessageBridge(): IMessageBridge {
+        throw new Error('Method not implemented.');
+    }
+
+    public getPersistenceBridge(): IPersistenceBridge {
+        throw new Error('Method not implemented.');
+    }
+
+    public getRoomBridge(): IRoomBridge {
+        throw new Error('Method not implemented.');
+    }
+
+    public getUserBridge(): IUserBridge {
+        throw new Error('Method not implemented.');
     }
 }

@@ -1,6 +1,7 @@
 import { MustContainFunctionError, MustExtendRocketletError } from '../errors';
 import { RocketletLoggerManager } from '../managers';
 import { ProxiedRocketlet } from '../ProxiedRocketlet';
+import { IRocketletStorageItem } from '../storage/IRocketletStorageItem';
 import { ICompilerFile } from './ICompilerFile';
 
 import * as fs from 'fs';
@@ -175,57 +176,61 @@ export class RocketletCompiler {
         return files;
     }
 
-    public toSandBox(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): ProxiedRocketlet {
-        if (typeof files[path.normalize(info.classFile)] === 'undefined') {
-            throw new Error(`Invalid Rocketlet package for "${info.name}". ` +
-                `Could not find the classFile (${info.classFile}) file.`);
+    public toSandBox(storage: IRocketletStorageItem): ProxiedRocketlet {
+        const files = this.storageFilesToCompiler(storage.compiled);
+
+        if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
+            throw new Error(`Invalid Rocketlet package for "${storage.info.name}". ` +
+                `Could not find the classFile (${storage.info.classFile}) file.`);
         }
 
         const customRequire = this.buildCustomRequire(files);
         const context = vm.createContext({ require: customRequire, exports });
 
-        const script = new vm.Script(files[path.normalize(info.classFile)].compiled);
+        const script = new vm.Script(files[path.normalize(storage.info.classFile)].compiled);
         const result = script.runInContext(context);
 
         if (typeof result !== 'function') {
-            throw new Error(`The Rocketlet's main class for ${info.name} is not valid ("${info.classFile}").`);
+            // tslint:disable-next-line:max-line-length
+            throw new Error(`The Rocketlet's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
         }
 
         const rl = vm.runInNewContext('new Rocketlet(info, rcLogger);', vm.createContext({
-            rcLogger: this.logger.retrieve(info.id),
-            info,
+            console: this.logger.retrieve(storage.info.id),
+            rcLogger: this.logger.retrieve(storage.info.id),
+            info: storage.info,
             Rocketlet: result,
-        }), { timeout: 100, filename: `Rocketlet_${info.nameSlug}.js` });
+        }), { timeout: 100, filename: `Rocketlet_${storage.info.nameSlug}.js` });
 
         if (!(rl instanceof Rocketlet)) {
             throw new MustExtendRocketletError();
         }
 
         if (typeof rl.getName !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getName');
+            throw new MustContainFunctionError(storage.info.classFile, 'getName');
         }
 
         if (typeof rl.getNameSlug !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getNameSlug');
+            throw new MustContainFunctionError(storage.info.classFile, 'getNameSlug');
         }
 
         if (typeof rl.getVersion !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getVersion');
+            throw new MustContainFunctionError(storage.info.classFile, 'getVersion');
         }
 
         if (typeof rl.getID !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getID');
+            throw new MustContainFunctionError(storage.info.classFile, 'getID');
         }
 
         if (typeof rl.getDescription !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getDescription');
+            throw new MustContainFunctionError(storage.info.classFile, 'getDescription');
         }
 
         if (typeof rl.getRequiredApiVersion !== 'function') {
-            throw new MustContainFunctionError(info.classFile, 'getRequiredApiVersion');
+            throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        return new ProxiedRocketlet(rl as Rocketlet, customRequire);
+        return new ProxiedRocketlet(storage, rl as Rocketlet, customRequire);
     }
 
     private isValidFile(file: ICompilerFile): boolean {

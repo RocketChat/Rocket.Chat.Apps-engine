@@ -58,7 +58,7 @@ export class RocketletManager {
         this.compiler = new RocketletCompiler(this.logger);
         this.accessorManager = new RocketletAccessorManager(this);
         this.listenerManager = new RocketletListenerManger(this);
-        this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge());
+        this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge(), this.accessorManager);
 
         this.isLoaded = false;
     }
@@ -111,11 +111,8 @@ export class RocketletManager {
     public async load(): Promise<Array<ProxiedRocketlet>> {
         const items: Map<string, IRocketletStorageItem> = await this.storage.retrieveAll();
 
-        items.forEach((item: IRocketletStorageItem) => {
-            const files: { [key: string]: ICompilerFile} = this.compiler.storageFilesToCompiler(item.compiled);
-
-            this.availableRocketlets.set(item.id, this.getCompiler().toSandBox(item.info, files));
-        });
+        items.forEach((item: IRocketletStorageItem) =>
+            this.availableRocketlets.set(item.id, this.getCompiler().toSandBox(item)));
 
         // Let's initialize them
         this.availableRocketlets.forEach((rl) => {
@@ -175,6 +172,22 @@ export class RocketletManager {
         return rls;
     }
 
+    public getOneById(rocketletId: string): ProxiedRocketlet {
+        if (this.availableRocketlets.has(rocketletId)) {
+            return this.availableRocketlets.get(rocketletId);
+        }
+
+        if (this.activeRocketlets.has(rocketletId)) {
+            return this.activeRocketlets.get(rocketletId);
+        }
+
+        if (this.inactiveRocketlets.has(rocketletId)) {
+            return this.inactiveRocketlets.get(rocketletId);
+        }
+
+        return undefined;
+    }
+
     public async enable(id: string): Promise<boolean> {
         if (this.activeRocketlets.has(id)) {
             throw new Error(`The Rocketlet with the id "${id}" is already enabled.`);
@@ -215,7 +228,7 @@ export class RocketletManager {
         }
 
         try {
-            rocketlet.call(RocketletMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem));
+            rocketlet.call(RocketletMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
         } catch (e) {
             console.warn('Error while disabling:', e);
         }
@@ -243,10 +256,14 @@ export class RocketletManager {
             throw new Error('Failed to create the Rocketlet, the storage did not return it.');
         }
 
-        // Start up the rocketlet
-        this.runStartUpProcess(created, result.rocketlet);
+        // Now that is has all been compiled, let's get the
+        // the Rocketlet instance from the source.
+        const rocketlet = this.getCompiler().toSandBox(created);
 
-        return result.rocketlet;
+        // Start up the rocketlet
+        this.runStartUpProcess(created, rocketlet);
+
+        return rocketlet;
     }
 
     public remove(id: string): Rocketlet {
@@ -274,10 +291,14 @@ export class RocketletManager {
             settings: old.settings,
         });
 
-        // Start up the rocketlet
-        this.runStartUpProcess(stored, result.rocketlet);
+        // Now that is has all been compiled, let's get the
+        // the Rocketlet instance from the source.
+        const rocketlet = this.getCompiler().toSandBox(stored);
 
-        return result.rocketlet;
+        // Start up the rocketlet
+        this.runStartUpProcess(stored, rocketlet);
+
+        return rocketlet;
     }
 
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
@@ -299,7 +320,7 @@ export class RocketletManager {
 
     private initializeRocketlet(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
         let result: boolean;
-        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem);
+        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
 
         try {
             rocketlet.call(RocketletMethod.INITIALIZE, configExtend);
@@ -326,8 +347,8 @@ export class RocketletManager {
 
         try {
             enable = rocketlet.call(RocketletMethod.ONENABLE,
-                this.getAccessorManager().getEnvironmentRead(storageItem),
-                this.getAccessorManager().getConfigurationModify(storageItem)) as boolean;
+                this.getAccessorManager().getEnvironmentRead(storageItem.id),
+                this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
         } catch (e) {
             enable = false;
 

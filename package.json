@@ -12,6 +12,7 @@
   "license": "MIT",
   "scripts": {
     "start": "gulp",
+    "compile": "gulp compile-dev-ts",
     "go-publish": "gulp publish"
   },
   "devDependencies": {
