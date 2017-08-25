@@ -2,11 +2,13 @@ import {
     ConfigurationExtend,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    Reader,
     ServerSettingRead,
     SettingRead,
     SettingsExtend,
     SlashCommandsExtend,
     SlashCommandsModify,
+    MessageRead,
 } from '../accessors';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
@@ -18,6 +20,7 @@ import {
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
+    IRead,
 } from 'temporary-rocketlets-ts-definition/accessors';
 
 export class RocketletAccessorManager {
@@ -25,12 +28,14 @@ export class RocketletAccessorManager {
     private readonly configExtenders: Map<string, IConfigurationExtend>;
     private readonly envReaders: Map<string, IEnvironmentRead>;
     private readonly configModifiers: Map<string, IConfigurationModify>;
+    private readonly readers: Map<string, IRead>;
 
     constructor(private readonly manager: RocketletManager) {
         this.bridges = this.manager.getBridgeManager();
         this.configExtenders = new Map<string, IConfigurationExtend>();
         this.envReaders = new Map<string, IEnvironmentRead>();
         this.configModifiers = new Map<string, IConfigurationModify>();
+        this.readers = new Map<string, IRead>();
     }
 
     public getConfigurationExtend(storageItem: IRocketletStorageItem): IConfigurationExtend {
@@ -65,5 +70,17 @@ export class RocketletAccessorManager {
         }
 
         return this.configModifiers.get(storageItem.id);
+    }
+
+    public getReader(storageItem: IRocketletStorageItem): IRead {
+        if (!this.readers.has(storageItem.id)) {
+            // Create new one
+            const env = this.getEnvironmentRead(storageItem);
+            const msg = new MessageRead(this.bridges.getMessageBridge(), storageItem.id);
+
+            this.readers.set(storageItem.id, new Reader(env, msg));
+        }
+
+        return this.readers.get(storageItem.id);
     }
 }
