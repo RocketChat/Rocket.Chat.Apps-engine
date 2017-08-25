@@ -2,13 +2,16 @@ import {
     ConfigurationExtend,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    MessageRead,
+    PersistenceRead,
     Reader,
+    RoomRead,
     ServerSettingRead,
     SettingRead,
     SettingsExtend,
     SlashCommandsExtend,
     SlashCommandsModify,
-    MessageRead,
+    UserRead,
 } from '../accessors';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
@@ -77,8 +80,11 @@ export class RocketletAccessorManager {
             // Create new one
             const env = this.getEnvironmentRead(storageItem);
             const msg = new MessageRead(this.bridges.getMessageBridge(), storageItem.id);
+            const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), storageItem.id);
+            const room = new RoomRead(this.bridges.getRoomBridge(), storageItem.id);
+            const user = new UserRead(this.bridges.getUserBridge(), storageItem.id);
 
-            this.readers.set(storageItem.id, new Reader(env, msg));
+            this.readers.set(storageItem.id, new Reader(env, msg, persist, room, user));
         }
 
         return this.readers.get(storageItem.id);
