@@ -3,6 +3,7 @@ import {
     EnvironmentalVariableRead,
     EnvironmentRead,
     MessageRead,
+    Modify,
     PersistenceRead,
     Reader,
     RoomRead,
@@ -23,6 +24,7 @@ import {
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
+    IModify,
     IRead,
 } from 'temporary-rocketlets-ts-definition/accessors';
 
@@ -32,6 +34,7 @@ export class RocketletAccessorManager {
     private readonly envReaders: Map<string, IEnvironmentRead>;
     private readonly configModifiers: Map<string, IConfigurationModify>;
     private readonly readers: Map<string, IRead>;
+    private readonly modifiers: Map<string, IModify>;
 
     constructor(private readonly manager: RocketletManager) {
         this.bridges = this.manager.getBridgeManager();
@@ -39,6 +42,7 @@ export class RocketletAccessorManager {
         this.envReaders = new Map<string, IEnvironmentRead>();
         this.configModifiers = new Map<string, IConfigurationModify>();
         this.readers = new Map<string, IRead>();
+        this.modifiers = new Map<string, IModify>();
     }
 
     public getConfigurationExtend(rocketletId: string): IConfigurationExtend {
@@ -99,5 +103,13 @@ export class RocketletAccessorManager {
         }
 
         return this.readers.get(rocketletId);
+    }
+
+    public getModifier(rocketletId: string): IModify {
+        if (!this.modifiers.has(rocketletId)) {
+            this.modifiers.set(rocketletId, new Modify(this.bridges, rocketletId));
+        }
+
+        return this.modifiers.get(rocketletId);
     }
 }

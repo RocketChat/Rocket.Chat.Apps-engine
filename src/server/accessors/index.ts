@@ -1,7 +1,11 @@
 import { ConfigurationExtend } from './ConfigurationExtend';
+import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
+import { MessageBuilder } from './MessageBuilder';
 import { MessageRead } from './MessageRead';
+import { Modify } from './Modify';
+import { ModifyCreator } from './ModifyCreator';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
@@ -16,9 +20,13 @@ import { UserRead } from './UserRead';
 
 export {
     ConfigurationExtend,
+    ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    MessageBuilder,
     MessageRead,
+    Modify,
+    ModifyCreator,
     Persistence,
     PersistenceRead,
     Reader,

@@ -130,10 +130,12 @@ export class RocketletSlashCommandManager {
             return;
         }
 
-        const reader = this.accessors.getReader(this.commandMappingToRocketlet.get(command));
+        const rocketletId = this.commandMappingToRocketlet.get(command);
+        const reader = this.accessors.getReader(rocketletId);
+        const modify = this.accessors.getModifier(rocketletId);
 
         // TODO: UMMM YEAH THIS! context it
-        this.commands.get(command).executor(context, reader, undefined, undefined);
+        this.commands.get(command).executor(context, reader, modify, undefined);
     }
 
     /**
