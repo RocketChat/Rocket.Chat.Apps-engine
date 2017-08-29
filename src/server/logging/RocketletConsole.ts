@@ -1,7 +1,5 @@
-import { timingSafeEqual } from 'crypto';
 import * as stackTrace from 'stack-trace';
 import { ILogEntry, ILogger, LogMessageSeverity } from 'temporary-rocketlets-ts-definition/accessors';
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 
 export class RocketletConsole implements ILogger {
     public debugEntries: Array<ILogEntry>;

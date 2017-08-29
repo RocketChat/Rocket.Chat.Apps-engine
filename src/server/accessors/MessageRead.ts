@@ -15,11 +15,19 @@ export class MessageRead implements IMessageRead {
     public getSenderUser(messageId: string): IUser {
         const msg = this.messageBridge.getById(messageId, this.rocketletId);
 
+        if (!msg) {
+            return undefined;
+        }
+
         return msg.sender;
     }
 
     public getRoom(messageId: string): IRoom {
         const msg = this.messageBridge.getById(messageId, this.rocketletId);
+
+        if (!msg) {
+            return undefined;
+        }
 
         return msg.room;
     }

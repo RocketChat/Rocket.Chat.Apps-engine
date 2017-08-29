@@ -6,7 +6,7 @@ export class PersistenceRead implements IPersistenceRead {
     constructor(private persistBridge: IPersistenceBridge, private rocketletId: string) { }
 
     public read(id: string): object {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.readById(id, this.rocketletId);
     }
 
     public readByAssociation(association: RocketChatAssociationRecord): Array<object> {

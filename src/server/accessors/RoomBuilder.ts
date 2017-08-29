@@ -8,6 +8,7 @@ export class RoomBuilder implements IRoomBuilder {
     private room: IRoom;
 
     constructor(data?: IRoom) {
+        this.kind = RocketChatAssociationModel.ROOM;
         this.room = data ? data : ({} as IRoom);
     }
 

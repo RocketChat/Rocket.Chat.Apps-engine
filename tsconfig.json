@@ -6,6 +6,7 @@
         "module": "commonjs",
         "declaration": true,
         "noImplicitAny": true,
+        "noUnusedLocals": true,
         "removeComments": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,

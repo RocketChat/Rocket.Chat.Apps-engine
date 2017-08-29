@@ -9,6 +9,7 @@ export class MessageBuilder implements IMessageBuilder {
     private msg: IMessage;
 
     constructor(message?: IMessage) {
+        this.kind = RocketChatAssociationModel.MESSAGE;
         this.msg = message ? message : ({} as IMessage);
     }
 

@@ -18,7 +18,6 @@ import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { RocketletBridges } from '../bridges/RocketletBridges';
 import { RocketletManager } from '../RocketletManager';
-import { IRocketletStorageItem } from '../storage';
 
 import {
     IConfigurationExtend,

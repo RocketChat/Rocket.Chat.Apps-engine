@@ -1,4 +1,4 @@
-import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 /**
  * The interface which should be implemented for the commands to be

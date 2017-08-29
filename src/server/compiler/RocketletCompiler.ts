@@ -6,9 +6,7 @@ import { ICompilerFile } from './ICompilerFile';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { ILogger } from 'temporary-rocketlets-ts-definition/accessors';
-import { IRocketlet } from 'temporary-rocketlets-ts-definition/IRocketlet';
-import { IRocketletAuthorInfo, IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
+import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import * as ts from 'typescript';
 import * as vm from 'vm';

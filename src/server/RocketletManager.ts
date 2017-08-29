@@ -1,5 +1,5 @@
 import { RocketletBridges } from './bridges';
-import { ICompilerFile, RocketletCompiler } from './compiler';
+import { RocketletCompiler } from './compiler';
 import { RocketletMethod } from './compiler/RocketletMethod';
 import { RocketletPackageParser } from './compiler/RocketletPackageParser';
 import { IGetRocketletsFilter } from './IGetRocketletsFilter';
@@ -12,7 +12,6 @@ import {
 import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 
 export class RocketletManager {
