@@ -9,6 +9,7 @@ import { ModifyCreator } from './ModifyCreator';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
+import { RoomBuilder } from './RoomBuilder';
 import { RoomRead } from './RoomRead';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
@@ -30,6 +31,7 @@ export {
     Persistence,
     PersistenceRead,
     Reader,
+    RoomBuilder,
     RoomRead,
     ServerSettingRead,
     ServerSettingsModify,

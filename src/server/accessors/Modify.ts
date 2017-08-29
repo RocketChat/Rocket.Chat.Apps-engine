@@ -1,11 +1,17 @@
 import { IModify, IModifyCreator, IModifyExtender, IModifyUpdater } from 'temporary-rocketlets-ts-definition/accessors';
+
 import { RocketletBridges } from '../bridges';
+import { ModifyCreator } from './ModifyCreator';
 
 export class Modify implements IModify {
-    constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) { }
+    private creator: IModifyCreator;
+
+    constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) {
+        this.creator = new ModifyCreator(this.bridges, this.rocketletId);
+    }
 
     public getCreator(): IModifyCreator {
-        throw new Error('Method not implemented.');
+        return this.creator;
     }
 
     public getUpdater(): IModifyUpdater {

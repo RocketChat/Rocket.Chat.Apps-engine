@@ -5,6 +5,7 @@ import { IRoom } from 'temporary-rocketlets-ts-definition/rooms';
 
 import { RocketletBridges } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
+import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) { }
@@ -18,7 +19,11 @@ export class ModifyCreator implements IModifyCreator {
     }
 
     public startRoom(data?: IRoom): IRoomBuilder {
-        throw new Error('Method not implemented.');
+        if (data) {
+            delete data.id;
+        }
+
+        return new RoomBuilder(data);
     }
 
     public finish(builder: IMessageBuilder | IRoomBuilder): string {
@@ -48,6 +53,21 @@ export class ModifyCreator implements IModifyCreator {
     }
 
     private _finishRoom(builder: IRoomBuilder): string {
-        throw new Error('Method not implemented.');
+        const result = builder.getRoom();
+        delete result.id;
+
+        if (!result.creator || !result.creator.id) {
+            throw new Error('Invalid creator assigned to the room.');
+        }
+
+        if (!result.name || !result.name.trim()) {
+            throw new Error('Invalid name assigned to the room.');
+        }
+
+        if (!result.type) {
+            throw new Error('Invalid type assigned to the room.');
+        }
+
+        return this.bridges.getRoomBridge().create(result, this.rocketletId);
     }
 }
