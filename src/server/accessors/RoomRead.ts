@@ -13,7 +13,7 @@ export class RoomRead implements IRoomRead {
     }
 
     public getByName(name: string): IRoom {
-        throw new Error('Method not implemented.');
+        return this.roomBridge.getByName(name, this.rocketletId);
     }
 
     public getMessages(roomId: string): IIterator<IMessage> {

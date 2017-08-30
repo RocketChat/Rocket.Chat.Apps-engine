@@ -6,7 +6,7 @@ import { IPersistenceBridge } from '../bridges/IPersistenceBridge';
 export class Persistence implements IPersistence {
     constructor(private persistBridge: IPersistenceBridge, private rocketletId: string) { }
 
-    public create(data: object): string {
+    public create(data: any): string {
         return this.persistBridge.create(data, this.rocketletId);
     }
 
