@@ -9,16 +9,16 @@ export class RoomBuilder implements IRoomBuilder {
 
     constructor(data?: IRoom) {
         this.kind = RocketChatAssociationModel.ROOM;
-        this.room = data ? data : ({} as IRoom);
+        this.room = data ? data : ({ customFields: {} } as IRoom);
     }
 
-    public setCreator(creator: IUser): IRoomBuilder {
-        this.room.creator = creator;
+    public setDisplayName(name: string): IRoomBuilder {
+        this.room.displayName = name;
         return this;
     }
 
-    public setName(name: string): IRoomBuilder {
-        this.room.name = name;
+    public setSlugifiedName(name: string): IRoomBuilder {
+        this.room.slugifiedName = name;
         return this;
     }
 
@@ -27,8 +27,8 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
-    public setDefault(isDefault: boolean): IRoomBuilder {
-        this.room.isDefault = isDefault;
+    public setCreator(creator: IUser): IRoomBuilder {
+        this.room.creator = creator;
         return this;
     }
 
@@ -41,8 +41,33 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
-    public setUsers(users: Array<string>): IRoomBuilder {
-        this.room.usernames = users;
+    public setUsernames(usernames: Array<string>): IRoomBuilder {
+        this.room.usernames = usernames;
+        return this;
+    }
+
+    public setDefault(isDefault: boolean): IRoomBuilder {
+        this.room.isDefault = isDefault;
+        return this;
+    }
+
+    public setReadOnly(isReadOnly: boolean): IRoomBuilder {
+        this.room.isReadOnly = isReadOnly;
+        return this;
+    }
+
+    public setDisplayingOfSystemMessages(displaySystemMessages: boolean): IRoomBuilder {
+        this.room.displaySystemMessages = displaySystemMessages;
+        return this;
+    }
+
+    public addCustomField(key: string, value: object): IRoomBuilder {
+        this.room.customFields[key] = value;
+        return this;
+    }
+
+    public setCustomFields(fields: { [key: string]: object }): IRoomBuilder {
+        this.room.customFields = fields;
         return this;
     }
 

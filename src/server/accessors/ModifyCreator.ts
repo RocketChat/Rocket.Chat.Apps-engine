@@ -60,8 +60,12 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid creator assigned to the room.');
         }
 
-        if (!result.name || !result.name.trim()) {
-            throw new Error('Invalid name assigned to the room.');
+        if (!result.slugifiedName || !result.slugifiedName.trim()) {
+            throw new Error('Invalid slugifiedName assigned to the room.');
+        }
+
+        if (!result.displayName || !result.displayName.trim()) {
+            throw new Error('Invalid displayName assigned to the room.');
         }
 
         if (!result.type) {
