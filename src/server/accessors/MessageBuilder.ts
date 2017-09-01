@@ -13,6 +13,13 @@ export class MessageBuilder implements IMessageBuilder {
         this.msg = message ? message : ({} as IMessage);
     }
 
+    public setData(data: IMessage): IMessageBuilder {
+        delete data.id;
+        this.msg = data;
+
+        return this;
+    }
+
     public setRoom(room: IRoom): IMessageBuilder {
         this.msg.room = room;
         return this;
@@ -90,6 +97,6 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public getMessage(): IMessage {
-        return this.msg;
+        return Object.create(this.msg);
     }
 }

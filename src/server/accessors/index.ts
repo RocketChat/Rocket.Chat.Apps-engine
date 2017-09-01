@@ -6,6 +6,8 @@ import { MessageBuilder } from './MessageBuilder';
 import { MessageRead } from './MessageRead';
 import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
+import { ModifyExtender } from './ModifyExtender';
+import { ModifyUpdater } from './ModifyUpdater';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
@@ -28,6 +30,8 @@ export {
     MessageRead,
     Modify,
     ModifyCreator,
+    ModifyExtender,
+    ModifyUpdater,
     Persistence,
     PersistenceRead,
     Reader,

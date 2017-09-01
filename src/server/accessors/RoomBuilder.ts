@@ -12,6 +12,13 @@ export class RoomBuilder implements IRoomBuilder {
         this.room = data ? data : ({ customFields: {} } as IRoom);
     }
 
+    public setData(data: IRoom): IRoomBuilder {
+        delete data.id;
+        this.room = data;
+
+        return this;
+    }
+
     public setDisplayName(name: string): IRoomBuilder {
         this.room.displayName = name;
         return this;
@@ -72,6 +79,6 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public getRoom(): IRoom {
-        return this.room;
+        return Object.create(this.room);
     }
 }
