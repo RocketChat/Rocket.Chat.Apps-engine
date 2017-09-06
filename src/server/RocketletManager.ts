@@ -259,6 +259,9 @@ export class RocketletManager {
         // the Rocketlet instance from the source.
         const rocketlet = this.getCompiler().toSandBox(created);
 
+        // Store it temporarily so we can access it else where
+        this.availableRocketlets.set(rocketlet.getID(), rocketlet);
+
         // Start up the rocketlet
         this.runStartUpProcess(created, rocketlet);
 
@@ -294,6 +297,9 @@ export class RocketletManager {
         // the Rocketlet instance from the source.
         const rocketlet = this.getCompiler().toSandBox(stored);
 
+        // Store it temporarily so we can access it else where
+        this.availableRocketlets.set(rocketlet.getID(), rocketlet);
+
         // Start up the rocketlet
         this.runStartUpProcess(stored, rocketlet);
 
@@ -303,7 +309,6 @@ export class RocketletManager {
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
         const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
         if (!isInitialized) {
-            this.inactiveRocketlets.set(storageItem.id, rocketlet);
             return false;
         }
 
@@ -337,6 +342,11 @@ export class RocketletManager {
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
         this.storage.update(storageItem);
+
+        if (!result) {
+            this.inactiveRocketlets.set(storageItem.id, rocketlet);
+            this.availableRocketlets.delete(storageItem.id);
+        }
 
         return result;
     }
