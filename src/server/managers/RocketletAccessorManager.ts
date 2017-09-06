@@ -2,8 +2,11 @@ import {
     ConfigurationExtend,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    Http,
+    HttpExtend,
     MessageRead,
     Modify,
+    Persistence,
     PersistenceRead,
     Reader,
     RoomRead,
@@ -23,7 +26,9 @@ import {
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
+    IHttp,
     IModify,
+    IPersistence,
     IRead,
 } from 'temporary-rocketlets-ts-definition/accessors';
 
@@ -34,6 +39,8 @@ export class RocketletAccessorManager {
     private readonly configModifiers: Map<string, IConfigurationModify>;
     private readonly readers: Map<string, IRead>;
     private readonly modifiers: Map<string, IModify>;
+    private readonly persists: Map<string, IPersistence>;
+    private readonly https: Map<string, IHttp>;
 
     constructor(private readonly manager: RocketletManager) {
         this.bridges = this.manager.getBridgeManager();
@@ -42,6 +49,8 @@ export class RocketletAccessorManager {
         this.configModifiers = new Map<string, IConfigurationModify>();
         this.readers = new Map<string, IRead>();
         this.modifiers = new Map<string, IModify>();
+        this.persists = new Map<string, IPersistence>();
+        this.https = new Map<string, IHttp>();
     }
 
     public getConfigurationExtend(rocketletId: string): IConfigurationExtend {
@@ -52,10 +61,11 @@ export class RocketletAccessorManager {
                 throw new Error(`No Rocketlet found by the provided id: ${ rocketletId }`);
             }
 
+            const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), rocketletId);
             const sets = new SettingsExtend(rl.getStorageItem());
 
-            this.configExtenders.set(rocketletId, new ConfigurationExtend(sets, cmds));
+            this.configExtenders.set(rocketletId, new ConfigurationExtend(htt, sets, cmds));
         }
 
         return this.configExtenders.get(rocketletId);
@@ -110,5 +120,22 @@ export class RocketletAccessorManager {
         }
 
         return this.modifiers.get(rocketletId);
+    }
+
+    public getPersistence(rocketletId: string): IPersistence {
+        if (!this.persists.has(rocketletId)) {
+            this.persists.set(rocketletId, new Persistence(this.bridges.getPersistenceBridge(), rocketletId));
+        }
+
+        return this.persists.get(rocketletId);
+    }
+
+    public getHttp(rocketletId: string): IHttp {
+        if (!this.https.has(rocketletId)) {
+            const ext = this.configExtenders.get(rocketletId).http;
+            this.https.set(rocketletId, new Http(this, this.bridges, ext, rocketletId));
+        }
+
+        return this.https.get(rocketletId);
     }
 }

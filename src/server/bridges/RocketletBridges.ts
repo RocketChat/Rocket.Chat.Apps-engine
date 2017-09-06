@@ -1,4 +1,5 @@
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
+import { IHttpBridge } from './IHttpBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRocketletCommandBridge } from './IRocketletCommandBridge';
@@ -9,6 +10,7 @@ import { IUserBridge } from './IUserBridge';
 export abstract class RocketletBridges {
     public abstract getCommandBridge(): IRocketletCommandBridge;
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
+    public abstract getHttpBridge(): IHttpBridge;
     public abstract getMessageBridge(): IMessageBridge;
     public abstract getPersistenceBridge(): IPersistenceBridge;
     public abstract getRoomBridge(): IRoomBridge;

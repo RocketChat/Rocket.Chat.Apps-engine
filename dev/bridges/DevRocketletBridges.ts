@@ -8,6 +8,7 @@ import {
     IUserBridge,
     RocketletBridges,
 } from '../../src/server/bridges';
+import { IHttpBridge } from '../../src/server/bridges/IHttpBridge';
 import { DevCommandBridge } from './DevCommandBridge';
 import { DevEnvironmentalVariableBridge } from './DevEnvironmentalVariableBridge';
 import { DevServerSettingBridge } from './DevServerSettingBridge';
@@ -34,6 +35,10 @@ export class DevRocketletBridges extends RocketletBridges {
 
     public getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge {
         return this.envBridge;
+    }
+
+    public getHttpBridge(): IHttpBridge {
+        throw new Error('Method not implemented.');
     }
 
     public getMessageBridge(): IMessageBridge {

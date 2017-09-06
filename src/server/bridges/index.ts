@@ -1,4 +1,5 @@
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
+import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRocketletCommandBridge } from './IRocketletCommandBridge';
@@ -9,6 +10,8 @@ import { RocketletBridges } from './RocketletBridges';
 
 export {
     IEnvironmentalVariableBridge,
+    IHttpBridge,
+    IHttpBridgeRequestInfo,
     IMessageBridge,
     IPersistenceBridge,
     IRocketletCommandBridge,

@@ -133,9 +133,10 @@ export class RocketletSlashCommandManager {
         const rocketletId = this.commandMappingToRocketlet.get(command);
         const reader = this.accessors.getReader(rocketletId);
         const modify = this.accessors.getModifier(rocketletId);
+        const http = this.accessors.getHttp(rocketletId);
 
-        // TODO: UMMM YEAH THIS! context it
-        this.commands.get(command).executor(context, reader, modify, undefined);
+        // TODO: Maybe run it in a context/sandbox? :thinking:
+        this.commands.get(command).executor(context, reader, modify, http);
     }
 
     /**

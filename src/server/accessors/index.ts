@@ -2,6 +2,8 @@ import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
+import { Http } from './Http';
+import { HttpExtend } from './HttpExtend';
 import { MessageBuilder } from './MessageBuilder';
 import { MessageRead } from './MessageRead';
 import { Modify } from './Modify';
@@ -26,6 +28,8 @@ export {
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    Http,
+    HttpExtend,
     MessageBuilder,
     MessageRead,
     Modify,
