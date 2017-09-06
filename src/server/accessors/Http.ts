@@ -59,11 +59,7 @@ export class Http implements IHttp {
         const persis = this.accessManager.getPersistence(this.rocketletId);
 
         this.httpExtender.getPreRequestHandlers().forEach((handler: IHttpPreRequestHandler) => {
-            try {
-                request = handler.executePreHttpRequest(url, request, reader, persis);
-            } catch (e) {
-                // TODO: An error occured during in one of preRequest handlers
-            }
+            request = handler.executePreHttpRequest(url, request, reader, persis);
         });
 
         let response = this.bridges.getHttpBridge().call({
@@ -74,11 +70,7 @@ export class Http implements IHttp {
         });
 
         this.httpExtender.getPreResponseHandlers().forEach((handler: IHttpPreResponseHandler) => {
-            try {
-                response = handler.executePreHttpResponse(response, reader, persis);
-            } catch (e) {
-                // TODO: An error occured during in one of preResponse handlers
-            }
+            response = handler.executePreHttpResponse(response, reader, persis);
         });
 
         return response;
