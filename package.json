@@ -1,6 +1,6 @@
 {
   "name": "temporary-rocketlets-server",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Temporary location for the server's piece for the Rocketlets, it manages, runs, translates, and coordinates and all of that.",
   "main": "index.js",
   "typings": "index",
