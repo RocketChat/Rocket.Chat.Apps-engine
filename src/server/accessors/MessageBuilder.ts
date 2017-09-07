@@ -41,7 +41,7 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public setAvatarUrl(avatarUrl: string): IMessageBuilder {
-        this.msg.avatar = avatarUrl;
+        this.msg.avatarUrl = avatarUrl;
         return this;
     }
 
@@ -91,8 +91,8 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
-    public setUpdater(user: IUser): IMessageBuilder {
-        this.msg.updater = user;
+    public setEditor(user: IUser): IMessageBuilder {
+        this.msg.editor = user;
         return this;
     }
 

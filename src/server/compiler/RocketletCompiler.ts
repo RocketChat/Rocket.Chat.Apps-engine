@@ -183,7 +183,7 @@ export class RocketletCompiler {
         }
 
         const customRequire = this.buildCustomRequire(files);
-        const context = vm.createContext({ require: customRequire, exports });
+        const context = vm.createContext({ require: customRequire, exports, process: {} });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)].compiled);
         const result = script.runInContext(context);
@@ -198,6 +198,7 @@ export class RocketletCompiler {
             rcLogger: this.logger.retrieve(storage.info.id),
             info: storage.info,
             Rocketlet: result,
+            process: {},
         }), { timeout: 100, filename: `Rocketlet_${storage.info.nameSlug}.js` });
 
         if (!(rl instanceof Rocketlet)) {
@@ -243,7 +244,7 @@ export class RocketletCompiler {
         return function _requirer(mod: string): any {
             if (files[path.normalize(mod + '.ts')]) {
                 const ourExport = {};
-                const context = vm.createContext({ require, exports: ourExport });
+                const context = vm.createContext({ require, exports: ourExport, process: {} });
                 vm.runInContext(files[path.normalize(mod + '.ts')].compiled, context);
 
                 return ourExport;

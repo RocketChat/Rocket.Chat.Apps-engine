@@ -21,7 +21,7 @@ export class ModifyUpdater implements IModifyUpdater {
         return new RoomBuilder(room);
     }
 
-    public finish(builder: IMessageBuilder | IRoomBuilder): boolean {
+    public finish(builder: IMessageBuilder | IRoomBuilder): void {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -32,7 +32,7 @@ export class ModifyUpdater implements IModifyUpdater {
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): boolean {
+    private _finishMessage(builder: IMessageBuilder): void {
         const result = builder.getMessage();
 
         if (!result.room || !result.room.id) {
@@ -46,7 +46,7 @@ export class ModifyUpdater implements IModifyUpdater {
         return this.bridges.getMessageBridge().update(result, this.rocketletId);
     }
 
-    private _finishRoom(builder: IRoomBuilder): boolean {
+    private _finishRoom(builder: IRoomBuilder): void {
         const result = builder.getRoom();
 
         if (!result.creator || !result.creator.id) {

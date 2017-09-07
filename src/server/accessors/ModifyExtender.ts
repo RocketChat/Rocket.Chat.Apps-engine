@@ -11,8 +11,8 @@ export class ModifyExtender implements IModifyExtender {
 
     public extendMessage(messageId: string, updater: IUser): IMessageExtender {
         const msg = this.bridges.getMessageBridge().getById(messageId, this.rocketletId);
-        msg.updater = updater;
-        msg.updatedAt = new Date();
+        msg.editor = updater;
+        msg.editedAt = new Date();
 
         return new MessageExtender(msg);
     }
@@ -24,7 +24,7 @@ export class ModifyExtender implements IModifyExtender {
         return new RoomExtender(room);
     }
 
-    public finish(extender: IMessageExtender | IRoomExtender): boolean {
+    public finish(extender: IMessageExtender | IRoomExtender): void {
         switch (extender.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this.bridges.getMessageBridge().update(extender.getMessage(), this.rocketletId);
