@@ -68,7 +68,6 @@ export class RocketletPackageParser {
             throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
         }
 
-        // TODO: Assign this to something
         const languageFiles = this.getLanguageFiles(zip);
 
         // Compile all the typescript files to javascript
@@ -96,7 +95,7 @@ export class RocketletPackageParser {
             entry.entryName.startsWith('i18n/') &&
             entry.entryName.endsWith('.json'))
         .forEach((entry) => {
-            languageFiles[entry.entryName] = entry.getData().toString();
+            languageFiles[entry.entryName.replace('.json', '')] = entry.getData().toString();
         });
 
         return languageFiles;

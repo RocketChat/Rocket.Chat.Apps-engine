@@ -306,6 +306,24 @@ export class RocketletManager {
         return rocketlet;
     }
 
+    public getLanguageFiles(): Map<string, Array<string>> {
+        const langs = new Map<string, Array<string>>();
+
+        this.activeRocketlets.forEach((rl) => {
+            const files = rl.getStorageItem().languageFiles;
+
+            Object.keys(files).forEach((key) => {
+                if (!langs.has(key)) {
+                    langs.set(key, new Array<string>());
+                }
+
+                langs.get(key).push(files[key]);
+            });
+        });
+
+        return langs;
+    }
+
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
         const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
         if (!isInitialized) {
