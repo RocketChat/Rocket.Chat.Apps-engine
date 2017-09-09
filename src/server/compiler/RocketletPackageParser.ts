@@ -95,7 +95,8 @@ export class RocketletPackageParser {
             entry.entryName.startsWith('i18n/') &&
             entry.entryName.endsWith('.json'))
         .forEach((entry) => {
-            languageFiles[entry.entryName.replace('.json', '')] = entry.getData().toString();
+            const lang = entry.entryName.replace('.json', '').replace('i18n/', '');
+            languageFiles[lang] = entry.getData().toString();
         });
 
         return languageFiles;

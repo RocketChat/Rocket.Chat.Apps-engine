@@ -306,18 +306,18 @@ export class RocketletManager {
         return rocketlet;
     }
 
-    public getLanguageFiles(): Map<string, Array<string>> {
-        const langs = new Map<string, Array<string>>();
+    public getLanguageFiles(): { [key: string]: Array<string> } {
+        const langs: { [key: string]: Array<string> } = { };
 
         this.activeRocketlets.forEach((rl) => {
             const files = rl.getStorageItem().languageFiles;
 
             Object.keys(files).forEach((key) => {
-                if (!langs.has(key)) {
-                    langs.set(key, new Array<string>());
+                if (!Array.isArray(langs[key])) {
+                    langs[key] = new Array<string>();
                 }
 
-                langs.get(key).push(files[key]);
+                langs[key].push(files[key]);
             });
         });
 
