@@ -206,6 +206,12 @@ export class RocketletManager {
         if (isSetup) {
             this.activeRocketlets.set(storageItem.id, rocketlet);
             this.inactiveRocketlets.delete(storageItem.id);
+
+            try {
+                this.bridges.getRocketletActivationBridge().rocketletEnabled(rocketlet);
+            } catch (e) {
+                // If an error occurs during this, oh well.
+            }
         }
 
         return isSetup;
@@ -237,6 +243,12 @@ export class RocketletManager {
         this.inactiveRocketlets.set(storageItem.id, rocketlet);
         this.activeRocketlets.delete(storageItem.id);
 
+        try {
+            this.bridges.getRocketletActivationBridge().rocketletDisabled(rocketlet);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
+
         return true;
     }
 
@@ -264,6 +276,13 @@ export class RocketletManager {
 
         // Start up the rocketlet
         this.runStartUpProcess(created, rocketlet);
+
+        try {
+            const isEnabled = this.activeRocketlets.has(rocketlet.getID());
+            this.bridges.getRocketletActivationBridge().rocketletLoaded(rocketlet, isEnabled);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
 
         return rocketlet;
     }
@@ -302,6 +321,13 @@ export class RocketletManager {
 
         // Start up the rocketlet
         this.runStartUpProcess(stored, rocketlet);
+
+        try {
+            const isEnabled = this.activeRocketlets.has(rocketlet.getID());
+            this.bridges.getRocketletActivationBridge().rocketletUpdated(rocketlet, isEnabled);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
 
         return rocketlet;
     }
