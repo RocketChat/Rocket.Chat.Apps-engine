@@ -68,7 +68,7 @@ export class RocketletPackageParser {
             throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
         }
 
-        const languageFiles = this.getLanguageFiles(zip);
+        const languageContent = this.getLanguageContent(zip);
 
         // Compile all the typescript files to javascript
         // this actually modifies the `tsFiles` object
@@ -83,23 +83,32 @@ export class RocketletPackageParser {
         return {
             info,
             compiledFiles,
-            languageFiles,
+            languageContent,
         };
     }
 
-    private getLanguageFiles(zip: AdmZip): { [key: string]: string } {
-        const languageFiles: { [key: string]: string } = {};
+    private getLanguageContent(zip: AdmZip): { [key: string]: object } {
+        const languageContent: { [key: string]: object } = {};
 
         zip.getEntries().filter((entry) =>
             !entry.isDirectory &&
             entry.entryName.startsWith('i18n/') &&
             entry.entryName.endsWith('.json'))
         .forEach((entry) => {
-            const lang = entry.entryName.replace('.json', '').replace('i18n/', '');
-            languageFiles[lang] = entry.getData().toString();
+            const entrySplit = entry.entryName.split('/');
+            const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
+
+            let content;
+            try {
+                content = JSON.parse(entry.getData().toString());
+            } catch (e) {
+                // Failed to parse it, maybe warn them? idk yet
+            }
+
+            languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
         });
 
-        return languageFiles;
+        return languageContent;
     }
 
     private getTsDefVersion(): string {

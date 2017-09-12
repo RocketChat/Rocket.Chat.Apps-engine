@@ -259,7 +259,7 @@ export class RocketletManager {
             info: result.info,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
-            languageFiles: result.languageFiles,
+            languageContent: result.languageContent,
             settings: {},
         });
 
@@ -308,7 +308,7 @@ export class RocketletManager {
             info: result.info,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
-            languageFiles: result.languageFiles,
+            languageContent: result.languageContent,
             settings: old.settings,
         });
 
@@ -332,18 +332,14 @@ export class RocketletManager {
         return rocketlet;
     }
 
-    public getLanguageFiles(): { [key: string]: Array<string> } {
-        const langs: { [key: string]: Array<string> } = { };
+    public getLanguageContent(): { [key: string]: object } {
+        const langs: { [key: string]: object } = { };
 
         this.activeRocketlets.forEach((rl) => {
-            const files = rl.getStorageItem().languageFiles;
+            const content = rl.getStorageItem().languageContent;
 
-            Object.keys(files).forEach((key) => {
-                if (!Array.isArray(langs[key])) {
-                    langs[key] = new Array<string>();
-                }
-
-                langs[key].push(files[key]);
+            Object.keys(content).forEach((key) => {
+                langs[key] = Object.assign(langs[key] || {}, content[key]);
             });
         });
 
