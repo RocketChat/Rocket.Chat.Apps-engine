@@ -11,6 +11,10 @@ const storage = new TestingStorage();
 const bridges = new DevRocketletBridges();
 const manager = new RocketletManager(storage, bridges);
 
+if (!fs.existsSync('examples')) {
+    fs.mkdirSync('example');
+}
+
 manager.load().then(() => {
     return Promise.all(fs.readdirSync('examples')
             .filter((file) => file.endsWith('.zip') && fs.statSync(path.join('examples', file)).isFile())
