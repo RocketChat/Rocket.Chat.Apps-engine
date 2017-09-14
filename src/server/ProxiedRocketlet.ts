@@ -10,12 +10,16 @@ import { IRocketletStorageItem } from './storage';
 import * as vm from 'vm';
 
 export class ProxiedRocketlet implements IRocketlet {
-    constructor(private readonly storageItem: IRocketletStorageItem,
+    constructor(private storageItem: IRocketletStorageItem,
                 private readonly rocketlet: Rocketlet,
                 private readonly customRequire: (mod: string) => {}) { }
 
     public getStorageItem(): IRocketletStorageItem {
         return this.storageItem;
+    }
+
+    public setStorageItem(item: IRocketletStorageItem): void {
+        this.storageItem = item;
     }
 
     public hasMethod(method: RocketletMethod): boolean {

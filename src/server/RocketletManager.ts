@@ -7,6 +7,7 @@ import {
     RocketletAccessorManager,
     RocketletListenerManger,
     RocketletLoggerManager,
+    RocketletSettingsManager,
     RocketletSlashCommandManager,
 } from './managers';
 import { ProxiedRocketlet } from './ProxiedRocketlet';
@@ -30,6 +31,7 @@ export class RocketletManager {
     private readonly listenerManager: RocketletListenerManger;
     private readonly logger: RocketletLoggerManager;
     private readonly commandManager: RocketletSlashCommandManager;
+    private readonly settingsManager: RocketletSettingsManager;
 
     private isLoaded: boolean;
 
@@ -58,6 +60,7 @@ export class RocketletManager {
         this.accessorManager = new RocketletAccessorManager(this);
         this.listenerManager = new RocketletListenerManger(this);
         this.commandManager = new RocketletSlashCommandManager(this.bridges.getCommandBridge(), this.accessorManager);
+        this.settingsManager = new RocketletSettingsManager(this);
 
         this.isLoaded = false;
     }
@@ -95,6 +98,11 @@ export class RocketletManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): RocketletSlashCommandManager {
         return this.commandManager;
+    }
+
+    /** Gets the manager of the settings, updates and getting. */
+    public getSettingsManager(): RocketletSettingsManager {
+        return this.settingsManager;
     }
 
     /** Gets whether the Rocketlets have been loaded or not. */

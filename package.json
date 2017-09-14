@@ -1,6 +1,6 @@
 {
   "name": "temporary-rocketlets-server",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "Temporary location for the server's piece for the Rocketlets, it manages, runs, translates, and coordinates and all of that.",
   "main": "index.js",
   "typings": "index",
@@ -38,7 +38,7 @@
     "adm-zip": "^0.4.7",
     "semver": "^5.3.0",
     "stack-trace": "0.0.10",
-    "temporary-rocketlets-ts-definition": "^0.6.25",
+    "temporary-rocketlets-ts-definition": "^0.6.27",
     "typescript": "^2.4.1",
     "uuid": "^3.1.0"
   }
