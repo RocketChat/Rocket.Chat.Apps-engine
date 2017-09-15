@@ -373,9 +373,10 @@ export class RocketletManager {
     private initializeRocketlet(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
+        const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
-            rocketlet.call(RocketletMethod.INITIALIZE, configExtend);
+            rocketlet.call(RocketletMethod.INITIALIZE, configExtend, envRead);
             result = true;
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {

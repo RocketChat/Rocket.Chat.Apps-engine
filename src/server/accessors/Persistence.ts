@@ -18,7 +18,7 @@ export class Persistence implements IPersistence {
         throw new Error('Method not implemented.');
     }
 
-    public update(id: string, data: object): void {
+    public update(id: string, data: object, upsert?: boolean): string {
         throw new Error('Method not implemented.');
     }
 

@@ -20,7 +20,7 @@ export class Reader implements IRead {
         return this.message;
     }
 
-    public getPersistanceReader(): IPersistenceRead {
+    public getPersistenceReader(): IPersistenceRead {
         return this.persist;
     }
 

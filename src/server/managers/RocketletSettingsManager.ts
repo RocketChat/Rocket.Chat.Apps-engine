@@ -42,6 +42,8 @@ export class RocketletSettingsManager {
         const item = await this.manager.getStorage().update(rl.getStorageItem());
 
         rl.setStorageItem(item);
-        rl.call(RocketletMethod.ONSETTINGUPDATED, setting);
+
+        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
+        rl.call(RocketletMethod.ONSETTINGUPDATED, setting, configModify);
     }
 }
