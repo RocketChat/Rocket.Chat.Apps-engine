@@ -44,6 +44,9 @@ export class RocketletSettingsManager {
         rl.setStorageItem(item);
 
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
-        rl.call(RocketletMethod.ONSETTINGUPDATED, setting, configModify);
+        const reader = this.manager.getAccessorManager().getReader(rl.getID());
+        const http = this.manager.getAccessorManager().getHttp(rl.getID());
+
+        rl.call(RocketletMethod.ONSETTINGUPDATED, setting, configModify, reader, http);
     }
 }
