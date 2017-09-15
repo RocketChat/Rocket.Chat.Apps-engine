@@ -11,10 +11,10 @@ export class SlashCommandsModify implements ISlashCommandsModify {
     }
 
     public disableSlashCommand(command: string): void {
-        this.manager.disableCommand(command, this.rocketletId);
+        this.manager.disableCommand(this.rocketletId, command);
     }
 
     public enableSlashCommand(command: string): void {
-        this.manager.enableCommand(command, this.rocketletId);
+        this.manager.enableCommand(this.rocketletId, command);
     }
 }
