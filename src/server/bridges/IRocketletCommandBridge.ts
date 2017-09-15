@@ -18,6 +18,14 @@ export interface IRocketletCommandBridge {
     doesCommandExist(command: string, rocketletId: string): boolean;
 
     /**
+     * Enables an existing command from the bridged system.
+     *
+     * @param command the command to enable
+     * @param rocketletId the id of the rocketlet calling this
+     */
+    enableCommand(command: string, rocketletId: string): void;
+
+    /**
      * Disables an existing command from the bridged system.
      *
      * @param command the command which to disable

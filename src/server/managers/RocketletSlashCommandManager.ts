@@ -73,6 +73,14 @@ export class RocketletSlashCommandManager {
         this.commandMappingToRocketlet.set(command.command, rocketletId);
     }
 
+    public enableCommand(rocketletId: string, command: string): void {
+        if (!this.bridge.doesCommandExist(command, rocketletId)) {
+            throw new Error(`The command "${command}" does not exist to disable.`);
+        }
+
+        this.bridge.enableCommand(command, rocketletId);
+    }
+
     /**
      * Renders an existing slash command un-usable.
      *
@@ -84,7 +92,7 @@ export class RocketletSlashCommandManager {
             throw new Error(`The command "${command}" does not exist to disable.`);
         }
 
-        this.bridge.disableCommand(rocketletId, command);
+        this.bridge.disableCommand(command, rocketletId);
     }
 
     /**

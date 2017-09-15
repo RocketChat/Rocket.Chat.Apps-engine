@@ -13,4 +13,8 @@ export class SlashCommandsModify implements ISlashCommandsModify {
     public disableSlashCommand(command: string): void {
         this.manager.disableCommand(command, this.rocketletId);
     }
+
+    public enableSlashCommand(command: string): void {
+        this.manager.enableCommand(command, this.rocketletId);
+    }
 }

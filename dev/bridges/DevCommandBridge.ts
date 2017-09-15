@@ -15,6 +15,10 @@ export class DevCommandBridge implements IRocketletCommandBridge {
         return this.commands.has(command);
     }
 
+    public enableCommand(command: string, rocketletId: string): void {
+        console.log(`Enabling the command "${command}" per request of the rocketlet: ${rocketletId}`);
+    }
+
     public disableCommand(command: string, rocketletId: string): void {
         console.log(`Disabling the command "${command}" per request of the rocketlet: ${rocketletId}`);
     }
