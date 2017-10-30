@@ -68,16 +68,11 @@ export class RocketletPackageParser {
             throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
         }
 
-        // TODO: Assign this to something
-        const languageFiles = this.getLanguageFiles(zip);
+        const languageContent = this.getLanguageContent(zip);
 
         // Compile all the typescript files to javascript
         // this actually modifies the `tsFiles` object
         this.manager.getCompiler().toJs(info, tsFiles);
-
-        // Now that is has all been compiled, let's get the
-        // the Rocketlet instance from the source.
-        const rocketlet = this.manager.getCompiler().toSandBox(info, tsFiles);
 
         const compiledFiles: { [s: string]: string } = {};
         Object.keys(tsFiles).forEach((name) => {
@@ -88,23 +83,32 @@ export class RocketletPackageParser {
         return {
             info,
             compiledFiles,
-            languageFiles,
-            rocketlet,
+            languageContent,
         };
     }
 
-    private getLanguageFiles(zip: AdmZip): { [key: string]: string } {
-        const languageFiles: { [key: string]: string } = {};
+    private getLanguageContent(zip: AdmZip): { [key: string]: object } {
+        const languageContent: { [key: string]: object } = {};
 
         zip.getEntries().filter((entry) =>
             !entry.isDirectory &&
             entry.entryName.startsWith('i18n/') &&
             entry.entryName.endsWith('.json'))
         .forEach((entry) => {
-            languageFiles[entry.entryName] = entry.getData().toString();
+            const entrySplit = entry.entryName.split('/');
+            const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
+
+            let content;
+            try {
+                content = JSON.parse(entry.getData().toString());
+            } catch (e) {
+                // Failed to parse it, maybe warn them? idk yet
+            }
+
+            languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
         });
 
-        return languageFiles;
+        return languageContent;
     }
 
     private getTsDefVersion(): string {

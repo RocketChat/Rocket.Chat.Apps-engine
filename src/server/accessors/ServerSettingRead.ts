@@ -14,7 +14,7 @@ export class ServerSettingRead implements IServerSettingRead {
         const set = this.settingBridge.getOneById(id, this.rocketletId);
 
         if (typeof set === 'undefined') {
-            throw new Error(`No Server Setting, or it is unaccessible, by the id of "${id}".`);
+            throw new Error(`No Server Setting found, or it is unaccessible, by the id of "${id}".`);
         }
 
         return set.value || set.packageValue;

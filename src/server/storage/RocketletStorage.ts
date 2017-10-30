@@ -1,7 +1,11 @@
 import { IRocketletStorageItem } from './IRocketletStorageItem';
 
 export abstract class RocketletStorage {
-    constructor(private readonly engine: string) {}
+    constructor(private readonly engine: string) { }
+
+    public getEngine() {
+        return this.engine;
+    }
 
     public abstract async create(item: IRocketletStorageItem): Promise<IRocketletStorageItem>;
     public abstract async retrieveOne(id: string): Promise<IRocketletStorageItem>;

@@ -1,4 +1,4 @@
-import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
 
 /**
  * The interface which should be implemented for the commands to be
@@ -16,6 +16,14 @@ export interface IRocketletCommandBridge {
      * @return whether the command is already in the system
      */
     doesCommandExist(command: string, rocketletId: string): boolean;
+
+    /**
+     * Enables an existing command from the bridged system.
+     *
+     * @param command the command to enable
+     * @param rocketletId the id of the rocketlet calling this
+     */
+    enableCommand(command: string, rocketletId: string): void;
 
     /**
      * Disables an existing command from the bridged system.

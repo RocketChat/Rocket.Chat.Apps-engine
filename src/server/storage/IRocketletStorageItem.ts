@@ -9,6 +9,6 @@ export interface IRocketletStorageItem {
     info: IRocketletInfo;
     zip: string;
     compiled: { [s: string]: string };
-    languageFiles: { [key: string]: string };
+    languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
 }
