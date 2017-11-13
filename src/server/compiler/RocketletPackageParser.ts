@@ -119,7 +119,12 @@ export class RocketletPackageParser {
     }
 
     private getIconFile(zip: AdmZip, filePath: string): string {
-        if (!filePath || !this.allowedIconExts.includes(path.extname(filePath))) {
+        if (!filePath) {
+            return undefined;
+        }
+
+        const ext = path.extname(filePath);
+        if (!this.allowedIconExts.includes(ext)) {
             return undefined;
         }
 
@@ -129,7 +134,9 @@ export class RocketletPackageParser {
             return undefined;
         }
 
-        return entry.getData().toString('base64');
+        const base64 = entry.getData().toString('base64');
+
+        return `data:image/${ ext.replace('.', '') };base64,${ base64 }`;
     }
 
     private getTsDefVersion(): string {
