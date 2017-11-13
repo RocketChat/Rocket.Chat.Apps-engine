@@ -13,6 +13,7 @@ import * as uuidv4 from 'uuid/v4';
 export class RocketletPackageParser {
     // tslint:disable-next-line:max-line-length
     public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
     private rocketletsTsDefVer: string;
 
     constructor(private readonly manager: RocketletManager) {
@@ -80,6 +81,12 @@ export class RocketletPackageParser {
             compiledFiles[norm.replace(/\./g, '$')] = tsFiles[norm].compiled;
         });
 
+        // Get the icon's content
+        const iconFile = this.getIconFile(zip, info.iconFile);
+        if (iconFile) {
+            info.iconFileContent = iconFile;
+        }
+
         return {
             info,
             compiledFiles,
@@ -109,6 +116,20 @@ export class RocketletPackageParser {
         });
 
         return languageContent;
+    }
+
+    private getIconFile(zip: AdmZip, filePath: string): string {
+        if (!filePath || !this.allowedIconExts.includes(path.extname(filePath))) {
+            return undefined;
+        }
+
+        const entry = zip.getEntry(filePath);
+
+        if (entry.isDirectory) {
+            return undefined;
+        }
+
+        return entry.getData().toString('base64');
     }
 
     private getTsDefVersion(): string {
