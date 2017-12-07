@@ -289,6 +289,8 @@ export class RocketletManager {
             this.runStartUpProcess(created, rocketlet);
         } else {
             this.initializeRocketlet(created, rocketlet);
+            this.activeRocketlets.set(rocketlet.getID(), rocketlet);
+            this.availableRocketlets.delete(rocketlet.getID());
         }
 
         try {
