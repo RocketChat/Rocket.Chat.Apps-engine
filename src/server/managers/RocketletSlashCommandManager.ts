@@ -3,6 +3,7 @@ import { ISlashCommand, SlashCommandContext } from 'temporary-rocketlets-ts-defi
 import { IRocketletCommandBridge } from '../bridges/IRocketletCommandBridge';
 import { CommandAlreadyExistsError } from '../errors/CommandAlreadyExistsError';
 import { RocketletAccessorManager } from './RocketletAccessorManager';
+import { RocketletSlashCommandRegistration } from './RocketletSlashCommandRegistration';
 
 /**
  * The command manager for the Rocketlets.
@@ -13,15 +14,15 @@ import { RocketletAccessorManager } from './RocketletAccessorManager';
  */
 export class RocketletSlashCommandManager {
     // commands by rocketlet id
-    private rlCommands: Map<string, Array<ISlashCommand>>;
+    private rlCommands: Map<string, Array<RocketletSlashCommandRegistration>>;
     // loaded commands
-    private commands: Map<string, ISlashCommand>;
+    private commands: Map<string, RocketletSlashCommandRegistration>;
     private commandMappingToRocketlet: Map<string, string>;
 
     // tslint:disable-next-line:max-line-length
     constructor(private readonly bridge: IRocketletCommandBridge, private readonly accessors: RocketletAccessorManager) {
-        this.rlCommands = new Map<string, Array<ISlashCommand>>();
-        this.commands = new Map<string, ISlashCommand>();
+        this.rlCommands = new Map<string, Array<RocketletSlashCommandRegistration>>();
+        this.commands = new Map<string, RocketletSlashCommandRegistration>();
         this.commandMappingToRocketlet = new Map<string, string>();
     }
 
@@ -41,10 +42,10 @@ export class RocketletSlashCommandManager {
         }
 
         if (!this.rlCommands.has(rocketletId)) {
-            this.rlCommands.set(rocketletId, new Array<ISlashCommand>());
+            this.rlCommands.set(rocketletId, new Array<RocketletSlashCommandRegistration>());
         }
 
-        this.rlCommands.get(rocketletId).push(command);
+        this.rlCommands.get(rocketletId).push(new RocketletSlashCommandRegistration(command));
     }
 
     /**
@@ -55,27 +56,41 @@ export class RocketletSlashCommandManager {
      * @param rocketletId the rocketlet's id of the command to modify
      * @param command the modified command to replace the current one with
      */
+    // TODO: Rework this logic, as the logic inside the method does not match up to the documentation
     public modifyCommand(rocketletId: string, command: ISlashCommand): void {
         // tslint:disable-next-line:max-line-length
-        if (!this.rlCommands.has(rocketletId) || this.rlCommands.get(rocketletId).filter((c) => c.command === command.command).length === 0) {
+        if (!this.rlCommands.has(rocketletId) || this.rlCommands.get(rocketletId).filter((r) => r.slashCommand.command === command.command).length === 0) {
             if (!this.bridge.doesCommandExist(command.command, rocketletId)) {
                 throw new Error('You must first register a command before you can modify it.');
             }
         }
 
-        const index = this.rlCommands.get(rocketletId).findIndex((c) => c.command === command.command);
+        const index = this.rlCommands.get(rocketletId).findIndex((r) => r.slashCommand.command === command.command);
         if (index === -1) {
             this.bridge.modifyCommand(command, rocketletId);
         } else {
-            this.rlCommands.get(rocketletId)[index] = command;
+            this.rlCommands.get(rocketletId)[index].slashCommand = command;
         }
 
         this.commandMappingToRocketlet.set(command.command, rocketletId);
     }
 
     public enableCommand(rocketletId: string, command: string): void {
-        if (!this.bridge.doesCommandExist(command, rocketletId)) {
+        const cmdInfo = this.getRocketletCommand(rocketletId, command);
+        if (this.isAlreadyDefined(command) && cmdInfo && !cmdInfo.isRegistered) {
+            cmdInfo.isDisabled = false;
+            cmdInfo.isEnabled = true;
+            return;
+        }
+
+        const exists = this.bridge.doesCommandExist(command, rocketletId);
+        if (!exists && !cmdInfo) {
             throw new Error(`The command "${command}" does not exist to disable.`);
+        } else if (!exists && cmdInfo) {
+            // This means it was "disabled" when the command was registered
+            // so now we need to register it again.
+            this.registerCommand(rocketletId, cmdInfo);
+            return;
         }
 
         this.bridge.enableCommand(command, rocketletId);
@@ -88,6 +103,13 @@ export class RocketletSlashCommandManager {
      * @param command the command to disable in the bridged system
      */
     public disableCommand(rocketletId: string, command: string): void {
+        const cmdInfo = this.getRocketletCommand(rocketletId, command);
+        if (this.isAlreadyDefined(command) && cmdInfo && !cmdInfo.isRegistered) {
+            cmdInfo.isDisabled = true;
+            cmdInfo.isEnabled = false;
+            return;
+        }
+
         if (!this.bridge.doesCommandExist(command, rocketletId)) {
             throw new Error(`The command "${command}" does not exist to disable.`);
         }
@@ -106,10 +128,13 @@ export class RocketletSlashCommandManager {
             return;
         }
 
-        this.rlCommands.get(rocketletId).forEach((cmd) => {
-            this.commands.set(cmd.command, cmd);
-            this.commandMappingToRocketlet.set(cmd.command, rocketletId);
-            this.bridge.registerCommand(cmd, rocketletId);
+        this.rlCommands.get(rocketletId).forEach((r) => {
+            r.isRegistered = true;
+            if (r.isDisabled) {
+                return;
+            }
+
+            this.registerCommand(rocketletId, r);
         });
     }
 
@@ -118,10 +143,11 @@ export class RocketletSlashCommandManager {
             return;
         }
 
-        this.rlCommands.get(rocketletId).forEach((cmd) => {
-            this.commands.delete(cmd.command);
-            this.commandMappingToRocketlet.delete(cmd.command);
-            this.bridge.unregisterCommand(cmd.command, rocketletId);
+        this.rlCommands.get(rocketletId).forEach((r) => {
+            this.commands.delete(r.slashCommand.command);
+            this.commandMappingToRocketlet.delete(r.slashCommand.command);
+            this.bridge.unregisterCommand(r.slashCommand.command, rocketletId);
+            r.isRegistered = false;
         });
 
         this.rlCommands.delete(rocketletId);
@@ -144,23 +170,45 @@ export class RocketletSlashCommandManager {
         const http = this.accessors.getHttp(rocketletId);
 
         // TODO: Maybe run it in a context/sandbox? :thinking:
-        this.commands.get(command).executor(context, reader, modify, http);
+        this.commands.get(command).slashCommand.executor(context, reader, modify, http);
+    }
+
+    private registerCommand(rocketletId: string, info: RocketletSlashCommandRegistration): void {
+        this.commands.set(info.slashCommand.command, info);
+        this.commandMappingToRocketlet.set(info.slashCommand.command, rocketletId);
+        this.bridge.registerCommand(info.slashCommand, rocketletId);
     }
 
     /**
-     * Determines whether the provided command is already defined internally or not.
+     * Determines whether the provided command is already defined in the Rocketlet system or not.
      *
      * @param command the command to check if it exists or not
      */
     private isAlreadyDefined(command: string): boolean {
         let exists: boolean = false;
 
-        this.rlCommands.forEach((cmds) => cmds.forEach((c) => {
-            if (c.command === command) {
+        this.rlCommands.forEach((cmds) => cmds.forEach((r) => {
+            if (r.slashCommand.command === command) {
                 exists = true;
             }
         }));
 
         return exists;
+    }
+
+    private getRocketletCommand(rocketletId: string, command: string): RocketletSlashCommandRegistration | undefined {
+        if (!this.isAlreadyDefined(command)) {
+            return undefined;
+        }
+
+        let info: RocketletSlashCommandRegistration;
+
+        this.rlCommands.get(rocketletId).forEach((r) => {
+            if (r.slashCommand.command === command) {
+                info = r;
+            }
+        });
+
+        return info;
     }
 }

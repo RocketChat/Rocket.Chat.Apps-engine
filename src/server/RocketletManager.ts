@@ -260,7 +260,7 @@ export class RocketletManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
+    public async add(zipContentsBase64d: string, enable = true): Promise<ProxiedRocketlet> {
         const result = await this.getParser().parseZip(zipContentsBase64d);
         const created = await this.storage.create({
             id: result.info.id,
@@ -282,8 +282,14 @@ export class RocketletManager {
         // Store it temporarily so we can access it else where
         this.availableRocketlets.set(rocketlet.getID(), rocketlet);
 
-        // Start up the rocketlet
-        this.runStartUpProcess(created, rocketlet);
+        // Should enable === true, then we go through the entire start up process
+        // Otherwise, we only initialize it.
+        if (enable) {
+            // Start up the rocketlet
+            this.runStartUpProcess(created, rocketlet);
+        } else {
+            this.initializeRocketlet(created, rocketlet);
+        }
 
         try {
             const isEnabled = this.activeRocketlets.has(rocketlet.getID());
