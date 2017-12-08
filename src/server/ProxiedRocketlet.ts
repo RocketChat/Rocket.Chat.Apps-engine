@@ -2,6 +2,7 @@ import { ILogger } from 'temporary-rocketlets-ts-definition/accessors';
 import { IRocketlet } from 'temporary-rocketlets-ts-definition/IRocketlet';
 import { IRocketletAuthorInfo, IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
+import { RocketletStatus } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 
 import { RocketletMethod } from './compiler';
 import { NotEnoughMethodArgumentsError } from './errors';
@@ -10,9 +11,13 @@ import { IRocketletStorageItem } from './storage';
 import * as vm from 'vm';
 
 export class ProxiedRocketlet implements IRocketlet {
+    private previousStatus: RocketletStatus;
+
     constructor(private storageItem: IRocketletStorageItem,
                 private readonly rocketlet: Rocketlet,
-                private readonly customRequire: (mod: string) => {}) { }
+                private readonly customRequire: (mod: string) => {}) {
+        this.previousStatus = storageItem.status;
+    }
 
     public getStorageItem(): IRocketletStorageItem {
         return this.storageItem;
@@ -20,6 +25,10 @@ export class ProxiedRocketlet implements IRocketlet {
 
     public setStorageItem(item: IRocketletStorageItem): void {
         this.storageItem = item;
+    }
+
+    public getPreviousStatus() {
+        return this.previousStatus;
     }
 
     public hasMethod(method: RocketletMethod): boolean {
@@ -52,6 +61,14 @@ export class ProxiedRocketlet implements IRocketlet {
         this.rocketlet.getLogger().debug(`${method} was successfully called!`);
 
         return result;
+    }
+
+    public getStatus(): RocketletStatus {
+        return this.rocketlet.getStatus();
+    }
+
+    public setStatus(status: RocketletStatus) {
+        this.call(RocketletMethod.SETSTATUS, status);
     }
 
     public getName(): string {

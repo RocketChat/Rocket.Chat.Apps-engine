@@ -14,6 +14,7 @@ import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
+import { RocketletStatus } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 
 export class RocketletManager {
     // availableRocketlets contains the rocketlets which haven't tried to start
@@ -130,8 +131,14 @@ export class RocketletManager {
             }
         });
 
-        // Now let's enable all of the rocketlets
-        this.availableRocketlets.forEach((rl) => this.enableRocketlet(items.get(rl.getID()), rl));
+        // Now let's enable the rocketlets which were once enabled
+        this.availableRocketlets.forEach((rl) => {
+            const prev = rl.getPreviousStatus();
+
+            if (prev === RocketletStatus.AUTO_ENABLED || prev === RocketletStatus.MANUALLY_ENABLED) {
+                this.enableRocketlet(items.get(rl.getID()), rl);
+            }
+        });
 
         // TODO: Register all of the listeners
 
@@ -215,6 +222,13 @@ export class RocketletManager {
             this.activeRocketlets.set(storageItem.id, rocketlet);
             this.inactiveRocketlets.delete(storageItem.id);
 
+            rocketlet.setStatus(RocketletStatus.MANUALLY_ENABLED);
+
+            // This is async, but we don't care since it only updates in the database
+            // and it should not mutate any properties we care about
+            storageItem.status = rocketlet.getStatus();
+            this.storage.update(storageItem);
+
             try {
                 this.bridges.getRocketletActivationBridge().rocketletEnabled(rocketlet);
             } catch (e) {
@@ -251,6 +265,13 @@ export class RocketletManager {
         this.inactiveRocketlets.set(storageItem.id, rocketlet);
         this.activeRocketlets.delete(storageItem.id);
 
+        rocketlet.setStatus(RocketletStatus.MANUALLY_DISABLED);
+
+        // This is async, but we don't care since it only updates in the database
+        // and it should not mutate any properties we care about
+        storageItem.status = rocketlet.getStatus();
+        this.storage.update(storageItem);
+
         try {
             this.bridges.getRocketletActivationBridge().rocketletDisabled(rocketlet);
         } catch (e) {
@@ -265,6 +286,7 @@ export class RocketletManager {
         const created = await this.storage.create({
             id: result.info.id,
             info: result.info,
+            status: RocketletStatus.UNKNOWN,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
             languageContent: result.languageContent,
@@ -322,6 +344,7 @@ export class RocketletManager {
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
+            status: RocketletStatus.UNKNOWN,
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
             languageContent: result.languageContent,
@@ -386,6 +409,7 @@ export class RocketletManager {
         try {
             rocketlet.call(RocketletMethod.INITIALIZE, configExtend, envRead);
             result = true;
+            rocketlet.setStatus(RocketletStatus.INITIALIZED);
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -394,10 +418,13 @@ export class RocketletManager {
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
             result = false;
+
+            rocketlet.setStatus(RocketletStatus.ERROR_DISABLED);
         }
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
+        storageItem.status = rocketlet.getStatus();
         this.storage.update(storageItem);
 
         if (!result) {
@@ -415,6 +442,7 @@ export class RocketletManager {
             enable = rocketlet.call(RocketletMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
+            rocketlet.setStatus(RocketletStatus.AUTO_ENABLED);
         } catch (e) {
             enable = false;
 
@@ -423,6 +451,7 @@ export class RocketletManager {
             }
 
             console.error(e);
+            rocketlet.setStatus(RocketletStatus.ERROR_DISABLED);
         }
 
         if (enable) {
@@ -434,6 +463,11 @@ export class RocketletManager {
         }
 
         this.availableRocketlets.delete(rocketlet.getID());
+
+        // This is async, but we don't care since it only updates in the database
+        // and it should not mutate any properties we care about
+        storageItem.status = rocketlet.getStatus();
+        this.storage.update(storageItem);
 
         return enable;
     }

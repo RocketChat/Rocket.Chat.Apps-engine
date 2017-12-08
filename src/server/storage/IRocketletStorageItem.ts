@@ -1,4 +1,5 @@
 import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
+import { RocketletStatus } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 import { ISetting } from 'temporary-rocketlets-ts-definition/settings';
 
 export interface IRocketletStorageItem {
@@ -6,6 +7,7 @@ export interface IRocketletStorageItem {
     id: string;
     createdAt?: Date;
     updatedAt?: Date;
+    status: RocketletStatus;
     info: IRocketletInfo;
     zip: string;
     compiled: { [s: string]: string };

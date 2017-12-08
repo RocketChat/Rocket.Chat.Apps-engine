@@ -3,4 +3,5 @@ export enum RocketletMethod {
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',
     ONSETTINGUPDATED = 'onSettingUpdated',
+    SETSTATUS = 'setStatus',
 }

@@ -25,6 +25,7 @@ export class RocketletConsole implements ILogger {
             timestamp: new Date(),
             args: items,
         });
+        console.log(items);
     }
 
     public info(...items: Array<any>): void {
