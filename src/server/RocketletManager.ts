@@ -14,15 +14,11 @@ import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
 import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
-import { RocketletStatus } from 'temporary-rocketlets-ts-definition/RocketletStatus';
+import { RocketletStatus, RocketletStatusUtils } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 
 export class RocketletManager {
-    // availableRocketlets contains the rocketlets which haven't tried to start
-    private readonly availableRocketlets: Map<string, ProxiedRocketlet>;
-    // activeRocketlets contains the rocketlets which are active and enabled
-    private readonly activeRocketlets: Map<string, ProxiedRocketlet>;
-    // inactiveRocketlets contains the rocketlets which failed to load or are disabled
-    private readonly inactiveRocketlets: Map<string, ProxiedRocketlet>;
+    // rocketlets contains all of the Rocketlets
+    private readonly rocketlets: Map<string, ProxiedRocketlet>;
     private readonly storage: RocketletStorage;
     private readonly bridges: RocketletBridges;
     private readonly parser: RocketletPackageParser;
@@ -51,9 +47,7 @@ export class RocketletManager {
             throw new Error('Invalid instance of the RocketletBridges');
         }
 
-        this.availableRocketlets = new Map<string, ProxiedRocketlet>();
-        this.activeRocketlets = new Map<string, ProxiedRocketlet>();
-        this.inactiveRocketlets = new Map<string, ProxiedRocketlet>();
+        this.rocketlets = new Map<string, ProxiedRocketlet>();
 
         this.parser = new RocketletPackageParser(this);
         this.logger = new RocketletLoggerManager();
@@ -120,22 +114,14 @@ export class RocketletManager {
         const items: Map<string, IRocketletStorageItem> = await this.storage.retrieveAll();
 
         items.forEach((item: IRocketletStorageItem) =>
-            this.availableRocketlets.set(item.id, this.getCompiler().toSandBox(item)));
+            this.rocketlets.set(item.id, this.getCompiler().toSandBox(item)));
 
         // Let's initialize them
-        this.availableRocketlets.forEach((rl) => {
-            const isInitialized = this.initializeRocketlet(items.get(rl.getID()), rl);
-
-            if (!isInitialized) {
-                this.inactiveRocketlets.set(rl.getID(), rl);
-            }
-        });
+        this.rocketlets.forEach((rl) => this.initializeRocketlet(items.get(rl.getID()), rl));
 
         // Now let's enable the rocketlets which were once enabled
-        this.availableRocketlets.forEach((rl) => {
-            const prev = rl.getPreviousStatus();
-
-            if (prev === RocketletStatus.AUTO_ENABLED || prev === RocketletStatus.MANUALLY_ENABLED) {
+        this.rocketlets.forEach((rl) => {
+            if (RocketletStatusUtils.isEnabled(rl.getPreviousStatus())) {
                 this.enableRocketlet(items.get(rl.getID()), rl);
             }
         });
@@ -143,15 +129,14 @@ export class RocketletManager {
         // TODO: Register all of the listeners
 
         this.isLoaded = true;
-        return Array.from(this.activeRocketlets.values()).concat(Array.from(this.inactiveRocketlets.values()));
+        return Array.from(this.rocketlets.values());
     }
 
     public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
         let rls = new Array<ProxiedRocketlet>();
 
         if (typeof filter === 'undefined') {
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
-            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
+            this.rocketlets.forEach((rl) => rls.push(rl));
 
             return rls;
         }
@@ -159,18 +144,25 @@ export class RocketletManager {
         let nothing = true;
 
         if (typeof filter.enabled === 'boolean' && filter.enabled) {
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
+            this.rocketlets.forEach((rl) => {
+                if (RocketletStatusUtils.isEnabled(rl.getStatus())) {
+                    rls.push(rl);
+                }
+            });
             nothing = false;
         }
 
         if (typeof filter.disabled === 'boolean' && filter.disabled) {
-            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
+            this.rocketlets.forEach((rl) => {
+                if (RocketletStatusUtils.isDisabled(rl.getStatus())) {
+                    rls.push(rl);
+                }
+            });
             nothing = false;
         }
 
         if (nothing) {
-            this.activeRocketlets.forEach((rl) => rls.push(rl));
-            this.inactiveRocketlets.forEach((rl) => rls.push(rl));
+            this.rocketlets.forEach((rl) => rls.push(rl));
         }
 
         if (typeof filter.ids !== 'undefined') {
@@ -187,50 +179,36 @@ export class RocketletManager {
     }
 
     public getOneById(rocketletId: string): ProxiedRocketlet {
-        if (this.availableRocketlets.has(rocketletId)) {
-            return this.availableRocketlets.get(rocketletId);
-        }
-
-        if (this.activeRocketlets.has(rocketletId)) {
-            return this.activeRocketlets.get(rocketletId);
-        }
-
-        if (this.inactiveRocketlets.has(rocketletId)) {
-            return this.inactiveRocketlets.get(rocketletId);
-        }
-
-        return undefined;
+        return this.rocketlets.get(rocketletId);
     }
 
     public async enable(id: string): Promise<boolean> {
-        if (this.activeRocketlets.has(id)) {
+        const rl = this.rocketlets.get(id);
+
+        if (!rl) {
+            throw new Error(`No Rocketlet by the id "${id}" exists.`);
+        }
+
+        if (RocketletStatusUtils.isEnabled(rl.getStatus())) {
             throw new Error(`The Rocketlet with the id "${id}" is already enabled.`);
         }
 
-        if (!this.inactiveRocketlets.has(id)) {
-            throw new Error(`No Rocketlet by the id "${id}" is inactive.`);
-        }
-
-        const rocketlet = this.inactiveRocketlets.get(id);
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
             throw new Error(`Could not enable a Rocketlet with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = this.runStartUpProcess(storageItem, rocketlet);
+        const isSetup = this.runStartUpProcess(storageItem, rl);
         if (isSetup) {
-            this.activeRocketlets.set(storageItem.id, rocketlet);
-            this.inactiveRocketlets.delete(storageItem.id);
-
-            rocketlet.setStatus(RocketletStatus.MANUALLY_ENABLED);
+            rl.setStatus(RocketletStatus.MANUALLY_ENABLED);
 
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = rocketlet.getStatus();
+            storageItem.status = rl.getStatus();
             this.storage.update(storageItem);
 
             try {
-                this.bridges.getRocketletActivationBridge().rocketletEnabled(rocketlet);
+                this.bridges.getRocketletActivationBridge().rocketletEnabled(rl);
             } catch (e) {
                 // If an error occurs during this, oh well.
             }
@@ -239,41 +217,41 @@ export class RocketletManager {
         return isSetup;
     }
 
-    public async disable(id: string): Promise<boolean> {
-        if (this.inactiveRocketlets.has(id)) {
-            throw new Error(`The Rocketlet with the id of "${id}" is already disabled.`);
+    public async disable(id: string, isManual = false): Promise<boolean> {
+        const rl = this.rocketlets.get(id);
+
+        if (!rl) {
+            throw new Error(`No Rocketlet by the id "${id}" exists.`);
         }
 
-        if (!this.activeRocketlets.has(id)) {
+        if (!RocketletStatusUtils.isEnabled(rl.getStatus())) {
             throw new Error(`No Rocketlet by the id of "${id}" is enabled."`);
         }
 
-        const rocketlet = this.activeRocketlets.get(id);
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
             throw new Error(`Could not disable a Rocketlet with the id of "${id}" as it doesn't exist.`);
         }
 
         try {
-            rocketlet.call(RocketletMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
+            rl.call(RocketletMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
         } catch (e) {
             console.warn('Error while disabling:', e);
         }
 
         this.commandManager.unregisterCommands(storageItem.id);
 
-        this.inactiveRocketlets.set(storageItem.id, rocketlet);
-        this.activeRocketlets.delete(storageItem.id);
-
-        rocketlet.setStatus(RocketletStatus.MANUALLY_DISABLED);
+        if (isManual) {
+            rl.setStatus(RocketletStatus.MANUALLY_DISABLED);
+        }
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
-        storageItem.status = rocketlet.getStatus();
+        storageItem.status = rl.getStatus();
         this.storage.update(storageItem);
 
         try {
-            this.bridges.getRocketletActivationBridge().rocketletDisabled(rocketlet);
+            this.bridges.getRocketletActivationBridge().rocketletDisabled(rl);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -301,8 +279,7 @@ export class RocketletManager {
         // the Rocketlet instance from the source.
         const rocketlet = this.getCompiler().toSandBox(created);
 
-        // Store it temporarily so we can access it else where
-        this.availableRocketlets.set(rocketlet.getID(), rocketlet);
+        this.rocketlets.set(rocketlet.getID(), rocketlet);
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -311,12 +288,10 @@ export class RocketletManager {
             this.runStartUpProcess(created, rocketlet);
         } else {
             this.initializeRocketlet(created, rocketlet);
-            this.activeRocketlets.set(rocketlet.getID(), rocketlet);
-            this.availableRocketlets.delete(rocketlet.getID());
         }
 
         try {
-            const isEnabled = this.activeRocketlets.has(rocketlet.getID());
+            const isEnabled = RocketletStatusUtils.isEnabled(rocketlet.getStatus());
             this.bridges.getRocketletActivationBridge().rocketletLoaded(rocketlet, isEnabled);
         } catch (e) {
             // If an error occurs during this, oh well.
@@ -337,14 +312,18 @@ export class RocketletManager {
             throw new Error('Can not update a Rocketlet that does not currently exist.');
         }
 
-        await this.disable(old.id);
-        this.inactiveRocketlets.delete(old.id);
+        // Attempt to disable it, if it wasn't enabled then it will error and we don't care
+        try {
+            await this.disable(old.id);
+        } catch (e) {
+            // We don't care
+        }
 
         const stored = await this.storage.update({
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
-            status: RocketletStatus.UNKNOWN,
+            status: this.rocketlets.get(old.id).getStatus(),
             zip: zipContentsBase64d,
             compiled: result.compiledFiles,
             languageContent: result.languageContent,
@@ -356,13 +335,13 @@ export class RocketletManager {
         const rocketlet = this.getCompiler().toSandBox(stored);
 
         // Store it temporarily so we can access it else where
-        this.availableRocketlets.set(rocketlet.getID(), rocketlet);
+        this.rocketlets.set(rocketlet.getID(), rocketlet);
 
         // Start up the rocketlet
         this.runStartUpProcess(stored, rocketlet);
 
         try {
-            const isEnabled = this.activeRocketlets.has(rocketlet.getID());
+            const isEnabled = RocketletStatusUtils.isEnabled(rocketlet.getStatus());
             this.bridges.getRocketletActivationBridge().rocketletUpdated(rocketlet, isEnabled);
         } catch (e) {
             // If an error occurs during this, oh well.
@@ -374,7 +353,11 @@ export class RocketletManager {
     public getLanguageContent(): { [key: string]: object } {
         const langs: { [key: string]: object } = { };
 
-        this.activeRocketlets.forEach((rl) => {
+        this.rocketlets.forEach((rl) => {
+            if (!RocketletStatusUtils.isEnabled(rl.getStatus())) {
+                return;
+            }
+
             const content = rl.getStorageItem().languageContent;
 
             Object.keys(content).forEach((key) => {
@@ -427,11 +410,6 @@ export class RocketletManager {
         storageItem.status = rocketlet.getStatus();
         this.storage.update(storageItem);
 
-        if (!result) {
-            this.inactiveRocketlets.set(storageItem.id, rocketlet);
-            this.availableRocketlets.delete(storageItem.id);
-        }
-
         return result;
     }
 
@@ -456,13 +434,9 @@ export class RocketletManager {
 
         if (enable) {
             this.commandManager.registerCommands(rocketlet.getID());
-            this.activeRocketlets.set(rocketlet.getID(), rocketlet);
         } else {
-            this.commandManager.unregisterCommands(storageItem.id);
-            this.inactiveRocketlets.set(rocketlet.getID(), rocketlet);
+            this.commandManager.unregisterCommands(rocketlet.getID());
         }
-
-        this.availableRocketlets.delete(rocketlet.getID());
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
