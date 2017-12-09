@@ -379,30 +379,30 @@ export class RocketletManager {
             throw new Error('Can not change the status of a Rocketlet which does not currently exist.');
         }
 
-        const storageItem = await this.storage.retrieveOne(rl.getID());
-
         if (RocketletStatusUtils.isEnabled(status)) {
             // Then enable it
             if (RocketletStatusUtils.isEnabled(rl.getStatus())) {
                 throw new Error('Can not enable a Rocketlet which is already enabled.');
             }
 
-            this.enableRocketlet(storageItem, rl);
+            await this.enable(rl.getID());
         } else {
             if (!RocketletStatusUtils.isEnabled(rl.getStatus())) {
                 throw new Error('Can not disable a Rocketlet which is not enabled.');
             }
 
-            this.disable(rl.getID(), true);
+            await this.disable(rl.getID(), true);
         }
 
         return rl;
     }
 
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
-        const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
-        if (!isInitialized) {
-            return false;
+        if (rocketlet.getStatus() !== RocketletStatus.INITIALIZED) {
+            const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
+            if (!isInitialized) {
+                return false;
+            }
         }
 
         const isEnabled = this.enableRocketlet(storageItem, rocketlet);
