@@ -398,7 +398,8 @@ export class RocketletManager {
     }
 
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
-        if (rocketlet.getStatus() !== RocketletStatus.INITIALIZED) {
+        if (rocketlet.getStatus() !== RocketletStatus.INITIALIZED
+                && rocketlet.getStatus() !== RocketletStatus.MANUALLY_DISABLED) {
             const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
             if (!isInitialized) {
                 return false;
