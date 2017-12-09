@@ -354,10 +354,6 @@ export class RocketletManager {
         const langs: { [key: string]: object } = { };
 
         this.rocketlets.forEach((rl) => {
-            if (!RocketletStatusUtils.isEnabled(rl.getStatus())) {
-                return;
-            }
-
             const content = rl.getStorageItem().languageContent;
 
             Object.keys(content).forEach((key) => {
@@ -366,6 +362,41 @@ export class RocketletManager {
         });
 
         return langs;
+    }
+
+    public async changeStatus(rocketletId: string, status: RocketletStatus): Promise<ProxiedRocketlet> {
+        switch (status) {
+            case RocketletStatus.MANUALLY_DISABLED:
+            case RocketletStatus.MANUALLY_ENABLED:
+                break;
+            default:
+                throw new Error('Invalid status to change a Rocketlet to, must be manually disabled or enabled.');
+        }
+
+        const rl = this.rocketlets.get(rocketletId);
+
+        if (!rl) {
+            throw new Error('Can not change the status of a Rocketlet which does not currently exist.');
+        }
+
+        const storageItem = await this.storage.retrieveOne(rl.getID());
+
+        if (RocketletStatusUtils.isEnabled(status)) {
+            // Then enable it
+            if (RocketletStatusUtils.isEnabled(rl.getStatus())) {
+                throw new Error('Can not enable a Rocketlet which is already enabled.');
+            }
+
+            this.enableRocketlet(storageItem, rl);
+        } else {
+            if (!RocketletStatusUtils.isEnabled(rl.getStatus())) {
+                throw new Error('Can not disable a Rocketlet which is not enabled.');
+            }
+
+            this.disable(rl.getID(), true);
+        }
+
+        return rl;
     }
 
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
