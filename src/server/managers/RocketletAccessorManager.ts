@@ -78,7 +78,7 @@ export class RocketletAccessorManager {
 
             const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), rocketletId);
-            const sets = new SettingsExtend(rl.getStorageItem());
+            const sets = new SettingsExtend(rl);
 
             this.configExtenders.set(rocketletId, new ConfigurationExtend(htt, sets, cmds));
         }
@@ -94,7 +94,7 @@ export class RocketletAccessorManager {
                 throw new Error(`No Rocketlet found by the provided id: ${ rocketletId }`);
             }
 
-            const sets = new SettingRead(rl.getStorageItem());
+            const sets = new SettingRead(rl);
             const servsets = new ServerSettingRead(this.bridges.getServerSettingBridge(), rocketletId);
             const env = new EnvironmentalVariableRead(this.bridges.getEnvironmentalVariableBridge(), rocketletId);
 
