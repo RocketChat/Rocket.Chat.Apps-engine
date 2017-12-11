@@ -53,6 +53,21 @@ export class RocketletAccessorManager {
         this.https = new Map<string, IHttp>();
     }
 
+    /**
+     * Purifies the accessors for the provided Rocketlet.
+     *
+     * @param rocketletId The id of the Rocketlet to purge the accessors for.
+     */
+    public purifyRocketlet(rocketletId: string): void {
+        this.configExtenders.delete(rocketletId);
+        this.envReaders.delete(rocketletId);
+        this.configModifiers.delete(rocketletId);
+        this.readers.delete(rocketletId);
+        this.modifiers.delete(rocketletId);
+        this.persists.delete(rocketletId);
+        this.https.delete(rocketletId);
+    }
+
     public getConfigurationExtend(rocketletId: string): IConfigurationExtend {
         if (!this.configExtenders.has(rocketletId)) {
             const rl = this.manager.getOneById(rocketletId);

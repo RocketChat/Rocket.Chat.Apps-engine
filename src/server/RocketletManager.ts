@@ -240,6 +240,7 @@ export class RocketletManager {
         }
 
         this.commandManager.unregisterCommands(storageItem.id);
+        this.accessorManager.purifyRocketlet(storageItem.id);
 
         if (isManual) {
             rl.setStatus(RocketletStatus.MANUALLY_DISABLED);
@@ -398,8 +399,7 @@ export class RocketletManager {
     }
 
     private runStartUpProcess(storageItem: IRocketletStorageItem, rocketlet: ProxiedRocketlet): boolean {
-        if (rocketlet.getStatus() !== RocketletStatus.INITIALIZED
-                && rocketlet.getStatus() !== RocketletStatus.MANUALLY_DISABLED) {
+        if (rocketlet.getStatus() !== RocketletStatus.INITIALIZED) {
             const isInitialized = this.initializeRocketlet(storageItem, rocketlet);
             if (!isInitialized) {
                 return false;
