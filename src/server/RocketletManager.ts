@@ -17,6 +17,9 @@ import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import { RocketletStatus, RocketletStatusUtils } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 
 export class RocketletManager {
+    public static ENV_VAR_NAME_FOR_ENABLING = 'USE_UNRELEASED_ROCKETAPPS_FRAMEWORK';
+    public static SUPER_FUN_ENV_ENABLEMENT_NAME = 'LET_ME_HAVE_FUN_WITH_ROCKETS_NOW';
+
     // rocketlets contains all of the Rocketlets
     private readonly rocketlets: Map<string, ProxiedRocketlet>;
     private readonly storage: RocketletStorage;
@@ -132,6 +135,7 @@ export class RocketletManager {
         return Array.from(this.rocketlets.values());
     }
 
+    /** Gets the Rocketlets which match the filter passed in. */
     public get(filter?: IGetRocketletsFilter): Array<ProxiedRocketlet> {
         let rls = new Array<ProxiedRocketlet>();
 
@@ -178,6 +182,7 @@ export class RocketletManager {
         return rls;
     }
 
+    /** Gets a single Rocketlet by the id passed in. */
     public getOneById(rocketletId: string): ProxiedRocketlet {
         return this.rocketlets.get(rocketletId);
     }
