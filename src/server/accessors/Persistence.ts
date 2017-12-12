@@ -11,26 +11,26 @@ export class Persistence implements IPersistence {
     }
 
     public createWithAssociation(data: object, association: RocketChatAssociationRecord): string {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.createWithAssociations(data, new Array(association), this.rocketletId);
     }
 
     public createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>): string {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.createWithAssociations(data, associations, this.rocketletId);
     }
 
-    public update(id: string, data: object, upsert?: boolean): string {
-        throw new Error('Method not implemented.');
+    public update(id: string, data: object, upsert = false): string {
+        return this.persistBridge.update(id, data, upsert, this.rocketletId);
     }
 
     public remove(id: string): object {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.remove(id, this.rocketletId);
     }
 
-    public removeByAssociation(association: RocketChatAssociationRecord): Array<object> {
-        throw new Error('Method not implemented.');
+    public removeByAssociation(association: RocketChatAssociationRecord): number {
+        return this.persistBridge.removeByAssociations(new Array(association), this.rocketletId);
     }
 
-    public removeByAssociations(associations: Array<RocketChatAssociationRecord>): Array<object> {
-        throw new Error('Method not implemented.');
+    public removeByAssociations(associations: Array<RocketChatAssociationRecord>): number {
+        return this.persistBridge.removeByAssociations(associations, this.rocketletId);
     }
 }

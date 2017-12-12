@@ -10,10 +10,10 @@ export class PersistenceRead implements IPersistenceRead {
     }
 
     public readByAssociation(association: RocketChatAssociationRecord): Array<object> {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.readByAssociations(new Array(association), this.rocketletId);
     }
 
     public readByAssociations(associations: Array<RocketChatAssociationRecord>): Array<object> {
-        throw new Error('Method not implemented.');
+        return this.persistBridge.readByAssociations(associations, this.rocketletId);
     }
 }

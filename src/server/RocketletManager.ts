@@ -13,7 +13,6 @@ import {
 import { ProxiedRocketlet } from './ProxiedRocketlet';
 import { IRocketletStorageItem, RocketletStorage } from './storage';
 
-import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import { RocketletStatus, RocketletStatusUtils } from 'temporary-rocketlets-ts-definition/RocketletStatus';
 
 export class RocketletManager {
@@ -306,8 +305,17 @@ export class RocketletManager {
         return rocketlet;
     }
 
-    public remove(id: string): Rocketlet {
-        throw new Error('Not implemented nor architected.');
+    public async remove(id: string): Promise<ProxiedRocketlet> {
+        await this.disable(id);
+
+        const rl = this.rocketlets.get(id);
+
+        this.bridges.getPersistenceBridge().purge(rl.getID());
+        await this.storage.remove(rl.getID());
+
+        this.rocketlets.delete(rl.getID());
+
+        return rl;
     }
 
     public async update(zipContentsBase64d: string): Promise<ProxiedRocketlet> {
