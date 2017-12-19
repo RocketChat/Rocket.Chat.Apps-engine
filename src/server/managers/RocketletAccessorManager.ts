@@ -43,7 +43,7 @@ export class RocketletAccessorManager {
     private readonly https: Map<string, IHttp>;
 
     constructor(private readonly manager: RocketletManager) {
-        this.bridges = this.manager.getBridgeManager();
+        this.bridges = this.manager.getBridges();
         this.configExtenders = new Map<string, IConfigurationExtend>();
         this.envReaders = new Map<string, IEnvironmentRead>();
         this.configModifiers = new Map<string, IConfigurationModify>();

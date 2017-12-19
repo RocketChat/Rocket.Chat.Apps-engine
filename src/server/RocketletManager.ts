@@ -83,7 +83,7 @@ export class RocketletManager {
     }
 
     /** Gets the instance of the Bridge manager. */
-    public getBridgeManager(): RocketletBridges {
+    public getBridges(): RocketletBridges {
         return this.bridges;
     }
 
