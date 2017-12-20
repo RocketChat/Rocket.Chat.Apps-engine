@@ -115,8 +115,15 @@ export class RocketletManager {
     public async load(): Promise<Array<ProxiedRocketlet>> {
         const items: Map<string, IRocketletStorageItem> = await this.storage.retrieveAll();
 
-        items.forEach((item: IRocketletStorageItem) =>
-            this.rocketlets.set(item.id, this.getCompiler().toSandBox(item)));
+        items.forEach((item: IRocketletStorageItem) => {
+            try {
+                this.rocketlets.set(item.id, this.getCompiler().toSandBox(item));
+            } catch (e) {
+                // TODO: Handle this better. Create a way to show that it is disabled due to an
+                // unrecoverable error and they need to either update or remove it. #7
+                console.warn(`Error while compiling the Rocketlet "${ item.info.name } (${ item.id })":`, e);
+            }
+        });
 
         // Let's initialize them
         this.rocketlets.forEach((rl) => this.initializeRocketlet(items.get(rl.getID()), rl));
