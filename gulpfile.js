@@ -78,5 +78,5 @@ gulp.task('pack', ['clean-generated', 'lint-ts', 'compile-ts', 'npm-files'], she
 ]));
 
 gulp.task('publish', ['clean-generated', 'lint-ts', 'compile-ts', 'npm-files'], shell.task([
-    'cd dist && npm publish && npm pack'
+    'cd dist && npm publish --access public && npm pack'
 ]));
