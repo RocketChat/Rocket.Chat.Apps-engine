@@ -1,15 +1,15 @@
-import { IUserRead } from 'temporary-rocketlets-ts-definition/accessors';
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IUserRead } from '@rocket.chat/apps-ts-definition/accessors';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { IUserBridge } from '../bridges/IUserBridge';
 
 export class UserRead implements IUserRead {
-    constructor(private userBridge: IUserBridge, private rocketletId: string) { }
+    constructor(private userBridge: IUserBridge, private appId: string) { }
 
     public getById(id: string): IUser {
-        return this.userBridge.getById(id, this.rocketletId);
+        return this.userBridge.getById(id, this.appId);
     }
 
     public getByUsername(username: string): IUser {
-        return this.userBridge.getByUsername(username, this.rocketletId);
+        return this.userBridge.getByUsername(username, this.appId);
     }
 }

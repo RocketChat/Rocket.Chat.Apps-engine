@@ -1,13 +1,13 @@
+import { AppBridges } from './AppBridges';
+import { IAppActivationBridge } from './IAppActivationBridge';
+import { IAppCommandBridge } from './IAppCommandBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
-import { IRocketletActivationBridge } from './IRocketletActivationBridge';
-import { IRocketletCommandBridge } from './IRocketletCommandBridge';
 import { IRoomBridge } from './IRoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUserBridge } from './IUserBridge';
-import { RocketletBridges } from './RocketletBridges';
 
 export {
     IEnvironmentalVariableBridge,
@@ -15,10 +15,10 @@ export {
     IHttpBridgeRequestInfo,
     IMessageBridge,
     IPersistenceBridge,
-    IRocketletActivationBridge,
-    IRocketletCommandBridge,
+    IAppActivationBridge,
+    IAppCommandBridge,
     IRoomBridge,
     IServerSettingBridge,
     IUserBridge,
-    RocketletBridges,
+    AppBridges,
 };

@@ -1,24 +1,24 @@
-import { IRocketletActivationBridge } from '../../src/server/bridges';
-import { ProxiedRocketlet } from '../../src/server/ProxiedRocketlet';
+import { IAppActivationBridge } from '../../src/server/bridges';
+import { ProxiedApp } from '../../src/server/ProxiedApp';
 
-export class DevActivationBridge implements IRocketletActivationBridge {
-    public rocketletEnabled(rocketlet: ProxiedRocketlet): void {
-        console.log(`The Rocketlet ${ rocketlet.getName() } (${ rocketlet.getID() }) has been enabled.`);
+export class DevActivationBridge implements IAppActivationBridge {
+    public appEnabled(app: ProxiedApp): void {
+        console.log(`The App ${ app.getName() } (${ app.getID() }) has been enabled.`);
     }
 
-    public rocketletDisabled(rocketlet: ProxiedRocketlet): void {
-        console.log(`The Rocketlet ${ rocketlet.getName() } (${ rocketlet.getID() }) has been disabled.`);
+    public appDisabled(app: ProxiedApp): void {
+        console.log(`The App ${ app.getName() } (${ app.getID() }) has been disabled.`);
     }
 
-    public rocketletLoaded(rocketlet: ProxiedRocketlet, enabled: boolean): void {
-        console.log(`The Rocketlet ${ rocketlet.getName() } (${ rocketlet.getID() }) has been loaded.`);
+    public appLoaded(app: ProxiedApp, enabled: boolean): void {
+        console.log(`The App ${ app.getName() } (${ app.getID() }) has been loaded.`);
     }
 
-    public rocketletUpdated(rocketlet: ProxiedRocketlet, enabled: boolean): void {
-        console.log(`The Rocketlet ${ rocketlet.getName() } (${ rocketlet.getID() }) has been updated.`);
+    public appUpdated(app: ProxiedApp, enabled: boolean): void {
+        console.log(`The App ${ app.getName() } (${ app.getID() }) has been updated.`);
     }
 
-    public rocketletRemoved(rocketlet: ProxiedRocketlet): void {
-        console.log(`The Rocketlet ${ rocketlet.getName() } (${ rocketlet.getID() }) has been removed.`);
+    public appRemoved(app: ProxiedApp): void {
+        console.log(`The App ${ app.getName() } (${ app.getID() }) has been removed.`);
     }
 }

@@ -1,49 +1,49 @@
+import { AppManager } from '../AppManager';
 import { RequiredApiVersionError } from '../errors';
-import { RocketletManager } from '../RocketletManager';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
+import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata/IAppInfo';
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata/IRocketletInfo';
 import * as uuidv4 from 'uuid/v4';
 
-export class RocketletPackageParser {
+export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
     public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
-    private rocketletsTsDefVer: string;
+    private appsTsDefVer: string;
 
-    constructor(private readonly manager: RocketletManager) {
-        this.rocketletsTsDefVer = this.getTsDefVersion();
+    constructor(private readonly manager: AppManager) {
+        this.appsTsDefVer = this.getTsDefVersion();
     }
 
     public async parseZip(zipBase64: string): Promise<IParseZipResult> {
         const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
-        const infoZip = zip.getEntry('rocketlet.json');
-        let info: IRocketletInfo;
+        const infoZip = zip.getEntry('app.json');
+        let info: IAppInfo;
 
         if (infoZip && !infoZip.isDirectory) {
             try {
-                info = JSON.parse(infoZip.getData().toString()) as IRocketletInfo;
+                info = JSON.parse(infoZip.getData().toString()) as IAppInfo;
 
-                if (!RocketletPackageParser.uuid4Regex.test(info.id)) {
+                if (!AppPackageParser.uuid4Regex.test(info.id)) {
                     info.id = uuidv4();
                     console.warn('WARNING: We automatically generated a uuid v4 id for',
                         info.name, 'since it did not provide us an id. This is NOT',
-                        'recommended as the same Rocketlet can be installed several times.');
+                        'recommended as the same App can be installed several times.');
                 }
             } catch (e) {
-                throw new Error('Invalid Rocketlet package. The "rocketlet.json" file is not valid json.');
+                throw new Error('Invalid App package. The "app.json" file is not valid json.');
             }
         } else {
-            throw new Error('Invalid Rocketlet package. No "rocketlet.json" file.');
+            throw new Error('Invalid App package. No "app.json" file.');
         }
 
-        if (!semver.satisfies(this.rocketletsTsDefVer, info.requiredApiVersion)) {
-            throw new RequiredApiVersionError(info, this.rocketletsTsDefVer);
+        if (!semver.satisfies(this.appsTsDefVer, info.requiredApiVersion)) {
+            throw new RequiredApiVersionError(info, this.appsTsDefVer);
         }
 
         // Load all of the TypeScript only files
@@ -66,7 +66,7 @@ export class RocketletPackageParser {
 
         // Ensure that the main class file exists
         if (!tsFiles[path.normalize(info.classFile)]) {
-            throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
+            throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
         }
 
         const languageContent = this.getLanguageContent(zip);
@@ -140,9 +140,9 @@ export class RocketletPackageParser {
     }
 
     private getTsDefVersion(): string {
-        const devLocation = 'node_modules/temporary-rocketlets-ts-definition/package.json';
+        const devLocation = 'node_modules/@rocket.chat/apps-ts-definition/package.json';
         // tslint:disable-next-line
-        const prodLocation = __dirname.split('temporary-rocketlets-server')[0] + 'temporary-rocketlets-ts-definition/package.json';
+        const prodLocation = __dirname.split('temporary-apps-server')[0] + '@rocket.chat/apps-ts-definition/package.json';
 
         if (fs.existsSync(devLocation)) {
             const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
@@ -151,7 +151,7 @@ export class RocketletPackageParser {
             const info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
             return info.version as string;
         } else {
-            throw new Error('Could not find the Rocketlets TypeScript Definition Package Version!');
+            throw new Error('Could not find the Apps TypeScript Definition Package Version!');
         }
     }
 }

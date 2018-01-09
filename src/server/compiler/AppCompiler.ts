@@ -1,21 +1,21 @@
-import { MustContainFunctionError, MustExtendRocketletError } from '../errors';
-import { RocketletLoggerManager } from '../managers';
-import { ProxiedRocketlet } from '../ProxiedRocketlet';
-import { IRocketletStorageItem } from '../storage/IRocketletStorageItem';
+import { MustContainFunctionError, MustExtendAppError } from '../errors';
+import { AppLoggerManager } from '../managers';
+import { ProxiedApp } from '../ProxiedApp';
+import { IAppStorageItem } from '../storage/IAppStorageItem';
 import { ICompilerFile } from './ICompilerFile';
 
+import { App } from '@rocket.chat/apps-ts-definition/App';
+import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import * as fs from 'fs';
 import * as path from 'path';
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
-import { Rocketlet } from 'temporary-rocketlets-ts-definition/Rocketlet';
 import * as ts from 'typescript';
 import * as vm from 'vm';
 
-export class RocketletCompiler {
+export class AppCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
     private libraryFiles: { [s: string]: ICompilerFile };
 
-    constructor(private readonly logger: RocketletLoggerManager) {
+    constructor(private readonly logger: AppLoggerManager) {
         this.compilerOptions = {
             target: ts.ScriptTarget.ES2016,
             module: ts.ModuleKind.CommonJS,
@@ -71,16 +71,16 @@ export class RocketletCompiler {
         return this.libraryFiles[norm];
     }
 
-    public toJs(info: IRocketletInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {
+    public toJs(info: IAppInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {
         if (!files || !files[info.classFile] || !this.isValidFile(files[info.classFile])) {
-            throw new Error(`Invalid Rocketlet package. Could not find the classFile (${info.classFile}) file.`);
+            throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
         }
 
         // Verify all file names are normalized
         // and that the files are valid
         Object.keys(files).forEach((key) => {
             if (!this.isValidFile(files[key])) {
-                throw new Error(`Invalid TypeScript file in the Rocketlet ${info.name} in the file "${key}".`);
+                throw new Error(`Invalid TypeScript file in the App ${info.name} in the file "${key}".`);
             }
 
             files[key].name = path.normalize(files[key].name);
@@ -147,8 +147,8 @@ export class RocketletCompiler {
 
                         ts.forEachChild(node, (nn) => {
                             if (e.token === ts.SyntaxKind.ExtendsKeyword) {
-                                if (nn.getText() !== 'Rocketlet') {
-                                    throw new MustExtendRocketletError();
+                                if (nn.getText() !== 'App') {
+                                    throw new MustExtendAppError();
                                 }
                             } else {
                                 console.log(nn.getText());
@@ -174,11 +174,11 @@ export class RocketletCompiler {
         return files;
     }
 
-    public toSandBox(storage: IRocketletStorageItem): ProxiedRocketlet {
+    public toSandBox(storage: IAppStorageItem): ProxiedApp {
         const files = this.storageFilesToCompiler(storage.compiled);
 
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
-            throw new Error(`Invalid Rocketlet package for "${storage.info.name}". ` +
+            throw new Error(`Invalid App package for "${storage.info.name}". ` +
                 `Could not find the classFile (${storage.info.classFile}) file.`);
         }
 
@@ -190,19 +190,19 @@ export class RocketletCompiler {
 
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
-            throw new Error(`The Rocketlet's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
+            throw new Error(`The App's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
         }
 
-        const rl = vm.runInNewContext('new Rocketlet(info, rcLogger);', vm.createContext({
+        const rl = vm.runInNewContext('new App(info, rcLogger);', vm.createContext({
             console: this.logger.retrieve(storage.info.id),
             rcLogger: this.logger.retrieve(storage.info.id),
             info: storage.info,
-            Rocketlet: result,
+            App: result,
             process: {},
-        }), { timeout: 100, filename: `Rocketlet_${storage.info.nameSlug}.js` });
+        }), { timeout: 100, filename: `App_${storage.info.nameSlug}.js` });
 
-        if (!(rl instanceof Rocketlet)) {
-            throw new MustExtendRocketletError();
+        if (!(rl instanceof App)) {
+            throw new MustExtendAppError();
         }
 
         if (typeof rl.getName !== 'function') {
@@ -229,7 +229,7 @@ export class RocketletCompiler {
             throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        return new ProxiedRocketlet(storage, rl as Rocketlet, customRequire);
+        return new ProxiedApp(storage, rl as App, customRequire);
     }
 
     private isValidFile(file: ICompilerFile): boolean {

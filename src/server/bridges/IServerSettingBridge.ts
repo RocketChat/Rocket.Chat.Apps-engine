@@ -1,15 +1,15 @@
-import { ISetting } from 'temporary-rocketlets-ts-definition/settings';
+import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 
 export interface IServerSettingBridge {
-    getAll(rocketletId: string): Array<ISetting>;
+    getAll(appId: string): Array<ISetting>;
 
-    getOneById(id: string, rocketletId: string): ISetting;
+    getOneById(id: string, appId: string): ISetting;
 
-    hideGroup(name: string, rocketletId: string): void;
+    hideGroup(name: string, appId: string): void;
 
-    hideSetting(id: string, rocketletId: string): void;
+    hideSetting(id: string, appId: string): void;
 
-    isReadableById(id: string, rocketletId: string): boolean;
+    isReadableById(id: string, appId: string): boolean;
 
-    updateOne(setting: ISetting, rocketletId: string): void;
+    updateOne(setting: ISetting, appId: string): void;
 }

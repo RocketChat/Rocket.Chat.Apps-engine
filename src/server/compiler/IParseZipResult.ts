@@ -1,7 +1,7 @@
-import { IRocketletInfo } from 'temporary-rocketlets-ts-definition/metadata';
+import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 
 export interface IParseZipResult {
-    info: IRocketletInfo;
+    info: IAppInfo;
     compiledFiles: { [key: string]: string };
     languageContent: { [key: string]: object };
 }

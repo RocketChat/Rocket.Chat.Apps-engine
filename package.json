@@ -1,20 +1,29 @@
 {
-  "name": "temporary-rocketlets-server",
+  "name": "@rocket.chat/apps-engine",
   "version": "0.2.6",
-  "description": "Temporary location for the server's piece for the Rocketlets, it manages, runs, translates, and coordinates and all of that.",
+  "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index.js",
   "typings": "index",
-  "keywords": [
-    "rocketlets",
-    "rocket.chat"
-  ],
-  "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
-  "license": "MIT",
   "scripts": {
     "start": "gulp",
     "compile": "gulp compile-dev-ts",
     "go-publish": "gulp publish"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RocketChat/Rocket.Chat.Apps-engine.git"
+  },
+  "keywords": [
+    "rocket.chat",
+    "team chat",
+    "apps engine"
+  ],
+  "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/RocketChat/Rocket.Chat.Apps-engine/issues"
+  },
+  "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
   "devDependencies": {
     "@types/adm-zip": "^0.4.31",
     "@types/nedb": "^1.8.3",
@@ -35,10 +44,10 @@
     "tslint": "^5.5.0"
   },
   "dependencies": {
+    "@rocket.chat/apps-ts-definition": "^0.7.2",
     "adm-zip": "^0.4.7",
     "semver": "^5.3.0",
     "stack-trace": "0.0.10",
-    "temporary-rocketlets-ts-definition": "^0.6.34",
     "typescript": "^2.4.1",
     "uuid": "^3.1.0"
   }

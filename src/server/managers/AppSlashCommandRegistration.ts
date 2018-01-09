@@ -1,6 +1,6 @@
-import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
 
-export class RocketletSlashCommandRegistration {
+export class AppSlashCommandRegistration {
     /**
      * States whether this command has been registered into the Rocket.Chat system or not.
      */

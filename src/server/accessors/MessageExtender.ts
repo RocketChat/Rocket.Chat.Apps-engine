@@ -1,6 +1,6 @@
-import { IMessageExtender } from 'temporary-rocketlets-ts-definition/accessors';
-import { IMessage, IMessageAttachment } from 'temporary-rocketlets-ts-definition/messages';
-import { RocketChatAssociationModel } from 'temporary-rocketlets-ts-definition/metadata';
+import { IMessageExtender } from '@rocket.chat/apps-ts-definition/accessors';
+import { IMessage, IMessageAttachment } from '@rocket.chat/apps-ts-definition/messages';
+import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
 
 export class MessageExtender implements IMessageExtender {
     public readonly kind: RocketChatAssociationModel.MESSAGE;

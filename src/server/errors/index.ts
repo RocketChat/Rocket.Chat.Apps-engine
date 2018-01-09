@@ -1,13 +1,13 @@
 import { CommandAlreadyExistsError } from './CommandAlreadyExistsError';
 import { MustContainFunctionError } from './MustContainFunctionError';
-import { MustExtendRocketletError } from './MustExtendRocketletError';
+import { MustExtendAppError } from './MustExtendAppError';
 import { NotEnoughMethodArgumentsError } from './NotEnoughMethodArgumentsError';
 import { RequiredApiVersionError } from './RequiredApiVersionError';
 
 export {
     CommandAlreadyExistsError,
     MustContainFunctionError,
-    MustExtendRocketletError,
+    MustExtendAppError,
     NotEnoughMethodArgumentsError,
     RequiredApiVersionError,
 };

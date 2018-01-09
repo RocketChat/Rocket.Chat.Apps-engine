@@ -1,19 +1,19 @@
 import { IMessageBridge } from '../bridges/IMessageBridge';
 
-import { IMessageRead } from 'temporary-rocketlets-ts-definition/accessors';
-import { IMessage } from 'temporary-rocketlets-ts-definition/messages';
-import { IRoom } from 'temporary-rocketlets-ts-definition/rooms';
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IMessageRead } from '@rocket.chat/apps-ts-definition/accessors';
+import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
+import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 export class MessageRead implements IMessageRead {
-    constructor(private messageBridge: IMessageBridge, private rocketletId: string) { }
+    constructor(private messageBridge: IMessageBridge, private appId: string) { }
 
     public getById(id: string): IMessage {
-        return this.messageBridge.getById(id, this.rocketletId);
+        return this.messageBridge.getById(id, this.appId);
     }
 
     public getSenderUser(messageId: string): IUser {
-        const msg = this.messageBridge.getById(messageId, this.rocketletId);
+        const msg = this.messageBridge.getById(messageId, this.appId);
 
         if (!msg) {
             return undefined;
@@ -23,7 +23,7 @@ export class MessageRead implements IMessageRead {
     }
 
     public getRoom(messageId: string): IRoom {
-        const msg = this.messageBridge.getById(messageId, this.rocketletId);
+        const msg = this.messageBridge.getById(messageId, this.appId);
 
         if (!msg) {
             return undefined;

@@ -1,7 +1,7 @@
-import { IRoomExtender } from 'temporary-rocketlets-ts-definition/accessors';
-import { RocketChatAssociationModel } from 'temporary-rocketlets-ts-definition/metadata';
-import { IRoom } from 'temporary-rocketlets-ts-definition/rooms';
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IRoomExtender } from '@rocket.chat/apps-ts-definition/accessors';
+import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
+import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 export class RoomExtender implements IRoomExtender {
     public kind: RocketChatAssociationModel.ROOM;
