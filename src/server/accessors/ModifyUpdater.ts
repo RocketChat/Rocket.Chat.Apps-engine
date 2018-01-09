@@ -1,22 +1,22 @@
-import { IMessageBuilder, IModifyUpdater, IRoomBuilder } from 'temporary-rocketlets-ts-definition/accessors';
-import { RocketChatAssociationModel } from 'temporary-rocketlets-ts-definition/metadata';
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IMessageBuilder, IModifyUpdater, IRoomBuilder } from '@rocket.chat/apps-ts-definition/accessors';
+import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
-import { RocketletBridges } from '../bridges';
+import { AppBridges } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyUpdater implements IModifyUpdater {
-    constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) { }
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
     public message(messageId: string, updater: IUser): IMessageBuilder {
-        const msg = this.bridges.getMessageBridge().getById(messageId, this.rocketletId);
+        const msg = this.bridges.getMessageBridge().getById(messageId, this.appId);
 
         return new MessageBuilder(msg);
     }
 
     public room(roomId: string, updater: IUser): IRoomBuilder {
-        const room = this.bridges.getRoomBridge().getById(roomId, this.rocketletId);
+        const room = this.bridges.getRoomBridge().getById(roomId, this.appId);
 
         return new RoomBuilder(room);
     }
@@ -43,7 +43,7 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid sender assigned to the message.');
         }
 
-        return this.bridges.getMessageBridge().update(result, this.rocketletId);
+        return this.bridges.getMessageBridge().update(result, this.appId);
     }
 
     private _finishRoom(builder: IRoomBuilder): void {
@@ -65,6 +65,6 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid type assigned to the room.');
         }
 
-        return this.bridges.getRoomBridge().update(result, this.rocketletId);
+        return this.bridges.getRoomBridge().update(result, this.appId);
     }
 }

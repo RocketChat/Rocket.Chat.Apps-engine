@@ -1,8 +1,8 @@
-import { IMessageBuilder } from 'temporary-rocketlets-ts-definition/accessors';
-import { IMessage, IMessageAttachment } from 'temporary-rocketlets-ts-definition/messages';
-import { RocketChatAssociationModel } from 'temporary-rocketlets-ts-definition/metadata';
-import { IRoom } from 'temporary-rocketlets-ts-definition/rooms';
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IMessageBuilder } from '@rocket.chat/apps-ts-definition/accessors';
+import { IMessage, IMessageAttachment } from '@rocket.chat/apps-ts-definition/messages';
+import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
+import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;

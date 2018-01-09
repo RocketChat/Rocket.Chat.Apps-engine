@@ -1,4 +1,4 @@
-import { RocketletClientManager } from './RocketletClientManager';
-import { RocketletServerCommunicator } from './RocketletServerCommunicator';
+import { AppClientManager } from './AppClientManager';
+import { AppServerCommunicator } from './AppServerCommunicator';
 
-export { RocketletClientManager, RocketletServerCommunicator };
+export { AppClientManager, AppServerCommunicator };

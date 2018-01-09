@@ -5,7 +5,7 @@ import {
     IRead,
     IRoomRead,
     IUserRead,
-} from 'temporary-rocketlets-ts-definition/accessors';
+} from '@rocket.chat/apps-ts-definition/accessors';
 
 export class Reader implements IRead {
     constructor(private env: IEnvironmentRead, private message: IMessageRead,

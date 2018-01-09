@@ -1,7 +1,7 @@
-import { IRocketletStorageItem } from './IRocketletStorageItem';
-import { RocketletStorage } from './RocketletStorage';
+import { AppStorage } from './AppStorage';
+import { IAppStorageItem } from './IAppStorageItem';
 
 export {
-    IRocketletStorageItem,
-    RocketletStorage,
+    IAppStorageItem,
+    AppStorage,
 };

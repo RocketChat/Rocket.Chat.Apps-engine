@@ -1,6 +1,6 @@
-import { IModify, IModifyCreator, IModifyExtender, IModifyUpdater } from 'temporary-rocketlets-ts-definition/accessors';
+import { IModify, IModifyCreator, IModifyExtender, IModifyUpdater } from '@rocket.chat/apps-ts-definition/accessors';
 
-import { RocketletBridges } from '../bridges';
+import { AppBridges } from '../bridges';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
@@ -10,10 +10,10 @@ export class Modify implements IModify {
     private updater: IModifyUpdater;
     private extender: IModifyExtender;
 
-    constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) {
-        this.creator = new ModifyCreator(this.bridges, this.rocketletId);
-        this.updater = new ModifyUpdater(this.bridges, this.rocketletId);
-        this.extender = new ModifyExtender(this.bridges, this.rocketletId);
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+        this.creator = new ModifyCreator(this.bridges, this.appId);
+        this.updater = new ModifyUpdater(this.bridges, this.appId);
+        this.extender = new ModifyExtender(this.bridges, this.appId);
     }
 
     public getCreator(): IModifyCreator {

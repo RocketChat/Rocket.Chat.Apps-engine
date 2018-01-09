@@ -1,13 +1,13 @@
-import { ProxiedRocketlet } from '../ProxiedRocketlet';
+import { ProxiedApp } from '../ProxiedApp';
 
-import { ISettingRead } from 'temporary-rocketlets-ts-definition/accessors';
-import { ISetting } from 'temporary-rocketlets-ts-definition/settings';
+import { ISettingRead } from '@rocket.chat/apps-ts-definition/accessors';
+import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 
 export class SettingRead implements ISettingRead {
-    constructor(private readonly rocketlet: ProxiedRocketlet) {}
+    constructor(private readonly app: ProxiedApp) {}
 
     public getById(id: string): ISetting {
-        return this.rocketlet.getStorageItem().settings[id];
+        return this.app.getStorageItem().settings[id];
     }
 
     public getValueById(id: string): any {

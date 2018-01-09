@@ -1,13 +1,13 @@
-import { RocketletAccessorManager} from './RocketletAccessorManager';
-import { RocketletListenerManger } from './RocketletListenerManger';
-import { RocketletLoggerManager } from './RocketletLoggerManager';
-import { RocketletSettingsManager } from './RocketletSettingsManager';
-import { RocketletSlashCommandManager } from './RocketletSlashCommandManager';
+import { AppAccessorManager} from './AppAccessorManager';
+import { AppListenerManger } from './AppListenerManger';
+import { AppLoggerManager } from './AppLoggerManager';
+import { AppSettingsManager } from './AppSettingsManager';
+import { AppSlashCommandManager } from './AppSlashCommandManager';
 
 export {
-    RocketletAccessorManager,
-    RocketletListenerManger,
-    RocketletLoggerManager,
-    RocketletSettingsManager,
-    RocketletSlashCommandManager,
+    AppAccessorManager,
+    AppListenerManger,
+    AppLoggerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
 };

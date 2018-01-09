@@ -3,6 +3,6 @@ export class MustContainFunctionError implements Error {
     public message: string;
 
     constructor(fileName: string, funcName: string) {
-        this.message = `The Rocketlet (${fileName}) doesn't have a "${funcName}" function which is required.`;
+        this.message = `The App (${fileName}) doesn't have a "${funcName}" function which is required.`;
     }
 }

@@ -1,13 +1,13 @@
-import { ISetting } from 'temporary-rocketlets-ts-definition/settings';
+import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 
 import { IServerSettingBridge } from '../../src/server/bridges';
 
 export class DevServerSettingBridge implements IServerSettingBridge {
-    public getAll(rocketletId: string): Array<ISetting> {
+    public getAll(appId: string): Array<ISetting> {
         throw new Error('Method not implemented.');
     }
 
-    public getOneById(id: string, rocketletId: string): ISetting {
+    public getOneById(id: string, appId: string): ISetting {
         throw new Error('Method not implemented.');
     }
 
@@ -19,11 +19,11 @@ export class DevServerSettingBridge implements IServerSettingBridge {
         throw new Error('Method not implemented.');
     }
 
-    public isReadableById(id: string, rocketletId: string): boolean {
+    public isReadableById(id: string, appId: string): boolean {
         throw new Error('Method not implemented.');
     }
 
-    public updateOne(setting: ISetting, rocketletId: string): void {
+    public updateOne(setting: ISetting, appId: string): void {
         throw new Error('Method not implemented.');
     }
 }

@@ -1,12 +1,12 @@
-import { RocketletSlashCommandManager } from '../managers/RocketletSlashCommandManager';
+import { AppSlashCommandManager } from '../managers/AppSlashCommandManager';
 
-import { ISlashCommandsExtend } from 'temporary-rocketlets-ts-definition/accessors';
-import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommandsExtend } from '@rocket.chat/apps-ts-definition/accessors';
+import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
 
 export class SlashCommandsExtend implements ISlashCommandsExtend {
-    constructor(private readonly manager: RocketletSlashCommandManager, private readonly rocketletId: string) { }
+    constructor(private readonly manager: AppSlashCommandManager, private readonly appId: string) { }
 
     public provideSlashCommand(slashCommand: ISlashCommand): void {
-        this.manager.addCommand(this.rocketletId, slashCommand);
+        this.manager.addCommand(this.appId, slashCommand);
     }
 }

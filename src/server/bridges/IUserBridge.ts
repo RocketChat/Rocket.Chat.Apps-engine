@@ -1,7 +1,7 @@
-import { IUser } from 'temporary-rocketlets-ts-definition/users';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 export interface IUserBridge {
-    getById(id: string, rocketletId: string): IUser;
+    getById(id: string, appId: string): IUser;
 
-    getByUsername(username: string, rocketletId: string): IUser;
+    getByUsername(username: string, appId: string): IUser;
 }

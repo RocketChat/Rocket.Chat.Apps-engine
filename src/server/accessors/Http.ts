@@ -6,15 +6,15 @@ import {
     IHttpRequest,
     IHttpResponse,
     RequestMethod,
-} from 'temporary-rocketlets-ts-definition/accessors';
-import { RocketletBridges } from '../bridges/RocketletBridges';
-import { RocketletAccessorManager } from '../managers/RocketletAccessorManager';
+} from '@rocket.chat/apps-ts-definition/accessors';
+import { AppBridges } from '../bridges/AppBridges';
+import { AppAccessorManager } from '../managers/AppAccessorManager';
 
 export class Http implements IHttp {
-    constructor(private readonly accessManager: RocketletAccessorManager,
-                private readonly bridges: RocketletBridges,
+    constructor(private readonly accessManager: AppAccessorManager,
+                private readonly bridges: AppBridges,
                 private readonly httpExtender: IHttpExtend,
-                private readonly rocketletId: string) { }
+                private readonly appId: string) { }
 
     public get(url: string, options?: IHttpRequest): IHttpResponse {
         return this._processHandler(url, RequestMethod.GET, options);
@@ -55,15 +55,15 @@ export class Http implements IHttp {
             }
         });
 
-        const reader = this.accessManager.getReader(this.rocketletId);
-        const persis = this.accessManager.getPersistence(this.rocketletId);
+        const reader = this.accessManager.getReader(this.appId);
+        const persis = this.accessManager.getPersistence(this.appId);
 
         this.httpExtender.getPreRequestHandlers().forEach((handler: IHttpPreRequestHandler) => {
             request = handler.executePreHttpRequest(url, request, reader, persis);
         });
 
         let response = this.bridges.getHttpBridge().call({
-            rocketletId: this.rocketletId,
+            appId: this.appId,
             method,
             url,
             request,

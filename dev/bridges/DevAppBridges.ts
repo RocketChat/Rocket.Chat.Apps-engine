@@ -1,21 +1,21 @@
 import {
+    AppBridges,
+    IAppActivationBridge,
+    IAppCommandBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
     IMessageBridge,
     IPersistenceBridge,
-    IRocketletActivationBridge,
-    IRocketletCommandBridge,
     IRoomBridge,
     IServerSettingBridge,
     IUserBridge,
-    RocketletBridges,
 } from '../../src/server/bridges';
 import { DevActivationBridge } from './DevActivationBridge';
 import { DevCommandBridge } from './DevCommandBridge';
 import { DevEnvironmentalVariableBridge } from './DevEnvironmentalVariableBridge';
 import { DevServerSettingBridge } from './DevServerSettingBridge';
 
-export class DevRocketletBridges extends RocketletBridges {
+export class DevAppBridges extends AppBridges {
     private readonly cmdBridge: DevCommandBridge;
     private readonly setsBridge: DevServerSettingBridge;
     private readonly envBridge: DevEnvironmentalVariableBridge;
@@ -29,7 +29,7 @@ export class DevRocketletBridges extends RocketletBridges {
         this.rlActBridge = new DevActivationBridge();
     }
 
-    public getCommandBridge(): IRocketletCommandBridge {
+    public getCommandBridge(): IAppCommandBridge {
         return this.cmdBridge;
     }
 
@@ -53,7 +53,7 @@ export class DevRocketletBridges extends RocketletBridges {
         throw new Error('Method not implemented.');
     }
 
-    public getRocketletActivationBridge(): IRocketletActivationBridge {
+    public getAppActivationBridge(): IAppActivationBridge {
         return this.rlActBridge;
     }
 

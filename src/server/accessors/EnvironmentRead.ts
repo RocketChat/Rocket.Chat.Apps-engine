@@ -3,7 +3,7 @@ import {
     IEnvironmentRead,
     IServerSettingRead,
     ISettingRead,
-} from 'temporary-rocketlets-ts-definition/accessors';
+} from '@rocket.chat/apps-ts-definition/accessors';
 
 export class EnvironmentRead implements IEnvironmentRead {
     constructor(private readonly settings: ISettingRead,

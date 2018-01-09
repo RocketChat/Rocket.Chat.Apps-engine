@@ -1,3 +1,3 @@
-import { RocketletConsole } from './RocketletConsole';
+import { AppConsole } from './AppConsole';
 
-export { RocketletConsole };
+export { AppConsole };

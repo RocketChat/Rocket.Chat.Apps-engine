@@ -1,7 +1,7 @@
+import { ILogEntry, ILogger, LogMessageSeverity } from '@rocket.chat/apps-ts-definition/accessors';
 import * as stackTrace from 'stack-trace';
-import { ILogEntry, ILogger, LogMessageSeverity } from 'temporary-rocketlets-ts-definition/accessors';
 
-export class RocketletConsole implements ILogger {
+export class AppConsole implements ILogger {
     public debugEntries: Array<ILogEntry>;
     public infoEntries: Array<ILogEntry>;
     public logEntries: Array<ILogEntry>;

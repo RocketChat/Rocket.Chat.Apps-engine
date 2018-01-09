@@ -1,4 +1,4 @@
-export enum RocketletMethod {
+export enum AppMethod {
     INITIALIZE = 'initialize',
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',

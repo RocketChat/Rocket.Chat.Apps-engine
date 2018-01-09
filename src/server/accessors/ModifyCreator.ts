@@ -1,14 +1,14 @@
-import { IMessageBuilder, IModifyCreator, IRoomBuilder } from 'temporary-rocketlets-ts-definition/accessors';
-import { IMessage } from 'temporary-rocketlets-ts-definition/messages';
-import { RocketChatAssociationModel } from 'temporary-rocketlets-ts-definition/metadata';
-import { IRoom } from 'temporary-rocketlets-ts-definition/rooms';
+import { IMessageBuilder, IModifyCreator, IRoomBuilder } from '@rocket.chat/apps-ts-definition/accessors';
+import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
+import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
+import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 
-import { RocketletBridges } from '../bridges';
+import { AppBridges } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyCreator implements IModifyCreator {
-    constructor(private readonly bridges: RocketletBridges, private readonly rocketletId: string) { }
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
     public startMessage(data?: IMessage): IMessageBuilder {
         if (data) {
@@ -49,7 +49,7 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid sender assigned to the message.');
         }
 
-        return this.bridges.getMessageBridge().create(result, this.rocketletId);
+        return this.bridges.getMessageBridge().create(result, this.appId);
     }
 
     private _finishRoom(builder: IRoomBuilder): string {
@@ -72,6 +72,6 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid type assigned to the room.');
         }
 
-        return this.bridges.getRoomBridge().create(result, this.rocketletId);
+        return this.bridges.getRoomBridge().create(result, this.appId);
     }
 }

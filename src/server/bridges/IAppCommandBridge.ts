@@ -1,61 +1,61 @@
-import { ISlashCommand } from 'temporary-rocketlets-ts-definition/slashcommands';
+import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
 
 /**
  * The interface which should be implemented for the commands to be
  * registered, unregistered, and a check to see if a command exists.
  */
-export interface IRocketletCommandBridge {
+export interface IAppCommandBridge {
     /**
      * Checks if the provided command already exists inside of the
-     * system which is being bridged. This does not check if the rocketlet
+     * system which is being bridged. This does not check if the app
      * registered it but it should return whether the supplied command is
      * already defined by something else or not.
      *
      * @param command the command to check if it exists
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      * @return whether the command is already in the system
      */
-    doesCommandExist(command: string, rocketletId: string): boolean;
+    doesCommandExist(command: string, appId: string): boolean;
 
     /**
      * Enables an existing command from the bridged system.
      *
      * @param command the command to enable
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      */
-    enableCommand(command: string, rocketletId: string): void;
+    enableCommand(command: string, appId: string): void;
 
     /**
      * Disables an existing command from the bridged system.
      *
      * @param command the command which to disable
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      */
-    disableCommand(command: string, rocketletId: string): void;
+    disableCommand(command: string, appId: string): void;
 
     /**
      * Changes how an existing slash command behaves, so you can provide
      * different executor per configuration.
      *
      * @param command the modified slash command
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      */
-    modifyCommand(command: ISlashCommand, rocketletId: string): void;
+    modifyCommand(command: ISlashCommand, appId: string): void;
 
     /**
      * Registers a command with the system which is being bridged.
      *
      * @param command the command to register
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      * @param toRun the executor which is called when the command is ran
      */
-    registerCommand(command: ISlashCommand, rocketletId: string): void;
+    registerCommand(command: ISlashCommand, appId: string): void;
 
     /**
      * Unregisters the provided command from the bridged system.
      *
      * @param command the command to unregister
-     * @param rocketletId the id of the rocketlet calling this
+     * @param appId the id of the app calling this
      */
-    unregisterCommand(command: string, rocketletId: string): void;
+    unregisterCommand(command: string, appId: string): void;
 }
