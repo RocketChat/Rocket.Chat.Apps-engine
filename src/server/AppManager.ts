@@ -81,7 +81,7 @@ export class AppManager {
     }
 
     /** Gets the instance of the Bridge manager. */
-    public getBridgeManager(): AppBridges {
+    public getBridges(): AppBridges {
         return this.bridges;
     }
 
@@ -113,8 +113,15 @@ export class AppManager {
     public async load(): Promise<Array<ProxiedApp>> {
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
 
-        items.forEach((item: IAppStorageItem) =>
-            this.apps.set(item.id, this.getCompiler().toSandBox(item)));
+        items.forEach((item: IAppStorageItem) => {
+            try {
+                this.apps.set(item.id, this.getCompiler().toSandBox(item));
+            } catch (e) {
+                // TODO: Handle this better. Create a way to show that it is disabled due to an
+                // unrecoverable error and they need to either update or remove it. #7
+                console.warn(`Error while compiling the Rocketlet "${ item.info.name } (${ item.id })":`, e);
+            }
+        });
 
         // Let's initialize them
         this.apps.forEach((rl) => this.initializeApp(items.get(rl.getID()), rl));
