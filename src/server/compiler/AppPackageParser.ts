@@ -142,7 +142,7 @@ export class AppPackageParser {
     private getTsDefVersion(): string {
         const devLocation = 'node_modules/@rocket.chat/apps-ts-definition/package.json';
         // tslint:disable-next-line
-        const prodLocation = __dirname.split('temporary-apps-server')[0] + '@rocket.chat/apps-ts-definition/package.json';
+        const prodLocation = __dirname.split('@rocket.chat/apps-engine')[0] + '@rocket.chat/apps-ts-definition/package.json';
 
         if (fs.existsSync(devLocation)) {
             const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
