@@ -5,7 +5,7 @@ import * as vm from 'vm';
 
 import { AppManager } from '../AppManager';
 import { MustContainFunctionError, MustExtendAppError } from '../errors';
-import { AppConsole } from '../logging/index';
+import { AppConsole } from '../logging';
 import { ProxiedApp } from '../ProxiedApp';
 import { IAppStorageItem } from '../storage/IAppStorageItem';
 import { ICompilerFile } from './ICompilerFile';
