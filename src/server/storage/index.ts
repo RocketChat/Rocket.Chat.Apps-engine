@@ -1,7 +1,9 @@
+import { AppLogStorage } from './AppLogStorage';
 import { AppStorage } from './AppStorage';
 import { IAppStorageItem } from './IAppStorageItem';
 
 export {
-    IAppStorageItem,
+    AppLogStorage,
     AppStorage,
+    IAppStorageItem,
 };

@@ -1,21 +1,23 @@
-import { MustContainFunctionError, MustExtendAppError } from '../errors';
-import { AppLoggerManager } from '../managers';
-import { ProxiedApp } from '../ProxiedApp';
-import { IAppStorageItem } from '../storage/IAppStorageItem';
-import { ICompilerFile } from './ICompilerFile';
-
-import { App } from '@rocket.chat/apps-ts-definition/App';
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
 
+import { AppManager } from '../AppManager';
+import { MustContainFunctionError, MustExtendAppError } from '../errors';
+import { AppConsole } from '../logging/index';
+import { ProxiedApp } from '../ProxiedApp';
+import { IAppStorageItem } from '../storage/IAppStorageItem';
+import { ICompilerFile } from './ICompilerFile';
+
+import { App } from '@rocket.chat/apps-ts-definition/App';
+import { AppMethod, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+
 export class AppCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
     private libraryFiles: { [s: string]: ICompilerFile };
 
-    constructor(private readonly logger: AppLoggerManager) {
+    constructor(private readonly manager: AppManager) {
         this.compilerOptions = {
             target: ts.ScriptTarget.ES2016,
             module: ts.ModuleKind.CommonJS,
@@ -193,9 +195,10 @@ export class AppCompiler {
             throw new Error(`The App's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
         }
 
+        const logger = new AppConsole(AppMethod._CONSTRUCTOR);
         const rl = vm.runInNewContext('new App(info, rcLogger);', vm.createContext({
-            console: this.logger.retrieve(storage.info.id),
-            rcLogger: this.logger.retrieve(storage.info.id),
+            console: logger,
+            rcLogger: logger,
             info: storage.info,
             App: result,
             process: {},
@@ -229,7 +232,11 @@ export class AppCompiler {
             throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        return new ProxiedApp(storage, rl as App, customRequire);
+        const app = new ProxiedApp(this.manager, storage, rl as App, customRequire);
+
+        this.manager.getLogStorage().storeEntries(app.getID(), logger);
+
+        return app;
     }
 
     private isValidFile(file: ICompilerFile): boolean {

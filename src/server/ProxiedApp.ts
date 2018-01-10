@@ -2,18 +2,20 @@ import { ILogger } from '@rocket.chat/apps-ts-definition/accessors';
 import { App } from '@rocket.chat/apps-ts-definition/App';
 import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
 import { IApp } from '@rocket.chat/apps-ts-definition/IApp';
-import { IAppAuthorInfo, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+import { AppMethod, IAppAuthorInfo, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 
-import { AppMethod } from './compiler';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { IAppStorageItem } from './storage';
 
 import * as vm from 'vm';
+import { AppManager } from './AppManager';
+import { AppConsole } from './logging/index';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
 
-    constructor(private storageItem: IAppStorageItem,
+    constructor(private readonly manager: AppManager,
+                private storageItem: IAppStorageItem,
                 private readonly app: App,
                 private readonly customRequire: (mod: string) => {}) {
         this.previousStatus = storageItem.status;
@@ -48,6 +50,10 @@ export class ProxiedApp implements IApp {
             throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
         }
 
+        const logger = new AppConsole(method);
+        // Set the logger to our new one
+        (this.app as any).logger = logger;
+
         const context = vm.createContext({
             app: this.app,
             args,
@@ -59,6 +65,8 @@ export class ProxiedApp implements IApp {
         // tslint:disable-next-line:max-line-length
         const result = vm.runInContext(`app.${method}.apply(app, args)`, context, { timeout: 1000 });
         this.app.getLogger().debug(`${method} was successfully called!`);
+
+        this.manager.getLogStorage().storeEntries(this.getID(), logger);
 
         return result;
     }

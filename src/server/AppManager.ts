@@ -1,17 +1,17 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppMethod, AppPackageParser } from './compiler';
+import { AppCompiler, AppPackageParser } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppListenerManger,
-    AppLoggerManager,
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
 import { ProxiedApp } from './ProxiedApp';
-import { AppStorage, IAppStorageItem } from './storage';
+import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
+import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 
 export class AppManager {
     public static ENV_VAR_NAME_FOR_ENABLING = 'USE_UNRELEASED_ROCKETAPPS_FRAMEWORK';
@@ -20,25 +20,31 @@ export class AppManager {
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
     private readonly storage: AppStorage;
+    private readonly logStorage: AppLogStorage;
     private readonly bridges: AppBridges;
     private readonly parser: AppPackageParser;
     private readonly compiler: AppCompiler;
 
     private readonly accessorManager: AppAccessorManager;
     private readonly listenerManager: AppListenerManger;
-    private readonly logger: AppLoggerManager;
     private readonly commandManager: AppSlashCommandManager;
     private readonly settingsManager: AppSettingsManager;
 
     private isLoaded: boolean;
 
-    constructor(rlStorage: AppStorage, rlBridges: AppBridges) {
+    constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
         console.log('Constructed the AppManager.');
 
         if (rlStorage instanceof AppStorage) {
             this.storage = rlStorage;
         } else {
             throw new Error('Invalid instance of the AppStorage.');
+        }
+
+        if (logStorage instanceof AppLogStorage) {
+            this.logStorage = logStorage;
+        } else {
+            throw new Error('Invalid instance of the AppLogStorage.');
         }
 
         if (rlBridges instanceof AppBridges) {
@@ -50,8 +56,7 @@ export class AppManager {
         this.apps = new Map<string, ProxiedApp>();
 
         this.parser = new AppPackageParser(this);
-        this.logger = new AppLoggerManager();
-        this.compiler = new AppCompiler(this.logger);
+        this.compiler = new AppCompiler(this);
         this.accessorManager = new AppAccessorManager(this);
         this.listenerManager = new AppListenerManger(this);
         this.commandManager = new AppSlashCommandManager(this.bridges.getCommandBridge(), this.accessorManager);
@@ -63,6 +68,11 @@ export class AppManager {
     /** Gets the instance of the storage connector. */
     public getStorage(): AppStorage {
         return this.storage;
+    }
+
+    /** Gets the instance of the log storage connector. */
+    public getLogStorage(): AppLogStorage {
+        return this.logStorage;
     }
 
     /** Gets the instance of the App package parser. */
@@ -204,7 +214,7 @@ export class AppManager {
 
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
-            throw new Error(`Could not enable a App with the id of "${id}" as it doesn't exist.`);
+            throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
         const isSetup = this.runStartUpProcess(storageItem, rl);
@@ -239,7 +249,7 @@ export class AppManager {
 
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
-            throw new Error(`Could not disable a App with the id of "${id}" as it doesn't exist.`);
+            throw new Error(`Could not disable an App with the id of "${id}" as it doesn't exist.`);
         }
 
         try {
@@ -328,7 +338,7 @@ export class AppManager {
         const old = await this.storage.retrieveOne(result.info.id);
 
         if (!old) {
-            throw new Error('Can not update a App that does not currently exist.');
+            throw new Error('Can not update an App that does not currently exist.');
         }
 
         // Attempt to disable it, if it wasn't enabled then it will error and we don't care
@@ -389,25 +399,25 @@ export class AppManager {
             case AppStatus.MANUALLY_ENABLED:
                 break;
             default:
-                throw new Error('Invalid status to change a App to, must be manually disabled or enabled.');
+                throw new Error('Invalid status to change an App to, must be manually disabled or enabled.');
         }
 
         const rl = this.apps.get(appId);
 
         if (!rl) {
-            throw new Error('Can not change the status of a App which does not currently exist.');
+            throw new Error('Can not change the status of an App which does not currently exist.');
         }
 
         if (AppStatusUtils.isEnabled(status)) {
             // Then enable it
             if (AppStatusUtils.isEnabled(rl.getStatus())) {
-                throw new Error('Can not enable a App which is already enabled.');
+                throw new Error('Can not enable an App which is already enabled.');
             }
 
             await this.enable(rl.getID());
         } else {
             if (!AppStatusUtils.isEnabled(rl.getStatus())) {
-                throw new Error('Can not disable a App which is not enabled.');
+                throw new Error('Can not disable an App which is not enabled.');
             }
 
             await this.disable(rl.getID(), true);

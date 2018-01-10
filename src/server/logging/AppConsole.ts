@@ -1,84 +1,116 @@
-import { ILogEntry, ILogger, LogMessageSeverity } from '@rocket.chat/apps-ts-definition/accessors';
 import * as stackTrace from 'stack-trace';
 
-export class AppConsole implements ILogger {
-    public debugEntries: Array<ILogEntry>;
-    public infoEntries: Array<ILogEntry>;
-    public logEntries: Array<ILogEntry>;
-    public warnEntries: Array<ILogEntry>;
-    public errorEntries: Array<ILogEntry>;
-    public successEntries: Array<ILogEntry>;
+import { ILogEntry, ILogger, LogMessageSeverity } from '@rocket.chat/apps-ts-definition/accessors';
+import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
+import { ILoggerStorageEntry } from './ILoggerStorageEntry';
 
-    constructor() {
-        this.debugEntries = new Array<ILogEntry>();
-        this.infoEntries = new Array<ILogEntry>();
-        this.logEntries = new Array<ILogEntry>();
-        this.warnEntries = new Array<ILogEntry>();
-        this.errorEntries = new Array<ILogEntry>();
-        this.successEntries = new Array<ILogEntry>();
+export class AppConsole implements ILogger {
+    public static toStorageEntry(appId: string, logger: AppConsole): ILoggerStorageEntry {
+        return {
+            appId,
+            method: logger.getMethod(),
+            entries: logger.getEntries(),
+            startTime: logger.getStartTime(),
+            endTime: logger.getEndTime(),
+            totalTime: logger.getTotalTime(),
+            _createdAt: new Date(),
+        };
+    }
+
+    public method: AppMethod;
+    private entries: Array<ILogEntry>;
+    private start: Date;
+
+    constructor(method: AppMethod) {
+        this.method = method;
+        this.entries = new Array<ILogEntry>();
+        this.start = new Date();
     }
 
     public debug(...items: Array<any>): void {
-        this.debugEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.DEBUG,
             timestamp: new Date(),
             args: items,
         });
-        console.log(items);
+
+        console.debug(items);
     }
 
     public info(...items: Array<any>): void {
-        this.infoEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.INFORMATION,
             timestamp: new Date(),
             args: items,
         });
+
+        console.info(items);
     }
 
     public log(...items: Array<any>): void {
-        this.logEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.LOG,
             timestamp: new Date(),
             args: items,
         });
+
+        console.log(items);
     }
 
     public warn(...items: Array<any>): void {
-        this.warnEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.WARNING,
             timestamp: new Date(),
             args: items,
         });
+
+        console.warn(items);
     }
 
     public error(...items: Array<any>): void {
-        this.errorEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.ERROR,
             timestamp: new Date(),
             args: items,
         });
+
+        console.error(items);
     }
 
     public success(...items: Array<any>): void {
-        this.successEntries.push({
+        this.entries.push({
             caller: this.getFunc(stackTrace.get()),
             severity: LogMessageSeverity.SUCCESS,
             timestamp: new Date(),
             args: items,
         });
+
+        console.log('[SUCCESS]:', ...items);
     }
 
-    public getAllEntries(): Array<ILogEntry> {
-        return this.debugEntries.concat(this.infoEntries)
-                    .concat(this.logEntries)
-                    .concat(this.warnEntries)
-                    .concat(this.errorEntries)
-                    .concat(this.successEntries);
+    public getEntries(): Array<ILogEntry> {
+        return Array.from(this.entries);
+    }
+
+    public getMethod(): AppMethod {
+        return this.method;
+    }
+
+    public getStartTime(): Date {
+        return this.start;
+    }
+
+    public getEndTime(): Date {
+        return new Date();
+    }
+
+    public getTotalTime(): number {
+        return this.getEndTime().getTime() - this.getStartTime().getTime();
     }
 
     private getFunc(stack: Array<stackTrace.StackFrame>): string {

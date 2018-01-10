@@ -28,7 +28,7 @@ export class AppSlashCommandManager {
 
     /**
      * Adds a command to be registered. This will not register it with the
-     * bridged system yet as this is only called on a App's
+     * bridged system yet as this is only called on an App's
      * `initialize` method which the App might not be enabled.
      *
      * @param appId the app's id which the command belongs to
@@ -154,7 +154,7 @@ export class AppSlashCommandManager {
     }
 
     /**
-     * Executes a App's command.
+     * Executes an App's command.
      *
      * @param command the command to execute
      * @param context the context in which the command was entered
