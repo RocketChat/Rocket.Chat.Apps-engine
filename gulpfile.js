@@ -68,6 +68,8 @@ gulp.task('default', ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts',
     return gulp.watch(['src/**/*.ts', 'dev/**/*.ts'], ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts', 'run-dev']);
 });
 
+gulp.task('build', ['clean-generated', 'lint-ts', 'lint-dev-ts', 'compile-ts', 'compile-dev-ts']);
+
 //Tasks for getting it ready and publishing
 gulp.task('npm-files', ['clean-generated'], function _npmFileGathering() {
     return gulp.src(['README.md', 'LICENSE', 'package.json']).pipe(gulp.dest('dist'));

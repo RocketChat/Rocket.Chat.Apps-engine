@@ -1,6 +1,6 @@
+import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 import { AppManager } from '../AppManager';
-import { AppMethod } from '../compiler';
 
 export class AppSettingsManager {
     constructor(private manager: AppManager) { }

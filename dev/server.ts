@@ -1,15 +1,17 @@
 import { AppManager } from '../src/server/AppManager';
 import { ProxiedApp } from '../src/server/ProxiedApp';
 import { DevAppBridges } from './bridges/DevAppBridges';
+import { DevAppLogStorage } from './logStorage';
 import { TestingStorage } from './storage';
 
 import { App } from '@rocket.chat/apps-ts-definition/App';
 import * as fs from 'fs';
 import * as path from 'path';
 
+const logStorage = new DevAppLogStorage();
 const storage = new TestingStorage();
 const bridges = new DevAppBridges();
-const manager = new AppManager(storage, bridges);
+const manager = new AppManager(storage, logStorage, bridges);
 
 if (!fs.existsSync('examples')) {
     fs.mkdirSync('example');
