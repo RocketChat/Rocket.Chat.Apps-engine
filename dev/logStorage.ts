@@ -1,7 +1,7 @@
 import * as Datastore from 'nedb';
 
 import { AppConsole, ILoggerStorageEntry } from '../src/server/logging';
-import { AppLogStorage } from '../src/server/storage/index';
+import { AppLogStorage, IAppLogStorageFindOptions } from '../src/server/storage';
 
 export class DevAppLogStorage extends AppLogStorage {
     private db: Datastore;
@@ -9,6 +9,19 @@ export class DevAppLogStorage extends AppLogStorage {
     constructor() {
         super('nedb');
         this.db = new Datastore({ filename: 'data/logs.nedb', autoload: true });
+    }
+
+    public find(query: { [field: string]: any },
+                options?: IAppLogStorageFindOptions): Promise<Array<ILoggerStorageEntry>> {
+        return new Promise((resolve, reject) => {
+            this.db.find(query, (err: Error, items: Array<ILoggerStorageEntry>) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(items);
+                }
+            });
+        });
     }
 
     public storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry> {
