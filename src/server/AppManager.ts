@@ -59,7 +59,7 @@ export class AppManager {
         this.compiler = new AppCompiler(this);
         this.accessorManager = new AppAccessorManager(this);
         this.listenerManager = new AppListenerManger(this);
-        this.commandManager = new AppSlashCommandManager(this.bridges.getCommandBridge(), this.accessorManager);
+        this.commandManager = new AppSlashCommandManager(this);
         this.settingsManager = new AppSettingsManager(this);
 
         this.isLoaded = false;

@@ -1,5 +1,7 @@
+import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 
+import { AppManager } from '../AppManager';
 import { IAppCommandBridge } from '../bridges/IAppCommandBridge';
 import { CommandAlreadyExistsError } from '../errors/CommandAlreadyExistsError';
 import { AppAccessorManager } from './AppAccessorManager';
@@ -13,6 +15,8 @@ import { AppSlashCommandRegistration } from './AppSlashCommandRegistration';
  * only then will that App's commands be enabled.
  */
 export class AppSlashCommandManager {
+    private readonly bridge: IAppCommandBridge;
+    private readonly accessors: AppAccessorManager;
     // commands by app id
     private rlCommands: Map<string, Array<AppSlashCommandRegistration>>;
     // loaded commands
@@ -20,7 +24,9 @@ export class AppSlashCommandManager {
     private commandMappingToApp: Map<string, string>;
 
     // tslint:disable-next-line:max-line-length
-    constructor(private readonly bridge: IAppCommandBridge, private readonly accessors: AppAccessorManager) {
+    constructor(private readonly manager: AppManager) {
+        this.bridge = this.manager.getBridges().getCommandBridge();
+        this.accessors = this.manager.getAccessorManager();
         this.rlCommands = new Map<string, Array<AppSlashCommandRegistration>>();
         this.commands = new Map<string, AppSlashCommandRegistration>();
         this.commandMappingToApp = new Map<string, string>();
@@ -164,13 +170,30 @@ export class AppSlashCommandManager {
             return;
         }
 
-        const appId = this.commandMappingToApp.get(command);
-        const reader = this.accessors.getReader(appId);
-        const modify = this.accessors.getModifier(appId);
-        const http = this.accessors.getHttp(appId);
+        const app = this.manager.getOneById(this.commandMappingToApp.get(command));
+        const slashCommand = this.commands.get(command).slashCommand;
 
-        // TODO: Maybe run it in a context/sandbox? :thinking:
-        this.commands.get(command).slashCommand.executor(context, reader, modify, http);
+        const runContext = app.makeContext({
+            slashCommand,
+            context,
+            reader: this.accessors.getReader(app.getID()),
+            modify: this.accessors.getModifier(app.getID()),
+            http: this.accessors.getHttp(app.getID()),
+        });
+
+        const logger = app.setupLogger(AppMethod._COMMAND_EXECUTOR);
+        logger.debug(`${ command } is being executed...`, context);
+
+        try {
+            const runCode = 'slashCommand.executor.apply(slashCommand, context, reader, modify, http)';
+            app.runInContext(runCode, runContext);
+            logger.debug(`${ command } was successfully executed.`);
+        } catch (e) {
+            logger.error(e);
+            logger.debug(`${ command } was unsuccessful.`);
+        }
+
+        this.manager.getLogStorage().storeEntries(app.getID(), logger);
     }
 
     private registerCommand(appId: string, info: AppSlashCommandRegistration): void {

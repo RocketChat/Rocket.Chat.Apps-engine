@@ -17,16 +17,29 @@ if (!fs.existsSync('examples')) {
     fs.mkdirSync('example');
 }
 
-manager.load().then(() => {
-    return Promise.all(fs.readdirSync('examples')
-            .filter((file) => file.endsWith('.zip') && fs.statSync(path.join('examples', file)).isFile())
-            .map((file) => fs.readFileSync(path.join('examples', file), 'base64'))
-            .map((zip) => manager.add(zip).catch((err2: Error) => {
-                if (err2.message === 'App already exists.') {
-                    return manager.update(zip);
-                } else {
-                    return Promise.reject(err2);
-                }
-            })));
-}).then(() => manager.get().forEach((rl: ProxiedApp) => console.log('Successfully loaded:', rl.getName())))
-    .then(() => console.log('Completed the loading.')).catch((err) => console.log('Error caught:', err));
+async function loader(): Promise<void> {
+    await manager.load();
+
+    const files = fs.readdirSync('examples')
+                        .filter((file) => file.endsWith('.zip') && fs.statSync(path.join('examples', file)).isFile());
+
+    for (const file of files) {
+        const zip = fs.readFileSync(path.join('examples', file), 'base64');
+
+        try {
+            await manager.add(zip);
+        } catch (e) {
+            if (e.message === 'App already exists.') {
+                await manager.update(zip);
+                continue;
+            }
+
+            console.log('Got an error while working with:', file);
+            throw e;
+        }
+    }
+
+    manager.get().forEach((rl: ProxiedApp) => console.log('Successfully loaded:', rl.getName()));
+}
+
+loader().then(() => console.log('Completed the loading.'));

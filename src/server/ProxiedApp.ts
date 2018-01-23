@@ -38,6 +38,25 @@ export class ProxiedApp implements IApp {
         return typeof (this.app as any)[method] === 'function';
     }
 
+    public makeContext(data: object): vm.Context {
+        return vm.createContext(Object.assign({}, {
+            require: this.customRequire,
+            console: this.app.getLogger(),
+        }, data));
+    }
+
+    public setupLogger(method: AppMethod): AppConsole {
+        const logger = new AppConsole(method);
+        // Set the logger to our new one
+        (this.app as any).logger = logger;
+
+        return logger;
+    }
+
+    public runInContext(codeToRun: string, context: vm.Context): any {
+        return vm.runInContext(codeToRun, context, { timeout: 1000 });
+    }
+
     public call(method: AppMethod, ...args: Array<any>): any {
         if (typeof (this.app as any)[method] !== 'function') {
             throw new Error(`The App ${this.app.getName()} (${this.app.getID()}`
@@ -50,21 +69,17 @@ export class ProxiedApp implements IApp {
             throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
         }
 
-        const logger = new AppConsole(method);
-        // Set the logger to our new one
-        (this.app as any).logger = logger;
+        const logger = this.setupLogger(method);
+        logger.debug(`${method} is being called...`);
 
-        const context = vm.createContext({
-            app: this.app,
-            args,
-            require: this.customRequire,
-            console: this.app.getLogger(),
-        });
-
-        this.app.getLogger().debug(`${method} is being called...`);
-        // tslint:disable-next-line:max-line-length
-        const result = vm.runInContext(`app.${method}.apply(app, args)`, context, { timeout: 1000 });
-        this.app.getLogger().debug(`${method} was successfully called!`);
+        let result;
+        try {
+            result = this.runInContext(`app.${method}.apply(app, args)`, this.makeContext({ app: this.app, args }));
+            logger.debug(`${method} was successfully called!`, result);
+        } catch (e) {
+            logger.error(e);
+            logger.debug(`${method} was unsuccessful.`);
+        }
 
         this.manager.getLogStorage().storeEntries(this.getID(), logger);
 
