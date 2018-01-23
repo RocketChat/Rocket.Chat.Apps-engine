@@ -28,69 +28,27 @@ export class AppConsole implements ILogger {
     }
 
     public debug(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.DEBUG,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.debug(items);
+        this.addEntry(LogMessageSeverity.DEBUG, this.getFunc(stackTrace.get()), items);
     }
 
     public info(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.INFORMATION,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.info(items);
+        this.addEntry(LogMessageSeverity.INFORMATION, this.getFunc(stackTrace.get()), items);
     }
 
     public log(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.LOG,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.log(items);
+        this.addEntry(LogMessageSeverity.LOG, this.getFunc(stackTrace.get()), items);
     }
 
     public warn(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.WARNING,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.warn(items);
+        this.addEntry(LogMessageSeverity.WARNING, this.getFunc(stackTrace.get()), items);
     }
 
     public error(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.ERROR,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.error(items);
+        this.addEntry(LogMessageSeverity.ERROR, this.getFunc(stackTrace.get()), items);
     }
 
     public success(...items: Array<any>): void {
-        this.entries.push({
-            caller: this.getFunc(stackTrace.get()),
-            severity: LogMessageSeverity.SUCCESS,
-            timestamp: new Date(),
-            args: items,
-        });
-
-        console.log('[SUCCESS]:', ...items);
+        this.addEntry(LogMessageSeverity.SUCCESS, this.getFunc(stackTrace.get()), items);
     }
 
     public getEntries(): Array<ILogEntry> {
@@ -111,6 +69,26 @@ export class AppConsole implements ILogger {
 
     public getTotalTime(): number {
         return this.getEndTime().getTime() - this.getStartTime().getTime();
+    }
+
+    private addEntry(severity: LogMessageSeverity, caller: string, ...items: Array<any>): void {
+        const i = items.map((v) => {
+            if (v instanceof Error) {
+                return JSON.stringify(v, Object.getOwnPropertyNames(v));
+            } else {
+                return v;
+            }
+        });
+
+        this.entries.push({
+            caller,
+            severity,
+            timestamp: new Date(),
+            args: i,
+        });
+
+        // This should be a setting? :thinking:
+        console.log(`${ severity.toUpperCase() }:`, ...i);
     }
 
     private getFunc(stack: Array<stackTrace.StackFrame>): string {

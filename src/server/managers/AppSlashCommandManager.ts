@@ -175,17 +175,19 @@ export class AppSlashCommandManager {
 
         const runContext = app.makeContext({
             slashCommand,
-            context,
-            reader: this.accessors.getReader(app.getID()),
-            modify: this.accessors.getModifier(app.getID()),
-            http: this.accessors.getHttp(app.getID()),
+            args: [
+                context,
+                this.accessors.getReader(app.getID()),
+                this.accessors.getModifier(app.getID()),
+                this.accessors.getHttp(app.getID()),
+            ],
         });
 
         const logger = app.setupLogger(AppMethod._COMMAND_EXECUTOR);
         logger.debug(`${ command } is being executed...`, context);
 
         try {
-            const runCode = 'slashCommand.executor.apply(slashCommand, context, reader, modify, http)';
+            const runCode = 'slashCommand.executor.apply(slashCommand, args)';
             app.runInContext(runCode, runContext);
             logger.debug(`${ command } was successfully executed.`);
         } catch (e) {
