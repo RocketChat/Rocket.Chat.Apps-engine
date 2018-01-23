@@ -28,27 +28,27 @@ export class AppConsole implements ILogger {
     }
 
     public debug(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.DEBUG, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.DEBUG, this.getFunc(stackTrace.get()), ...items);
     }
 
     public info(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.INFORMATION, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.INFORMATION, this.getFunc(stackTrace.get()), ...items);
     }
 
     public log(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.LOG, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.LOG, this.getFunc(stackTrace.get()), ...items);
     }
 
     public warn(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.WARNING, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.WARNING, this.getFunc(stackTrace.get()), ...items);
     }
 
     public error(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.ERROR, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.ERROR, this.getFunc(stackTrace.get()), ...items);
     }
 
     public success(...items: Array<any>): void {
-        this.addEntry(LogMessageSeverity.SUCCESS, this.getFunc(stackTrace.get()), items);
+        this.addEntry(LogMessageSeverity.SUCCESS, this.getFunc(stackTrace.get()), ...items);
     }
 
     public getEntries(): Array<ILogEntry> {
