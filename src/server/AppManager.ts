@@ -225,12 +225,6 @@ export class AppManager {
             // and it should not mutate any properties we care about
             storageItem.status = rl.getStatus();
             this.storage.update(storageItem);
-
-            try {
-                this.bridges.getAppActivationBridge().appEnabled(rl);
-            } catch (e) {
-                // If an error occurs during this, oh well.
-            }
         }
 
         return isSetup;
@@ -270,12 +264,6 @@ export class AppManager {
         storageItem.status = rl.getStatus();
         this.storage.update(storageItem);
 
-        try {
-            this.bridges.getAppActivationBridge().appDisabled(rl);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
-
         return true;
     }
 
@@ -301,6 +289,13 @@ export class AppManager {
 
         this.apps.set(app.getID(), app);
 
+        // Let everyone know that the App has been added
+        try {
+            this.bridges.getAppActivationBridge().appAdded(app);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
+
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
         if (enable) {
@@ -310,27 +305,27 @@ export class AppManager {
             this.initializeApp(created, app, true);
         }
 
-        try {
-            const isEnabled = AppStatusUtils.isEnabled(app.getStatus());
-            this.bridges.getAppActivationBridge().appLoaded(app, isEnabled);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
-
         return app;
     }
 
     public async remove(id: string): Promise<ProxiedApp> {
         await this.disable(id);
 
-        const rl = this.apps.get(id);
+        const app = this.apps.get(id);
 
-        this.bridges.getPersistenceBridge().purge(rl.getID());
-        await this.storage.remove(rl.getID());
+        this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.storage.remove(app.getID());
 
-        this.apps.delete(rl.getID());
+        // Let everyone know that the App has been removed
+        try {
+            this.bridges.getAppActivationBridge().appRemoved(app);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
 
-        return rl;
+        this.apps.delete(app.getID());
+
+        return app;
     }
 
     public async update(zipContentsBase64d: string): Promise<ProxiedApp> {
@@ -369,9 +364,9 @@ export class AppManager {
         // Start up the app
         this.runStartUpProcess(stored, app);
 
+        // Let everyone know that the App has been updated
         try {
-            const isEnabled = AppStatusUtils.isEnabled(app.getStatus());
-            this.bridges.getAppActivationBridge().appUpdated(app, isEnabled);
+            this.bridges.getAppActivationBridge().appUpdated(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }

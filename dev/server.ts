@@ -14,7 +14,7 @@ const bridges = new DevAppBridges();
 const manager = new AppManager(storage, logStorage, bridges);
 
 if (!fs.existsSync('examples')) {
-    fs.mkdirSync('example');
+    fs.mkdirSync('examples');
 }
 
 async function loader(): Promise<void> {

@@ -92,6 +92,7 @@ export class ProxiedApp implements IApp {
 
     public setStatus(status: AppStatus) {
         this.call(AppMethod.SETSTATUS, status);
+        this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
     }
 
     public getName(): string {
