@@ -139,7 +139,7 @@ export class AppManager {
         // Now let's enable the apps which were once enabled
         this.apps.forEach((rl) => {
             if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                this.enableApp(items.get(rl.getID()), rl, true);
+                this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
         });
 
@@ -217,10 +217,8 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = this.runStartUpProcess(storageItem, rl);
+        const isSetup = this.runStartUpProcess(storageItem, rl, true);
         if (isSetup) {
-            rl.setStatus(AppStatus.MANUALLY_ENABLED);
-
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = rl.getStatus();
@@ -300,7 +298,7 @@ export class AppManager {
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            this.runStartUpProcess(created, app);
+            this.runStartUpProcess(created, app, false);
         } else {
             this.initializeApp(created, app, true);
         }
@@ -362,7 +360,7 @@ export class AppManager {
         this.apps.set(app.getID(), app);
 
         // Start up the app
-        this.runStartUpProcess(stored, app);
+        this.runStartUpProcess(stored, app, false);
 
         // Let everyone know that the App has been updated
         try {
@@ -439,13 +437,13 @@ export class AppManager {
         this.initializeApp(item, rl, false);
 
         if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-            this.enableApp(item, rl, false);
+            this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
         return this.apps.get(item.id);
     }
 
-    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp): boolean {
+    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): boolean {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
             const isInitialized = this.initializeApp(storageItem, app, true);
             if (!isInitialized) {
@@ -453,7 +451,7 @@ export class AppManager {
             }
         }
 
-        const isEnabled = this.enableApp(storageItem, app, true);
+        const isEnabled = this.enableApp(storageItem, app, true, isManual);
         if (!isEnabled) {
             return false;
         }
@@ -494,14 +492,14 @@ export class AppManager {
         return result;
     }
 
-    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): boolean {
+    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): boolean {
         let enable: boolean;
 
         try {
             enable = app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            app.setStatus(AppStatus.AUTO_ENABLED);
+            app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
         } catch (e) {
             enable = false;
 
