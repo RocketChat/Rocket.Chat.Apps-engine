@@ -307,9 +307,11 @@ export class AppManager {
     }
 
     public async remove(id: string): Promise<ProxiedApp> {
-        await this.disable(id);
-
         const app = this.apps.get(id);
+
+        if (AppStatusUtils.isEnabled(app.getStatus())) {
+            await this.disable(id);
+        }
 
         this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
