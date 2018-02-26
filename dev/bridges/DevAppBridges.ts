@@ -2,6 +2,7 @@ import {
     AppBridges,
     IAppActivationBridge,
     IAppCommandBridge,
+    IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
     IMessageBridge,
@@ -39,6 +40,10 @@ export class DevAppBridges extends AppBridges {
 
     public getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge {
         return this.envBridge;
+    }
+
+    public getAppDetailChangesBridge(): IAppDetailChangesBridge {
+        throw new Error('Method not implemented.');
     }
 
     public getHttpBridge(): IHttpBridge {

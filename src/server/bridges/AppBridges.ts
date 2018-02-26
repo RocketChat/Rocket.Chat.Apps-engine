@@ -1,5 +1,6 @@
 import { IAppActivationBridge } from './IAppActivationBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
+import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge } from './IHttpBridge';
 import { IMessageBridge } from './IMessageBridge';
@@ -10,6 +11,7 @@ import { IUserBridge } from './IUserBridge';
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): IAppCommandBridge;
+    public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
     public abstract getHttpBridge(): IHttpBridge;
     public abstract getMessageBridge(): IMessageBridge;

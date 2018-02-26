@@ -117,7 +117,7 @@ export class AppManager {
 
     /**
      * Goes through the entire loading up process.
-     * Except this to take some time, as it goes through a very
+     * Expect this to take some time, as it goes through a very
      * long process of loading all the Apps up.
      */
     public async load(): Promise<Array<ProxiedApp>> {
@@ -134,12 +134,12 @@ export class AppManager {
         });
 
         // Let's initialize them
-        this.apps.forEach((rl) => this.initializeApp(items.get(rl.getID()), rl));
+        this.apps.forEach((rl) => this.initializeApp(items.get(rl.getID()), rl, true));
 
         // Now let's enable the apps which were once enabled
         this.apps.forEach((rl) => {
             if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                this.enableApp(items.get(rl.getID()), rl);
+                this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
         });
 
@@ -217,20 +217,12 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = this.runStartUpProcess(storageItem, rl);
+        const isSetup = this.runStartUpProcess(storageItem, rl, true);
         if (isSetup) {
-            rl.setStatus(AppStatus.MANUALLY_ENABLED);
-
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = rl.getStatus();
             this.storage.update(storageItem);
-
-            try {
-                this.bridges.getAppActivationBridge().appEnabled(rl);
-            } catch (e) {
-                // If an error occurs during this, oh well.
-            }
         }
 
         return isSetup;
@@ -270,12 +262,6 @@ export class AppManager {
         storageItem.status = rl.getStatus();
         this.storage.update(storageItem);
 
-        try {
-            this.bridges.getAppActivationBridge().appDisabled(rl);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
-
         return true;
     }
 
@@ -301,36 +287,45 @@ export class AppManager {
 
         this.apps.set(app.getID(), app);
 
+        // Let everyone know that the App has been added
+        try {
+            this.bridges.getAppActivationBridge().appAdded(app);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
+
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            this.runStartUpProcess(created, app);
+            this.runStartUpProcess(created, app, false);
         } else {
-            this.initializeApp(created, app);
-        }
-
-        try {
-            const isEnabled = AppStatusUtils.isEnabled(app.getStatus());
-            this.bridges.getAppActivationBridge().appLoaded(app, isEnabled);
-        } catch (e) {
-            // If an error occurs during this, oh well.
+            this.initializeApp(created, app, true);
         }
 
         return app;
     }
 
     public async remove(id: string): Promise<ProxiedApp> {
-        await this.disable(id);
+        const app = this.apps.get(id);
 
-        const rl = this.apps.get(id);
+        if (AppStatusUtils.isEnabled(app.getStatus())) {
+            await this.disable(id);
+        }
 
-        this.bridges.getPersistenceBridge().purge(rl.getID());
-        await this.storage.remove(rl.getID());
+        this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.storage.remove(app.getID());
 
-        this.apps.delete(rl.getID());
+        // Let everyone know that the App has been removed
+        try {
+            this.bridges.getAppActivationBridge().appRemoved(app);
+        } catch (e) {
+            // If an error occurs during this, oh well.
+        }
 
-        return rl;
+        this.apps.delete(app.getID());
+
+        return app;
     }
 
     public async update(zipContentsBase64d: string): Promise<ProxiedApp> {
@@ -367,11 +362,11 @@ export class AppManager {
         this.apps.set(app.getID(), app);
 
         // Start up the app
-        this.runStartUpProcess(stored, app);
+        this.runStartUpProcess(stored, app, false);
 
+        // Let everyone know that the App has been updated
         try {
-            const isEnabled = AppStatusUtils.isEnabled(app.getStatus());
-            this.bridges.getAppActivationBridge().appUpdated(app, isEnabled);
+            this.bridges.getAppActivationBridge().appUpdated(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -426,15 +421,39 @@ export class AppManager {
         return rl;
     }
 
-    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp): boolean {
+    /**
+     * Goes through the entire loading up process. WARNING: Do not use. ;)
+     *
+     * @param appId the id of the application to load
+     */
+    protected async loadOne(appId: string): Promise<ProxiedApp> {
+        const item: IAppStorageItem = await this.storage.retrieveOne(appId);
+
+        if (!item) {
+            throw new Error(`No App found by the id of: "${ appId }"`);
+        }
+
+        this.apps.set(item.id, this.getCompiler().toSandBox(item));
+
+        const rl = this.apps.get(item.id);
+        this.initializeApp(item, rl, false);
+
+        if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+            this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+        }
+
+        return this.apps.get(item.id);
+    }
+
+    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): boolean {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
-            const isInitialized = this.initializeApp(storageItem, app);
+            const isInitialized = this.initializeApp(storageItem, app, true);
             if (!isInitialized) {
                 return false;
             }
         }
 
-        const isEnabled = this.enableApp(storageItem, app);
+        const isEnabled = this.enableApp(storageItem, app, true, isManual);
         if (!isEnabled) {
             return false;
         }
@@ -444,7 +463,7 @@ export class AppManager {
         return true;
     }
 
-    private initializeApp(storageItem: IAppStorageItem, app: ProxiedApp): boolean {
+    private initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): boolean {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
@@ -465,22 +484,24 @@ export class AppManager {
             app.setStatus(AppStatus.ERROR_DISABLED);
         }
 
-        // This is async, but we don't care since it only updates in the database
-        // and it should not mutate any properties we care about
-        storageItem.status = app.getStatus();
-        this.storage.update(storageItem);
+        if (saveToDb) {
+            // This is async, but we don't care since it only updates in the database
+            // and it should not mutate any properties we care about
+            storageItem.status = app.getStatus();
+            this.storage.update(storageItem);
+        }
 
         return result;
     }
 
-    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp): boolean {
+    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): boolean {
         let enable: boolean;
 
         try {
             enable = app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            app.setStatus(AppStatus.AUTO_ENABLED);
+            app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
         } catch (e) {
             enable = false;
 
@@ -498,10 +519,12 @@ export class AppManager {
             this.commandManager.unregisterCommands(app.getID());
         }
 
-        // This is async, but we don't care since it only updates in the database
-        // and it should not mutate any properties we care about
-        storageItem.status = app.getStatus();
-        this.storage.update(storageItem);
+        if (saveToDb) {
+            // This is async, but we don't care since it only updates in the database
+            // and it should not mutate any properties we care about
+            storageItem.status = app.getStatus();
+            this.storage.update(storageItem);
+        }
 
         return enable;
     }
