@@ -275,6 +275,7 @@ export class AppManager {
             compiled: result.compiledFiles,
             languageContent: result.languageContent,
             settings: {},
+            implemented: result.implemented.getValues(),
         });
 
         if (!created) {
@@ -343,6 +344,8 @@ export class AppManager {
             // We don't care
         }
 
+        // TODO: We could show what new interfaces have been added
+
         const stored = await this.storage.update({
             createdAt: old.createdAt,
             id: result.info.id,
@@ -352,6 +355,7 @@ export class AppManager {
             compiled: result.compiledFiles,
             languageContent: result.languageContent,
             settings: old.settings,
+            implemented: result.implemented.getValues(),
         });
 
         // Now that is has all been compiled, let's get the

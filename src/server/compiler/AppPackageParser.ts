@@ -47,7 +47,7 @@ export class AppPackageParser {
         }
 
         // Load all of the TypeScript only files
-        const tsFiles: { [s: string]: ICompilerFile } = {};
+        let tsFiles: { [s: string]: ICompilerFile } = {};
 
         zip.getEntries().filter((entry) => entry.entryName.endsWith('.ts') && !entry.isDirectory).forEach((entry) => {
             const norm = path.normalize(entry.entryName);
@@ -72,8 +72,8 @@ export class AppPackageParser {
         const languageContent = this.getLanguageContent(zip);
 
         // Compile all the typescript files to javascript
-        // this actually modifies the `tsFiles` object
-        this.manager.getCompiler().toJs(info, tsFiles);
+        const result = this.manager.getCompiler().toJs(info, tsFiles);
+        tsFiles = result.files;
 
         const compiledFiles: { [s: string]: string } = {};
         Object.keys(tsFiles).forEach((name) => {
@@ -91,6 +91,7 @@ export class AppPackageParser {
             info,
             compiledFiles,
             languageContent,
+            implemented: result.implemented,
         };
     }
 

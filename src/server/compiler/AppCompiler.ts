@@ -8,7 +8,9 @@ import { MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
 import { ProxiedApp } from '../ProxiedApp';
 import { IAppStorageItem } from '../storage/IAppStorageItem';
+import { AppImplements } from './AppImplements';
 import { ICompilerFile } from './ICompilerFile';
+import { ICompilerResult } from './ICompilerResult';
 
 import { App } from '@rocket.chat/apps-ts-definition/App';
 import { AppMethod, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
@@ -73,31 +75,36 @@ export class AppCompiler {
         return this.libraryFiles[norm];
     }
 
-    public toJs(info: IAppInfo, files: { [s: string]: ICompilerFile }): { [s: string]: ICompilerFile } {
-        if (!files || !files[info.classFile] || !this.isValidFile(files[info.classFile])) {
+    public toJs(info: IAppInfo, theFiles: { [s: string]: ICompilerFile }): ICompilerResult {
+        if (!theFiles || !theFiles[info.classFile] || !this.isValidFile(theFiles[info.classFile])) {
             throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
         }
 
+        const result: ICompilerResult = {
+            files: theFiles,
+            implemented: new AppImplements(),
+        };
+
         // Verify all file names are normalized
         // and that the files are valid
-        Object.keys(files).forEach((key) => {
-            if (!this.isValidFile(files[key])) {
+        Object.keys(result.files).forEach((key) => {
+            if (!this.isValidFile(result.files[key])) {
                 throw new Error(`Invalid TypeScript file in the App ${info.name} in the file "${key}".`);
             }
 
-            files[key].name = path.normalize(files[key].name);
+            result.files[key].name = path.normalize(result.files[key].name);
         });
 
         const host: ts.LanguageServiceHost = {
-            getScriptFileNames: () => Object.keys(files),
+            getScriptFileNames: () => Object.keys(result.files),
             getScriptVersion: (fileName) => {
                 fileName = path.normalize(fileName);
-                const file = files[fileName] || this.getLibraryFile(fileName);
+                const file = result.files[fileName] || this.getLibraryFile(fileName);
                 return file && file.version.toString();
             },
             getScriptSnapshot: (fileName) => {
                 fileName = path.normalize(fileName);
-                const file = files[fileName] || this.getLibraryFile(fileName);
+                const file = result.files[fileName] || this.getLibraryFile(fileName);
 
                 if (!file || !file.content) {
                     return;
@@ -152,8 +159,11 @@ export class AppCompiler {
                                 if (nn.getText() !== 'App') {
                                     throw new MustExtendAppError();
                                 }
-                            } else {
+                            } else if (e.token === ts.SyntaxKind.ImplementsKeyword) {
                                 console.log(nn.getText());
+                                result.implemented.doesImplement(nn.getText());
+                            } else {
+                                console.log(e.token, nn.getText());
                             }
                         });
                     }
@@ -161,8 +171,8 @@ export class AppCompiler {
             }
         });
 
-        Object.keys(files).forEach((key) => {
-            const file: ICompilerFile = files[key];
+        Object.keys(result.files).forEach((key) => {
+            const file: ICompilerFile = result.files[key];
             const output: ts.EmitOutput = languageService.getEmitOutput(file.name);
 
             if (output.emitSkipped) {
@@ -173,7 +183,7 @@ export class AppCompiler {
             file.compiled = output.outputFiles[0].text;
         });
 
-        return files;
+        return result;
     }
 
     public toSandBox(storage: IAppStorageItem): ProxiedApp {

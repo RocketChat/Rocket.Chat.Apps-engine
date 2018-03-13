@@ -13,4 +13,5 @@ export interface IAppStorageItem {
     compiled: { [s: string]: string };
     languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
+    implemented: { [int: string]: boolean };
 }
