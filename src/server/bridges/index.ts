@@ -4,6 +4,7 @@ import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
+import { IListenerBridge } from './IListenerBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
@@ -14,6 +15,7 @@ export {
     IEnvironmentalVariableBridge,
     IHttpBridge,
     IHttpBridgeRequestInfo,
+    IListenerBridge,
     IMessageBridge,
     IPersistenceBridge,
     IAppActivationBridge,

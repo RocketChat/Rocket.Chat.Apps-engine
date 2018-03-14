@@ -5,6 +5,7 @@ import {
     IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
+    IListenerBridge,
     IMessageBridge,
     IPersistenceBridge,
     IRoomBridge,
@@ -47,6 +48,10 @@ export class DevAppBridges extends AppBridges {
     }
 
     public getHttpBridge(): IHttpBridge {
+        throw new Error('Method not implemented.');
+    }
+
+    public getListenerBridge(): IListenerBridge {
         throw new Error('Method not implemented.');
     }
 
