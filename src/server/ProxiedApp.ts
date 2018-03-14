@@ -33,6 +33,10 @@ export class ProxiedApp implements IApp {
         return this.previousStatus;
     }
 
+    public getImplementationList() {
+        return this.storageItem.implemented;
+    }
+
     public hasMethod(method: AppMethod): boolean {
         console.log('Checking:', method);
         return typeof (this.app as any)[method] === 'function';

@@ -150,9 +150,6 @@ export class AppCompiler {
                 ts.forEachChild(n, (node) => {
                     if (node.kind === ts.SyntaxKind.HeritageClause) {
                         const e = node as ts.HeritageClause;
-                        if (e.token === ts.SyntaxKind.ImplementsKeyword) {
-                            console.log('Implements the following:');
-                        }
 
                         ts.forEachChild(node, (nn) => {
                             if (e.token === ts.SyntaxKind.ExtendsKeyword) {
@@ -160,7 +157,6 @@ export class AppCompiler {
                                     throw new MustExtendAppError();
                                 }
                             } else if (e.token === ts.SyntaxKind.ImplementsKeyword) {
-                                console.log(nn.getText());
                                 result.implemented.doesImplement(nn.getText());
                             } else {
                                 console.log(e.token, nn.getText());

@@ -143,7 +143,12 @@ export class AppManager {
             }
         });
 
-        // TODO: Register all of the listeners
+        // Now, register the listeners of an App
+        this.apps.forEach((rl) => {
+            if (AppStatusUtils.isEnabled(rl.getStatus())) {
+                this.listenerManager.registerListeners(rl);
+            }
+        });
 
         this.isLoaded = true;
         return Array.from(this.apps.values());
@@ -250,6 +255,7 @@ export class AppManager {
             console.warn('Error while disabling:', e);
         }
 
+        this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(storageItem.id);
         this.accessorManager.purifyApp(storageItem.id);
 
@@ -519,6 +525,7 @@ export class AppManager {
 
         if (enable) {
             this.commandManager.registerCommands(app.getID());
+            this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
         }
