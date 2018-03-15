@@ -10,6 +10,7 @@ import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
+import { Notifier } from './Notifier';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
@@ -36,6 +37,7 @@ export {
     ModifyCreator,
     ModifyExtender,
     ModifyUpdater,
+    Notifier,
     Persistence,
     PersistenceRead,
     Reader,

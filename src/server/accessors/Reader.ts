@@ -1,6 +1,7 @@
 import {
     IEnvironmentRead,
     IMessageRead,
+    INotifier,
     IPersistenceRead,
     IRead,
     IRoomRead,
@@ -10,7 +11,7 @@ import {
 export class Reader implements IRead {
     constructor(private env: IEnvironmentRead, private message: IMessageRead,
                 private persist: IPersistenceRead, private room: IRoomRead,
-                private user: IUserRead) { }
+                private user: IUserRead, private noti: INotifier) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
@@ -30,5 +31,9 @@ export class Reader implements IRead {
 
     public getUserReader(): IUserRead {
         return this.user;
+    }
+
+    public getNotifier(): INotifier {
+        return this.noti;
     }
 }

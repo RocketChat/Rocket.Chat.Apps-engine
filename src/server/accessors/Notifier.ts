@@ -1,9 +1,10 @@
-import { INotifier } from '@rocket.chat/apps-ts-definition/accessors';
+import { IMessageBuilder, INotifier } from '@rocket.chat/apps-ts-definition/accessors';
 import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 import { AppBridges } from '../bridges';
+import { MessageBuilder } from './MessageBuilder';
 
 export class Notifier implements INotifier {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
@@ -14,5 +15,9 @@ export class Notifier implements INotifier {
 
     public notifyRoom(room: IRoom, message: IMessage): void {
         this.bridges.getMessageBridge().notifyRoom(room, message, this.appId);
+    }
+
+    public getMessageBuilder(): IMessageBuilder {
+        return new MessageBuilder();
     }
 }
