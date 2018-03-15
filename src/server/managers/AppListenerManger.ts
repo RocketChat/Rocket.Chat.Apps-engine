@@ -94,16 +94,16 @@ export class AppListenerManger {
             const app = this.manager.getOneById(appId);
 
             let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTPREVENT)) {
-                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTPREVENT,
+            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGESENT)) {
+                continueOn = app.call(AppMethod.CHECKPOSTMESSAGESENT,
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     ) as boolean;
             }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTPREVENT)) {
-                app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT,
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENT)) {
+                app.call(AppMethod.EXECUTEPOSTMESSAGESENT,
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
