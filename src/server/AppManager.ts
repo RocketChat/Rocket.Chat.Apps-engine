@@ -143,13 +143,6 @@ export class AppManager {
             }
         });
 
-        // Now, register the listeners of an App
-        this.apps.forEach((rl) => {
-            if (AppStatusUtils.isEnabled(rl.getStatus())) {
-                this.listenerManager.registerListeners(rl);
-            }
-        });
-
         this.isLoaded = true;
         return Array.from(this.apps.values());
     }
