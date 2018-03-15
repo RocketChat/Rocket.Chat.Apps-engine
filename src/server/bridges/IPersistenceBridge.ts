@@ -60,9 +60,9 @@ export interface IPersistenceBridge {
      *
      * @argument associations the associations which to remove records
      * @argument appId the id of the app calling this
-     * @returns the amount of records removed
+     * @returns the data of the removed records
      */
-    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): number;
+    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Array<object>;
 
     /**
      * Updates the record in the database, with the option of creating a new one if it doesn't exist.
