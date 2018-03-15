@@ -1,14 +1,15 @@
-import { IHttp, IModify, IRead } from '@rocket.chat/apps-ts-definition/accessors';
+import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 
 import { IAppCommandBridge } from '../../src/server/bridges';
 
 export class DevCommandBridge implements IAppCommandBridge {
-    private commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp) => void>;
+    // tslint:disable-next-line:max-line-length
+    private commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
 
     constructor() {
         // tslint:disable-next-line:max-line-length
-        this.commands = new Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp) => void>();
+        this.commands = new Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>();
     }
 
     public doesCommandExist(command: string, appId: string): boolean {
