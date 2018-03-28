@@ -208,7 +208,7 @@ export class AppCompiler {
             info: storage.info,
             App: result,
             process: {},
-        }), { timeout: 100, filename: `App_${storage.info.nameSlug}.js` });
+        }), { timeout: 1000, filename: `App_${storage.info.nameSlug}.js` });
 
         if (!(rl instanceof App)) {
             throw new MustExtendAppError();
