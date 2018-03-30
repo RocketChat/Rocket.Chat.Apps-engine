@@ -5,6 +5,7 @@ import { EnvironmentRead } from './EnvironmentRead';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
 import { MessageBuilder } from './MessageBuilder';
+import { MessageExtender } from './MessageExtender';
 import { MessageRead } from './MessageRead';
 import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
@@ -15,6 +16,7 @@ import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
 import { RoomBuilder } from './RoomBuilder';
+import { RoomExtender } from './RoomExtender';
 import { RoomRead } from './RoomRead';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
@@ -32,6 +34,7 @@ export {
     Http,
     HttpExtend,
     MessageBuilder,
+    MessageExtender,
     MessageRead,
     Modify,
     ModifyCreator,
@@ -42,6 +45,7 @@ export {
     PersistenceRead,
     Reader,
     RoomBuilder,
+    RoomExtender,
     RoomRead,
     ServerSettingRead,
     ServerSettingsModify,

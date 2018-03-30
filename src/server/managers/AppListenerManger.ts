@@ -1,3 +1,4 @@
+import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
 import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
@@ -52,8 +53,24 @@ export class AppListenerManger {
         switch (int) {
             case AppInterface.IPreMessageSentPrevent:
                 return this.executePreMessageSentPrevent(data as IMessage);
+            case AppInterface.IPreMessageSentExtend:
+                return this.executePreMessageSentExtend(data as IMessage);
+            case AppInterface.IPreMessageSentModify:
+                return this.executePreMessageSentModify(data as IMessage);
             case AppInterface.IPostMessageSent:
                 this.executePostMessageSent(data as IMessage);
+                return;
+            case AppInterface.IPreRoomCreatePrevent:
+                return this.executePreRoomCreatePrevent(data as IRoom);
+            case AppInterface.IPreRoomCreateExtend:
+                return this.executePreRoomCreateExtend(data as IRoom);
+            case AppInterface.IPreRoomCreateModify:
+                return this.executePreRoomCreateModify(data as IRoom);
+            case AppInterface.IPostRoomCreate:
+                this.executePostRoomCreate(data as IRoom);
+                return;
+            default:
+                console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
         }
     }
@@ -78,7 +95,8 @@ export class AppListenerManger {
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
-                    this.am.getPersistence(appId)) as boolean;
+                    this.am.getPersistence(appId),
+                ) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -87,6 +105,64 @@ export class AppListenerManger {
         }
 
         return prevented;
+    }
+
+    private executePreMessageSentExtend(data: IMessage): IMessage {
+        let msg = Object.assign({}, data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTEXTEND)) {
+                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTEXTEND,
+                    Object.freeze(msg),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTEXTEND)) {
+                msg = app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND,
+                    msg,
+                    new MessageExtender(msg),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as IMessage;
+            }
+        }
+
+        return data;
+    }
+
+    private executePreMessageSentModify(data: IMessage): IMessage {
+        let msg = Object.assign({}, data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageSentModify)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTMODIFY)) {
+                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTMODIFY,
+                    Object.freeze(msg),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTMODIFY)) {
+                msg = app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
+                    Object.freeze(msg),
+                    new MessageBuilder(msg),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as IMessage;
+            }
+        }
+
+        return data;
     }
 
     private executePostMessageSent(data: IMessage): void {
@@ -108,6 +184,120 @@ export class AppListenerManger {
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId));
+            }
+        }
+    }
+
+    private executePreRoomCreatePrevent(data: IRoom): boolean {
+        let prevented = false;
+
+        for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEPREVENT)) {
+                continueOn = app.call(AppMethod.CHECKPREROOMCREATEPREVENT,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEPREVENT)) {
+                prevented = app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
+    }
+
+    private executePreRoomCreateExtend(data: IRoom): IRoom {
+        let room = Object.assign({}, data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEEXTEND)) {
+                continueOn = app.call(AppMethod.CHECKPREROOMCREATEEXTEND,
+                    Object.freeze(room),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEEXTEND)) {
+                room = app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND,
+                    room,
+                    new RoomExtender(room),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as IRoom;
+            }
+        }
+
+        return data;
+    }
+
+    private executePreRoomCreateModify(data: IRoom): IRoom {
+        let room = Object.assign({}, data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEMODIFY)) {
+                continueOn = app.call(AppMethod.CHECKPREROOMCREATEMODIFY,
+                    Object.freeze(room),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEMODIFY)) {
+                room = app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY,
+                    Object.freeze(room),
+                    new RoomBuilder(room),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as IRoom;
+            }
+        }
+
+        return data;
+    }
+
+    private executePostRoomCreate(data: IRoom): void {
+        for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
+                continueOn = app.call(AppMethod.CHECKPOSTROOMCREATE,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMCREATE)) {
+                app.call(AppMethod.EXECUTEPOSTROOMCREATE,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
             }
         }
     }
