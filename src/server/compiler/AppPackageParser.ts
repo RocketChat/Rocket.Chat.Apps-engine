@@ -131,7 +131,7 @@ export class AppPackageParser {
 
         const entry = zip.getEntry(filePath);
 
-        if (typeof entry === 'undefined') {
+        if (!entry) {
             return undefined;
         }
 
