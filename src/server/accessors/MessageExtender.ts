@@ -2,6 +2,8 @@ import { IMessageExtender } from '@rocket.chat/apps-ts-definition/accessors';
 import { IMessage, IMessageAttachment } from '@rocket.chat/apps-ts-definition/messages';
 import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
 
+import { Utilities } from '../misc/Utilities';
+
 export class MessageExtender implements IMessageExtender {
     public readonly kind: RocketChatAssociationModel.MESSAGE;
 
@@ -36,6 +38,6 @@ export class MessageExtender implements IMessageExtender {
     }
 
     public getMessage(): IMessage {
-        return Object.create(this.msg);
+        return Utilities.deepClone(this.msg);
     }
 }

@@ -79,6 +79,6 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public getRoom(): IRoom {
-        return Object.create(this.room);
+        return this.room;
     }
 }

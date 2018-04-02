@@ -97,6 +97,6 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public getMessage(): IMessage {
-        return Object.create(this.msg);
+        return this.msg;
     }
 }
