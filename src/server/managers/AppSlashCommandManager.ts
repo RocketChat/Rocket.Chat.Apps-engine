@@ -180,6 +180,7 @@ export class AppSlashCommandManager {
                 this.accessors.getReader(app.getID()),
                 this.accessors.getModifier(app.getID()),
                 this.accessors.getHttp(app.getID()),
+                this.accessors.getPersistence(app.getID()),
             ],
         });
 

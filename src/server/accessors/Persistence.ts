@@ -26,11 +26,11 @@ export class Persistence implements IPersistence {
         return this.persistBridge.remove(id, this.appId);
     }
 
-    public removeByAssociation(association: RocketChatAssociationRecord): number {
+    public removeByAssociation(association: RocketChatAssociationRecord): Array<object> {
         return this.persistBridge.removeByAssociations(new Array(association), this.appId);
     }
 
-    public removeByAssociations(associations: Array<RocketChatAssociationRecord>): number {
+    public removeByAssociations(associations: Array<RocketChatAssociationRecord>): Array<object> {
         return this.persistBridge.removeByAssociations(associations, this.appId);
     }
 }

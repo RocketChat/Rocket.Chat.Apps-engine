@@ -97,6 +97,10 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public getMessage(): IMessage {
-        return Object.create(this.msg);
+        if (!this.msg.room) {
+            throw new Error('The Room Value is required.');
+        }
+
+        return this.msg;
     }
 }

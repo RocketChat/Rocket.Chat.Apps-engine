@@ -88,7 +88,7 @@ export class AppConsole implements ILogger {
         });
 
         // This should be a setting? :thinking:
-        console.log(`${ severity.toUpperCase() }:`, ...i);
+        console.log(`${ severity.toUpperCase() }:`, i);
     }
 
     private getFunc(stack: Array<stackTrace.StackFrame>): string {

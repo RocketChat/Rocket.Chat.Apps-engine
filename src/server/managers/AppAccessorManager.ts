@@ -6,6 +6,7 @@ import {
     HttpExtend,
     MessageRead,
     Modify,
+    Notifier,
     Persistence,
     PersistenceRead,
     Reader,
@@ -122,8 +123,9 @@ export class AppAccessorManager {
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
+            const noti = new Notifier(this.bridges, appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti));
         }
 
         return this.readers.get(appId);

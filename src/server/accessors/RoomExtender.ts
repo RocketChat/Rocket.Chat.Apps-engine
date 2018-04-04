@@ -3,6 +3,8 @@ import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/meta
 import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
+import { Utilities } from '../misc/Utilities';
+
 export class RoomExtender implements IRoomExtender {
     public kind: RocketChatAssociationModel.ROOM;
 
@@ -27,6 +29,6 @@ export class RoomExtender implements IRoomExtender {
     }
 
     public getRoom(): IRoom {
-        return Object.create(this.room);
+        return Utilities.deepClone(this.room);
     }
 }
