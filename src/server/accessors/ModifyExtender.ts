@@ -9,22 +9,22 @@ import { RoomExtender } from './RoomExtender';
 export class ModifyExtender implements IModifyExtender {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
-    public extendMessage(messageId: string, updater: IUser): IMessageExtender {
-        const msg = this.bridges.getMessageBridge().getById(messageId, this.appId);
+    public async extendMessage(messageId: string, updater: IUser): Promise<IMessageExtender> {
+        const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
         msg.editor = updater;
         msg.editedAt = new Date();
 
         return new MessageExtender(msg);
     }
 
-    public extendRoom(roomId: string, updater: IUser): IRoomExtender {
-        const room = this.bridges.getRoomBridge().getById(roomId, this.appId);
+    public async extendRoom(roomId: string, updater: IUser): Promise<IRoomExtender> {
+        const room = await this.bridges.getRoomBridge().getById(roomId, this.appId);
         room.updatedAt = new Date();
 
         return new RoomExtender(room);
     }
 
-    public finish(extender: IMessageExtender | IRoomExtender): void {
+    public finish(extender: IMessageExtender | IRoomExtender): Promise<void> {
         switch (extender.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this.bridges.getMessageBridge().update(extender.getMessage(), this.appId);

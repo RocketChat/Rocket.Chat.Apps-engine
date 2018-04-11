@@ -61,7 +61,7 @@ export class ProxiedApp implements IApp {
         return vm.runInContext(codeToRun, context, { timeout: 1000 });
     }
 
-    public call(method: AppMethod, ...args: Array<any>): any {
+    public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
             throw new Error(`The App ${this.app.getName()} (${this.app.getID()}`
                 + ` does not have the method: "${method}"`);
@@ -78,7 +78,8 @@ export class ProxiedApp implements IApp {
 
         let result;
         try {
-            result = this.runInContext(`app.${method}.apply(app, args)`, this.makeContext({ app: this.app, args }));
+            // tslint:disable-next-line:max-line-length
+            result = await this.runInContext(`Promise.resolve().then(() => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
             logger.debug(`${method} was successfully called!`, result);
         } catch (e) {
             logger.error(e);

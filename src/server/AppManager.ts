@@ -134,12 +134,12 @@ export class AppManager {
         });
 
         // Let's initialize them
-        this.apps.forEach((rl) => this.initializeApp(items.get(rl.getID()), rl, true));
+        this.apps.forEach(async (rl) => await this.initializeApp(items.get(rl.getID()), rl, true));
 
         // Now let's enable the apps which were once enabled
-        this.apps.forEach((rl) => {
+        this.apps.forEach(async (rl) => {
             if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
         });
 
@@ -215,11 +215,11 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = this.runStartUpProcess(storageItem, rl, true);
+        const isSetup = await this.runStartUpProcess(storageItem, rl, true);
         if (isSetup) {
+            storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = rl.getStatus();
             this.storage.update(storageItem);
         }
 
@@ -243,7 +243,7 @@ export class AppManager {
         }
 
         try {
-            rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
+            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
         } catch (e) {
             console.warn('Error while disabling:', e);
         }
@@ -298,9 +298,9 @@ export class AppManager {
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            this.runStartUpProcess(created, app, false);
+            await this.runStartUpProcess(created, app, false);
         } else {
-            this.initializeApp(created, app, true);
+            await this.initializeApp(created, app, true);
         }
 
         return app;
@@ -313,7 +313,7 @@ export class AppManager {
             await this.disable(id);
         }
 
-        this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
@@ -365,7 +365,7 @@ export class AppManager {
         this.apps.set(app.getID(), app);
 
         // Start up the app
-        this.runStartUpProcess(stored, app, false);
+        await this.runStartUpProcess(stored, app, false);
 
         // Let everyone know that the App has been updated
         try {
@@ -439,7 +439,7 @@ export class AppManager {
         this.apps.set(item.id, this.getCompiler().toSandBox(item));
 
         const rl = this.apps.get(item.id);
-        this.initializeApp(item, rl, false);
+        await this.initializeApp(item, rl, false);
 
         if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
             this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
@@ -448,7 +448,7 @@ export class AppManager {
         return this.apps.get(item.id);
     }
 
-    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): boolean {
+    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): Promise<boolean> {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
             const isInitialized = this.initializeApp(storageItem, app, true);
             if (!isInitialized) {
@@ -456,23 +456,21 @@ export class AppManager {
             }
         }
 
-        const isEnabled = this.enableApp(storageItem, app, true, isManual);
+        const isEnabled = await this.enableApp(storageItem, app, true, isManual);
         if (!isEnabled) {
             return false;
         }
 
-        // TODO: Register all of the listeners
-
         return true;
     }
 
-    private initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): boolean {
+    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): Promise<boolean> {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
-            app.call(AppMethod.INITIALIZE, configExtend, envRead);
+            await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             result = true;
             app.setStatus(AppStatus.INITIALIZED);
         } catch (e) {
@@ -497,11 +495,11 @@ export class AppManager {
         return result;
     }
 
-    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): boolean {
+    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): Promise<boolean> {
         let enable: boolean;
 
         try {
-            enable = app.call(AppMethod.ONENABLE,
+            enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
             app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
@@ -524,9 +522,9 @@ export class AppManager {
         }
 
         if (saveToDb) {
+            storageItem.status = app.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = app.getStatus();
             this.storage.update(storageItem);
         }
 

@@ -50,7 +50,7 @@ export class AppListenerManger {
     }
 
     // tslint:disable-next-line
-    public executeListener(int: AppInterface, data: IMessage | IRoom | IUser): void | boolean | IMessage | IRoom | IUser {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
         switch (int) {
             case AppInterface.IPreMessageSentPrevent:
                 return this.executePreMessageSentPrevent(data as IMessage);
@@ -76,7 +76,7 @@ export class AppListenerManger {
         }
     }
 
-    private executePreMessageSentPrevent(data: IMessage): boolean {
+    private async executePreMessageSentPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
         const cfMsg = Utilities.deepCloneAndFreeze(data);
 
@@ -85,7 +85,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTPREVENT)) {
-                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTPREVENT,
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -93,7 +93,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTPREVENT)) {
-                prevented = app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT,
+                prevented = await app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -109,7 +109,7 @@ export class AppListenerManger {
         return prevented;
     }
 
-    private executePreMessageSentExtend(data: IMessage): IMessage {
+    private async executePreMessageSentExtend(data: IMessage): Promise<IMessage> {
         const msg = data;
         const cfMsg = Utilities.deepCloneAndFreeze(msg);
 
@@ -118,7 +118,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTEXTEND)) {
-                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTEXTEND,
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -126,7 +126,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTEXTEND)) {
-                app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND,
+                await app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND,
                     cfMsg,
                     new MessageExtender(msg), // This mutates the passed in object
                     this.am.getReader(appId),
@@ -139,7 +139,7 @@ export class AppListenerManger {
         return msg;
     }
 
-    private executePreMessageSentModify(data: IMessage): IMessage {
+    private async executePreMessageSentModify(data: IMessage): Promise<IMessage> {
         let msg = data;
         const cfMsg = Utilities.deepCloneAndFreeze(msg);
 
@@ -148,7 +148,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTMODIFY)) {
-                continueOn = app.call(AppMethod.CHECKPREMESSAGESENTMODIFY,
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -156,7 +156,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTMODIFY)) {
-                msg = app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
+                msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
                     cfMsg,
                     new MessageBuilder(msg),
                     this.am.getReader(appId),
@@ -169,7 +169,7 @@ export class AppListenerManger {
         return data;
     }
 
-    private executePostMessageSent(data: IMessage): void {
+    private async executePostMessageSent(data: IMessage): Promise<void> {
         const cfMsg = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
@@ -177,7 +177,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGESENT)) {
-                continueOn = app.call(AppMethod.CHECKPOSTMESSAGESENT,
+                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGESENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -185,7 +185,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENT)) {
-                app.call(AppMethod.EXECUTEPOSTMESSAGESENT,
+                await app.call(AppMethod.EXECUTEPOSTMESSAGESENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -195,7 +195,7 @@ export class AppListenerManger {
         }
     }
 
-    private executePreRoomCreatePrevent(data: IRoom): boolean {
+    private async executePreRoomCreatePrevent(data: IRoom): Promise<boolean> {
         const cfRoom = Utilities.deepCloneAndFreeze(data);
         let prevented = false;
 
@@ -204,7 +204,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEPREVENT)) {
-                continueOn = app.call(AppMethod.CHECKPREROOMCREATEPREVENT,
+                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEPREVENT,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -212,7 +212,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEPREVENT)) {
-                prevented = app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT,
+                prevented = await app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -228,7 +228,7 @@ export class AppListenerManger {
         return prevented;
     }
 
-    private executePreRoomCreateExtend(data: IRoom): IRoom {
+    private async executePreRoomCreateExtend(data: IRoom): Promise<IRoom> {
         const room = data;
         const cfRoom = Utilities.deepCloneAndFreeze(room);
 
@@ -237,7 +237,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEEXTEND)) {
-                continueOn = app.call(AppMethod.CHECKPREROOMCREATEEXTEND,
+                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEEXTEND,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -245,7 +245,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEEXTEND)) {
-                app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND,
+                await app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND,
                     cfRoom,
                     new RoomExtender(room), // This mutates the passed in object
                     this.am.getReader(appId),
@@ -258,7 +258,7 @@ export class AppListenerManger {
         return data;
     }
 
-    private executePreRoomCreateModify(data: IRoom): IRoom {
+    private async executePreRoomCreateModify(data: IRoom): Promise<IRoom> {
         let room = data;
         const cfRoom = Utilities.deepCloneAndFreeze(room);
 
@@ -267,7 +267,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEMODIFY)) {
-                continueOn = app.call(AppMethod.CHECKPREROOMCREATEMODIFY,
+                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEMODIFY,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -275,7 +275,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEMODIFY)) {
-                room = app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY,
+                room = await app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY,
                     cfRoom,
                     new RoomBuilder(room),
                     this.am.getReader(appId),
@@ -288,7 +288,7 @@ export class AppListenerManger {
         return data;
     }
 
-    private executePostRoomCreate(data: IRoom): void {
+    private async executePostRoomCreate(data: IRoom): Promise<void> {
         const cfRoom = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
@@ -296,7 +296,7 @@ export class AppListenerManger {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
-                continueOn = app.call(AppMethod.CHECKPOSTROOMCREATE,
+                continueOn = await app.call(AppMethod.CHECKPOSTROOMCREATE,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -304,7 +304,7 @@ export class AppListenerManger {
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMCREATE)) {
-                app.call(AppMethod.EXECUTEPOSTROOMCREATE,
+                await app.call(AppMethod.EXECUTEPOSTROOMCREATE,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),

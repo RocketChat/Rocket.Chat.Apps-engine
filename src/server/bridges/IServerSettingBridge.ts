@@ -1,15 +1,15 @@
 import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 
 export interface IServerSettingBridge {
-    getAll(appId: string): Array<ISetting>;
+    getAll(appId: string): Promise<Array<ISetting>>;
 
-    getOneById(id: string, appId: string): ISetting;
+    getOneById(id: string, appId: string): Promise<ISetting>;
 
-    hideGroup(name: string, appId: string): void;
+    hideGroup(name: string, appId: string): Promise<void>;
 
-    hideSetting(id: string, appId: string): void;
+    hideSetting(id: string, appId: string): Promise<void>;
 
-    isReadableById(id: string, appId: string): boolean;
+    isReadableById(id: string, appId: string): Promise<boolean>;
 
-    updateOne(setting: ISetting, appId: string): void;
+    updateOne(setting: ISetting, appId: string): Promise<void>;
 }

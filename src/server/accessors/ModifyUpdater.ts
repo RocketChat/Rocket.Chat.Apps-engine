@@ -9,19 +9,19 @@ import { RoomBuilder } from './RoomBuilder';
 export class ModifyUpdater implements IModifyUpdater {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
-    public message(messageId: string, updater: IUser): IMessageBuilder {
-        const msg = this.bridges.getMessageBridge().getById(messageId, this.appId);
+    public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
+        const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
 
         return new MessageBuilder(msg);
     }
 
-    public room(roomId: string, updater: IUser): IRoomBuilder {
-        const room = this.bridges.getRoomBridge().getById(roomId, this.appId);
+    public async room(roomId: string, updater: IUser): Promise<IRoomBuilder> {
+        const room = await this.bridges.getRoomBridge().getById(roomId, this.appId);
 
         return new RoomBuilder(room);
     }
 
-    public finish(builder: IMessageBuilder | IRoomBuilder): void {
+    public finish(builder: IMessageBuilder | IRoomBuilder): Promise<void> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -32,7 +32,7 @@ export class ModifyUpdater implements IModifyUpdater {
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): void {
+    private _finishMessage(builder: IMessageBuilder): Promise<void> {
         const result = builder.getMessage();
 
         if (!result.room || !result.room.id) {
@@ -46,7 +46,7 @@ export class ModifyUpdater implements IModifyUpdater {
         return this.bridges.getMessageBridge().update(result, this.appId);
     }
 
-    private _finishRoom(builder: IRoomBuilder): void {
+    private _finishRoom(builder: IRoomBuilder): Promise<void> {
         const result = builder.getRoom();
 
         if (!result.creator || !result.creator.id) {
