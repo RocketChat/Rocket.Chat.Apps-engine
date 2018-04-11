@@ -253,7 +253,7 @@ export class AppManager {
         this.accessorManager.purifyApp(storageItem.id);
 
         if (isManual) {
-            rl.setStatus(AppStatus.MANUALLY_DISABLED);
+            await rl.setStatus(AppStatus.MANUALLY_DISABLED);
         }
 
         // This is async, but we don't care since it only updates in the database
@@ -289,7 +289,7 @@ export class AppManager {
 
         // Let everyone know that the App has been added
         try {
-            this.bridges.getAppActivationBridge().appAdded(app);
+            await this.bridges.getAppActivationBridge().appAdded(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -318,7 +318,7 @@ export class AppManager {
 
         // Let everyone know that the App has been removed
         try {
-            this.bridges.getAppActivationBridge().appRemoved(app);
+            await this.bridges.getAppActivationBridge().appRemoved(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -369,7 +369,7 @@ export class AppManager {
 
         // Let everyone know that the App has been updated
         try {
-            this.bridges.getAppActivationBridge().appUpdated(app);
+            await this.bridges.getAppActivationBridge().appUpdated(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -442,7 +442,7 @@ export class AppManager {
         await this.initializeApp(item, rl, false);
 
         if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-            this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+            await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
         return this.apps.get(item.id);
@@ -450,7 +450,7 @@ export class AppManager {
 
     private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): Promise<boolean> {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
-            const isInitialized = this.initializeApp(storageItem, app, true);
+            const isInitialized = await this.initializeApp(storageItem, app, true);
             if (!isInitialized) {
                 return false;
             }
@@ -472,7 +472,7 @@ export class AppManager {
         try {
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             result = true;
-            app.setStatus(AppStatus.INITIALIZED);
+            await app.setStatus(AppStatus.INITIALIZED);
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -482,7 +482,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             result = false;
 
-            app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED);
         }
 
         if (saveToDb) {
@@ -502,7 +502,7 @@ export class AppManager {
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
+            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
         } catch (e) {
             enable = false;
 
@@ -511,7 +511,7 @@ export class AppManager {
             }
 
             console.error(e);
-            app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED);
         }
 
         if (enable) {

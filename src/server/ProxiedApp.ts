@@ -79,7 +79,7 @@ export class ProxiedApp implements IApp {
         let result;
         try {
             // tslint:disable-next-line:max-line-length
-            result = await this.runInContext(`Promise.resolve().then(() => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
+            result = await this.runInContext(`Promise.resolve(args).then((args) => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
             logger.debug(`${method} was successfully called!`, result);
         } catch (e) {
             logger.error(e);
@@ -95,9 +95,9 @@ export class ProxiedApp implements IApp {
         return this.app.getStatus();
     }
 
-    public setStatus(status: AppStatus) {
-        this.call(AppMethod.SETSTATUS, status);
-        this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
+    public async setStatus(status: AppStatus): Promise<void> {
+        await this.call(AppMethod.SETSTATUS, status);
+        await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
     }
 
     public getName(): string {
