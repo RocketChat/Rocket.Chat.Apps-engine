@@ -1,5 +1,5 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppPackageParser } from './compiler';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -120,7 +120,7 @@ export class AppManager {
      * Expect this to take some time, as it goes through a very
      * long process of loading all the Apps up.
      */
-    public async load(): Promise<Array<ProxiedApp>> {
+    public async load(): Promise<Array<AppFabricationFulfillment>> {
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
 
         items.forEach((item: IAppStorageItem) => {
@@ -134,14 +134,16 @@ export class AppManager {
         });
 
         // Let's initialize them
-        this.apps.forEach(async (rl) => await this.initializeApp(items.get(rl.getID()), rl, true));
+        for (const rl of this.apps.values()) {
+            await this.initializeApp(items.get(rl.getID()), rl, true);
+        }
 
         // Now let's enable the apps which were once enabled
-        this.apps.forEach(async (rl) => {
+        for (const rl of this.apps.values()) {
             if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
                 await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
-        });
+        }
 
         this.isLoaded = true;
         return Array.from(this.apps.values());
@@ -264,8 +266,17 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true): Promise<ProxiedApp> {
+    public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
+        const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
+
+        aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
+
         const created = await this.storage.create({
             id: result.info.id,
             info: result.info,
@@ -286,6 +297,7 @@ export class AppManager {
         const app = this.getCompiler().toSandBox(created);
 
         this.apps.set(app.getID(), app);
+        aff.setApp(app);
 
         // Let everyone know that the App has been added
         try {
@@ -303,7 +315,7 @@ export class AppManager {
             await this.initializeApp(created, app, true);
         }
 
-        return app;
+        return aff;
     }
 
     public async remove(id: string): Promise<ProxiedApp> {
@@ -328,8 +340,17 @@ export class AppManager {
         return app;
     }
 
-    public async update(zipContentsBase64d: string): Promise<ProxiedApp> {
+    public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
+        const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
+
+        aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
+
         const old = await this.storage.retrieveOne(result.info.id);
 
         if (!old) {
@@ -363,6 +384,7 @@ export class AppManager {
 
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
+        aff.setApp(app);
 
         // Start up the app
         await this.runStartUpProcess(stored, app, false);
@@ -374,7 +396,7 @@ export class AppManager {
             // If an error occurs during this, oh well.
         }
 
-        return app;
+        return aff;
     }
 
     public getLanguageContent(): { [key: string]: object } {

@@ -1,8 +1,8 @@
-import * as _ from 'lodash';
+import cloneDeep = require('lodash.clonedeep');
 
 export class Utilities {
     public static deepClone<T>(item: T): T {
-        return _.cloneDeep(item);
+        return cloneDeep(item);
     }
 
     public static deepFreeze<T>(item: any): T {
