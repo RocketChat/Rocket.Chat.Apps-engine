@@ -6,8 +6,7 @@
   "typings": "index",
   "scripts": {
     "start": "gulp",
-    "compile": "gulp compile-dev-ts",
-    "build": "gulp build",
+    "compile": "gulp build",
     "go-publish": "gulp publish"
   },
   "repository": {
@@ -46,7 +45,7 @@
     "tslint": "^5.9.1"
   },
   "dependencies": {
-    "@rocket.chat/apps-ts-definition": "^0.9.4",
+    "@rocket.chat/apps-ts-definition": "^0.9.5",
     "adm-zip": "^0.4.7",
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.5.0",

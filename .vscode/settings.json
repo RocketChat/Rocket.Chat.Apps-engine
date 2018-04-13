@@ -1,4 +1,8 @@
 {
     "typescript.referencesCodeLens.enabled": true,
-    "typescript.implementationsCodeLens.enabled": true
+    "typescript.implementationsCodeLens.enabled": true,
+    "files.exclude": {
+        "*dist*/": true,
+        "data/": true
+    }
 }

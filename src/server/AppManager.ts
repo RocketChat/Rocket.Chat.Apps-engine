@@ -7,6 +7,7 @@ import {
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
+import { DisabledApp } from './misc/DisabledApp';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
@@ -122,16 +123,33 @@ export class AppManager {
      */
     public async load(): Promise<Array<AppFabricationFulfillment>> {
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
+        const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
-        items.forEach((item: IAppStorageItem) => {
+        for (const item of items.values()) {
+            const aff = new AppFabricationFulfillment();
+
             try {
-                this.apps.set(item.id, this.getCompiler().toSandBox(item));
+                const result = await this.getParser().parseZip(item.zip);
+
+                aff.setAppInfo(result.info);
+                aff.setImplementedInterfaces(result.implemented.getValues());
+                aff.setCompilerErrors(result.compilerErrors);
+                item.compiled = result.compiledFiles;
+
+                const app = this.getCompiler().toSandBox(item);
+                this.apps.set(item.id, app);
+                aff.setApp(app);
             } catch (e) {
-                // TODO: Handle this better. Create a way to show that it is disabled due to an
-                // unrecoverable error and they need to either update or remove it. #7
-                console.warn(`Error while compiling the Rocketlet "${ item.info.name } (${ item.id })":`, e);
+                console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`, e);
+
+                const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
+                const prl = new ProxiedApp(this, item, app, () => '');
+                this.apps.set(item.id, prl);
+                aff.setApp(prl);
             }
-        });
+
+            affs.push(aff);
+        }
 
         // Let's initialize them
         for (const rl of this.apps.values()) {
@@ -146,7 +164,7 @@ export class AppManager {
         }
 
         this.isLoaded = true;
-        return Array.from(this.apps.values());
+        return affs;
     }
 
     /** Gets the Apps which match the filter passed in. */
@@ -270,6 +288,7 @@ export class AppManager {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
 
+        aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
         aff.setCompilerErrors(result.compilerErrors);
 
@@ -344,6 +363,7 @@ export class AppManager {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
 
+        aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
         aff.setCompilerErrors(result.compilerErrors);
 

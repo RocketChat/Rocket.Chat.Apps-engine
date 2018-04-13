@@ -161,7 +161,7 @@ export class AppCompiler {
 
             console.error('A VERY UNEXPECTED ERROR HAPPENED THAT SHOULD NOT!');
             console.error('Please report this error with a screenshot of the logs. ' +
-                `Also, please email copy of the App being installed/updated: ${ info.name } v${ info.version } (${ info.id })`);
+                `Also, please email a copy of the App being installed/updated: ${ info.name } v${ info.version } (${ info.id })`);
 
             throw new CompilerError(`Language Service's Compiler Options Diagnostics contains ${ coDiag.length } diagnostics.`);
         }

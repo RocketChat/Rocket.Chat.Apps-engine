@@ -6,6 +6,7 @@ import { DevAppLogStorage } from './logStorage';
 import { TestingStorage } from './storage';
 
 import { App } from '@rocket.chat/apps-ts-definition/App';
+import { AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
 import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
@@ -64,7 +65,18 @@ async function loader(): Promise<void> {
         }
     }
 
-    manager.get().forEach((rl: ProxiedApp) => console.log('Successfully loaded:', rl.getName()));
+    manager.get().forEach((rl: ProxiedApp) => {
+        if (AppStatusUtils.isEnabled(rl.getStatus())) {
+            console.log(`Successfully loaded: ${ rl.getName() } v${ rl.getVersion() }`);
+        } else if (AppStatusUtils.isDisabled(rl.getStatus())) {
+            console.log(`Failed to load: ${ rl.getName() } v${ rl.getVersion() }`);
+        } else {
+            console.log(`Neither failed nor succeeded in loading: ${ rl.getName() } v${ rl.getVersion() }`);
+        }
+    });
 }
 
-loader().then(() => console.log('Completed the loading.'));
+loader().then(() => console.log('Completed the loading.')).catch((e) => {
+    console.warn('An error ocurred during the loading:');
+    console.error(e);
+});
