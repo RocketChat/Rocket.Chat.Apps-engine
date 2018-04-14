@@ -32,6 +32,8 @@ export class AppCompiler {
             noImplicitReturns: true,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
+            // Uncomment this out if you would like to see the module resolution process
+            // traceResolution: process.env.NODE_ENV !== 'production',
         };
 
         this.libraryFiles = {};
@@ -106,6 +108,10 @@ export class AppCompiler {
             result.files[key].name = path.normalize(result.files[key].name);
         });
 
+        // Our "current working directory" needs to be adjusted for module resolution
+        const cwd = __dirname.includes('node_modules/@rocket.chat/apps-engine')
+            ? __dirname.split('package/node_modules/@rocket.chat/apps-engine')[0] : process.cwd();
+
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(result.files),
             getScriptVersion: (fileName) => {
@@ -124,7 +130,7 @@ export class AppCompiler {
                 return ts.ScriptSnapshot.fromString(file.content);
             },
             getCompilationSettings: () => this.compilerOptions,
-            getCurrentDirectory: () => process.cwd(),
+            getCurrentDirectory: () => cwd,
             getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(this.compilerOptions),
             fileExists: (fileName: string): boolean => {
                 return ts.sys.fileExists(fileName);
@@ -134,17 +140,18 @@ export class AppCompiler {
             },
             resolveModuleNames: (moduleNames: Array<string>, containingFile: string): Array<ts.ResolvedModule> => {
                 const resolvedModules = new Array<ts.ResolvedModule>();
+                // tslint:disable-next-line
+                const moduleResHost: ts.ModuleResolutionHost = { fileExists: host.fileExists, readFile: host.readFile, trace: (traceDetail) => console.log(traceDetail) };
 
                 for (const moduleName of moduleNames) {
-                    // try to use standard resolution
-                    const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, { fileExists: host.fileExists, readFile: host.readFile });
-                    if (rs.resolvedModule) {
-                        resolvedModules.push(rs.resolvedModule);
+                    // Let's ensure we search for the App's modules first
+                    if (result.files[path.normalize(moduleName) + '.ts']) {
+                        resolvedModules.push({ resolvedFileName: path.normalize(moduleName) + '.ts' });
                     } else {
-                        const p = path.normalize(moduleName) + '.ts';
-
-                        if (result.files[p]) {
-                            resolvedModules.push({ resolvedFileName: p });
+                        // Now, let's try the "standard" resolution but with our little twist on it
+                        const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
+                        if (rs.resolvedModule) {
+                            resolvedModules.push(rs.resolvedModule);
                         }
                     }
                 }
