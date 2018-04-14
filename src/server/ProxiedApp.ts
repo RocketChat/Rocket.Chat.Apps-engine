@@ -21,6 +21,10 @@ export class ProxiedApp implements IApp {
         this.previousStatus = storageItem.status;
     }
 
+    public getApp(): App {
+        return this.app;
+    }
+
     public getStorageItem(): IAppStorageItem {
         return this.storageItem;
     }

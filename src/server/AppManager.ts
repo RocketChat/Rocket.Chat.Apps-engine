@@ -153,6 +153,10 @@ export class AppManager {
 
         // Let's initialize them
         for (const rl of this.apps.values()) {
+            if (rl.getApp() instanceof DisabledApp) {
+                continue;
+            }
+
             await this.initializeApp(items.get(rl.getID()), rl, true);
         }
 
