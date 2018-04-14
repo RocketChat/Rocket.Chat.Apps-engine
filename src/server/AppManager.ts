@@ -170,8 +170,9 @@ export class AppManager {
         }
 
         // Now let's enable the apps which were once enabled
+        // but are not currently disabled.
         for (const rl of this.apps.values()) {
-            if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+            if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
                 await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
         }
@@ -240,7 +241,11 @@ export class AppManager {
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error(`The App with the id "${id}" is already enabled.`);
+            throw new Error('The App is already enabled.');
+        }
+
+        if (rl.getStatus() === AppStatus.COMPILER_ERROR_DISABLED) {
+            throw new Error('The App had compiler errors, can not enable it.');
         }
 
         const storageItem = await this.storage.retrieveOne(id);
