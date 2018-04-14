@@ -32,8 +32,8 @@ export class AppCompiler {
             noImplicitReturns: true,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
-            // Uncomment this out if you would like to see the module resolution process
-            // traceResolution: process.env.NODE_ENV !== 'production',
+            // Set this to true if you would like to see the module resolution process
+            traceResolution: false,
         };
 
         this.libraryFiles = {};
@@ -110,7 +110,7 @@ export class AppCompiler {
 
         // Our "current working directory" needs to be adjusted for module resolution
         const cwd = __dirname.includes('node_modules/@rocket.chat/apps-engine')
-            ? __dirname.split('package/node_modules/@rocket.chat/apps-engine')[0] : process.cwd();
+            ? __dirname.split('node_modules/@rocket.chat/apps-engine')[0] : process.cwd();
 
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(result.files),
