@@ -149,6 +149,11 @@ export class AppCompiler {
                     }
                 }
 
+                if (moduleNames.length > resolvedModules.length) {
+                    const failedCount = moduleNames.length - resolvedModules.length;
+                    console.log(`Failed to resolved ${ failedCount } modules for ${ info.name } v${ info.version }!`);
+                }
+
                 return resolvedModules;
             },
         };

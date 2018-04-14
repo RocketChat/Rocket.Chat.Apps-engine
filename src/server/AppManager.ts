@@ -134,13 +134,19 @@ export class AppManager {
                 aff.setAppInfo(result.info);
                 aff.setImplementedInterfaces(result.implemented.getValues());
                 aff.setCompilerErrors(result.compilerErrors);
+
+                if (result.compilerErrors.length > 0) {
+                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors.`);
+                }
+
                 item.compiled = result.compiledFiles;
 
                 const app = this.getCompiler().toSandBox(item);
                 this.apps.set(item.id, app);
                 aff.setApp(app);
             } catch (e) {
-                console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`, e);
+                console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`);
+                console.error(e);
 
                 const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
                 const prl = new ProxiedApp(this, item, app, () => '');
@@ -153,7 +159,10 @@ export class AppManager {
 
         // Let's initialize them
         for (const rl of this.apps.values()) {
-            if (rl.getApp() instanceof DisabledApp) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                // Usually if an App is disabled before it's initialized,
+                // then something (such as an error) occured while
+                // it was compiled or something similar.
                 continue;
             }
 
