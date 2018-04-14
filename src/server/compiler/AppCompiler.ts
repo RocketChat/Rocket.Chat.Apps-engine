@@ -145,8 +145,8 @@ export class AppCompiler {
 
                 for (const moduleName of moduleNames) {
                     // Let's ensure we search for the App's modules first
-                    if (result.files[path.normalize(moduleName) + '.ts']) {
-                        resolvedModules.push({ resolvedFileName: path.normalize(moduleName) + '.ts' });
+                    if (result.files[path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts']) {
+                        resolvedModules.push({ resolvedFileName: path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts' });
                     } else {
                         // Now, let's try the "standard" resolution but with our little twist on it
                         const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
