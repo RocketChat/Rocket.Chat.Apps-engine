@@ -17,4 +17,8 @@ export class DisabledApp extends App {
     public async onEnable(): Promise<boolean> {
         return false;
     }
+
+    public getLogger(): AppConsole {
+        return super.getLogger() as AppConsole;
+    }
 }

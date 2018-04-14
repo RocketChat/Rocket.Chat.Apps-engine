@@ -149,6 +149,9 @@ export class AppManager {
                 console.error(e);
 
                 const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
+                app.getLogger().error(e);
+                this.logStorage.storeEntries(app.getID(), app.getLogger());
+
                 const prl = new ProxiedApp(this, item, app, () => '');
                 this.apps.set(item.id, prl);
                 aff.setApp(prl);
