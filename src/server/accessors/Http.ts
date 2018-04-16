@@ -1,8 +1,6 @@
 import {
     IHttp,
     IHttpExtend,
-    IHttpPreRequestHandler,
-    IHttpPreResponseHandler,
     IHttpRequest,
     IHttpResponse,
     RequestMethod,
@@ -58,9 +56,9 @@ export class Http implements IHttp {
         const reader = this.accessManager.getReader(this.appId);
         const persis = this.accessManager.getPersistence(this.appId);
 
-        this.httpExtender.getPreRequestHandlers().forEach((handler: IHttpPreRequestHandler) => {
-            request = handler.executePreHttpRequest(url, request, reader, persis);
-        });
+        for (const handler of this.httpExtender.getPreRequestHandlers()) {
+            request = await handler.executePreHttpRequest(url, request, reader, persis);
+        }
 
         let response = await this.bridges.getHttpBridge().call({
             appId: this.appId,
@@ -69,9 +67,9 @@ export class Http implements IHttp {
             request,
         });
 
-        this.httpExtender.getPreResponseHandlers().forEach((handler: IHttpPreResponseHandler) => {
-            response = handler.executePreHttpResponse(response, reader, persis);
-        });
+        for (const handler of this.httpExtender.getPreResponseHandlers()) {
+            response = await handler.executePreHttpResponse(response, reader, persis);
+        }
 
         return response;
     }
