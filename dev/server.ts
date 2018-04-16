@@ -11,6 +11,7 @@ import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
+import { QuickMessageTests } from './quick-tests/messages';
 
 const logStorage = new DevAppLogStorage();
 const storage = new TestingStorage();
@@ -76,7 +77,17 @@ async function loader(): Promise<void> {
     });
 }
 
-loader().then(() => console.log('Completed the loading.')).catch((e) => {
+async function tester(): Promise<void> {
+    const msgTesting = new QuickMessageTests(manager);
+
+    await msgTesting.testMessagePrevent();
+    await msgTesting.testMessageExtend();
+}
+
+loader().then(() => {
+    console.log('!!!Loading complete. Now going to test!!!');
+    return tester();
+}).then(() => console.log('Completed the loading.')).catch((e) => {
     console.warn('An error ocurred during the loading:');
     console.error(e);
 });

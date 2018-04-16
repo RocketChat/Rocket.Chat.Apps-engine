@@ -84,10 +84,10 @@ export class ProxiedApp implements IApp {
         try {
             // tslint:disable-next-line:max-line-length
             result = await this.runInContext(`Promise.resolve(args).then((args) => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
-            logger.debug(`${method} was successfully called!`, result);
+            logger.debug(`'${method}' was successfully called! The result is:`, result);
         } catch (e) {
             logger.error(e);
-            logger.debug(`${method} was unsuccessful.`);
+            logger.debug(`'${method}' was unsuccessful.`);
         }
 
         this.manager.getLogStorage().storeEntries(this.getID(), logger);
