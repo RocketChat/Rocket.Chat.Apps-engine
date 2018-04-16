@@ -21,6 +21,10 @@ export class ProxiedApp implements IApp {
         this.previousStatus = storageItem.status;
     }
 
+    public getApp(): App {
+        return this.app;
+    }
+
     public getStorageItem(): IAppStorageItem {
         return this.storageItem;
     }
@@ -61,7 +65,7 @@ export class ProxiedApp implements IApp {
         return vm.runInContext(codeToRun, context, { timeout: 1000 });
     }
 
-    public call(method: AppMethod, ...args: Array<any>): any {
+    public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
             throw new Error(`The App ${this.app.getName()} (${this.app.getID()}`
                 + ` does not have the method: "${method}"`);
@@ -78,11 +82,12 @@ export class ProxiedApp implements IApp {
 
         let result;
         try {
-            result = this.runInContext(`app.${method}.apply(app, args)`, this.makeContext({ app: this.app, args }));
-            logger.debug(`${method} was successfully called!`, result);
+            // tslint:disable-next-line:max-line-length
+            result = await this.runInContext(`Promise.resolve(args).then((args) => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
+            logger.debug(`'${method}' was successfully called! The result is:`, result);
         } catch (e) {
             logger.error(e);
-            logger.debug(`${method} was unsuccessful.`);
+            logger.debug(`'${method}' was unsuccessful.`);
         }
 
         this.manager.getLogStorage().storeEntries(this.getID(), logger);
@@ -94,9 +99,9 @@ export class ProxiedApp implements IApp {
         return this.app.getStatus();
     }
 
-    public setStatus(status: AppStatus) {
-        this.call(AppMethod.SETSTATUS, status);
-        this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
+    public async setStatus(status: AppStatus): Promise<void> {
+        await this.call(AppMethod.SETSTATUS, status);
+        await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
     }
 
     public getName(): string {

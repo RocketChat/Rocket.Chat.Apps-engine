@@ -6,9 +6,10 @@ import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 export class SettingsExtend implements ISettingsExtend {
     constructor(private readonly app: ProxiedApp) { }
 
-    public provideSetting(setting: ISetting): void {
+    public async provideSetting(setting: ISetting): Promise<void> {
         if (this.app.getStorageItem().settings[setting.id]) {
-            const old = this.app.getStorageItem().settings[setting.id];
+            // :see_no_evil:
+            const old = await Promise.resolve(this.app.getStorageItem().settings[setting.id]);
 
             setting.createdAt = old.createdAt;
             setting.updatedAt = new Date();

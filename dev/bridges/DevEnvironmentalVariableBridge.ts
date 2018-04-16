@@ -1,15 +1,15 @@
 import { IEnvironmentalVariableBridge } from '../../src/server/bridges/IEnvironmentalVariableBridge';
 
 export class DevEnvironmentalVariableBridge implements IEnvironmentalVariableBridge {
-    public getValueByName(envVarName: string, appId: string): string {
+    public getValueByName(envVarName: string, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
 
-    public isReadable(envVarName: string, appId: string): boolean {
+    public isReadable(envVarName: string, appId: string): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 
-    public isSet(envVarName: string, appId: string): boolean {
+    public isSet(envVarName: string, appId: string): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 }

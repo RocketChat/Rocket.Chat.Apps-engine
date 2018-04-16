@@ -26,7 +26,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | IRoomBuilder): string {
+    public finish(builder: IMessageBuilder | IRoomBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -37,7 +37,7 @@ export class ModifyCreator implements IModifyCreator {
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): string {
+    private _finishMessage(builder: IMessageBuilder): Promise<string> {
         const result = builder.getMessage();
         delete result.id;
 
@@ -52,7 +52,7 @@ export class ModifyCreator implements IModifyCreator {
         return this.bridges.getMessageBridge().create(result, this.appId);
     }
 
-    private _finishRoom(builder: IRoomBuilder): string {
+    private _finishRoom(builder: IRoomBuilder): Promise<string> {
         const result = builder.getRoom();
         delete result.id;
 

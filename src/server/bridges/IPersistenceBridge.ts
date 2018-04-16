@@ -6,7 +6,7 @@ export interface IPersistenceBridge {
      *
      * @argument appId the id of the app's data to remove
      */
-    purge(appId: string): void;
+    purge(appId: string): Promise<void>;
 
     /**
      * Creates a new persistant record with the provided data attached.
@@ -15,7 +15,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app which is storing the data
      * @returns the id of the stored record
      */
-    create(data: any, appId: string): string;
+    create(data: any, appId: string): Promise<string>;
 
     /**
      * Creates a new record in the App's persistent storage with the data being
@@ -26,7 +26,8 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app which is storing the data
      * @returns the id of the stored record
      */
-    createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): string;
+    // tslint:disable-next-line:max-line-length
+    createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): Promise<string>;
 
     /**
      * Retrieves from the persistent storage the record by the id provided.
@@ -35,7 +36,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app calling this
      * @returns the data stored in the persistent storage, or undefined
      */
-    readById(id: string, appId: string): object;
+    readById(id: string, appId: string): Promise<object>;
 
     /**
      * Retrieves the data which is associated with the provided records.
@@ -44,7 +45,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app calling this
      * @returns an array of records if they exist, an empty array otherwise
      */
-    readByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Array<object>;
+    readByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>>;
 
     /**
      * Removes the record which matches the provided id.
@@ -53,7 +54,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app calling this
      * @returns the data being removed
      */
-    remove(id: string, appId: string): object;
+    remove(id: string, appId: string): Promise<object>;
 
     /**
      * Removes any data which has been associated with the provided records.
@@ -62,7 +63,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app calling this
      * @returns the data of the removed records
      */
-    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Array<object>;
+    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>>;
 
     /**
      * Updates the record in the database, with the option of creating a new one if it doesn't exist.
@@ -73,5 +74,5 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app calling this
      * @returns the id, whether the new one or the existing one
      */
-    update(id: string, data: object, upsert: boolean, appId: string): string;
+    update(id: string, data: object, upsert: boolean, appId: string): Promise<string>;
 }

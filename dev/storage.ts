@@ -66,7 +66,7 @@ export class TestingStorage extends AppStorage {
 
     public update(item: IAppStorageItem): Promise<IAppStorageItem> {
         return new Promise((resolve, reject) => {
-            this.db.update({ id: item.id }, item, (err: Error, numOfUpdated: number) => {
+            this.db.update({ id: item.id }, item, {}, (err: Error, numOfUpdated: number) => {
                 if (err) {
                     reject(err);
                 } else {

@@ -2,8 +2,8 @@ import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
 import { ProxiedApp } from '../ProxiedApp';
 
 export interface IAppActivationBridge {
-    appAdded(app: ProxiedApp): void;
-    appUpdated(app: ProxiedApp): void;
-    appRemoved(app: ProxiedApp): void;
-    appStatusChanged(app: ProxiedApp, status: AppStatus): void;
+    appAdded(app: ProxiedApp): Promise<void>;
+    appUpdated(app: ProxiedApp): Promise<void>;
+    appRemoved(app: ProxiedApp): Promise<void>;
+    appStatusChanged(app: ProxiedApp, status: AppStatus): Promise<void>;
 }

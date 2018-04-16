@@ -1,5 +1,5 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppPackageParser } from './compiler';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -7,6 +7,7 @@ import {
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
+import { DisabledApp } from './misc/DisabledApp';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
@@ -120,31 +121,67 @@ export class AppManager {
      * Expect this to take some time, as it goes through a very
      * long process of loading all the Apps up.
      */
-    public async load(): Promise<Array<ProxiedApp>> {
+    public async load(): Promise<Array<AppFabricationFulfillment>> {
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
+        const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
-        items.forEach((item: IAppStorageItem) => {
+        for (const item of items.values()) {
+            const aff = new AppFabricationFulfillment();
+
             try {
-                this.apps.set(item.id, this.getCompiler().toSandBox(item));
+                const result = await this.getParser().parseZip(item.zip);
+
+                aff.setAppInfo(result.info);
+                aff.setImplementedInterfaces(result.implemented.getValues());
+                aff.setCompilerErrors(result.compilerErrors);
+
+                if (result.compilerErrors.length > 0) {
+                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors.`);
+                }
+
+                item.compiled = result.compiledFiles;
+
+                const app = this.getCompiler().toSandBox(item);
+                this.apps.set(item.id, app);
+                aff.setApp(app);
             } catch (e) {
-                // TODO: Handle this better. Create a way to show that it is disabled due to an
-                // unrecoverable error and they need to either update or remove it. #7
-                console.warn(`Error while compiling the Rocketlet "${ item.info.name } (${ item.id })":`, e);
+                console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`);
+                console.error(e);
+
+                const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
+                app.getLogger().error(e);
+                this.logStorage.storeEntries(app.getID(), app.getLogger());
+
+                const prl = new ProxiedApp(this, item, app, () => '');
+                this.apps.set(item.id, prl);
+                aff.setApp(prl);
             }
-        });
+
+            affs.push(aff);
+        }
 
         // Let's initialize them
-        this.apps.forEach((rl) => this.initializeApp(items.get(rl.getID()), rl, true));
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                // Usually if an App is disabled before it's initialized,
+                // then something (such as an error) occured while
+                // it was compiled or something similar.
+                continue;
+            }
+
+            await this.initializeApp(items.get(rl.getID()), rl, true);
+        }
 
         // Now let's enable the apps which were once enabled
-        this.apps.forEach((rl) => {
-            if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+        // but are not currently disabled.
+        for (const rl of this.apps.values()) {
+            if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
             }
-        });
+        }
 
         this.isLoaded = true;
-        return Array.from(this.apps.values());
+        return affs;
     }
 
     /** Gets the Apps which match the filter passed in. */
@@ -207,7 +244,11 @@ export class AppManager {
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error(`The App with the id "${id}" is already enabled.`);
+            throw new Error('The App is already enabled.');
+        }
+
+        if (rl.getStatus() === AppStatus.COMPILER_ERROR_DISABLED) {
+            throw new Error('The App had compiler errors, can not enable it.');
         }
 
         const storageItem = await this.storage.retrieveOne(id);
@@ -215,11 +256,11 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = this.runStartUpProcess(storageItem, rl, true);
+        const isSetup = await this.runStartUpProcess(storageItem, rl, true);
         if (isSetup) {
+            storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = rl.getStatus();
             this.storage.update(storageItem);
         }
 
@@ -243,7 +284,7 @@ export class AppManager {
         }
 
         try {
-            rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
+            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
         } catch (e) {
             console.warn('Error while disabling:', e);
         }
@@ -253,7 +294,7 @@ export class AppManager {
         this.accessorManager.purifyApp(storageItem.id);
 
         if (isManual) {
-            rl.setStatus(AppStatus.MANUALLY_DISABLED);
+            await rl.setStatus(AppStatus.MANUALLY_DISABLED);
         }
 
         // This is async, but we don't care since it only updates in the database
@@ -264,8 +305,18 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true): Promise<ProxiedApp> {
+    public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
+        const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
+
+        aff.setAppInfo(result.info);
+        aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
+
         const created = await this.storage.create({
             id: result.info.id,
             info: result.info,
@@ -286,10 +337,11 @@ export class AppManager {
         const app = this.getCompiler().toSandBox(created);
 
         this.apps.set(app.getID(), app);
+        aff.setApp(app);
 
         // Let everyone know that the App has been added
         try {
-            this.bridges.getAppActivationBridge().appAdded(app);
+            await this.bridges.getAppActivationBridge().appAdded(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -298,12 +350,12 @@ export class AppManager {
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            this.runStartUpProcess(created, app, false);
+            await this.runStartUpProcess(created, app, false);
         } else {
-            this.initializeApp(created, app, true);
+            await this.initializeApp(created, app, true);
         }
 
-        return app;
+        return aff;
     }
 
     public async remove(id: string): Promise<ProxiedApp> {
@@ -313,12 +365,12 @@ export class AppManager {
             await this.disable(id);
         }
 
-        this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
         try {
-            this.bridges.getAppActivationBridge().appRemoved(app);
+            await this.bridges.getAppActivationBridge().appRemoved(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
@@ -328,8 +380,18 @@ export class AppManager {
         return app;
     }
 
-    public async update(zipContentsBase64d: string): Promise<ProxiedApp> {
+    public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
+        const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(zipContentsBase64d);
+
+        aff.setAppInfo(result.info);
+        aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
+
         const old = await this.storage.retrieveOne(result.info.id);
 
         if (!old) {
@@ -363,18 +425,19 @@ export class AppManager {
 
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
+        aff.setApp(app);
 
         // Start up the app
-        this.runStartUpProcess(stored, app, false);
+        await this.runStartUpProcess(stored, app, false);
 
         // Let everyone know that the App has been updated
         try {
-            this.bridges.getAppActivationBridge().appUpdated(app);
+            await this.bridges.getAppActivationBridge().appUpdated(app);
         } catch (e) {
             // If an error occurs during this, oh well.
         }
 
-        return app;
+        return aff;
     }
 
     public getLanguageContent(): { [key: string]: object } {
@@ -439,42 +502,40 @@ export class AppManager {
         this.apps.set(item.id, this.getCompiler().toSandBox(item));
 
         const rl = this.apps.get(item.id);
-        this.initializeApp(item, rl, false);
+        await this.initializeApp(item, rl, false);
 
         if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-            this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+            await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
         return this.apps.get(item.id);
     }
 
-    private runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): boolean {
+    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): Promise<boolean> {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
-            const isInitialized = this.initializeApp(storageItem, app, true);
+            const isInitialized = await this.initializeApp(storageItem, app, true);
             if (!isInitialized) {
                 return false;
             }
         }
 
-        const isEnabled = this.enableApp(storageItem, app, true, isManual);
+        const isEnabled = await this.enableApp(storageItem, app, true, isManual);
         if (!isEnabled) {
             return false;
         }
 
-        // TODO: Register all of the listeners
-
         return true;
     }
 
-    private initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): boolean {
+    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): Promise<boolean> {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
-            app.call(AppMethod.INITIALIZE, configExtend, envRead);
+            await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             result = true;
-            app.setStatus(AppStatus.INITIALIZED);
+            await app.setStatus(AppStatus.INITIALIZED);
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -484,7 +545,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             result = false;
 
-            app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED);
         }
 
         if (saveToDb) {
@@ -497,14 +558,14 @@ export class AppManager {
         return result;
     }
 
-    private enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): boolean {
+    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): Promise<boolean> {
         let enable: boolean;
 
         try {
-            enable = app.call(AppMethod.ONENABLE,
+            enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
+            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
         } catch (e) {
             enable = false;
 
@@ -513,7 +574,7 @@ export class AppManager {
             }
 
             console.error(e);
-            app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED);
         }
 
         if (enable) {
@@ -524,9 +585,9 @@ export class AppManager {
         }
 
         if (saveToDb) {
+            storageItem.status = app.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = app.getStatus();
             this.storage.update(storageItem);
         }
 

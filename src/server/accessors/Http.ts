@@ -16,23 +16,23 @@ export class Http implements IHttp {
                 private readonly httpExtender: IHttpExtend,
                 private readonly appId: string) { }
 
-    public get(url: string, options?: IHttpRequest): IHttpResponse {
+    public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.GET, options);
     }
 
-    public put(url: string, options?: IHttpRequest): IHttpResponse {
+    public put(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.PUT, options);
     }
 
-    public post(url: string, options?: IHttpRequest): IHttpResponse {
+    public post(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.POST, options);
     }
 
-    public del(url: string, options?: IHttpRequest): IHttpResponse {
+    public del(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.DELETE, options);
     }
 
-    private _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): IHttpResponse {
+    private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
         let request = options || { };
 
         if (typeof request.headers === 'undefined') {
@@ -62,7 +62,7 @@ export class Http implements IHttp {
             request = handler.executePreHttpRequest(url, request, reader, persis);
         });
 
-        let response = this.bridges.getHttpBridge().call({
+        let response = await this.bridges.getHttpBridge().call({
             appId: this.appId,
             method,
             url,

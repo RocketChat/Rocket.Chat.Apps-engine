@@ -92,6 +92,7 @@ export class AppPackageParser {
             compiledFiles,
             languageContent,
             implemented: result.implemented,
+            compilerErrors: result.compilerErrors,
         };
     }
 

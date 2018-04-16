@@ -4,11 +4,12 @@ import * as ts from 'typescript';
 import * as vm from 'vm';
 
 import { AppManager } from '../AppManager';
-import { MustContainFunctionError, MustExtendAppError } from '../errors';
+import { CompilerError, MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
 import { ProxiedApp } from '../ProxiedApp';
 import { IAppStorageItem } from '../storage/IAppStorageItem';
 import { AppImplements } from './AppImplements';
+import { ICompilerError } from './ICompilerError';
 import { ICompilerFile } from './ICompilerFile';
 import { ICompilerResult } from './ICompilerResult';
 
@@ -21,15 +22,18 @@ export class AppCompiler {
 
     constructor(private readonly manager: AppManager) {
         this.compilerOptions = {
-            target: ts.ScriptTarget.ES2016,
+            target: ts.ScriptTarget.ES2017,
             module: ts.ModuleKind.CommonJS,
             moduleResolution: ts.ModuleResolutionKind.NodeJs,
             declaration: false,
             noImplicitAny: false,
             removeComments: true,
+            strictNullChecks: true,
             noImplicitReturns: true,
-            experimentalDecorators: true,
             emitDecoratorMetadata: true,
+            experimentalDecorators: true,
+            // Set this to true if you would like to see the module resolution process
+            traceResolution: false,
         };
 
         this.libraryFiles = {};
@@ -75,6 +79,14 @@ export class AppCompiler {
         return this.libraryFiles[norm];
     }
 
+    /**
+     * Attempts to compile the TypeScript down into JavaScript which we can understand.
+     * It returns the files, what the App implements, and whether there are errors or not.
+     *
+     * @param info the App's information (name, version, etc)
+     * @param theFiles the actual files to try and compile
+     * @returns the results of trying to compile, including errors
+     */
     public toJs(info: IAppInfo, theFiles: { [s: string]: ICompilerFile }): ICompilerResult {
         if (!theFiles || !theFiles[info.classFile] || !this.isValidFile(theFiles[info.classFile])) {
             throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
@@ -83,6 +95,7 @@ export class AppCompiler {
         const result: ICompilerResult = {
             files: theFiles,
             implemented: new AppImplements(),
+            compilerErrors: new Array<ICompilerError>(),
         };
 
         // Verify all file names are normalized
@@ -94,6 +107,10 @@ export class AppCompiler {
 
             result.files[key].name = path.normalize(result.files[key].name);
         });
+
+        // Our "current working directory" needs to be adjusted for module resolution
+        const cwd = __dirname.includes('node_modules/@rocket.chat/apps-engine')
+            ? __dirname.split('node_modules/@rocket.chat/apps-engine')[0] : process.cwd();
 
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(result.files),
@@ -113,35 +130,52 @@ export class AppCompiler {
                 return ts.ScriptSnapshot.fromString(file.content);
             },
             getCompilationSettings: () => this.compilerOptions,
-            getCurrentDirectory: () => process.cwd(),
+            getCurrentDirectory: () => cwd,
             getDefaultLibFileName: (options) => ts.getDefaultLibFilePath(this.compilerOptions),
+            fileExists: (fileName: string): boolean => {
+                return ts.sys.fileExists(fileName);
+            },
+            readFile: (fileName: string): string | undefined => {
+                return ts.sys.readFile(fileName);
+            },
+            resolveModuleNames: (moduleNames: Array<string>, containingFile: string): Array<ts.ResolvedModule> => {
+                const resolvedModules = new Array<ts.ResolvedModule>();
+                // tslint:disable-next-line
+                const moduleResHost: ts.ModuleResolutionHost = { fileExists: host.fileExists, readFile: host.readFile, trace: (traceDetail) => console.log(traceDetail) };
+
+                for (const moduleName of moduleNames) {
+                    // Let's ensure we search for the App's modules first
+                    if (result.files[path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts']) {
+                        resolvedModules.push({ resolvedFileName: path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts' });
+                    } else {
+                        // Now, let's try the "standard" resolution but with our little twist on it
+                        const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
+                        if (rs.resolvedModule) {
+                            resolvedModules.push(rs.resolvedModule);
+                        }
+                    }
+                }
+
+                if (moduleNames.length > resolvedModules.length) {
+                    const failedCount = moduleNames.length - resolvedModules.length;
+                    console.log(`Failed to resolved ${ failedCount } modules for ${ info.name } v${ info.version }!`);
+                }
+
+                return resolvedModules;
+            },
         };
 
         const languageService = ts.createLanguageService(host, ts.createDocumentRegistry());
 
-        // const dia = languageService.getProgram().getGlobalDiagnostics();
-        const dia = languageService.getCompilerOptionsDiagnostics();
-        if (dia.length !== 0) {
-            console.log(dia);
-            throw new Error('The Compiler Options Diagnostics return some values' + ' ' +
-                'please report this with a screenshot of above!');
-        }
+        const coDiag = languageService.getCompilerOptionsDiagnostics();
+        if (coDiag.length !== 0) {
+            console.log(coDiag);
 
-        function logErrors(fileName: string) {
-            const allDiagnostics = languageService.getCompilerOptionsDiagnostics()
-                .concat(languageService.getSyntacticDiagnostics(fileName))
-                .concat(languageService.getSemanticDiagnostics(fileName));
+            console.error('A VERY UNEXPECTED ERROR HAPPENED THAT SHOULD NOT!');
+            console.error('Please report this error with a screenshot of the logs. ' +
+                `Also, please email a copy of the App being installed/updated: ${ info.name } v${ info.version } (${ info.id })`);
 
-            allDiagnostics.forEach((diagnostic) => {
-                const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-
-                if (diagnostic.file) {
-                    const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
-                    console.log(`  Error ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
-                } else {
-                    console.log(`  Error: ${message}`);
-                }
-            });
+            throw new CompilerError(`Language Service's Compiler Options Diagnostics contains ${ coDiag.length } diagnostics.`);
         }
 
         const src = languageService.getProgram().getSourceFile(info.classFile);
@@ -165,6 +199,47 @@ export class AppCompiler {
                     }
                 });
             }
+        });
+
+        function logErrors(fileName: string) {
+            const allDiagnostics = languageService.getCompilerOptionsDiagnostics()
+                .concat(languageService.getSyntacticDiagnostics(fileName))
+                .concat(languageService.getSemanticDiagnostics(fileName));
+
+            allDiagnostics.forEach((diagnostic) => {
+                const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+
+                if (diagnostic.file) {
+                    const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+                    console.log(`  Error ${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`);
+                } else {
+                    console.log(`  Error: ${message}`);
+                }
+            });
+        }
+
+        const preEmit = ts.getPreEmitDiagnostics(languageService.getProgram());
+        preEmit.forEach((dia: ts.Diagnostic) => {
+            // Only filter out the typing diagnostics which are something other than errors
+            if (dia.category !== ts.DiagnosticCategory.Error) {
+                return;
+            }
+
+            const msg = ts.flattenDiagnosticMessageText(dia.messageText, '\n');
+            if (!dia.file) {
+                console.warn(msg);
+                return;
+            }
+
+            const { line, character } = dia.file.getLineAndCharacterOfPosition(dia.start);
+            // console.warn(`  Error ${dia.file.fileName} (${line + 1},${character + 1}): ${msg}`);
+
+            result.compilerErrors.push({
+                file: dia.file.fileName,
+                line,
+                character,
+                message: `${dia.file.fileName} (${line + 1},${character + 1}): ${msg}`,
+            });
         });
 
         Object.keys(result.files).forEach((key) => {

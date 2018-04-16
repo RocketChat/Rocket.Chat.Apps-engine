@@ -3,19 +3,19 @@ import { IAppActivationBridge } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
 
 export class DevActivationBridge implements IAppActivationBridge {
-    public appAdded(app: ProxiedApp): void {
+    public async appAdded(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been added.`);
     }
 
-    public appUpdated(app: ProxiedApp): void {
+    public async appUpdated(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been updated.`);
     }
 
-    public appRemoved(app: ProxiedApp): void {
+    public async appRemoved(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been removed.`);
     }
 
-    public appStatusChanged(app: ProxiedApp, status: AppStatus): void {
+    public async appStatusChanged(app: ProxiedApp, status: AppStatus): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) status has changed to: ${ status }`);
     }
 }
