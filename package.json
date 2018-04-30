@@ -6,11 +6,13 @@
   "typings": "index",
   "scripts": {
     "start": "gulp",
-    "compile": "gulp build",
+    "lint": "tslint --project tsconfig.json",
+    "compile": "gulp",
     "go-publish": "gulp publish",
     "unit-tests": "ts-node ./tests/runner.ts",
     "check-coverage": "nyc --reporter=lcov --reporter=html npm run unit-tests && nyc report",
-    "view-coverage": "npm run check-coverage && http-server coverage -p 9082 -c-1"
+    "view-coverage": "npm run check-coverage && http-server coverage -p 9082 -c-1",
+    "submit-codecov": "codecov"
   },
   "repository": {
     "type": "git",
@@ -36,6 +38,7 @@
     "@types/stack-trace": "0.0.29",
     "@types/uuid": "^3.4.3",
     "alsatian": "^2.2.1",
+    "codecov": "^3.0.1",
     "del": "^3.0.0",
     "eslint": "^4.19.1",
     "gulp": "^3.9.1",

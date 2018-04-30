@@ -1,0 +1,110 @@
+version: 2
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:7.10.1
+
+whitelist: &whitelist
+  paths:
+    - .git/*
+    - .nyc_output/*
+    - coverage/*
+    - dist/*
+    - node_modules/*
+    - src/*
+    - tests/*
+    - LICENSE
+    - package.json
+    - README.md
+    - tsconfig.json
+    - tslint.json
+    - gulpfile.js
+
+jobs:
+  checkout:
+    <<: *defaults
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install Dependencies
+          command: npm install
+
+      - persist_to_workspace:
+          root: ~/repo
+          <<: *whitelist
+
+  lint:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Lint TypeScript Code
+          command: npm run lint
+
+  build:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Compile TypeScript into JavaScript
+          command: npm run compile
+
+      - persist_to_workspace:
+          root: ~/repo
+          <<: *whitelist
+
+  test:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Test TypeScript Code
+          command: npm run unit-tests
+
+      - persist_to_workspace:
+          root: ~/repo
+          <<: *whitelist
+
+  codecov:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Submit coverage report to codecov
+          command: npm run submit-codecov
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - checkout
+      - test:
+          requires:
+            - checkout
+      - lint:
+          requires:
+            - checkout
+      - build:
+          requires:
+            - lint
+            - test
+      - codecov:
+          requires:
+            - test
+            - lint
+            - build
