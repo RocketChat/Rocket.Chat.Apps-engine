@@ -17,3 +17,6 @@ The engine which manages and controls everything....more details coming soon.
 
 ## Testing Framework:
 Makes great usage of TypeScript and decorators: https://github.com/alsatian-test/alsatian/wiki
+* To run the tests do: `npm run unit-tests`
+* To generate the coverage information: `npm run check-coverage`
+* To view the coverage: `npm run view-coverage`
