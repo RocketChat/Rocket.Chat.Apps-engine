@@ -21,7 +21,7 @@ whitelist: &whitelist
     - gulpfile.js
 
 jobs:
-  build:
+  checkout:
     <<: *defaults
 
     steps:
@@ -29,9 +29,7 @@ jobs:
 
       - run:
           name: Install Dependencies
-          command: |
-            npm install
-            npm run compile
+          command: npm install
 
       - persist_to_workspace:
           root: ~/repo
@@ -47,6 +45,18 @@ jobs:
       - run:
           name: Lint TypeScript Code
           command: npm run lint
+
+  build:
+    <<: *defaults
+
+    steps:
+      - run:
+          name: Install Dependencies
+          command: npm run build
+
+      - persist_to_workspace:
+          root: ~/repo
+          <<: *whitelist
 
   test:
     <<: *defaults
@@ -79,14 +89,19 @@ workflows:
 
   build:
     jobs:
-      - build
+      - checkout
       - test:
           requires:
-            - build
+            - checkout
       - lint:
           requires:
-            - build
+            - checkout
+      - build:
+          requires:
+            - lint
+            - test
       - codecov:
           requires:
             - test
             - lint
+            - build
