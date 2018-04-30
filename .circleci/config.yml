@@ -60,6 +60,17 @@ jobs:
           root: ~/repo
           <<: *whitelist
 
+  codecov:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+
+      - run:
+          name: Submit coverage report to codecov
+          command: npm run submit-codecov
+
 workflows:
   version: 2
 
@@ -72,3 +83,7 @@ workflows:
       - lint:
           requires:
             - checkout
+      - codecov:
+          requires:
+            - test
+            - lint
