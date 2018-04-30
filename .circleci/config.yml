@@ -50,8 +50,11 @@ jobs:
     <<: *defaults
 
     steps:
+      - attach_workspace:
+          at: ~/repo
+
       - run:
-          name: Install Dependencies
+          name: Compile TypeScript into JavaScript
           command: npm run build
 
       - persist_to_workspace:
