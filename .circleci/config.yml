@@ -17,6 +17,7 @@ whitelist: &whitelist
     - README.md
     - tsconfig.json
     - tslint.json
+    - gulpfile.js
 
 jobs:
   checkout:
@@ -53,7 +54,7 @@ jobs:
 
       - run:
           name: Test TypeScript Code
-          command: npm run check-coverage
+          command: npm run unit-tests
 
       - persist_to_workspace:
           root: ~/repo
@@ -71,6 +72,3 @@ workflows:
       - lint:
           requires:
             - checkout
-      - coveralls:
-          requires:
-            - test
