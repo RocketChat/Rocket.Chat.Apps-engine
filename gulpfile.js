@@ -28,8 +28,6 @@ gulp.task('compile-ts', ['clean-generated', 'lint-ts'], function _compileTypescr
             .pipe(gulp.dest('dist'));
 });
 
-gulp.task('build', ['clean-generated', 'lint-ts', 'compile-ts']);
-
 gulp.task('default', ['clean-generated', 'lint-ts', 'compile-ts']);
 
 //Tasks for getting it ready and publishing

@@ -7,7 +7,7 @@
   "scripts": {
     "start": "gulp",
     "lint": "tslint --project tsconfig.json",
-    "compile": "gulp build",
+    "compile": "gulp",
     "go-publish": "gulp publish",
     "unit-tests": "ts-node ./tests/runner.ts",
     "check-coverage": "nyc --reporter=lcov --reporter=html npm run unit-tests && nyc report",

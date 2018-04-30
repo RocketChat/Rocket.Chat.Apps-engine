@@ -55,7 +55,7 @@ jobs:
 
       - run:
           name: Compile TypeScript into JavaScript
-          command: npm run build
+          command: npm run compile
 
       - persist_to_workspace:
           root: ~/repo
