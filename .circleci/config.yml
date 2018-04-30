@@ -21,7 +21,7 @@ whitelist: &whitelist
     - gulpfile.js
 
 jobs:
-  checkout:
+  build:
     <<: *defaults
 
     steps:
@@ -29,7 +29,9 @@ jobs:
 
       - run:
           name: Install Dependencies
-          command: npm install
+          command: |
+            npm install
+            npm run compile
 
       - persist_to_workspace:
           root: ~/repo
@@ -77,13 +79,13 @@ workflows:
 
   build:
     jobs:
-      - checkout
+      - build
       - test:
           requires:
-            - checkout
+            - build
       - lint:
           requires:
-            - checkout
+            - build
       - codecov:
           requires:
             - test
