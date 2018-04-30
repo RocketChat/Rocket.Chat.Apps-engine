@@ -4,6 +4,22 @@ defaults: &defaults
   docker:
     - image: circleci/node:10.0
 
+whitelist: &whitelist
+  paths:
+    - .git/*
+    - .nyc_output/*
+    - coverage/*
+    - dist/*
+    - node_modules/*
+    - src/*
+    - tests/*
+    - LICENSE
+    - package.json
+    - README.md
+    - tsconfig.json
+    - tslint.json
+    - gulpfile.js
+
 jobs:
   checkout:
     <<: *defaults
@@ -17,6 +33,7 @@ jobs:
 
       - persist_to_workspace:
           root: ~/repo
+          <<: *whitelist
 
   lint:
     <<: *defaults
@@ -42,6 +59,7 @@ jobs:
 
       - persist_to_workspace:
           root: ~/repo
+          <<: *whitelist
 
   codecov:
     <<: *defaults
