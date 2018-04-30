@@ -6,6 +6,7 @@
   "typings": "index",
   "scripts": {
     "start": "gulp",
+    "lint": "gulp lint-ts",
     "compile": "gulp build",
     "go-publish": "gulp publish",
     "unit-tests": "ts-node ./tests/runner.ts",
