@@ -1,12 +1,12 @@
 import * as Datastore from 'nedb';
-import { AppStorage, IAppStorageItem } from '../src/server/storage';
+import { AppStorage, IAppStorageItem } from '../../src/server/storage';
 
-export class TestingStorage extends AppStorage {
+export class TestsAppStorage extends AppStorage {
     private db: Datastore;
 
     constructor() {
         super('nedb');
-        this.db = new Datastore({ filename: 'data/apps.nedb', autoload: true });
+        this.db = new Datastore({ filename: 'tests/test-data/dbs/apps.nedb', autoload: true });
         this.db.ensureIndex({ fieldName: 'id', unique: true });
     }
 

@@ -12,4 +12,8 @@ The engine which manages and controls everything....more details coming soon.
 
 ## Implementer Needs to Implement:
 - `src/server/storage/AppStorage`
+- `src/server/storage/AppLogStorage`
 - `src/server/bridges/*`
+
+## Testing Framework:
+Makes great usage of TypeScript and decorators: https://github.com/alsatian-test/alsatian/wiki
