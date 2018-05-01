@@ -85,7 +85,7 @@ jobs:
 
       - run:
           name: Submit coverage report to codecov
-          command: npm run submit-codecov
+          command: bash <(curl -s https://codecov.io/bash)
 
 workflows:
   version: 2
