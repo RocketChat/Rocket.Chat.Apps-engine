@@ -70,7 +70,7 @@ jobs:
 
       - run:
           name: Test TypeScript Code
-          command: npm run unit-tests
+          command: npm run test-and-coverage
 
       - persist_to_workspace:
           root: ~/repo
@@ -85,7 +85,7 @@ jobs:
 
       - run:
           name: Submit coverage report to codecov
-          command: bash <(curl -s https://codecov.io/bash)
+          command: npm run submit-codecov
 
 workflows:
   version: 2

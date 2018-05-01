@@ -10,9 +10,9 @@
     "compile": "gulp",
     "go-publish": "gulp publish",
     "unit-tests": "ts-node ./tests/runner.ts",
-    "check-coverage": "nyc --reporter=lcov --reporter=html npm run unit-tests && nyc report",
+    "test-and-coverage": "nyc npm run unit-tests && nyc report",
     "view-coverage": "npm run check-coverage && http-server coverage -p 9082 -c-1",
-    "submit-codecov": "codecov"
+    "submit-codecov": "codecov --file=coverage/coverage-final.json"
   },
   "repository": {
     "type": "git",
@@ -71,6 +71,7 @@
       ".ts"
     ],
     "reporter": [
+      "lcov",
       "json",
       "html"
     ],
