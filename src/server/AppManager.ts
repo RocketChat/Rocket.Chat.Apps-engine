@@ -56,8 +56,8 @@ export class AppManager {
 
         this.apps = new Map<string, ProxiedApp>();
 
-        this.parser = new AppPackageParser(this);
-        this.compiler = new AppCompiler(this);
+        this.parser = new AppPackageParser();
+        this.compiler = new AppCompiler();
         this.accessorManager = new AppAccessorManager(this);
         this.listenerManager = new AppListenerManger(this);
         this.commandManager = new AppSlashCommandManager(this);
@@ -129,7 +129,7 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const result = await this.getParser().parseZip(item.zip);
+                const result = await this.getParser().parseZip(this.getCompiler(), item.zip);
 
                 aff.setAppInfo(result.info);
                 aff.setImplementedInterfaces(result.implemented.getValues());
@@ -141,7 +141,7 @@ export class AppManager {
 
                 item.compiled = result.compiledFiles;
 
-                const app = this.getCompiler().toSandBox(item);
+                const app = this.getCompiler().toSandBox(this, item);
                 this.apps.set(item.id, app);
                 aff.setApp(app);
             } catch (e) {
@@ -307,7 +307,7 @@ export class AppManager {
 
     public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(zipContentsBase64d);
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
@@ -334,7 +334,7 @@ export class AppManager {
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const app = this.getCompiler().toSandBox(created);
+        const app = this.getCompiler().toSandBox(this, created);
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -382,7 +382,7 @@ export class AppManager {
 
     public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(zipContentsBase64d);
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
@@ -421,7 +421,7 @@ export class AppManager {
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const app = this.getCompiler().toSandBox(stored);
+        const app = this.getCompiler().toSandBox(this, stored);
 
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
@@ -499,7 +499,7 @@ export class AppManager {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        this.apps.set(item.id, this.getCompiler().toSandBox(item));
+        this.apps.set(item.id, this.getCompiler().toSandBox(this, item));
 
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);

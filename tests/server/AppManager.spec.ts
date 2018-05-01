@@ -3,6 +3,9 @@ import { Expect, Test } from 'alsatian';
 import { SimpleClass, TestsData } from '../test-data/utilities';
 
 import { AppManager } from '../../src/server/AppManager';
+import { AppBridges } from '../../src/server/bridges';
+import { AppCompiler, AppPackageParser } from '../../src/server/compiler';
+import { AppAccessorManager, AppListenerManger, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
 
 export class AppManagerTestFixture {
     @Test('Setup of the AppManager')
@@ -12,6 +15,7 @@ export class AppManagerTestFixture {
         Expect(manager.getStorage()).toBe(TestsData.getAppStorage());
         Expect(manager.getLogStorage()).toBe(TestsData.getLogStorage());
         Expect(manager.getBridges()).toBe(TestsData.getAppBridges());
+        Expect(manager.areAppsLoaded()).toBe(false);
     }
 
     @Test('Invalid Storage and Bridge')
@@ -20,5 +24,18 @@ export class AppManagerTestFixture {
         Expect(() => new AppManager(invalid as any, invalid as any, invalid as any)).toThrowError(Error, 'Invalid instance of the AppStorage.');
         Expect(() => new AppManager(TestsData.getAppStorage(), invalid as any, invalid as any)).toThrowError(Error, 'Invalid instance of the AppLogStorage.');
         Expect(() => new AppManager(TestsData.getAppStorage(), TestsData.getLogStorage(), invalid as any)).toThrowError(Error, 'Invalid instance of the AppBridges');
+    }
+
+    @Test('Ensure Managers are Valid Types')
+    public verifyManagers() {
+        const manager = new AppManager(TestsData.getAppStorage(), TestsData.getLogStorage(), TestsData.getAppBridges());
+
+        Expect(manager.getParser() instanceof AppPackageParser).toBe(true);
+        Expect(manager.getCompiler() instanceof AppCompiler).toBe(true);
+        Expect(manager.getAccessorManager() instanceof AppAccessorManager).toBe(true);
+        Expect(manager.getBridges() instanceof AppBridges).toBe(true);
+        Expect(manager.getListenerManager() instanceof AppListenerManger).toBe(true);
+        Expect(manager.getCommandManager() instanceof AppSlashCommandManager).toBe(true);
+        Expect(manager.getSettingsManager() instanceof AppSettingsManager).toBe(true);
     }
 }
