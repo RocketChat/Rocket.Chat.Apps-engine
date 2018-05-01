@@ -2,7 +2,12 @@
     "typescript.referencesCodeLens.enabled": true,
     "typescript.implementationsCodeLens.enabled": true,
     "files.exclude": {
-        "*dist*/": true,
-        "data/": true
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "coverage": true,
+        ".nyc_output": true
     }
 }

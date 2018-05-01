@@ -1,8 +1,8 @@
 import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IAppActivationBridge } from '../../src/server/bridges';
-import { ProxiedApp } from '../../src/server/ProxiedApp';
+import { IAppActivationBridge } from '../../../src/server/bridges';
+import { ProxiedApp } from '../../../src/server/ProxiedApp';
 
-export class DevActivationBridge implements IAppActivationBridge {
+export class TestsActivationBridge implements IAppActivationBridge {
     public async appAdded(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been added.`);
     }

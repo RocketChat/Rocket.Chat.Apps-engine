@@ -1,9 +1,9 @@
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 
-import { IAppCommandBridge } from '../../src/server/bridges';
+import { IAppCommandBridge } from '../../../src/server/bridges';
 
-export class DevCommandBridge implements IAppCommandBridge {
+export class TestsCommandBridge implements IAppCommandBridge {
     // tslint:disable-next-line:max-line-length
     private commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
 
