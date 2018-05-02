@@ -21,7 +21,7 @@ export class AppFabricationFulfillmentTestFixture {
             author: {
                 name: 'Bradley Hilton',
                 homepage: 'https://github.com/RocketChat/Rocket.Chat.Apps-ts-definitions',
-                support: 'https://github.com/RocketChat/Rocket.Chat.Apps-ts-definitions/issues'
+                support: 'https://github.com/RocketChat/Rocket.Chat.Apps-ts-definitions/issues',
             },
             classFile: 'TestingApp.ts',
             iconFile: 'testing.jpg',
