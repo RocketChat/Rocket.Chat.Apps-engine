@@ -34,8 +34,6 @@ export class AppManager {
     private isLoaded: boolean;
 
     constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
-        console.log('Constructed the AppManager.');
-
         if (rlStorage instanceof AppStorage) {
             this.storage = rlStorage;
         } else {
