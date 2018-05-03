@@ -78,7 +78,7 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
-    public getDefault(): boolean {
+    public getIsDefault(): boolean {
         return this.room.isDefault;
     }
 
@@ -87,7 +87,7 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
-    public getReadOnly(): boolean {
+    public getIsReadOnly(): boolean {
         return this.room.isReadOnly;
     }
 
