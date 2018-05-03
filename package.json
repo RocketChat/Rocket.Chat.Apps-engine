@@ -79,8 +79,8 @@
     "all": true
   },
   "pre-commit": [
-    "lint",
-    "compile",
-    "unit-tests"
+      "lint",
+      "compile",
+      "unit-tests"
   ]
 }

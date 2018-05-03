@@ -70,6 +70,7 @@ export class MessageBuilderAccessorTestFixture {
         Expect(mb.removeAttachment(0)).toBe(mb);
         Expect(msg.attachments).toBeEmpty();
         Expect(mb.getAttachments()).toBeEmpty();
+
         delete msg.attachments;
         Expect(() => mb.removeAttachment(4)).toThrowError(Error, 'No attachment found at the index of "4" to remove.');
 
