@@ -10,9 +10,9 @@
     "compile": "gulp",
     "go-publish": "gulp publish",
     "unit-tests": "ts-node ./tests/runner.ts",
-    "check-coverage": "nyc --reporter=lcov --reporter=html npm run unit-tests && nyc report",
-    "view-coverage": "npm run check-coverage && http-server coverage -p 9082 -c-1",
-    "submit-codecov": "codecov"
+    "test-and-coverage": "nyc npm run unit-tests && nyc report",
+    "view-coverage": "npm run test-and-coverage && http-server coverage -p 9082 -c-1",
+    "submit-codecov": "codecov --file=coverage/coverage-final.json"
   },
   "repository": {
     "type": "git",
@@ -49,6 +49,7 @@
     "http-server": "^0.11.1",
     "nedb": "^1.8.0",
     "nyc": "^11.7.1",
+    "pre-commit": "^1.2.2",
     "tap-bark": "^1.0.0",
     "ts-node": "^6.0.2",
     "tslint": "^5.9.1"
@@ -71,9 +72,15 @@
       ".ts"
     ],
     "reporter": [
+      "lcov",
       "json",
       "html"
     ],
     "all": true
-  }
+  },
+  "pre-commit": [
+      "lint",
+      "compile",
+      "unit-tests"
+  ]
 }

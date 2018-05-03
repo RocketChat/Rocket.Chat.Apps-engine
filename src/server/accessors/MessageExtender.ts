@@ -16,6 +16,10 @@ export class MessageExtender implements IMessageExtender {
     }
 
     public addCustomField(key: string, value: any): IMessageExtender {
+        if (!this.msg.customFields) {
+            this.msg.customFields = {};
+        }
+
         if (this.msg.customFields[key]) {
             throw new Error(`The message already contains a custom field by the key: ${ key }`);
         }

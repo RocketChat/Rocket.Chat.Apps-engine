@@ -70,7 +70,7 @@ jobs:
 
       - run:
           name: Test TypeScript Code
-          command: npm run unit-tests
+          command: npm run test-and-coverage
 
       - persist_to_workspace:
           root: ~/repo

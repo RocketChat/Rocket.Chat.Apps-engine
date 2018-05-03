@@ -1,3 +1,5 @@
+import { Utilities } from '../misc/Utilities';
+
 export enum AppInterface {
     // Messages
     IPreMessageSentPrevent = 'IPreMessageSentPrevent',
@@ -26,6 +28,6 @@ export class AppImplements {
     }
 
     public getValues(): { [int: string]: boolean } {
-        return Object.assign({}, this.implemented);
+        return Utilities.deepCloneAndFreeze(this.implemented);
     }
 }
