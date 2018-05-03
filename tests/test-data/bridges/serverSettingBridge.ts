@@ -1,8 +1,8 @@
 import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
 
-import { IServerSettingBridge } from '../../src/server/bridges';
+import { IServerSettingBridge } from '../../../src/server/bridges';
 
-export class DevServerSettingBridge implements IServerSettingBridge {
+export class TestsServerSettingBridge implements IServerSettingBridge {
     public getAll(appId: string): Promise<Array<ISetting>> {
         throw new Error('Method not implemented.');
     }

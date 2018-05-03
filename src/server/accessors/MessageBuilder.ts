@@ -111,7 +111,7 @@ export class MessageBuilder implements IMessageBuilder {
         }
 
         if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to replace.`);
+            throw new Error(`No attachment found at the index of "${ position }" to remove.`);
         }
 
         this.msg.attachments.splice(position, 1);
@@ -130,7 +130,7 @@ export class MessageBuilder implements IMessageBuilder {
 
     public getMessage(): IMessage {
         if (!this.msg.room) {
-            throw new Error('The Room Value is required.');
+            throw new Error('The "room" property is required.');
         }
 
         return this.msg;

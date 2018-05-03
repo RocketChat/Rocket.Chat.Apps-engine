@@ -20,7 +20,8 @@
         "examples"
     ],
     "include": [
-        "src"
+        "src",
+        "tests"
     ],
     "atom": {
         "rewriteTsconfig": false

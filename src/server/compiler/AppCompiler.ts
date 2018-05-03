@@ -20,7 +20,7 @@ export class AppCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
     private libraryFiles: { [s: string]: ICompilerFile };
 
-    constructor(private readonly manager: AppManager) {
+    constructor() {
         this.compilerOptions = {
             target: ts.ScriptTarget.ES2017,
             module: ts.ModuleKind.CommonJS,
@@ -257,7 +257,7 @@ export class AppCompiler {
         return result;
     }
 
-    public toSandBox(storage: IAppStorageItem): ProxiedApp {
+    public toSandBox(manager: AppManager, storage: IAppStorageItem): ProxiedApp {
         const files = this.storageFilesToCompiler(storage.compiled);
 
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
@@ -313,18 +313,20 @@ export class AppCompiler {
             throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        const app = new ProxiedApp(this.manager, storage, rl as App, customRequire);
+        const app = new ProxiedApp(manager, storage, rl as App, customRequire);
 
-        this.manager.getLogStorage().storeEntries(app.getID(), logger);
+        manager.getLogStorage().storeEntries(app.getID(), logger);
 
         return app;
     }
 
     private isValidFile(file: ICompilerFile): boolean {
-        return file.name
-            && file.name.trim() !== ''
+        if (!file || !file.name || !file.content) {
+            return false;
+        }
+
+        return file.name.trim() !== ''
             && path.normalize(file.name)
-            && file.content
             && file.content.trim() !== '';
     }
 

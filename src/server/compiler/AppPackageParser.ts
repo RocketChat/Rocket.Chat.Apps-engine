@@ -1,5 +1,5 @@
-import { AppManager } from '../AppManager';
 import { RequiredApiVersionError } from '../errors';
+import { AppCompiler } from './AppCompiler';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
@@ -16,11 +16,11 @@ export class AppPackageParser {
     private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
     private appsTsDefVer: string;
 
-    constructor(private readonly manager: AppManager) {
+    constructor() {
         this.appsTsDefVer = this.getTsDefVersion();
     }
 
-    public async parseZip(zipBase64: string): Promise<IParseZipResult> {
+    public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
         const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
         const infoZip = zip.getEntry('app.json');
         let info: IAppInfo;
@@ -72,7 +72,7 @@ export class AppPackageParser {
         const languageContent = this.getLanguageContent(zip);
 
         // Compile all the typescript files to javascript
-        const result = this.manager.getCompiler().toJs(info, tsFiles);
+        const result = compiler.toJs(info, tsFiles);
         tsFiles = result.files;
 
         const compiledFiles: { [s: string]: string } = {};

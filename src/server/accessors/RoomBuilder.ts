@@ -101,6 +101,10 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public addCustomField(key: string, value: object): IRoomBuilder {
+        if (typeof this.room.customFields !== 'object') {
+            this.room.customFields = {};
+        }
+
         this.room.customFields[key] = value;
         return this;
     }

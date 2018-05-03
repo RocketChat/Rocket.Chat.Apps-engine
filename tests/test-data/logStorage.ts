@@ -1,14 +1,14 @@
 import * as Datastore from 'nedb';
 
-import { AppConsole, ILoggerStorageEntry } from '../src/server/logging';
-import { AppLogStorage, IAppLogStorageFindOptions } from '../src/server/storage';
+import { AppConsole, ILoggerStorageEntry } from '../../src/server/logging';
+import { AppLogStorage, IAppLogStorageFindOptions } from '../../src/server/storage';
 
-export class DevAppLogStorage extends AppLogStorage {
+export class TestsAppLogStorage extends AppLogStorage {
     private db: Datastore;
 
     constructor() {
         super('nedb');
-        this.db = new Datastore({ filename: 'data/logs.nedb', autoload: true });
+        this.db = new Datastore({ filename: 'tests/test-data/dbs/logs.nedb', autoload: true });
     }
 
     public find(query: { [field: string]: any },

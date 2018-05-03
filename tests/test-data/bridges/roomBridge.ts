@@ -1,8 +1,8 @@
 import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 
-import { IRoomBridge } from '../../src/server/bridges';
+import { IRoomBridge } from '../../../src/server/bridges';
 
-export class DevRoomBridge implements IRoomBridge {
+export class TestsRoomBridge implements IRoomBridge {
     public create(room: IRoom, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

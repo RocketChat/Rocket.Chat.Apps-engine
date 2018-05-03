@@ -2,9 +2,9 @@ import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
-import { IMessageBridge } from '../../src/server/bridges';
+import { IMessageBridge } from '../../../src/server/bridges';
 
-export class DevMessageBridge implements IMessageBridge {
+export class TestsMessageBridge implements IMessageBridge {
     public create(message: IMessage, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

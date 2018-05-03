@@ -1,8 +1,8 @@
 import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
 
-import { IPersistenceBridge } from '../../src/server/bridges';
+import { IPersistenceBridge } from '../../../src/server/bridges';
 
-export class DevPersisBridge implements IPersistenceBridge {
+export class TestsPersisBridge implements IPersistenceBridge {
     public purge(appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
