@@ -25,9 +25,17 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
+    public getRoom(): IRoom {
+        return this.msg.room;
+    }
+
     public setSender(sender: IUser): IMessageBuilder {
         this.msg.sender = sender;
         return this;
+    }
+
+    public getSender(): IUser {
+        return this.msg.sender;
     }
 
     public setText(text: string): IMessageBuilder {
@@ -35,9 +43,17 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
+    public getText(): string {
+        return this.msg.text;
+    }
+
     public setEmojiAvatar(emoji: string): IMessageBuilder {
         this.msg.emoji = emoji;
         return this;
+    }
+
+    public getEmojiAvatar(): string {
+        return this.msg.emoji;
     }
 
     public setAvatarUrl(avatarUrl: string): IMessageBuilder {
@@ -45,9 +61,17 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
+    public getAvatarUrl(): string {
+        return this.msg.avatarUrl;
+    }
+
     public setUsernameAlias(alias: string): IMessageBuilder {
         this.msg.alias = alias;
         return this;
+    }
+
+    public getUsernameAlias(): string {
+        return this.msg.alias;
     }
 
     public addAttachment(attachment: IMessageAttachment): IMessageBuilder {
@@ -62,6 +86,10 @@ export class MessageBuilder implements IMessageBuilder {
     public setAttachments(attachments: Array<IMessageAttachment>): IMessageBuilder {
         this.msg.attachments = attachments;
         return this;
+    }
+
+    public getAttachments(): Array<IMessageAttachment> {
+        return this.msg.attachments;
     }
 
     public replaceAttachment(position: number, attachment: IMessageAttachment): IMessageBuilder {
@@ -94,6 +122,10 @@ export class MessageBuilder implements IMessageBuilder {
     public setEditor(user: IUser): IMessageBuilder {
         this.msg.editor = user;
         return this;
+    }
+
+    public getEditor(): IUser {
+        return this.msg.editor;
     }
 
     public getMessage(): IMessage {
