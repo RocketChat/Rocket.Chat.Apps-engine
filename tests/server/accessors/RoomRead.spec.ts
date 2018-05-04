@@ -1,36 +1,48 @@
-import { IEnvironmentRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUserRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { Expect, SetupFixture, Test } from 'alsatian';
+import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
+import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
-import { Reader } from '../../../src/server/accessors';
+import { RoomRead } from '../../../src/server/accessors';
+import { IRoomBridge } from '../../../src/server/bridges';
+import { TestData } from '../../test-data/utilities';
 
-export class ReaderAccessorTestFixture {
-    private env: IEnvironmentRead;
-    private msg: IMessageRead;
-    private pr: IPersistenceRead;
-    private rm: IRoomRead;
-    private ur: IUserRead;
-    private ni: INotifier;
+export class RoomReadAccessorTestFixture {
+    private room: IRoom;
+    private mockRoomBridgeWithRoom: IRoomBridge;
 
     @SetupFixture
     public setupFixture() {
-        this.env = {} as IEnvironmentRead;
-        this.msg = {} as IMessageRead;
-        this.pr = {} as IPersistenceRead;
-        this.rm = {} as IRoomRead;
-        this.ur = {} as IUserRead;
-        this.ni = {} as INotifier;
+        this.room = TestData.getRoom();
+
+        const theRoom = this.room;
+        this.mockRoomBridgeWithRoom = {
+            getById(id, appId): Promise<IRoom> {
+                return Promise.resolve(theRoom);
+            },
+            getByName(name, appId): Promise<IRoom> {
+                return Promise.resolve(theRoom);
+            },
+        } as IRoomBridge;
     }
 
-    @Test()
-    public useReader() {
-        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni)).not.toThrow();
+    @AsyncTest()
+    public async expectDataFromRoomRead() {
+        Expect(() => new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app')).not.toThrow();
 
-        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni);
-        Expect(rd.getEnvironmentReader()).toBeDefined();
-        Expect(rd.getMessageReader()).toBeDefined();
-        Expect(rd.getNotifier()).toBeDefined();
-        Expect(rd.getPersistenceReader()).toBeDefined();
-        Expect(rd.getRoomReader()).toBeDefined();
-        Expect(rd.getUserReader()).toBeDefined();
+        const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
+
+        Expect(await rr.getById('fake')).toBeDefined();
+        Expect(await rr.getById('fake')).toEqual(this.room);
+        Expect(await rr.getByName('testing-room')).toBeDefined();
+        Expect(await rr.getByName('testing-room')).toEqual(this.room);
+    }
+
+    @AsyncTest()
+    // @IgnoreTest()
+    public async userTheIterators() {
+        Expect(() => new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app')).not.toThrow();
+
+        const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
+        await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+        await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
     }
 }

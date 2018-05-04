@@ -15,7 +15,7 @@ export interface IPersistenceBridge {
      * @argument appId the id of the app which is storing the data
      * @returns the id of the stored record
      */
-    create(data: any, appId: string): Promise<string>;
+    create(data: object, appId: string): Promise<string>;
 
     /**
      * Creates a new record in the App's persistent storage with the data being
