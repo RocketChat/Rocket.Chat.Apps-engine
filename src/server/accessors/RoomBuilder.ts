@@ -24,9 +24,17 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
+    public getDisplayName(): string {
+        return this.room.displayName;
+    }
+
     public setSlugifiedName(name: string): IRoomBuilder {
         this.room.slugifiedName = name;
         return this;
+    }
+
+    public getSlugifiedName(): string {
+        return this.room.slugifiedName;
     }
 
     public setType(type: RoomType): IRoomBuilder {
@@ -34,9 +42,17 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
+    public getType(): RoomType {
+        return this.room.type;
+    }
+
     public setCreator(creator: IUser): IRoomBuilder {
         this.room.creator = creator;
         return this;
+    }
+
+    public getCreator(): IUser {
+        return this.room.creator;
     }
 
     public addUsername(username: string): IRoomBuilder {
@@ -53,9 +69,17 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
+    public getUsernames(): Array<string> {
+        return this.room.usernames;
+    }
+
     public setDefault(isDefault: boolean): IRoomBuilder {
         this.room.isDefault = isDefault;
         return this;
+    }
+
+    public getIsDefault(): boolean {
+        return this.room.isDefault;
     }
 
     public setReadOnly(isReadOnly: boolean): IRoomBuilder {
@@ -63,9 +87,17 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
+    public getIsReadOnly(): boolean {
+        return this.room.isReadOnly;
+    }
+
     public setDisplayingOfSystemMessages(displaySystemMessages: boolean): IRoomBuilder {
         this.room.displaySystemMessages = displaySystemMessages;
         return this;
+    }
+
+    public getDisplayingOfSystemMessages(): boolean {
+        return this.room.displaySystemMessages;
     }
 
     public addCustomField(key: string, value: object): IRoomBuilder {
@@ -80,6 +112,10 @@ export class RoomBuilder implements IRoomBuilder {
     public setCustomFields(fields: { [key: string]: object }): IRoomBuilder {
         this.room.customFields = fields;
         return this;
+    }
+
+    public getCustomFields(): { [key: string]: object } {
+      return this.room.customFields;
     }
 
     public getRoom(): IRoom {
