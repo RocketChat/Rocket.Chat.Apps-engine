@@ -28,6 +28,7 @@ import {
     IConfigurationModify,
     IEnvironmentRead,
     IHttp,
+    IHttpExtend,
     IModify,
     IPersistence,
     IRead,
@@ -149,7 +150,14 @@ export class AppAccessorManager {
 
     public getHttp(appId: string): IHttp {
         if (!this.https.has(appId)) {
-            const ext = this.configExtenders.get(appId).http;
+            let ext: IHttpExtend;
+            if (this.configExtenders.has(appId)) {
+                ext = this.configExtenders.get(appId).http;
+            } else {
+                const cf = this.getConfigurationExtend(appId);
+                ext = cf.http;
+            }
+
             this.https.set(appId, new Http(this, this.bridges, ext, appId));
         }
 

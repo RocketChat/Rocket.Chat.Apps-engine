@@ -6,7 +6,7 @@ import * as ts from 'typescript';
 import { AppCompiler, ICompilerFile } from '../../../src/server/compiler';
 
 export class AppCompilerTestFixture {
-    @Test('Setup of the AppCompiler')
+    @Test()
     public setupAppCompiler() {
         const compiler = new AppCompiler();
 
@@ -27,7 +27,7 @@ export class AppCompilerTestFixture {
         Expect((compiler as any).compilerOptions).toEqual(expectedOptions);
     }
 
-    @Test('Verify conversion of Storage Files to Compiler')
+    @Test()
     public verifyStorageFileToCompiler() {
         const compiler = new AppCompiler();
 
@@ -56,7 +56,7 @@ export class AppCompilerTestFixture {
         Expect(compiler.storageFilesToCompiler(files)).toEqual(expected);
     }
 
-    @Test('isValidFile Check')
+    @Test()
     public testIsValidFile() {
         const compiler = new AppCompiler();
 
