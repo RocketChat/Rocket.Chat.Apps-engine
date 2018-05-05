@@ -41,10 +41,6 @@ export class ModifyCreator implements IModifyCreator {
         const result = builder.getMessage();
         delete result.id;
 
-        if (!result.room || !result.room.id) {
-            throw new Error('Invalid room assigned to the message.');
-        }
-
         if (!result.sender || !result.sender.id) {
             throw new Error('Invalid sender assigned to the message.');
         }

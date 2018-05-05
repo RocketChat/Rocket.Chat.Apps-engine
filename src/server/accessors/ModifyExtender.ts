@@ -31,7 +31,7 @@ export class ModifyExtender implements IModifyExtender {
             case RocketChatAssociationModel.ROOM:
                 return this.bridges.getRoomBridge().update(extender.getRoom(), this.appId);
             default:
-                throw new Error('Invalid builder passed to the ModifyExtender.finish function.');
+                throw new Error('Invalid extender passed to the ModifyExtender.finish function.');
         }
     }
 }
