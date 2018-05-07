@@ -35,8 +35,8 @@ export class ModifyUpdater implements IModifyUpdater {
     private _finishMessage(builder: IMessageBuilder): Promise<void> {
         const result = builder.getMessage();
 
-        if (!result.room || !result.room.id) {
-            throw new Error('Invalid room assigned to the message.');
+        if (!result.id) {
+            throw new Error('Invalid message, can not update a message without an id.');
         }
 
         if (!result.sender || !result.sender.id) {
@@ -48,6 +48,10 @@ export class ModifyUpdater implements IModifyUpdater {
 
     private _finishRoom(builder: IRoomBuilder): Promise<void> {
         const result = builder.getRoom();
+
+        if (!result.id) {
+            throw new Error('Invalid room, can not update a room without an id.');
+        }
 
         if (!result.creator || !result.creator.id) {
             throw new Error('Invalid creator assigned to the room.');

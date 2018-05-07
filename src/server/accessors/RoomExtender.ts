@@ -13,6 +13,10 @@ export class RoomExtender implements IRoomExtender {
     }
 
     public addCustomField(key: string, value: any): IRoomExtender {
+        if (!this.room.customFields) {
+            this.room.customFields = {};
+        }
+
         if (this.room.customFields[key]) {
             throw new Error(`The room already contains a custom field by the key: ${ key }`);
         }
@@ -23,6 +27,14 @@ export class RoomExtender implements IRoomExtender {
     }
 
     public addMember(user: IUser): IRoomExtender {
+        if (!Array.isArray(this.room.usernames)) {
+            this.room.usernames = new Array<string>();
+        }
+
+        if (this.room.usernames.includes(user.username)) {
+            throw new Error('The user is already in the room.');
+        }
+
         this.room.usernames.push(user.username);
 
         return this;

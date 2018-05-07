@@ -1,6 +1,9 @@
 // tslint:disable:max-classes-per-file
+import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
+import { ISetting, SettingType } from '@rocket.chat/apps-ts-definition/settings';
+import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { IUser, UserStatusConnection, UserType } from '@rocket.chat/apps-ts-definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
@@ -38,6 +41,17 @@ const date = new Date();
 export class TestData {
     public static getDate(): Date {
         return date;
+    }
+
+    public static getSetting(id?: string): ISetting {
+        return {
+            id: id ? id : 'testing',
+            type: SettingType.STRING,
+            packageValue: 'The packageValue',
+            required: false,
+            public: false,
+            i18nLabel: 'Testing',
+        };
     }
 
     public static getUser(id?: string, username?: string): IUser {
@@ -122,6 +136,18 @@ export class TestData {
                     },
                 ],
             }],
+        };
+    }
+
+    public static getSlashCommand(command?: string): ISlashCommand {
+        return {
+            command: command ? command : 'testing-cmd',
+            paramsExample: 'justATest',
+            i18nDescription: 'justATest_Description',
+            permission: 'create-c',
+            executor: (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+                return Promise.resolve();
+            },
         };
     }
 }

@@ -28,6 +28,7 @@ import {
     IConfigurationModify,
     IEnvironmentRead,
     IHttp,
+    IHttpExtend,
     IModify,
     IPersistence,
     IRead,
@@ -123,7 +124,7 @@ export class AppAccessorManager {
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
-            const noti = new Notifier(this.bridges, appId);
+            const noti = new Notifier(this.bridges.getMessageBridge(), appId);
 
             this.readers.set(appId, new Reader(env, msg, persist, room, user, noti));
         }
@@ -149,7 +150,14 @@ export class AppAccessorManager {
 
     public getHttp(appId: string): IHttp {
         if (!this.https.has(appId)) {
-            const ext = this.configExtenders.get(appId).http;
+            let ext: IHttpExtend;
+            if (this.configExtenders.has(appId)) {
+                ext = this.configExtenders.get(appId).http;
+            } else {
+                const cf = this.getConfigurationExtend(appId);
+                ext = cf.http;
+            }
+
             this.https.set(appId, new Http(this, this.bridges, ext, appId));
         }
 

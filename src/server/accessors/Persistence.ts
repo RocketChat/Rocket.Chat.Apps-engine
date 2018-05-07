@@ -6,7 +6,7 @@ import { IPersistenceBridge } from '../bridges/IPersistenceBridge';
 export class Persistence implements IPersistence {
     constructor(private persistBridge: IPersistenceBridge, private appId: string) { }
 
-    public create(data: any): Promise<string> {
+    public create(data: object): Promise<string> {
         return this.persistBridge.create(data, this.appId);
     }
 
