@@ -10,7 +10,7 @@ import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { Utilities } from '../misc/Utilities';
 
-export class AppListenerManger {
+export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
 

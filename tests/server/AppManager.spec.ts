@@ -5,7 +5,7 @@ import { SimpleClass, TestInfastructureSetup } from '../test-data/utilities';
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
 import { AppCompiler, AppPackageParser } from '../../src/server/compiler';
-import { AppAccessorManager, AppListenerManger, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
+import { AppAccessorManager, AppListenerManager, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
 
 export class AppManagerTestFixture {
     private testingInfastructure: TestInfastructureSetup;
@@ -41,7 +41,7 @@ export class AppManagerTestFixture {
         Expect(manager.getCompiler() instanceof AppCompiler).toBe(true);
         Expect(manager.getAccessorManager() instanceof AppAccessorManager).toBe(true);
         Expect(manager.getBridges() instanceof AppBridges).toBe(true);
-        Expect(manager.getListenerManager() instanceof AppListenerManger).toBe(true);
+        Expect(manager.getListenerManager() instanceof AppListenerManager).toBe(true);
         Expect(manager.getCommandManager() instanceof AppSlashCommandManager).toBe(true);
         Expect(manager.getSettingsManager() instanceof AppSettingsManager).toBe(true);
     }
