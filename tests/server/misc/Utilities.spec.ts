@@ -18,6 +18,7 @@ export class UtilitiesTestFixture {
         classFile: 'TestingApp.ts',
         iconFile: 'testing.jpg',
     };
+
     @Test()
     public testDeepClone() {
         Expect(() => Utilities.deepClone(this.expectedInfo)).not.toThrow();
@@ -50,6 +51,7 @@ export class UtilitiesTestFixture {
 
         const info = Utilities.deepCloneAndFreeze(this.expectedInfo);
         Expect(info).toEqual(this.expectedInfo);
+        Expect(info).not.toBe(this.expectedInfo);
         Expect(info.author.name).toEqual(this.expectedInfo.author.name);
         Expect(info.author.name).toEqual('Bradley H'); // was changed on testDeepFreeze
         Expect(() => info.author.name = 'Bradley Hilton').toThrow();
