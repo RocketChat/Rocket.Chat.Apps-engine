@@ -8,7 +8,7 @@ export interface IAppCommandBridge {
     /**
      * Checks if the provided command already exists inside of the
      * system which is being bridged. This does not check if the app
-     * registered it but it should return whether the supplied command is
+     * registered it but it will return whether the supplied command is
      * already defined by something else or not.
      *
      * @param command the command to check if it exists
@@ -18,7 +18,10 @@ export interface IAppCommandBridge {
     doesCommandExist(command: string, appId: string): boolean;
 
     /**
-     * Enables an existing command from the bridged system.
+     * Enables an existing command from the bridged system. The callee
+     * must ensure that the command that's being enabled is defined by
+     * the bridged system and not another App since the bridged system
+     * will not check that.
      *
      * @param command the command to enable
      * @param appId the id of the app calling this
@@ -26,7 +29,9 @@ export interface IAppCommandBridge {
     enableCommand(command: string, appId: string): void;
 
     /**
-     * Disables an existing command from the bridged system.
+     * Disables an existing command from the bridged system, the callee must
+     * ensure the command disabling is defined by the system and not another
+     * App since the bridged system won't check that.
      *
      * @param command the command which to disable
      * @param appId the id of the app calling this
@@ -34,13 +39,21 @@ export interface IAppCommandBridge {
     disableCommand(command: string, appId: string): void;
 
     /**
-     * Changes how an existing slash command behaves, so you can provide
-     * different executor per configuration.
+     * Changes how a system slash command behaves, allows Apps to provide
+     * different executors per system commands.
      *
      * @param command the modified slash command
      * @param appId the id of the app calling this
      */
     modifyCommand(command: ISlashCommand, appId: string): void;
+
+    /**
+     * Restores a system slash command back to it's default behavior.
+     *
+     * @param comand the command to restore
+     * @param appId the id of the app which modified it
+     */
+    restoreCommand(comand: string, appId: string): void;
 
     /**
      * Registers a command with the system which is being bridged.
