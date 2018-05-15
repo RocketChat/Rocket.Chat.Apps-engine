@@ -12,5 +12,10 @@ export class AppSlashCommandRegistrationTestFixture {
         Expect(ascr.isRegistered).toBe(false);
         Expect(ascr.isEnabled).toBe(false);
         Expect(ascr.isDisabled).toBe(false);
+
+        ascr.hasBeenRegistered();
+        Expect(ascr.isDisabled).toBe(false);
+        Expect(ascr.isEnabled).toBe(true);
+        Expect(ascr.isRegistered).toBe(true);
     }
 }

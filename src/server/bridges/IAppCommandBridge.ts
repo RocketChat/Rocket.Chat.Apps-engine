@@ -13,7 +13,7 @@ export interface IAppCommandBridge {
      *
      * @param command the command to check if it exists
      * @param appId the id of the app calling this
-     * @return whether the command is already in the system
+     * @returns whether the command is already in the system
      */
     doesCommandExist(command: string, appId: string): boolean;
 
@@ -49,11 +49,13 @@ export interface IAppCommandBridge {
 
     /**
      * Restores a system slash command back to it's default behavior.
+     * This includes "unmodifying" a command and also enabling a
+     * command again if it was disabled.
      *
-     * @param comand the command to restore
+     * @param command the command to restore
      * @param appId the id of the app which modified it
      */
-    restoreCommand(comand: string, appId: string): void;
+    restoreCommand(command: string, appId: string): void;
 
     /**
      * Registers a command with the system which is being bridged.

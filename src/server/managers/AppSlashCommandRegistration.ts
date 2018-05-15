@@ -23,4 +23,10 @@ export class AppSlashCommandRegistration {
         this.isEnabled = false;
         this.isDisabled = false;
     }
+
+    public hasBeenRegistered(): void {
+        this.isDisabled = false;
+        this.isEnabled = true;
+        this.isRegistered = true;
+    }
 }
