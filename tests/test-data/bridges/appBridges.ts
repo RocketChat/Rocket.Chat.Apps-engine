@@ -1,7 +1,6 @@
 import {
     AppBridges,
     IAppActivationBridge,
-    IAppCommandBridge,
     IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
@@ -13,6 +12,7 @@ import {
     IUserBridge,
 } from '../../../src/server/bridges';
 import { TestsActivationBridge } from './activationBridge';
+import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
@@ -23,6 +23,7 @@ import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsUserBridge } from './userBridge';
 
 export class TestsAppBridges extends AppBridges {
+    private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
@@ -35,6 +36,7 @@ export class TestsAppBridges extends AppBridges {
 
     constructor() {
         super();
+        this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
@@ -46,7 +48,7 @@ export class TestsAppBridges extends AppBridges {
         this.httpBridge = new TestsHttpBridge();
     }
 
-    public getCommandBridge(): IAppCommandBridge {
+    public getCommandBridge(): TestsCommandBridge {
         return this.cmdBridge;
     }
 
@@ -59,7 +61,7 @@ export class TestsAppBridges extends AppBridges {
     }
 
     public getAppDetailChangesBridge(): IAppDetailChangesBridge {
-        throw new Error('Method not implemented.');
+        return this.appDetails;
     }
 
     public getHttpBridge(): IHttpBridge {

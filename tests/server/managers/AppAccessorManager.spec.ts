@@ -1,9 +1,10 @@
 import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 
 import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges, IEnvironmentalVariableBridge, IMessageBridge, IPersistenceBridge, IRoomBridge, IServerSettingBridge, IUserBridge } from '../../../src/server/bridges';
+import { AppBridges } from '../../../src/server/bridges';
 import { AppAccessorManager, AppSlashCommandManager  } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class AppAccessorManagerTestFixture {
     private bridges: AppBridges;
@@ -12,26 +13,7 @@ export class AppAccessorManagerTestFixture {
 
     @SetupFixture
     public setupFixture() {
-        this.bridges = {
-            getServerSettingBridge() {
-                return {} as IServerSettingBridge;
-            },
-            getEnvironmentalVariableBridge() {
-                return {} as IEnvironmentalVariableBridge;
-            },
-            getMessageBridge() {
-                return {} as IMessageBridge;
-            },
-            getPersistenceBridge() {
-                return {} as IPersistenceBridge;
-            },
-            getRoomBridge() {
-                return {} as IRoomBridge;
-            },
-            getUserBridge() {
-                return {} as IUserBridge;
-            },
-        } as AppBridges;
+        this.bridges = new TestsAppBridges();
 
         const brds = this.bridges;
         this.manager = {
