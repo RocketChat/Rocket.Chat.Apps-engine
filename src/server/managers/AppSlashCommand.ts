@@ -58,6 +58,11 @@ export class AppSlashCommand {
                              context: SlashCommandContext, runContextArgs: Array<any>): Promise<void | ISlashCommandPreview> {
         const command = this.slashCommand.command;
 
+        // Ensure the slash command has the property before going on
+        if (typeof this.slashCommand[method] !== 'function') {
+            return;
+        }
+
         const runContext = this.app.makeContext({
             slashCommand: this.slashCommand,
             args: [

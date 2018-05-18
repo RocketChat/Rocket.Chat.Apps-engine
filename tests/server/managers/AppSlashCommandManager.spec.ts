@@ -30,7 +30,6 @@ export class AppSlashCommandManagerTestFixture {
     public setupFixture() {
         this.mockBridges = new TestsAppBridges();
 
-        let failed = false;
         this.mockApp = {
             getID() {
                 return 'testing';
@@ -39,11 +38,6 @@ export class AppSlashCommandManagerTestFixture {
                 return AppStatus.AUTO_ENABLED;
             },
             hasMethod(method: AppMethod): boolean {
-                if (AppSlashCommandManagerTestFixture.doThrow && !failed) {
-                    failed = true;
-                    return false;
-                }
-
                 return true;
             },
             makeContext(data: object): vm.Context {
@@ -354,7 +348,6 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.executeCommand('failure', context)).not.toThrowAsync();
 
         AppSlashCommandManagerTestFixture.doThrow = true;
-        await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
         await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
         AppSlashCommandManagerTestFixture.doThrow = false;
 

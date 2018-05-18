@@ -313,17 +313,9 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app) {
+        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
-            return;
-        }
-
-        if (AppStatusUtils.isDisabled(app.getStatus())) {
-            return;
-        }
-
-        if (!app.hasMethod(AppMethod._COMMAND_EXECUTOR)) {
             return;
         }
 
@@ -342,17 +334,9 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app) {
+        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
-            return;
-        }
-
-        if (AppStatusUtils.isDisabled(app.getStatus())) {
-            return;
-        }
-
-        if (!app.hasMethod(AppMethod._COMMAND_PREVIEWER)) {
             return;
         }
 
@@ -376,17 +360,9 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app) {
+        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
-            return;
-        }
-
-        if (AppStatusUtils.isDisabled(app.getStatus())) {
-            return;
-        }
-
-        if (!app.hasMethod(AppMethod._COMMAND_PREVIEWER)) {
             return;
         }
 
