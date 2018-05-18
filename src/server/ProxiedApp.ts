@@ -33,11 +33,11 @@ export class ProxiedApp implements IApp {
         this.storageItem = item;
     }
 
-    public getPreviousStatus() {
+    public getPreviousStatus(): AppStatus {
         return this.previousStatus;
     }
 
-    public getImplementationList() {
+    public getImplementationList(): { [inter: string]: boolean } {
         return this.storageItem.implemented;
     }
 

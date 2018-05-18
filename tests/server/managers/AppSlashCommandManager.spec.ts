@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 
 import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 import * as vm from 'vm';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -13,7 +13,7 @@ import { AppBridges } from '../../../src/server/bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppSlashCommandManager } from '../../../src/server/managers';
-import { AppSlashCommandRegistration } from '../../../src/server/managers/AppSlashCommandRegistration';
+import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 
@@ -29,16 +29,25 @@ export class AppSlashCommandManagerTestFixture {
     public setupFixture() {
         this.mockBridges = new TestsAppBridges();
 
+        let failed = false;
         this.mockApp = {
             getID() {
                 return 'testing';
+            },
+            hasMethod(method: AppMethod): boolean {
+                if (AppSlashCommandManagerTestFixture.doThrow && !failed) {
+                    failed = true;
+                    return false;
+                }
+
+                return true;
             },
             makeContext(data: object): vm.Context {
                 return {} as vm.Context;
             },
             runInContext(codeToRun: string, context: vm.Context): any {
                 return AppSlashCommandManagerTestFixture.doThrow ?
-                    Promise.reject('You told me so') : Promise.resolve(true);
+                    Promise.reject('You told me so') : Promise.resolve();
             },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);
@@ -55,7 +64,7 @@ export class AppSlashCommandManagerTestFixture {
                 return {} as AppSlashCommandManager;
             },
             getOneById(appId: string): ProxiedApp {
-                return app;
+                return appId === 'failMePlease' ? undefined : app;
             },
             getLogStorage(): AppLogStorage {
                 return new TestsAppLogStorage();
@@ -123,8 +132,8 @@ export class AppSlashCommandManagerTestFixture {
     public isAlreadyDefined() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        const reg = new Map<string, AppSlashCommandRegistration>();
-        reg.set('command', new AppSlashCommandRegistration(TestData.getSlashCommand('command')));
+        const reg = new Map<string, AppSlashCommand>();
+        reg.set('command', new AppSlashCommand(this.mockApp, TestData.getSlashCommand('command')));
 
         Expect(ascm.isAlreadyDefined('command')).toBe(false);
         (ascm as any).providedCommands.set('testing', reg);
@@ -152,7 +161,7 @@ export class AppSlashCommandManagerTestFixture {
     public registerCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        const regInfo = new AppSlashCommandRegistration(TestData.getSlashCommand('command'));
+        const regInfo = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('command'));
 
         Expect(() => (ascm as any).registerCommand('testing', regInfo)).not.toThrow();
         Expect(this.mockBridges.getCommandBridge().registerCommand).toHaveBeenCalledWith(regInfo.slashCommand, 'testing');
@@ -173,6 +182,7 @@ export class AppSlashCommandManagerTestFixture {
         Expect((ascm as any).appsTouchedCommands.get('testing').length).toBe(1);
         Expect(() => ascm.addCommand('another-app', cmd)).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
         Expect(() => ascm.addCommand('testing', cmd)).toThrowError(CommandAlreadyExistsError, 'The command "my-cmd" already exists in the system.');
+        Expect(() => ascm.addCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowError(Error, 'App must exist in order for a command to be added.');
         Expect(() => ascm.addCommand('testing', TestData.getSlashCommand('another-command'))).not.toThrow();
         Expect((ascm as any).providedCommands.size).toBe(1);
         Expect((ascm as any).providedCommands.get('testing').size).toBe(2);
@@ -185,6 +195,13 @@ export class AppSlashCommandManagerTestFixture {
         ascm.addCommand('other-app', TestData.getSlashCommand('my-cmd'));
 
         Expect(() => ascm.modifyCommand('testing', TestData.getSlashCommand('my-cmd'))).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
+    }
+
+    @Test()
+    public failToModifyNonExistantAppCommand() {
+        const ascm = new AppSlashCommandManager(this.mockManager);
+
+        Expect(() => ascm.modifyCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowError(Error, 'App must exist in order to modify a command.');
     }
 
     @Test()
@@ -277,10 +294,10 @@ export class AppSlashCommandManagerTestFixture {
         SpyOn(ascm, 'registerCommand');
 
         ascm.addCommand('testing', TestData.getSlashCommand('enabled-command'));
-        const enabledRegInfo = (ascm as any).providedCommands.get('testing').get('enabled-command') as AppSlashCommandRegistration;
+        const enabledRegInfo = (ascm as any).providedCommands.get('testing').get('enabled-command') as AppSlashCommand;
         ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
         ascm.disableCommand('testing', 'disabled-command');
-        const disabledRegInfo = (ascm as any).providedCommands.get('testing').get('disabled-command') as AppSlashCommandRegistration;
+        const disabledRegInfo = (ascm as any).providedCommands.get('testing').get('disabled-command') as AppSlashCommand;
 
         Expect(() => ascm.registerCommands('non-existant')).not.toThrow();
         Expect(() => ascm.registerCommands('testing')).not.toThrow();
@@ -323,9 +340,81 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.executeCommand('not-registered', context)).not.toThrowAsync();
         await Expect(async () => await ascm.executeCommand('disabled-command', context)).not.toThrowAsync();
 
+        // set it up for no "no app failure"
+        const failedItems = new Map<string, AppSlashCommand>();
+        const asm = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('failure'));
+        asm.hasBeenRegistered();
+        failedItems.set('failure', asm);
+        (ascm as any).providedCommands.set('failMePlease', failedItems);
+        (ascm as any).touchedCommandsToApps.set('failure', 'failMePlease');
+        await Expect(async () => await ascm.executeCommand('failure', context)).not.toThrowAsync();
+
         AppSlashCommandManagerTestFixture.doThrow = true;
         await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
+        await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
+        AppSlashCommandManagerTestFixture.doThrow = false;
 
         Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(3);
+    }
+
+    @AsyncTest()
+    public async getPreviews() {
+        const ascm = new AppSlashCommandManager(this.mockManager);
+        ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
+        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        ascm.disableCommand('testing', 'not-registered');
+        ascm.registerCommands('testing');
+        (ascm as any).providedCommands.get('testing').get('disabled-command').isDisabled = true;
+        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+
+        const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), ['testing']);
+
+        await Expect(async () => await ascm.getPreviews('nope', context)).not.toThrowAsync();
+        await Expect(async () => await ascm.getPreviews('it-exists', context)).not.toThrowAsync();
+        await Expect(async () => await ascm.getPreviews('command', context)).not.toThrowAsync();
+        await Expect(async () => await ascm.getPreviews('not-registered', context)).not.toThrowAsync();
+        await Expect(async () => await ascm.getPreviews('disabled-command', context)).not.toThrowAsync();
+
+        // set it up for no "no app failure"
+        const failedItems = new Map<string, AppSlashCommand>();
+        const asm = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('failure'));
+        asm.hasBeenRegistered();
+        failedItems.set('failure', asm);
+        (ascm as any).providedCommands.set('failMePlease', failedItems);
+        (ascm as any).touchedCommandsToApps.set('failure', 'failMePlease');
+        await Expect(async () => await ascm.getPreviews('failure', context)).not.toThrowAsync();
+
+        // TODO: Figure out how tests can mock/test the result now that we care about it
+    }
+
+    @AsyncTest()
+    public async executePreview() {
+        const previewItem = {} as ISlashCommandPreviewItem;
+        const ascm = new AppSlashCommandManager(this.mockManager);
+        ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
+        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        ascm.disableCommand('testing', 'not-registered');
+        ascm.registerCommands('testing');
+        (ascm as any).providedCommands.get('testing').get('disabled-command').isDisabled = true;
+        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+
+        const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), ['testing']);
+
+        await Expect(async () => await ascm.executePreview('nope', previewItem, context)).not.toThrowAsync();
+        await Expect(async () => await ascm.executePreview('it-exists', previewItem, context)).not.toThrowAsync();
+        await Expect(async () => await ascm.executePreview('command', previewItem, context)).not.toThrowAsync();
+        await Expect(async () => await ascm.executePreview('not-registered', previewItem, context)).not.toThrowAsync();
+        await Expect(async () => await ascm.executePreview('disabled-command', previewItem, context)).not.toThrowAsync();
+
+        // set it up for no "no app failure"
+        const failedItems = new Map<string, AppSlashCommand>();
+        const asm = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('failure'));
+        asm.hasBeenRegistered();
+        failedItems.set('failure', asm);
+        (ascm as any).providedCommands.set('failMePlease', failedItems);
+        (ascm as any).touchedCommandsToApps.set('failure', 'failMePlease');
+        await Expect(async () => await ascm.executePreview('failure', previewItem, context)).not.toThrowAsync();
     }
 }

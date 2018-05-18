@@ -1,4 +1,5 @@
 import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
+import { IUser } from '@rocket.chat/apps-ts-definition/users';
 
 import { IRoomBridge } from '../../../src/server/bridges';
 
@@ -11,7 +12,15 @@ export class TestsRoomBridge implements IRoomBridge {
         throw new Error('Method not implemented.');
     }
 
+    public getCreatorById(roomId: string, appId: string): Promise<IUser> {
+        throw new Error('Method not implemented.');
+    }
+
     public getByName(roomName: string, appId: string): Promise<IRoom> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getCreatorByName(roomName: string, appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 

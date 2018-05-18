@@ -65,7 +65,7 @@ export class RoomBuilderAccessorTestFixture {
         Expect(rb.addCustomField('thing', {})).toBe(rb);
         Expect(room.customFields).not.toBeEmpty();
         Expect(rb.getCustomFields()).not.toBeEmpty();
-        Expect(room.customFields.thing).toBeEmpty();
+        Expect(room.customFields.thing).toBeDefined();
         Expect(rb.getCustomFields().thing).toBeEmpty();
         Expect(rb.addCustomField('another', { thingy: 'two' })).toBe(rb);
         Expect(room.customFields.another).toEqual({ thingy: 'two' });

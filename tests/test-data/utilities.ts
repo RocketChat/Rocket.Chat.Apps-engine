@@ -1,9 +1,10 @@
 // tslint:disable:max-classes-per-file
+// tslint:disable:max-line-length
 import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
 import { ISetting, SettingType } from '@rocket.chat/apps-ts-definition/settings';
-import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { IUser, UserStatusConnection, UserType } from '@rocket.chat/apps-ts-definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
@@ -142,10 +143,20 @@ export class TestData {
     public static getSlashCommand(command?: string): ISlashCommand {
         return {
             command: command ? command : 'testing-cmd',
-            paramsExample: 'justATest',
+            i18nParamsExample: 'justATest',
             i18nDescription: 'justATest_Description',
             permission: 'create-c',
+            providesPreview: true,
             executor: (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+                return Promise.resolve();
+            },
+            previewer: (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<ISlashCommandPreview> => {
+                return Promise.resolve({
+                    i18nTitle: 'my i18nTitle',
+                    items: new Array(),
+                } as ISlashCommandPreview);
+            },
+            executePreviewItem: (item: ISlashCommandPreviewItem, context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
                 return Promise.resolve();
             },
         };
