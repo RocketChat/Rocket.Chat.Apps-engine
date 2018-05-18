@@ -594,7 +594,7 @@ export class AppManager {
                 continue;
             }
 
-            if (sett.value || sett.packageValue) {
+            if (sett.value !== 'undefined' || sett.packageValue !== 'undefined') {
                 continue;
             }
 
