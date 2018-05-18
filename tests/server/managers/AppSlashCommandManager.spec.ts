@@ -1,5 +1,6 @@
 // tslint:disable:max-line-length
 
+import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
 import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
@@ -33,6 +34,9 @@ export class AppSlashCommandManagerTestFixture {
         this.mockApp = {
             getID() {
                 return 'testing';
+            },
+            getStatus() {
+                return AppStatus.AUTO_ENABLED;
             },
             hasMethod(method: AppMethod): boolean {
                 if (AppSlashCommandManagerTestFixture.doThrow && !failed) {

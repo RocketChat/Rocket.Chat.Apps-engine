@@ -1,3 +1,4 @@
+import { AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
 import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 
@@ -318,6 +319,10 @@ export class AppSlashCommandManager {
             return;
         }
 
+        if (AppStatusUtils.isDisabled(app.getStatus())) {
+            return;
+        }
+
         if (!app.hasMethod(AppMethod._COMMAND_EXECUTOR)) {
             return;
         }
@@ -340,6 +345,10 @@ export class AppSlashCommandManager {
         if (!app) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
+            return;
+        }
+
+        if (AppStatusUtils.isDisabled(app.getStatus())) {
             return;
         }
 
@@ -370,6 +379,10 @@ export class AppSlashCommandManager {
         if (!app) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
+            return;
+        }
+
+        if (AppStatusUtils.isDisabled(app.getStatus())) {
             return;
         }
 

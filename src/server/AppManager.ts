@@ -170,6 +170,17 @@ export class AppManager {
             await this.initializeApp(items.get(rl.getID()), rl, true);
         }
 
+        // Let's ensure the required settings are all set
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                continue;
+            }
+
+            if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+            }
+        }
+
         // Now let's enable the apps which were once enabled
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
@@ -502,7 +513,11 @@ export class AppManager {
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
 
-        if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+        if (!this.areRequiredSettingsSet(item)) {
+            await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+        }
+
+        if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
             await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
@@ -515,6 +530,11 @@ export class AppManager {
             if (!isInitialized) {
                 return false;
             }
+        }
+
+        if (!this.areRequiredSettingsSet(storageItem)) {
+            await app.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+            return false;
         }
 
         const isEnabled = await this.enableApp(storageItem, app, true, isManual);
@@ -551,6 +571,30 @@ export class AppManager {
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
             this.storage.update(storageItem);
+        }
+
+        return result;
+    }
+
+    /**
+     * Determines if the App's required settings are set or not.
+     * Should a packageValue be provided and not empty, then it's considered set.
+     */
+    private areRequiredSettingsSet(storageItem: IAppStorageItem): boolean {
+        let result = true;
+
+        for (const setk of Object.keys(storageItem.settings)) {
+            const sett = storageItem.settings[setk];
+            // If it's not required, ignore
+            if (!sett.required) {
+                continue;
+            }
+
+            if (sett.value || sett.packageValue) {
+                continue;
+            }
+
+            result = false;
         }
 
         return result;
