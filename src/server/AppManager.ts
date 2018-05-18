@@ -374,6 +374,8 @@ export class AppManager {
             await this.disable(id);
         }
 
+        this.listenerManager.unregisterListeners(app);
+        this.commandManager.unregisterCommands(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.logStorage.removeEntriesFor(app.getID());
