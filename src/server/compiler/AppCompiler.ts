@@ -15,6 +15,7 @@ import { ICompilerResult } from './ICompilerResult';
 
 import { App } from '@rocket.chat/apps-ts-definition/App';
 import { AppMethod, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+import { Utilities } from '../misc/Utilities';
 
 export class AppCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
@@ -145,8 +146,8 @@ export class AppCompiler {
 
                 for (const moduleName of moduleNames) {
                     // Let's ensure we search for the App's modules first
-                    if (result.files[path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts']) {
-                        resolvedModules.push({ resolvedFileName: path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts' });
+                    if (result.files[Utilities.transformModuleForCustomRequire(moduleName)]) {
+                        resolvedModules.push({ resolvedFileName: Utilities.transformModuleForCustomRequire(moduleName) });
                     } else {
                         // Now, let's try the "standard" resolution but with our little twist on it
                         const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
@@ -265,7 +266,7 @@ export class AppCompiler {
                 `Could not find the classFile (${storage.info.classFile}) file.`);
         }
 
-        const customRequire = this.buildCustomRequire(files);
+        const customRequire = Utilities.buildCustomRequire(files);
         const context = vm.createContext({ require: customRequire, exports, process: {} });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)].compiled);
@@ -328,19 +329,5 @@ export class AppCompiler {
         return file.name.trim() !== ''
             && path.normalize(file.name)
             && file.content.trim() !== '';
-    }
-
-    private buildCustomRequire(files: { [s: string]: ICompilerFile }): (mod: string) => {} {
-        return function _requirer(mod: string): any {
-            if (files[path.normalize(mod + '.ts')]) {
-                const ourExport = {};
-                const context = vm.createContext({ require, exports: ourExport, process: {} });
-                vm.runInContext(files[path.normalize(mod + '.ts')].compiled, context);
-
-                return ourExport;
-            } else {
-                return require(mod);
-            }
-        };
     }
 }
