@@ -341,7 +341,7 @@ export class AppSlashCommandManager {
         }
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, context, this.manager.getLogStorage(), this.accessors);
+        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, context, this.manager.getLogStorage(), this.accessors);
 
         if (!result) {
             // Failed to get the preview, thus returning is fine
