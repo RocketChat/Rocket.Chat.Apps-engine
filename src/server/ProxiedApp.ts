@@ -99,9 +99,12 @@ export class ProxiedApp implements IApp {
         return this.app.getStatus();
     }
 
-    public async setStatus(status: AppStatus): Promise<void> {
+    public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {
         await this.call(AppMethod.SETSTATUS, status);
-        await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
+
+        if (!silent) {
+            await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, status);
+        }
     }
 
     public getName(): string {
