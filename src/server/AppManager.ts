@@ -15,8 +15,7 @@ import { AppStatus, AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppSt
 import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 
 export class AppManager {
-    public static ENV_VAR_NAME_FOR_ENABLING = 'USE_UNRELEASED_ROCKETAPPS_FRAMEWORK';
-    public static SUPER_FUN_ENV_ENABLEMENT_NAME = 'LET_ME_HAVE_FUN_WITH_ROCKETS_NOW';
+    public static Instance: AppManager;
 
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
@@ -34,6 +33,11 @@ export class AppManager {
     private isLoaded: boolean;
 
     constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
+        // Singleton style. There can only ever be one AppManager instance
+        if (typeof AppManager.Instance !== 'undefined') {
+            throw new Error('There is already a valid AppManager instance.');
+        }
+
         if (rlStorage instanceof AppStorage) {
             this.storage = rlStorage;
         } else {
@@ -62,6 +66,7 @@ export class AppManager {
         this.settingsManager = new AppSettingsManager(this);
 
         this.isLoaded = false;
+        AppManager.Instance = this;
     }
 
     /** Gets the instance of the storage connector. */
@@ -120,6 +125,12 @@ export class AppManager {
      * long process of loading all the Apps up.
      */
     public async load(): Promise<Array<AppFabricationFulfillment>> {
+        // You can not load the AppManager system again
+        // if it has already been loaded.
+        if (this.isLoaded) {
+            return;
+        }
+
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
         const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
@@ -191,6 +202,29 @@ export class AppManager {
 
         this.isLoaded = true;
         return affs;
+    }
+
+    public async unload(isManual: boolean): Promise<void> {
+        // If the AppManager hasn't been loaded yet, then
+        // there is nothing to unload
+        if (!this.isLoaded) {
+            return;
+        }
+
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                continue;
+            } else if (rl.getStatus() === AppStatus.INITIALIZED) {
+                this.listenerManager.unregisterListeners(rl);
+                this.commandManager.unregisterCommands(rl.getID());
+                this.accessorManager.purifyApp(rl.getID());
+                continue;
+            }
+
+            await this.disable(rl.getID(), isManual);
+        }
+
+        this.isLoaded = false;
     }
 
     /** Gets the Apps which match the filter passed in. */
