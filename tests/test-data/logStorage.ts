@@ -18,4 +18,8 @@ export class TestsAppLogStorage extends AppLogStorage {
     public getEntriesFor(appId: string): Promise<Array<ILoggerStorageEntry>> {
         return Promise.resolve([]);
     }
+
+    public removeEntriesFor(appId: string): Promise<void> {
+        return Promise.resolve();
+    }
 }

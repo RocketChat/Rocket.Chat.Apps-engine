@@ -21,7 +21,7 @@ export class AppPackageParser {
     }
 
     public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
+        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
         const infoZip = zip.getEntry('app.json');
         let info: IAppInfo;
 

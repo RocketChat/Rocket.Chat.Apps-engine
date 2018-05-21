@@ -6,11 +6,15 @@ export enum AppInterface {
     IPreMessageSentExtend = 'IPreMessageSentExtend',
     IPreMessageSentModify = 'IPreMessageSentModify',
     IPostMessageSent = 'IPostMessageSent',
+    IPreMessageDeletePrevent = 'IPreMessageDeletePrevent',
+    IPostMessageDeleted = 'IPostMessageDeleted',
     // Rooms
     IPreRoomCreatePrevent = 'IPreRoomCreatePrevent',
     IPreRoomCreateExtend = 'IPreRoomCreateExtend',
     IPreRoomCreateModify = 'IPreRoomCreateModify',
     IPostRoomCreate = 'IPostRoomCreate',
+    IPreRoomDeletePrevent = 'IPreRoomDeletePrevent',
+    IPostRoomDeleted = 'IPostRoomDeleted',
 }
 
 export class AppImplements {

@@ -170,6 +170,17 @@ export class AppManager {
             await this.initializeApp(items.get(rl.getID()), rl, true);
         }
 
+        // Let's ensure the required settings are all set
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                continue;
+            }
+
+            if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+            }
+        }
+
         // Now let's enable the apps which were once enabled
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
@@ -254,7 +265,7 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = await this.runStartUpProcess(storageItem, rl, true);
+        const isSetup = await this.runStartUpProcess(storageItem, rl, true, false);
         if (isSetup) {
             storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
@@ -348,7 +359,7 @@ export class AppManager {
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            await this.runStartUpProcess(created, app, false);
+            await this.runStartUpProcess(created, app, false, false);
         } else {
             await this.initializeApp(created, app, true);
         }
@@ -363,7 +374,11 @@ export class AppManager {
             await this.disable(id);
         }
 
+        this.listenerManager.unregisterListeners(app);
+        this.commandManager.unregisterCommands(app.getID());
+        this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
@@ -426,7 +441,7 @@ export class AppManager {
         aff.setApp(app);
 
         // Start up the app
-        await this.runStartUpProcess(stored, app, false);
+        await this.runStartUpProcess(stored, app, false, true);
 
         // Let everyone know that the App has been updated
         try {
@@ -502,22 +517,31 @@ export class AppManager {
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
 
-        if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+        if (!this.areRequiredSettingsSet(item)) {
+            await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+        }
+
+        if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
             await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
         return this.apps.get(item.id);
     }
 
-    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): Promise<boolean> {
+    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean, silenceStatus: boolean): Promise<boolean> {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
-            const isInitialized = await this.initializeApp(storageItem, app, true);
+            const isInitialized = await this.initializeApp(storageItem, app, true, silenceStatus);
             if (!isInitialized) {
                 return false;
             }
         }
 
-        const isEnabled = await this.enableApp(storageItem, app, true, isManual);
+        if (!this.areRequiredSettingsSet(storageItem)) {
+            await app.setStatus(AppStatus.INVALID_SETTINGS_DISABLED, silenceStatus);
+            return false;
+        }
+
+        const isEnabled = await this.enableApp(storageItem, app, true, isManual, silenceStatus);
         if (!isEnabled) {
             return false;
         }
@@ -525,7 +549,7 @@ export class AppManager {
         return true;
     }
 
-    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): Promise<boolean> {
+    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
@@ -533,7 +557,7 @@ export class AppManager {
         try {
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             result = true;
-            await app.setStatus(AppStatus.INITIALIZED);
+            await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -543,7 +567,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             result = false;
 
-            await app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
         }
 
         if (saveToDb) {
@@ -556,14 +580,38 @@ export class AppManager {
         return result;
     }
 
-    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): Promise<boolean> {
+    /**
+     * Determines if the App's required settings are set or not.
+     * Should a packageValue be provided and not empty, then it's considered set.
+     */
+    private areRequiredSettingsSet(storageItem: IAppStorageItem): boolean {
+        let result = true;
+
+        for (const setk of Object.keys(storageItem.settings)) {
+            const sett = storageItem.settings[setk];
+            // If it's not required, ignore
+            if (!sett.required) {
+                continue;
+            }
+
+            if (sett.value !== 'undefined' || sett.packageValue !== 'undefined') {
+                continue;
+            }
+
+            result = false;
+        }
+
+        return result;
+    }
+
+    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean, silenceStatus = false): Promise<boolean> {
         let enable: boolean;
 
         try {
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
+            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
         } catch (e) {
             enable = false;
 
@@ -572,7 +620,7 @@ export class AppManager {
             }
 
             console.error(e);
-            await app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
         }
 
         if (enable) {
