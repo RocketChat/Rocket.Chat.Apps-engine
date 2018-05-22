@@ -224,6 +224,9 @@ export class AppManager {
             await this.disable(rl.getID(), isManual);
         }
 
+        // Remove all the apps from the system now that we have unloaded everything
+        this.apps.clear();
+
         this.isLoaded = false;
     }
 
