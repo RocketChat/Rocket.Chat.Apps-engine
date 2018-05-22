@@ -75,7 +75,7 @@ export class AppConsole implements ILogger {
         const i = items.map((v) => {
             if (v instanceof Error) {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
-            } else if (typeof v.stack === 'string' && typeof v.message === 'string') {
+            } else if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
             } else {
                 return v;
