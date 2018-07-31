@@ -6,7 +6,7 @@ import { ISubscriptionBridge } from '../bridges';
 export class SubscriptionRead implements ISubscriptionRead {
     constructor(private subscriptionBridge: ISubscriptionBridge, private appId: string) { }
 
-    public getByRoomId(roomId: string): Promise<ISubscription> {
+    public getByRoomId(roomId: string): Promise<IterableIterator<ISubscription>> {
         return this.subscriptionBridge.getByRoomId(roomId, this.appId);
     }
 
