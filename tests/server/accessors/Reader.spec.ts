@@ -1,4 +1,4 @@
-import { IEnvironmentRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUserRead } from '@rocket.chat/apps-ts-definition/accessors';
+import { IEnvironmentRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, ISubscriptionRead, IUserRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { Expect, SetupFixture, Test } from 'alsatian';
 
 import { Reader } from '../../../src/server/accessors';
@@ -8,6 +8,7 @@ export class ReaderAccessorTestFixture {
     private msg: IMessageRead;
     private pr: IPersistenceRead;
     private rm: IRoomRead;
+    private sb: ISubscriptionRead;
     private ur: IUserRead;
     private ni: INotifier;
 
@@ -17,15 +18,16 @@ export class ReaderAccessorTestFixture {
         this.msg = {} as IMessageRead;
         this.pr = {} as IPersistenceRead;
         this.rm = {} as IRoomRead;
+        this.sb = {} as ISubscriptionRead;
         this.ur = {} as IUserRead;
         this.ni = {} as INotifier;
     }
 
     @Test()
     public useReader() {
-        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni)).not.toThrow();
+        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.sb, this.ur, this.ni)).not.toThrow();
 
-        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni);
+        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.sb, this.ur, this.ni);
         Expect(rd.getEnvironmentReader()).toBeDefined();
         Expect(rd.getMessageReader()).toBeDefined();
         Expect(rd.getNotifier()).toBeDefined();

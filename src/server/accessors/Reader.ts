@@ -5,13 +5,18 @@ import {
     IPersistenceRead,
     IRead,
     IRoomRead,
+    ISubscriptionRead,
     IUserRead,
 } from '@rocket.chat/apps-ts-definition/accessors';
 
 export class Reader implements IRead {
-    constructor(private env: IEnvironmentRead, private message: IMessageRead,
-                private persist: IPersistenceRead, private room: IRoomRead,
-                private user: IUserRead, private noti: INotifier) { }
+    constructor(private env: IEnvironmentRead,
+                private message: IMessageRead,
+                private persist: IPersistenceRead,
+                private room: IRoomRead,
+                private subscription: ISubscriptionRead,
+                private user: IUserRead,
+                private noti: INotifier) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
@@ -27,6 +32,9 @@ export class Reader implements IRead {
 
     public getRoomReader(): IRoomRead {
         return this.room;
+    }
+    public getSubscriptionReader(): ISubscriptionRead {
+        return this.subscription;
     }
 
     public getUserReader(): IUserRead {

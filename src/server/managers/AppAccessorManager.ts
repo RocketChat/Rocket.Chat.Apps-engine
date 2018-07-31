@@ -16,6 +16,7 @@ import {
     SettingsExtend,
     SlashCommandsExtend,
     SlashCommandsModify,
+    SubscriptionRead,
     UserRead,
 } from '../accessors';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
@@ -123,10 +124,10 @@ export class AppAccessorManager {
             const msg = new MessageRead(this.bridges.getMessageBridge(), appId);
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
+            const subscr = new SubscriptionRead(this.bridges.getSubscriptionBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
             const noti = new Notifier(this.bridges.getMessageBridge(), appId);
-
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti));
+            this.readers.set(appId, new Reader(env, msg, persist, room, subscr, user, noti));
         }
 
         return this.readers.get(appId);
