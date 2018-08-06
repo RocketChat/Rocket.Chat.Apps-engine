@@ -32,7 +32,7 @@ import {
     IModify,
     IPersistence,
     IRead,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;

@@ -52,3 +52,7 @@ examples/
 dev-dist/
 data/
 tests/test-data/dbs
+/client/
+/server/
+/definition/
+.DS_Store

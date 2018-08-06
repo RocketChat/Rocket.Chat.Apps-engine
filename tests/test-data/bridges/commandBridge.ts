@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { IHttp, IModify, IPersistence, IRead } from '../../../src/definition/accessors';
+import { ISlashCommand, SlashCommandContext } from '../../../src/definition/slashcommands';
 
 import { IAppCommandBridge } from '../../../src/server/bridges';
 import { TestData } from '../utilities';

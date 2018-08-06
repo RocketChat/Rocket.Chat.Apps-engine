@@ -1,4 +1,4 @@
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { ISetting } from '../../../src/definition/settings';
 
 import { IServerSettingBridge } from '../../../src/server/bridges';
 

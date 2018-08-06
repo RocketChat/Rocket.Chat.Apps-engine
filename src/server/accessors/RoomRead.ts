@@ -1,7 +1,7 @@
-import { IRoomRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IRoomRead } from '../../definition/accessors';
+import { IMessage } from '../../definition/messages';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 import { IRoomBridge } from '../bridges';
 

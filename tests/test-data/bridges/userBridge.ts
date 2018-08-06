@@ -1,4 +1,4 @@
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IUser } from '../../../src/definition/users';
 
 import { IUserBridge } from '../../../src/server/bridges';
 

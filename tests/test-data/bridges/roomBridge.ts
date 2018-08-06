@@ -1,5 +1,5 @@
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IRoom } from '../../../src/definition/rooms';
+import { IUser } from '../../../src/definition/users';
 
 import { IRoomBridge } from '../../../src/server/bridges';
 

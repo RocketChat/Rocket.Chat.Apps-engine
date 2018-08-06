@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { AsyncTest, Expect, SetupFixture, SpyOn, Test } from 'alsatian';
+import { AppMethod } from '../../../src/definition/metadata';
 import { TestData } from '../../test-data/utilities';
 
 import { AppManager } from '../../../src/server/AppManager';

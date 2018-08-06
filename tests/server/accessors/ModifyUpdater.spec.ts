@@ -1,6 +1,6 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
+import { IRoom, RoomType } from '../../../src/definition/rooms';
 
 import { MessageBuilder, ModifyUpdater, RoomBuilder } from '../../../src/server/accessors';
 import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';

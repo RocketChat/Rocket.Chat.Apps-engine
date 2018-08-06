@@ -1,4 +1,4 @@
-import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { ISlashCommand } from '../../definition/slashcommands';
 
 /**
  * The interface which should be implemented for the commands to be

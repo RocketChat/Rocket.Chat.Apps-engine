@@ -1,5 +1,5 @@
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 export interface IRoomBridge {
     create(room: IRoom, appId: string): Promise<string>;
