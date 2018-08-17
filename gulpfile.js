@@ -15,47 +15,49 @@ if (testIndex > -1) {
     tsp.config.include.splice(testIndex, 1);
 }
 
-gulp.task('clean-generated', function _cleanTypescript() {
+function clean_generated() {
     return del(['./server', './client', './definition']);
-});
+}
 
-gulp.task('lint-ts', function _lintTypescript() {
+function lint_ts() {
     return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
-});
+}
 
-gulp.task('compile-ts', ['ts-definition-module-files', 'update-ts-definition-version'], function _compileTypescript() {
+function compile_ts() {
     return tsp.src().pipe(sourcemaps.init())
             .pipe(tsp())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('.'));
-});
+}
 
-gulp.task('update-ts-definition-version', function _updateTsDefinitionVersion() {
+function update_ts_definition_version() {
     const { version } = JSON.parse(fs.readFileSync('./package.json'));
 
     return gulp.src('src/definition/package.json')
             .pipe(bump({ version }))
-            .pipe(gulp.dest('src/definition/'));
-});
+            .pipe(gulp.dest('definition/'));
+}
 
 //Tasks for getting it ready and publishing
-gulp.task('ts-definition-module-files', function _npmFileGathering() {
-    return gulp.src(['LICENSE', 'src/definition/README.md', 'src/definition/package.json'])
-            .pipe(gulp.dest('definition'));
-});
+function ts_definition_module_files() {
+    return gulp.src(['LICENSE', 'src/definition/package.json'])
+            .pipe(gulp.dest('definition/'));
+}
 
-gulp.task('compile', ['clean-generated', 'lint-ts', 'compile-ts']);
+const compile = gulp.series(clean_generated, lint_ts, compile_ts, update_ts_definition_version, ts_definition_module_files);
 
-gulp.task('default', ['compile'], function() {
-    gulp.watch('src/**/*.ts', ['lint-ts', 'compile-ts']);
-});
+gulp.task('compile', compile);
 
-gulp.task('pack', ['clean-generated', 'lint-ts', 'compile-ts'], shell.task([
+gulp.task('default', gulp.series(compile, function() {
+    return gulp.watch('src/**/*.ts', ['lint-ts', 'compile-ts']);
+}));
+
+gulp.task('pack', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
     'npm pack'
-]));
+])));
 
-gulp.task('publish', ['clean-generated', 'lint-ts', 'compile-ts'], shell.task([
+gulp.task('publish', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
     'npm publish --access public && npm pack'
 ], [
     'cd definition && npm publish --access public && npm pack'
-]));
+])));
