@@ -35,7 +35,7 @@ function update_ts_definition_version() {
 
     return gulp.src('src/definition/package.json')
             .pipe(bump({ version }))
-            .pipe(gulp.dest('definition/'));
+            .pipe(gulp.dest('src/definition/'));
 }
 
 //Tasks for getting it ready and publishing
