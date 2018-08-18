@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/server/logging/index.ts"],"names":[],"mappings":";;AAAA,6CAA0C;AAGjC,qBAHA,uBAAU,CAGA","file":"index.js","sourcesContent":["import { AppConsole } from './AppConsole';\nimport { ILoggerStorageEntry } from './ILoggerStorageEntry';\n\nexport { AppConsole, ILoggerStorageEntry };\n"]}

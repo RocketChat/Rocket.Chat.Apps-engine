@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/server/compiler/ICompilerFile.ts"],"names":[],"mappings":"","file":"ICompilerFile.js","sourcesContent":["export interface ICompilerFile {\n    name: string;\n    content: string;\n    version: number;\n    compiled?: string;\n}\n"]}

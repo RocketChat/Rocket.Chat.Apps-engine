@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/client/index.ts"],"names":[],"mappings":";;AAAA,yDAAsD;AAG7C,2BAHA,mCAAgB,CAGA;AAFzB,mEAAgE;AAErC,gCAFlB,6CAAqB,CAEkB","file":"index.js","sourcesContent":["import { AppClientManager } from './AppClientManager';\nimport { AppServerCommunicator } from './AppServerCommunicator';\n\nexport { AppClientManager, AppServerCommunicator };\n"]}

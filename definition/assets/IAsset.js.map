@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/assets/IAsset.ts"],"names":[],"mappings":"","file":"IAsset.js","sourcesContent":["export interface IAsset {\n    name: string;\n    path: string;\n    type: string;\n    public: boolean;\n}\n"]}

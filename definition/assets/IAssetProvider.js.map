@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/assets/IAssetProvider.ts"],"names":[],"mappings":"","file":"IAssetProvider.js","sourcesContent":["import { IAsset } from './IAsset';\n\nexport interface IAssetProvider {\n    getAssets(): Array<IAsset>;\n}\n"]}

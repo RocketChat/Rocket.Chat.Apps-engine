@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/server/bridges/IUserBridge.ts"],"names":[],"mappings":"","file":"IUserBridge.js","sourcesContent":["import { IUser } from '../../definition/users';\n\nexport interface IUserBridge {\n    getById(id: string, appId: string): Promise<IUser>;\n\n    getByUsername(username: string, appId: string): Promise<IUser>;\n}\n"]}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/metadata/IAppAuthorInfo.ts"],"names":[],"mappings":"","file":"IAppAuthorInfo.js","sourcesContent":["export interface IAppAuthorInfo {\n    name: string;\n    support: string;\n    homepage: string;\n}\n"]}

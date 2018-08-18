@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/webhooks/IRequest.ts"],"names":[],"mappings":"","file":"IRequest.js","sourcesContent":["import { RequestMethod } from '../accessors';\n\nexport interface IWebhookRequest {\n    method: RequestMethod;\n    headers: { [key: string]: string };\n    params: { [key: string]: string };\n    content: any;\n}\n"]}

@@ -44,15 +44,10 @@ jspm_packages
 ## Ignore downloaded typings
 /typings
 
-## Ignore distribution folder
-dist/
-
 ## dev environment stuff
 examples/
 dev-dist/
 data/
 tests/test-data/dbs
-/client/
-/server/
-/definition/
+
 .DS_Store

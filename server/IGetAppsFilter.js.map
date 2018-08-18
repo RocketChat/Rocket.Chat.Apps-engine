@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/server/IGetAppsFilter.ts"],"names":[],"mappings":"","file":"IGetAppsFilter.js","sourcesContent":["export interface IGetAppsFilter {\n    ids?: Array<string>;\n    name?: string | RegExp;\n    enabled?: boolean;\n    disabled?: boolean;\n}\n"]}

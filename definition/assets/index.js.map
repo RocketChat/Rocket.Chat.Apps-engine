@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/assets/index.ts"],"names":[],"mappings":"","file":"index.js","sourcesContent":["import { IAsset } from './IAsset';\nimport { IAssetProvider } from './IAssetProvider';\n\nexport { IAsset, IAssetProvider };\n"]}

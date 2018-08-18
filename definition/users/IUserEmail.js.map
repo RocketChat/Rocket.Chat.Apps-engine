@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/definition/users/IUserEmail.ts"],"names":[],"mappings":"","file":"IUserEmail.js","sourcesContent":["export interface IUserEmail {\n    address: string;\n    verified: boolean;\n}\n"]}

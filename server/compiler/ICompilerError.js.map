@@ -1,0 +1,1 @@
+{"version":3,"sources":["src/server/compiler/ICompilerError.ts"],"names":[],"mappings":"","file":"ICompilerError.js","sourcesContent":["export interface ICompilerError {\n    file: string;\n    line: number;\n    character: number;\n    message: string;\n}\n"]}
