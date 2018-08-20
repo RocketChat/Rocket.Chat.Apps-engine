@@ -45,9 +45,12 @@ jspm_packages
 /typings
 
 ## dev environment stuff
-examples/
-dev-dist/
-data/
-tests/test-data/dbs
+/examples/
+/dev-dist/
+/data/
+/tests/test-data/dbs
+/client
+/definition
+/server
 
 .DS_Store
