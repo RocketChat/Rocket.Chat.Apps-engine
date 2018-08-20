@@ -1,1 +1,0 @@
-{"version":3,"sources":["src/definition/webhooks/IResponse.ts"],"names":[],"mappings":"","file":"IResponse.js","sourcesContent":["import { HttpStatusCode } from '../accessors';\n\nexport interface IWebhookResponse {\n    status: HttpStatusCode;\n    content?: any;\n}\n"]}

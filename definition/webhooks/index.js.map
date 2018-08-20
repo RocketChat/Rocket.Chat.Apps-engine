@@ -1,1 +1,0 @@
-{"version":3,"sources":["src/definition/webhooks/index.ts"],"names":[],"mappings":"","file":"index.js","sourcesContent":["import { IWebhookRequest } from './IRequest';\nimport { IWebhookResponse } from './IResponse';\nimport { IWebhookProvider } from './IWebhookProvider';\n\nexport {\n    IWebhookRequest,\n    IWebhookResponse,\n    IWebhookProvider,\n};\n"]}
