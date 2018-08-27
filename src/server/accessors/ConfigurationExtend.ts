@@ -3,7 +3,7 @@ import {
     IHttpExtend,
     ISettingsExtend,
     ISlashCommandsExtend,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class ConfigurationExtend implements IConfigurationExtend {
     public readonly http: IHttpExtend;

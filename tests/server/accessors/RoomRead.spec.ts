@@ -1,6 +1,6 @@
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { IRoom } from '../../../src/definition/rooms';
+import { IUser } from '../../../src/definition/users';
 
 import { RoomRead } from '../../../src/server/accessors';
 import { IRoomBridge } from '../../../src/server/bridges';

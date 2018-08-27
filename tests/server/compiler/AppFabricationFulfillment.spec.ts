@@ -1,7 +1,7 @@
-import { App } from '@rocket.chat/apps-ts-definition/App';
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import { Expect, Test } from 'alsatian';
+import { App } from '../../../src/definition/App';
+import { AppStatus } from '../../../src/definition/AppStatus';
+import { IAppInfo } from '../../../src/definition/metadata';
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppFabricationFulfillment, AppInterface, ICompilerError } from '../../../src/server/compiler';

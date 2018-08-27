@@ -1,6 +1,6 @@
-import { AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { AppStatusUtils } from '../../definition/AppStatus';
+import { AppMethod } from '../../definition/metadata';
+import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 
 import { AppManager } from '../AppManager';
 import { IAppCommandBridge } from '../bridges';

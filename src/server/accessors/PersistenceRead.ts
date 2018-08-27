@@ -1,5 +1,5 @@
-import { IPersistenceRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
+import { IPersistenceRead } from '../../definition/accessors';
+import { RocketChatAssociationRecord } from '../../definition/metadata';
 import { IPersistenceBridge } from '../bridges';
 
 export class PersistenceRead implements IPersistenceRead {

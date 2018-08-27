@@ -1,6 +1,6 @@
 // tslint:disable:max-line-length
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import { Expect, Test } from 'alsatian';
+import { IAppInfo } from '../../../src/definition/metadata';
 
 import { RequiredApiVersionError } from '../../../src/server/errors';
 

@@ -32,6 +32,15 @@ export class Utilities {
 
     public static buildCustomRequire(files: { [s: string]: ICompilerFile }): (mod: string) => {} {
         return function _requirer(mod: string): any {
+            // Keep compatibility with apps importing apps-ts-definition
+            if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
+                mod = path.normalize(mod);
+                mod = mod.replace('@rocket.chat/apps-ts-definition/', '../../definition/');
+            } else if (mod.startsWith('@rocket.chat/apps-engine/definition/')) {
+                mod = path.normalize(mod);
+                mod = mod.replace('@rocket.chat/apps-engine/definition/', '../../definition/');
+            }
+
             if (files[Utilities.transformModuleForCustomRequire(mod)]) {
                 const ourExport = {};
                 const context = vm.createContext({

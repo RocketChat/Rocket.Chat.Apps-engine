@@ -4,10 +4,10 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IMessage } from '../../definition/messages';
+import { AppMethod } from '../../definition/metadata';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 import { Utilities } from '../misc/Utilities';
 
 export class AppListenerManger {

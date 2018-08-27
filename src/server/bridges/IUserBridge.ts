@@ -1,4 +1,4 @@
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IUser } from '../../definition/users';
 
 export interface IUserBridge {
     getById(id: string, appId: string): Promise<IUser>;

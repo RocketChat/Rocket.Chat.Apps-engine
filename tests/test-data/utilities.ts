@@ -1,11 +1,11 @@
 // tslint:disable:max-classes-per-file
 // tslint:disable:max-line-length
-import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
-import { ISetting, SettingType } from '@rocket.chat/apps-ts-definition/settings';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
-import { IUser, UserStatusConnection, UserType } from '@rocket.chat/apps-ts-definition/users';
+import { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
+import { IMessage } from '../../src/definition/messages';
+import { IRoom, RoomType } from '../../src/definition/rooms';
+import { ISetting, SettingType } from '../../src/definition/settings';
+import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
+import { IUser, UserStatusConnection, UserType } from '../../src/definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';

@@ -12,11 +12,13 @@
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "lib": ["es2017", "dom"],
-        "outDir": "dist"
+        "outDir": "."
     },
     "exclude": [
         "node_modules",
-        "dist",
+        "server",
+        "client",
+        "definition",
         "examples"
     ],
     "include": [

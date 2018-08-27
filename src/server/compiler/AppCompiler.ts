@@ -13,8 +13,8 @@ import { ICompilerError } from './ICompilerError';
 import { ICompilerFile } from './ICompilerFile';
 import { ICompilerResult } from './ICompilerResult';
 
-import { App } from '@rocket.chat/apps-ts-definition/App';
-import { AppMethod, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+import { App } from '../../definition/App';
+import { AppMethod, IAppInfo } from '../../definition/metadata';
 import { Utilities } from '../misc/Utilities';
 
 export class AppCompiler {
@@ -144,7 +144,10 @@ export class AppCompiler {
                 // tslint:disable-next-line
                 const moduleResHost: ts.ModuleResolutionHost = { fileExists: host.fileExists, readFile: host.readFile, trace: (traceDetail) => console.log(traceDetail) };
 
-                for (const moduleName of moduleNames) {
+                for (let moduleName of moduleNames) {
+                    // Keep compatibility with apps importing apps-ts-definition
+                    moduleName = moduleName.replace(/@rocket.chat\/apps-ts-definition\//, '@rocket.chat/apps-engine/definition/');
+
                     // Let's ensure we search for the App's modules first
                     if (result.files[Utilities.transformModuleForCustomRequire(moduleName)]) {
                         resolvedModules.push({ resolvedFileName: Utilities.transformModuleForCustomRequire(moduleName) });

@@ -1,7 +1,7 @@
 import { IServerSettingBridge } from '../bridges/IServerSettingBridge';
 
-import { IServerSettingsModify } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { IServerSettingsModify } from '../../definition/accessors';
+import { ISetting } from '../../definition/settings';
 
 export class ServerSettingsModify implements IServerSettingsModify {
     constructor(private readonly bridge: IServerSettingBridge, private readonly appId: string) { }

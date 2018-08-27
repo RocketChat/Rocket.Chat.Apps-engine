@@ -1,7 +1,7 @@
 import { AsyncTest, Expect } from 'alsatian';
 
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+import { AppStatus } from '../../../src/definition/AppStatus';
+import { IAppInfo } from '../../../src/definition/metadata';
 import { DisabledApp } from '../../../src/server/misc/DisabledApp';
 
 export class DisabledAppTestFixture {

@@ -1,5 +1,5 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { Expect, Test } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
