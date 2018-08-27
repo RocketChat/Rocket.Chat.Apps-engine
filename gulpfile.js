@@ -44,13 +44,16 @@ function ts_definition_module_files() {
             .pipe(gulp.dest('definition/'));
 }
 
+function watch() {
+    gulp.watch('src/**/*.ts', gulp.series(lint_ts, compile_ts));
+    gulp.watch('package.json', gulp.series(update_ts_definition_version, ts_definition_module_files));
+}
+
 const compile = gulp.series(clean_generated, lint_ts, compile_ts, update_ts_definition_version, ts_definition_module_files);
 
 gulp.task('compile', compile);
 
-gulp.task('default', gulp.series(compile, function() {
-    return gulp.watch('src/**/*.ts', ['lint-ts', 'compile-ts']);
-}));
+gulp.task('default', gulp.series(compile, watch));
 
 gulp.task('pack', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
     'npm pack'
