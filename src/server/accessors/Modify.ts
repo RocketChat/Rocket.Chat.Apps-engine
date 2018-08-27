@@ -37,7 +37,7 @@ export class Modify implements IModify {
         return this.extender;
     }
 
-    public getNotifer(): INotifier {
+    public getNotifier(): INotifier {
         return this.notifier;
     }
 }

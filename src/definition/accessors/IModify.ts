@@ -15,7 +15,7 @@ export interface IModify {
      *
      * @returns the notifier accessor
      */
-    getNotifer(): INotifier;
+    getNotifier(): INotifier;
 }
 
 export interface INotifier {
