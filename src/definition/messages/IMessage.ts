@@ -1,8 +1,7 @@
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
-import { IMessageReaction } from './IMessageReaction';
-import { IMessageAction } from './IMessageAction';
+import { IMessageReactions } from './IMessageReaction';
 
 export interface IMessage {
     id?: string;
@@ -17,7 +16,6 @@ export interface IMessage {
     avatarUrl?: string;
     alias?: string;
     attachments?: Array<IMessageAttachment>;
-    reactions?: { [key: string]: Array<IMessageReaction> };
-    actions?: Array<IMessageAction>;
+    reactions?: IMessageReactions;
     customFields?: { [key: string]: any };
 }
