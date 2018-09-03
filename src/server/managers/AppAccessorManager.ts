@@ -20,6 +20,7 @@ import {
 } from '../accessors';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
+import { WebhooksExtend } from '../accessors/WebhooksExtend';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
 
@@ -80,9 +81,10 @@ export class AppAccessorManager {
 
             const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
+            const webhooks = new WebhooksExtend(this.manager.getWebhookManager(), appId);
             const sets = new SettingsExtend(rl);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, webhooks));
         }
 
         return this.configExtenders.get(appId);

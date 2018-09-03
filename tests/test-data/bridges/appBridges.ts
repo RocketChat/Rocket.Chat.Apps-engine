@@ -21,10 +21,12 @@ import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsUserBridge } from './userBridge';
+import { TestsWebhookBridge } from './webhookBridge';
 
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
+    private readonly webhookBridge: TestsWebhookBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
     private readonly rlActBridge: TestsActivationBridge;
@@ -38,6 +40,7 @@ export class TestsAppBridges extends AppBridges {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
+        this.webhookBridge = new TestsWebhookBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
         this.rlActBridge = new TestsActivationBridge();
@@ -50,6 +53,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getCommandBridge(): TestsCommandBridge {
         return this.cmdBridge;
+    }
+
+    public getWebhookBridge(): TestsWebhookBridge {
+        return this.webhookBridge;
     }
 
     public getServerSettingBridge(): IServerSettingBridge {

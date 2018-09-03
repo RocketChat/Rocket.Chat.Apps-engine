@@ -37,6 +37,7 @@ import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
 import { IUserRead } from './IUserRead';
+import { IWebhooksExtend } from './IWebhooksExtend';
 
 export {
     HttpStatusCode,
@@ -75,4 +76,5 @@ export {
     IUserRead,
     LogMessageSeverity,
     RequestMethod,
+    IWebhooksExtend,
 };

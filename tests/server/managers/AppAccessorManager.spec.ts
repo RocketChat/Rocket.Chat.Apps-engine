@@ -2,7 +2,7 @@ import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Te
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppSlashCommandManager  } from '../../../src/server/managers';
+import { AppAccessorManager, AppSlashCommandManager, AppWebhookManager  } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
@@ -23,6 +23,9 @@ export class AppAccessorManagerTestFixture {
             getCommandManager() {
                 return {} as AppSlashCommandManager;
             },
+            getWebhookManager() {
+                return {} as AppWebhookManager;
+            },
             getOneById(appId: string): ProxiedApp {
                 return appId === 'testing' ? {} as ProxiedApp : undefined;
             },
@@ -40,6 +43,7 @@ export class AppAccessorManagerTestFixture {
         this.spies.push(SpyOn(this.bridges, 'getUserBridge'));
         this.spies.push(SpyOn(this.manager, 'getBridges'));
         this.spies.push(SpyOn(this.manager, 'getCommandManager'));
+        this.spies.push(SpyOn(this.manager, 'getWebhookManager'));
     }
 
     @Teardown
@@ -62,6 +66,7 @@ export class AppAccessorManagerTestFixture {
         Expect(acm.getConfigurationExtend('testing')).toBeDefined();
 
         Expect(this.manager.getCommandManager).toHaveBeenCalled().exactly(1);
+        Expect(this.manager.getWebhookManager).toHaveBeenCalled().exactly(1);
     }
 
     @Test()

@@ -1,4 +1,5 @@
 export enum AppMethod {
+    _WEBHOOK_EXECUTOR = 'webhookExecutor',
     _CONSTRUCTOR = 'constructor',
     _COMMAND_EXECUTOR = 'executor',
     _COMMAND_PREVIEWER = 'previewer',
