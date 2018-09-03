@@ -333,6 +333,19 @@ export interface IMessageBuilder {
     getEditor(): IUser;
 
     /**
+     * Sets whether this message can group with others.
+     * This is desirable if you want to avoid confusion with other integrations.
+     *
+     * @param groupable whether this message can group with others
+     */
+    setGroupable(groupable: boolean): IMessageBuilder;
+
+    /**
+     * Gets whether this message can group with others.
+     */
+    getGroupable(): boolean;
+
+    /**
      * Gets the resulting message that has been built up to the point of calling it.
      *
      * *Note:* This will error out if the Room has not been defined.

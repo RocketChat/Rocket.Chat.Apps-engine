@@ -15,5 +15,6 @@ export interface IMessage {
     avatarUrl?: string;
     alias?: string;
     attachments?: Array<IMessageAttachment>;
+    groupable?: boolean;
     customFields?: { [key: string]: any };
 }
