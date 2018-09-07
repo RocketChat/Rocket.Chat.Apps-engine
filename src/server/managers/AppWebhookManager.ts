@@ -113,6 +113,32 @@ export class AppWebhookManager {
     }
 
     /**
+     * Return a list of webhooks for a certain app
+     *
+     * @param appId the app which is providing the webhook
+     */
+    public listWebhooks(appId: string): Array<object> {
+        const webhooks = this.providedWebhooks.get(appId);
+
+        if (!webhooks) {
+            throw new Error('No app found for the provided id.');
+        }
+
+        const result = [];
+
+        for (const webhook of webhooks.values()) {
+            result.push({
+                path: webhook.webhook.path,
+                computedPath: webhook.computedPath,
+                methods: webhook.implementedMethods,
+                examples: webhook.webhook.examples,
+            });
+        }
+
+        return result;
+    }
+
+    /**
      * Actually goes and provide's the bridged system with the webhook information.
      *
      * @param appId the app which is providing the webhook

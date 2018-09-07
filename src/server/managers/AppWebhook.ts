@@ -5,8 +5,20 @@ import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
 import { AppAccessorManager } from './AppAccessorManager';
 
+const methods: Array<string> = [
+    'get',
+    'post',
+    'put',
+    'delete',
+    'head',
+    'options',
+    'patch',
+];
+
 export class AppWebhook {
     public readonly computedPath: string;
+    public readonly implementedMethods: Array<string>;
+
     constructor(public app: ProxiedApp, public webhook: IWebhook) {
         switch (this.webhook.visibility) {
             case WebhookVisibility.PUBLIC:
@@ -18,6 +30,7 @@ export class AppWebhook {
                 break;
         }
 
+        this.implementedMethods = methods.filter((m) => typeof (webhook as any)[m] === 'function');
     }
 
     public async runExecutor(request: IWebhookRequest,
