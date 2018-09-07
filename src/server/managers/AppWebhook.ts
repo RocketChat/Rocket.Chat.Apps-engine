@@ -59,24 +59,18 @@ export class AppWebhook {
         const logger = this.app.setupLogger(AppMethod._WEBHOOK_EXECUTOR);
         logger.debug(`${ path }'s ${ method } is being executed...`, request);
 
-        let result: Promise<IWebhookResponse>;
+        const runCode = `webhook.${ method }.apply(webhook, args)`;
         try {
-            const runCode = `webhook.${ method }.apply(webhook, args)`;
-            result = await this.app.runInContext(runCode, runContext);
+            const result: IWebhookResponse = await this.app.runInContext(runCode, runContext);
             logger.debug(`${ path }'s ${ method } was successfully executed.`);
+            logStorage.storeEntries(this.app.getID(), logger);
+            return result;
         } catch (e) {
             logger.error(e);
             logger.debug(`${ path }'s ${ method } was unsuccessful.`);
+            logStorage.storeEntries(this.app.getID(), logger);
+            throw e;
         }
-
-        try {
-            await logStorage.storeEntries(this.app.getID(), logger);
-        } catch (e) {
-            // Don't care, at the moment.
-            // TODO: Evaluate to determine if we do care
-        }
-
-        return result;
     }
 
     private validateVisibility(request: IWebhookRequest): boolean {

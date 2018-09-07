@@ -94,7 +94,7 @@ export class AppWebhookManager {
      * @param path the path to be executed in app's webhooks
      * @param request the request data to be evaluated byt the app
      */
-    public async executeWebhook(appId: string, path: string, request: IWebhookRequest): Promise<IWebhookResponse> {
+    public executeWebhook(appId: string, path: string, request: IWebhookRequest): Promise<IWebhookResponse> {
         const webhook = this.providedWebhooks.get(appId).get(path);
 
         if (!webhook) {
@@ -109,7 +109,7 @@ export class AppWebhookManager {
             return;
         }
 
-        return await webhook.runExecutor(request, this.manager.getLogStorage(), this.accessors);
+        return webhook.runExecutor(request, this.manager.getLogStorage(), this.accessors);
     }
 
     /**
