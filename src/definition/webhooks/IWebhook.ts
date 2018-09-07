@@ -1,6 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IWebhookRequest } from './IRequest';
 import { IWebhookResponse } from './IResponse';
+import { IWebhookExample } from './IWebhookExample';
 
 /**
  * Represents a webhook that is being provided.
@@ -11,8 +12,19 @@ export interface IWebhook {
      * or https://{your-server-address}/api/apps/private/{your-app-id}/{private-hash}/{path}
      */
     path: string;
+    /**
+     * Provides the visibility method of the URL, see the WebhookVisibility descriptions for more information
+     */
     visibility: WebhookVisibility;
+    /**
+     * Provides the visibility method of the URL, see the WebhookSecurity descriptions for more information
+     */
     security: WebhookSecurity;
+    /**
+     * Provide the examples for each method you have implemented, use the `@example` decorator imported
+     * from `IWebhookExample` on top of each method to provide this information.
+     */
+    examples?: {[key: string]: IWebhookExample};
 
     /**
      * Called whenever the publically accessible url for this App is called,
