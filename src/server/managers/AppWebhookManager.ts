@@ -118,7 +118,7 @@ export class AppWebhookManager {
      * @param appId the app which is providing the webhook
      * @param info the webhook's registration information
      */
-    private registerWebhook(appId: string, info: AppWebhook): void {
-        this.bridge.registerWebhook(info.webhook, appId);
+    private registerWebhook(appId: string, webhook: AppWebhook): void {
+        this.bridge.registerWebhook(webhook, appId);
     }
 }

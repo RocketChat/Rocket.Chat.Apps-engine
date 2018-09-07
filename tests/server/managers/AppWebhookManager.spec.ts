@@ -118,7 +118,7 @@ export class AppWebhookManagerTestFixture {
         const regInfo = new AppWebhook(this.mockApp, TestData.getWebhook('path'));
 
         Expect(() => (ascm as any).registerWebhook('testing', regInfo)).not.toThrow();
-        Expect(this.mockBridges.getWebhookBridge().registerWebhook).toHaveBeenCalledWith(regInfo.webhook, 'testing');
+        Expect(this.mockBridges.getWebhookBridge().registerWebhook).toHaveBeenCalledWith(regInfo, 'testing');
     }
 
     @Test()
@@ -151,7 +151,7 @@ export class AppWebhookManagerTestFixture {
         Expect(() => ascm.registerWebhooks('non-existant')).not.toThrow();
         Expect(() => ascm.registerWebhooks('testing')).not.toThrow();
         Expect((ascm as any).registerWebhook as FunctionSpy).toHaveBeenCalledWith('testing', regInfo).exactly(1);
-        Expect(this.mockBridges.getWebhookBridge().registerWebhook).toHaveBeenCalledWith(regInfo.webhook, 'testing').exactly(1);
+        Expect(this.mockBridges.getWebhookBridge().registerWebhook).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
     }
 
     @Test()

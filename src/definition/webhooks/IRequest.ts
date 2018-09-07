@@ -6,4 +6,5 @@ export interface IWebhookRequest {
     query: { [key: string]: string };
     params: { [key: string]: string };
     content: any;
+    privateHash?: string;
 }

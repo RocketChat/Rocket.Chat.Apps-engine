@@ -1,4 +1,4 @@
-import { IWebhook } from '../../definition/webhooks';
+import { AppWebhook } from '../managers/AppWebhook';
 
 /**
  * The interface which should be implemented for the webhooks to be
@@ -11,7 +11,7 @@ export interface IAppWebhookBridge {
      * @param webhook the webhook to register
      * @param appId the id of the app calling this
      */
-    registerWebhook(webhook: IWebhook, appId: string): void;
+    registerWebhook(webhook: AppWebhook, appId: string): void;
 
     /**
      * Unregisters all provided webhooks of an app from the bridged system.

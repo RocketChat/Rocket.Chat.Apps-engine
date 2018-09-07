@@ -11,7 +11,7 @@ import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';
 import { TestsAppStorage } from './storage';
 
-import { IWebhook, IWebhookRequest, IWebhookResponse } from '../../src/definition/webhooks';
+import { IWebhook, IWebhookRequest, IWebhookResponse, WebhookSecurity, WebhookVisibility } from '../../src/definition/webhooks';
 import { AppBridges } from '../../src/server/bridges';
 import { AppLogStorage, AppStorage } from '../../src/server/storage';
 
@@ -163,9 +163,11 @@ export class TestData {
         };
     }
 
-    public static getWebhook(path?: string): IWebhook {
+    public static getWebhook(path: string = 'testing-path', visibility: WebhookVisibility = WebhookVisibility.PUBLIC, security: WebhookSecurity = WebhookSecurity.UNSECURE): IWebhook {
         return {
-            path: path ? path : 'testing-path',
+            path,
+            visibility,
+            security,
             get(request: IWebhookRequest, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IWebhookResponse> {
                 return Promise.resolve({
                     status: HttpStatusCode.OK,

@@ -1,12 +1,22 @@
 import { AppMethod } from '../../definition/metadata';
 
-import { IWebhook, IWebhookRequest, IWebhookResponse } from '../../definition/webhooks';
+import { IWebhook, IWebhookRequest, IWebhookResponse, WebhookSecurity, WebhookVisibility } from '../../definition/webhooks';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
 import { AppAccessorManager } from './AppAccessorManager';
 
 export class AppWebhook {
+    public readonly computedPath: string;
     constructor(public app: ProxiedApp, public webhook: IWebhook) {
+        switch (this.webhook.visibility) {
+            case WebhookVisibility.PUBLIC:
+                this.computedPath = `/apps/public/${app.getID()}/${webhook.path}`;
+                break;
+
+            case WebhookVisibility.PRIVATE:
+                this.computedPath = `/apps/private/${app.getID()}/${app.getStorageItem()._id}/${webhook.path}`;
+                break;
+        }
 
     }
 
@@ -21,6 +31,18 @@ export class AppWebhook {
         // Ensure the webhook has the property before going on
         if (typeof this.webhook[method] !== 'function') {
             return;
+        }
+
+        if (!this.validateVisibility(request)) {
+            return {
+                status: 404,
+            };
+        }
+
+        if (!this.validateSecurity(request)) {
+            return {
+                status: 401,
+            };
         }
 
         const runContext = this.app.makeContext({
@@ -55,5 +77,25 @@ export class AppWebhook {
         }
 
         return result;
+    }
+
+    private validateVisibility(request: IWebhookRequest): boolean {
+        if (this.webhook.visibility === WebhookVisibility.PUBLIC) {
+            return true;
+        }
+
+        if (this.webhook.visibility === WebhookVisibility.PRIVATE) {
+            return this.app.getStorageItem()._id === request.privateHash;
+        }
+
+        return false;
+    }
+
+    private validateSecurity(request: IWebhookRequest): boolean {
+        if (this.webhook.security === WebhookSecurity.UNSECURE) {
+            return true;
+        }
+
+        return false;
     }
 }
