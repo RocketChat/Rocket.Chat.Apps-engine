@@ -67,6 +67,8 @@ export class AppListenerManger {
             case AppInterface.IPostMessageDeleted:
                 this.executePostMessageDelete(data as IMessage);
                 return;
+            case AppInterface.IPreMessageUpdatedPrevent:
+                return this.executePreMessageUpdatedPrevent(data as IMessage);
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -265,6 +267,39 @@ export class AppListenerManger {
                 );
             }
         }
+    }
+
+    private async executePreMessageUpdatedPrevent(data: IMessage): Promise<boolean> {
+        let prevented = false;
+        const cfMsg = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT)) {
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT)) {
+                prevented = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
     }
 
     // Rooms
