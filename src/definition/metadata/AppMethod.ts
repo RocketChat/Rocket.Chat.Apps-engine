@@ -27,6 +27,8 @@ export enum AppMethod {
     EXECUTEPREMESSAGEUPDATEDEXTEND = 'executePreMessageUpdatedExtend',
     CHECKPREMESSAGEUPDATEDMODIFY = 'checkPreMessageUpdatedModify',
     EXECUTEPREMESSAGEUPDATEDMODIFY = 'executePreMessageUpdatedModify',
+    CHECKPOSTMESSAGEUPDATED = 'checkPostMessageUpdated',
+    EXECUTEPOSTMESSAGEUPDATED = 'executePostMessageUpdated',
     // Room handlers
     CHECKPREROOMCREATEPREVENT = 'checkPreRoomCreatePrevent',
     EXECUTEPREROOMCREATEPREVENT = 'executePreRoomCreatePrevent',

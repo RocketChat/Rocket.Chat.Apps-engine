@@ -73,6 +73,9 @@ export class AppListenerManger {
                 return this.executePreMessageUpdatedExtend(data as IMessage);
             case AppInterface.IPreMessageUpdatedModify:
                 return this.executePreMessageUpdatedModify(data as IMessage);
+            case AppInterface.IPostMessageUpdated:
+                this.executePostMessageUpdated(data as IMessage);
+                return;
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -364,6 +367,32 @@ export class AppListenerManger {
         }
 
         return data;
+    }
+
+    private async executePostMessageUpdated(data: IMessage): Promise<void> {
+        const cfMsg = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEUPDATED)) {
+                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEUPDATED)) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
     }
 
     // Rooms
