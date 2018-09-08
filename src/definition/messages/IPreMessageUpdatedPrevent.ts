@@ -6,9 +6,9 @@ export interface IPreMessageUpdatedPrevent {
     /**
      * Enables the handler to signal to the Apps framework whether
      * this handler should actually be executed for the message
-     * about to be sent.
+     * about to be updated.
      *
-     * @param message The message which is being sent
+     * @param message The message which is being updated
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @returns whether to run the prevent or not
