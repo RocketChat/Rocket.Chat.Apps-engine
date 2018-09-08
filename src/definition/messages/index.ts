@@ -10,6 +10,7 @@ import { IPreMessageSentExtend } from './IPreMessageSentExtend';
 import { IPreMessageSentModify } from './IPreMessageSentModify';
 import { IPreMessageSentPrevent } from './IPreMessageSentPrevent';
 import { IPreMessageUpdatedExtend } from './IPreMessageUpdatedExtend';
+import { IPreMessageUpdatedModify } from './IPreMessageUpdatedModify';
 import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
 // todo: add rest
 
@@ -26,6 +27,7 @@ export {
     IPreMessageSentModify,
     IPreMessageSentPrevent,
     IPreMessageUpdatedExtend,
+    IPreMessageUpdatedModify,
     IPreMessageUpdatedPrevent,
     // todo: add rest
 };
