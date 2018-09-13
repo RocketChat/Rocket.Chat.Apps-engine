@@ -1,5 +1,5 @@
-import { IUser } from '../users';
 import { IMessage } from '../messages';
+import { IUser } from '../users';
 
 export interface INotification {
     message: string;
