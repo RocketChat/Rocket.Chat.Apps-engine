@@ -6,6 +6,7 @@ import { AppAccessorManager } from './AppAccessorManager';
 
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
+import { INotification } from '../../definition/notifications';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { Utilities } from '../misc/Utilities';
@@ -50,7 +51,7 @@ export class AppListenerManger {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | INotification): Promise<void | boolean | IMessage | IRoom | IUser> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -82,6 +83,9 @@ export class AppListenerManger {
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
                 return;
+            // Notifications
+            case AppInterface.IPreNotificationSentPrevent:
+                return this.executePreNotificationSentPrevent(data as INotification);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -444,5 +448,39 @@ export class AppListenerManger {
                 );
             }
         }
+    }
+
+    // Notifications
+    private async executePreNotificationSentPrevent(data: INotification): Promise<boolean> {
+        let prevented = false;
+        const cfNotification = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreNotificationSentPrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPRENOTIFICATIONSENTPREVENT )) {
+                continueOn = await app.call(AppMethod.CHECKPRENOTIFICATIONSENTPREVENT ,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPRENOTIFICATIONSENTPREVENT)) {
+                prevented = await app.call(AppMethod.EXECUTEPRENOTIFICATIONSENTPREVENT,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
     }
 }

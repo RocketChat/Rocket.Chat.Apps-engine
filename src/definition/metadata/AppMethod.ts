@@ -34,4 +34,7 @@ export enum AppMethod {
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
+    // Notification handlers
+    CHECKPRENOTIFICATIONSENTPREVENT = 'checkPreNotificationSentPrevent',
+    EXECUTEPRENOTIFICATIONSENTPREVENT = 'executePreNotificationSentPrevent',
 }
