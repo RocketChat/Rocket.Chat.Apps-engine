@@ -3,10 +3,8 @@ import { IUser } from '../users';
 
 export interface INotification {
     message: string;
-
-    triggerMessage: IMessage;
-
-    sender: IUser;
-
-    receiver: IUser;
+    customFields?: { [key: string]: any };
+    readonly triggerMessage: IMessage;
+    readonly sender: IUser;
+    readonly receiver: IUser;
 }
