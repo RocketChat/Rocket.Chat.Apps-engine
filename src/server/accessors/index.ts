@@ -11,6 +11,8 @@ import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
+import { DesktopNotificationBuilder } from './notification/DesktopNotificationBuilder';
+import { DesktopNotificationExtender } from './notification/DesktopNotificationExtender';
 import { NotificationBuilder } from './notification/NotificationBuilder';
 import { NotificationExtender } from './notification/NotificationExtender';
 import { Notifier } from './Notifier';
@@ -31,6 +33,8 @@ import { UserRead } from './UserRead';
 export {
     ConfigurationExtend,
     ConfigurationModify,
+    DesktopNotificationBuilder,
+    DesktopNotificationExtender,
     EnvironmentalVariableRead,
     EnvironmentRead,
     Http,

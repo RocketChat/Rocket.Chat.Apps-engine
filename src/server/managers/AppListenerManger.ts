@@ -1,4 +1,6 @@
 import {
+    DesktopNotificationBuilder,
+    DesktopNotificationExtender,
     MessageBuilder,
     MessageExtender,
     NotificationBuilder,
@@ -13,7 +15,7 @@ import { AppAccessorManager } from './AppAccessorManager';
 
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
-import { INotification } from '../../definition/notifications';
+import { IDesktopNotification, INotification } from '../../definition/notifications';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { Utilities } from '../misc/Utilities';
@@ -99,6 +101,15 @@ export class AppListenerManger {
                 return this.executePreNotificationSentModify(data as INotification);
             case AppInterface.IPostNotificationSent:
                 return this.executePostNotificationSent(data as INotification);
+            // Desktop Notifications
+            case AppInterface.IPreDesktopNotificationSentPrevent:
+                return this.executePreDesktopNotificationSentPrevent(data as IDesktopNotification);
+            case AppInterface.IPreDesktopNotificationSentExtend:
+                return this.executePreDesktopNotificationSentExtend(data as IDesktopNotification);
+            case AppInterface.IPreDesktopNotificationSentModify:
+                return this.executePreDesktopNotificationSentModify(data as IDesktopNotification);
+            case AppInterface.IPostDesktopNotificationSent:
+                return this.executePostDesktopNotificationSent(data as IDesktopNotification);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -575,6 +586,127 @@ export class AppListenerManger {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTNOTIFICATIONSENT)) {
                 await app.call(AppMethod.EXECUTEPOSTNOTIFICATIONSENT,
                     cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    // Notifications
+
+    private async executePreDesktopNotificationSentPrevent(data: IDesktopNotification): Promise<boolean> {
+        let prevented = false;
+        const cfDesktopNotification = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreDesktopNotificationSentPrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTPREVENT )) {
+                continueOn = await app.call(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTPREVENT ,
+                    cfDesktopNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTPREVENT)) {
+                prevented = await app.call(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTPREVENT,
+                    cfDesktopNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
+    }
+
+    private async executePreDesktopNotificationSentExtend(data: IDesktopNotification): Promise<IDesktopNotification> {
+        const notification: IDesktopNotification = data;
+        const cfDesktopNotification = Utilities.deepCloneAndFreeze(notification);
+
+        for (const appId of this.listeners.get(AppInterface.IPreDesktopNotificationSentExtend)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTEXTEND)) {
+                continueOn = await app.call(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTEXTEND,
+                    cfDesktopNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTEXTEND)) {
+                await app.call(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTEXTEND,
+                    cfDesktopNotification,
+                    new DesktopNotificationExtender(notification), // This mutates the passed in object
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+
+        return notification;
+    }
+
+    private async executePreDesktopNotificationSentModify(data: IDesktopNotification): Promise<IDesktopNotification> {
+        const notification: IDesktopNotification = data;
+        const cfDesktopNotification = Utilities.deepCloneAndFreeze(notification);
+
+        for (const appId of this.listeners.get(AppInterface.IPreDesktopNotificationSentModify)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTMODIFY)) {
+                continueOn = await app.call(AppMethod.CHECKPREDESKTOPNOTIFICATIONSENTMODIFY,
+                    cfDesktopNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTMODIFY)) {
+                await app.call(AppMethod.EXECUTEPREDESKTOPNOTIFICATIONSENTMODIFY,
+                    cfDesktopNotification,
+                    new DesktopNotificationBuilder(notification), // This mutates the passed in object
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+
+        return notification;
+    }
+
+    private async executePostDesktopNotificationSent(data: IDesktopNotification): Promise<void> {
+        const cfDesktopNotification = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostDesktopNotificationSent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPOSTDESKTOPNOTIFICATIONSENT)) {
+                continueOn = await app.call(AppMethod.CHECKPOSTDESKTOPNOTIFICATIONSENT,
+                    cfDesktopNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTDESKTOPNOTIFICATIONSENT)) {
+                await app.call(AppMethod.EXECUTEPOSTDESKTOPNOTIFICATIONSENT,
+                    cfDesktopNotification,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),

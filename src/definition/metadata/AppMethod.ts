@@ -43,4 +43,13 @@ export enum AppMethod {
     EXECUTEPRENOTIFICATIONSENTMODIFY = 'executePreNotificationSentModify',
     CHECKPOSTNOTIFICATIONSENT = 'checkPostNotificationSent',
     EXECUTEPOSTNOTIFICATIONSENT = 'executePostNotificationSent',
+    // Desktop Notification handlers
+    CHECKPREDESKTOPNOTIFICATIONSENTPREVENT = 'checkPreDesktopNotificationSentPrevent',
+    EXECUTEPREDESKTOPNOTIFICATIONSENTPREVENT = 'executePreDesktopNotificationSentPrevent',
+    CHECKPREDESKTOPNOTIFICATIONSENTEXTEND = 'checkPreDesktopNotificationSentExtend',
+    EXECUTEPREDESKTOPNOTIFICATIONSENTEXTEND = 'executePreDesktopNotificationSentExtend',
+    CHECKPREDESKTOPNOTIFICATIONSENTMODIFY = 'checkPreDesktopNotificationSentModify',
+    EXECUTEPREDESKTOPNOTIFICATIONSENTMODIFY = 'executePreDesktopNotificationSentModify',
+    CHECKPOSTDESKTOPNOTIFICATIONSENT = 'checkPostDesktopNotificationSent',
+    EXECUTEPOSTDESKTOPNOTIFICATIONSENT = 'executePostDesktopNotificationSent',
 }

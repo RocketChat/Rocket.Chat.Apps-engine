@@ -1,6 +1,6 @@
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
-import { INotification } from '../notifications';
+import { IDesktopNotification, INotification } from '../notifications';
 import { IRoom, RoomType } from '../rooms';
 import { IUser } from '../users';
 
@@ -534,4 +534,58 @@ export interface INotificationBuilder {
      * Note: modifying the returned value will have no effect.
      */
     getNotification(): INotification;
+}
+
+export interface IDesktopNotificationExtender {
+    /**
+     * Adds a custom field to the notification.
+     * Note: This key can not already exist or it will throw an error.
+     *
+     * @param key the name of the custom field
+     * @param value the value of this custom field
+     */
+    addCustomField(key: string, value: any): IDesktopNotificationExtender;
+
+    /**
+     * Gets the resulting notification that has been built up to the point of calling this method.
+     * Note: modifying the returned value will have no effect.
+     */
+    getDesktopNotification(): IDesktopNotification;
+}
+
+export interface IDesktopNotificationBuilder {
+    /**
+     * Sets the notification title
+     *
+     * @param title The title of the notification
+     */
+    setTitle(title: string): IDesktopNotificationBuilder;
+
+    /**
+     * Sets the notification text
+     *
+     * @param text The text of the notification
+     */
+    setText(text: string): IDesktopNotificationBuilder;
+
+    /**
+     * Sets the notification duration
+     *
+     * @param duration The duration of the notification
+     */
+    setDuration(duration: number): IDesktopNotificationBuilder;
+
+    /**
+     * Adds a custom field to the notification.
+     *
+     * @param key the name of the custom field
+     * @param value the value of this custom field
+     */
+    addCustomField(key: string, value: any): IDesktopNotificationBuilder;
+
+    /**
+     * Gets the resulting notification that has been built up to the point of calling this method.
+     * Note: modifying the returned value will have no effect.
+     */
+    getDesktopNotification(): IDesktopNotification;
 }

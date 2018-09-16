@@ -16,6 +16,8 @@ import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
 import { IMessageRead } from './IMessageRead';
 import {
+    IDesktopNotificationBuilder,
+    IDesktopNotificationExtender,
     IMessageBuilder,
     IMessageExtender,
     IModify,
@@ -44,6 +46,8 @@ export {
     HttpStatusCode,
     IConfigurationExtend,
     IConfigurationModify,
+    IDesktopNotificationBuilder,
+    IDesktopNotificationExtender,
     IEnvironmentalVariableRead,
     IEnvironmentRead,
     IHttp,

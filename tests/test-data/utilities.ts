@@ -2,7 +2,7 @@
 // tslint:disable:max-line-length
 import { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
 import { IMessage } from '../../src/definition/messages';
-import { INotification } from '../../src/definition/notifications';
+import { IDesktopNotification, INotification } from '../../src/definition/notifications';
 import { IRoom, RoomType } from '../../src/definition/rooms';
 import { ISetting, SettingType } from '../../src/definition/settings';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
@@ -148,6 +148,15 @@ export class TestData {
             sender: this.getUser(),
             receiver: this.getUser(),
             customFields: {},
+        };
+    }
+
+    public static getDesktopNotification(title?: string, text?: string, duration?: number): IDesktopNotification {
+        return {
+            title: title || 'Test desktop notification title',
+            text: text || 'Test desktop notification text',
+            duration: duration || 1000,
+            ...this.getNotification(),
         };
     }
 

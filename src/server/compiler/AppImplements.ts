@@ -20,6 +20,10 @@ export enum AppInterface {
     IPreNotificationSentExtend = 'IPreNotificationSentExtend',
     IPreNotificationSentModify = 'IPreNotificationSentModify',
     IPostNotificationSent = 'IPostNotificationSent',
+    IPreDesktopNotificationSentPrevent = 'IPreDesktopNotificationSentPrevent',
+    IPreDesktopNotificationSentExtend = 'IPreDesktopNotificationSentExtend',
+    IPreDesktopNotificationSentModify = 'IPreDesktopNotificationSentModify',
+    IPostDesktopNotificationSent = 'IPostDesktopNotificationSent',
 }
 
 export class AppImplements {
