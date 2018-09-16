@@ -17,6 +17,8 @@ export enum AppInterface {
     IPostRoomDeleted = 'IPostRoomDeleted',
     // Notifications
     IPreNotificationSentPrevent = 'IPreNotificationSentPrevent',
+    IPreNotificationSentExtend = 'IPreNotificationSentExtend',
+    IPreNotificationSentModify = 'IPreNotificationSentModify',
 }
 
 export class AppImplements {

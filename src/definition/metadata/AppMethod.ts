@@ -37,4 +37,8 @@ export enum AppMethod {
     // Notification handlers
     CHECKPRENOTIFICATIONSENTPREVENT = 'checkPreNotificationSentPrevent',
     EXECUTEPRENOTIFICATIONSENTPREVENT = 'executePreNotificationSentPrevent',
+    CHECKPRENOTIFICATIONSENTEXTEND = 'checkPreNotificationSentExtend',
+    EXECUTEPRENOTIFICATIONSENTEXTEND = 'executePreNotificationSentExtend',
+    CHECKPRENOTIFICATIONSENTMODIFY = 'checkPreNotificationSentModify',
+    EXECUTEPRENOTIFICATIONSENTMODIFY = 'executePreNotificationSentModify',
 }

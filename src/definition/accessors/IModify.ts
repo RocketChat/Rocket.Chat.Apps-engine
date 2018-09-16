@@ -501,12 +501,33 @@ export interface INotificationExtender {
     /**
      * Adds a custom field to the notification.
      * Note: This key can not already exist or it will throw an error.
-     * Note: The key must not contain a period in it, an error will be thrown.
      *
      * @param key the name of the custom field
      * @param value the value of this custom field
      */
     addCustomField(key: string, value: any): INotificationExtender;
+
+    /**
+     * Gets the resulting notification that has been built up to the point of calling this method.
+     * Note: modifying the returned value will have no effect.
+     */
+    getNotification(): INotification;
+}
+
+export interface INotificationBuilder {
+    /**
+     * Sets the notification message
+     *
+     * @param message The message of the notification
+     */
+    setMessage(message: string): INotificationBuilder;
+    /**
+     * Adds a custom field to the notification.
+     *
+     * @param key the name of the custom field
+     * @param value the value of this custom field
+     */
+    addCustomField(key: string, value: any): INotificationBuilder;
 
     /**
      * Gets the resulting notification that has been built up to the point of calling this method.

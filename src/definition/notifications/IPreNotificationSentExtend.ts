@@ -17,13 +17,14 @@ export interface IPreNotificationSentExtend {
 
     /**
      * Method which is to be used to non-destructively enrich the notification.
+     * The implementer should extend the message by using the `extend` parameter
      *
      * @param notification The notification about to be sent
      * @param extend An accessor for modifying the notification non-destructively
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence storage
-     * @returns the resulting notification
+     * @returns void
      */
     executePreNotificationSentExtend(
         notification: INotification,
@@ -31,5 +32,5 @@ export interface IPreNotificationSentExtend {
         read: IRead,
         http: IHttp,
         persistence: IPersistence,
-    ): Promise<INotification>;
+    ): Promise<void>;
 }

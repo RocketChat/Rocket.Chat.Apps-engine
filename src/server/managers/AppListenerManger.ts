@@ -1,4 +1,11 @@
-import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
+import {
+    MessageBuilder,
+    MessageExtender,
+    NotificationBuilder,
+    NotificationExtender,
+    RoomBuilder,
+    RoomExtender,
+} from '../accessors';
 import { AppManager } from '../AppManager';
 import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
@@ -51,7 +58,7 @@ export class AppListenerManger {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | INotification): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | INotification): Promise<void | boolean | IMessage | IRoom | IUser | INotification> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -86,6 +93,10 @@ export class AppListenerManger {
             // Notifications
             case AppInterface.IPreNotificationSentPrevent:
                 return this.executePreNotificationSentPrevent(data as INotification);
+            case AppInterface.IPreNotificationSentExtend:
+                return this.executePreNotificationSentExtend(data as INotification);
+            case AppInterface.IPreNotificationSentModify:
+                return this.executePreNotificationSentModify(data as INotification);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -482,5 +493,65 @@ export class AppListenerManger {
         }
 
         return prevented;
+    }
+
+    private async executePreNotificationSentExtend(data: INotification): Promise<INotification> {
+        const notification: INotification = data;
+        const cfNotification = Utilities.deepCloneAndFreeze(notification);
+
+        for (const appId of this.listeners.get(AppInterface.IPreNotificationSentExtend)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPRENOTIFICATIONSENTEXTEND)) {
+                continueOn = await app.call(AppMethod.CHECKPRENOTIFICATIONSENTEXTEND,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPRENOTIFICATIONSENTEXTEND)) {
+                await app.call(AppMethod.EXECUTEPRENOTIFICATIONSENTEXTEND,
+                    cfNotification,
+                    new NotificationExtender(notification), // This mutates the passed in object
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+
+        return notification;
+    }
+
+    private async executePreNotificationSentModify(data: INotification): Promise<INotification> {
+        const notification: INotification = data;
+        const cfNotification = Utilities.deepCloneAndFreeze(notification);
+
+        for (const appId of this.listeners.get(AppInterface.IPreNotificationSentModify)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPRENOTIFICATIONSENTMODIFY)) {
+                continueOn = await app.call(AppMethod.CHECKPRENOTIFICATIONSENTMODIFY,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPRENOTIFICATIONSENTMODIFY)) {
+                await app.call(AppMethod.EXECUTEPRENOTIFICATIONSENTMODIFY,
+                    cfNotification,
+                    new NotificationBuilder(notification), // This mutates the passed in object
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+
+        return notification;
     }
 }

@@ -11,6 +11,7 @@ import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
+import { NotificationBuilder } from './notification/NotificationBuilder';
 import { NotificationExtender } from './notification/NotificationExtender';
 import { Notifier } from './Notifier';
 import { Persistence } from './Persistence';
@@ -41,6 +42,7 @@ export {
     ModifyCreator,
     ModifyExtender,
     ModifyUpdater,
+    NotificationBuilder,
     NotificationExtender,
     Notifier,
     Persistence,
