@@ -2,6 +2,7 @@
 // tslint:disable:max-line-length
 import { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
 import { IMessage } from '../../src/definition/messages';
+import { INotification } from '../../src/definition/notifications';
 import { IRoom, RoomType } from '../../src/definition/rooms';
 import { ISetting, SettingType } from '../../src/definition/settings';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
@@ -137,6 +138,16 @@ export class TestData {
                     },
                 ],
             }],
+        };
+    }
+
+    public static getNotification(message?: string): INotification {
+        return {
+            message: message || 'Testing notification message',
+            triggerMessage: this.getMessage(),
+            sender: this.getUser(),
+            receiver: this.getUser(),
+            customFields: {},
         };
     }
 
