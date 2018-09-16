@@ -97,6 +97,8 @@ export class AppListenerManger {
                 return this.executePreNotificationSentExtend(data as INotification);
             case AppInterface.IPreNotificationSentModify:
                 return this.executePreNotificationSentModify(data as INotification);
+            case AppInterface.IPostNotificationSent:
+                return this.executePostNotificationSent(data as INotification);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -553,5 +555,31 @@ export class AppListenerManger {
         }
 
         return notification;
+    }
+
+    private async executePostNotificationSent(data: INotification): Promise<void> {
+        const cfNotification = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostNotificationSent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPOSTNOTIFICATIONSENT)) {
+                continueOn = await app.call(AppMethod.CHECKPOSTNOTIFICATIONSENT,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTNOTIFICATIONSENT)) {
+                await app.call(AppMethod.EXECUTEPOSTNOTIFICATIONSENT,
+                    cfNotification,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
     }
 }

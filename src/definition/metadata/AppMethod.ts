@@ -41,4 +41,6 @@ export enum AppMethod {
     EXECUTEPRENOTIFICATIONSENTEXTEND = 'executePreNotificationSentExtend',
     CHECKPRENOTIFICATIONSENTMODIFY = 'checkPreNotificationSentModify',
     EXECUTEPRENOTIFICATIONSENTMODIFY = 'executePreNotificationSentModify',
+    CHECKPOSTNOTIFICATIONSENT = 'checkPostNotificationSent',
+    EXECUTEPOSTNOTIFICATIONSENT = 'executePostNotificationSent',
 }

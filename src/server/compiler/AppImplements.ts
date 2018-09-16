@@ -19,6 +19,7 @@ export enum AppInterface {
     IPreNotificationSentPrevent = 'IPreNotificationSentPrevent',
     IPreNotificationSentExtend = 'IPreNotificationSentExtend',
     IPreNotificationSentModify = 'IPreNotificationSentModify',
+    IPostNotificationSent = 'IPostNotificationSent',
 }
 
 export class AppImplements {
