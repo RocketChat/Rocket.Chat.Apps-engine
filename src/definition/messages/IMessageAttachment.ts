@@ -1,8 +1,7 @@
+import { IMessageAction } from './IMessageAction';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
-import { IMessageAction } from './IMessageAction';
-
 
 /**
  * Interface which represents an attachment which can be added to a message.
