@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IWebhookResponse | Rocket.Chat Apps TypeScript Definition</title>
+	<title>IApiExtend | Rocket.Chat Apps TypeScript Definition</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,21 +56,29 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="iwebhookresponse.html">IWebhookResponse</a>
+					<a href="iapiextend.html">IApiExtend</a>
 				</li>
 			</ul>
-			<h1>Interface IWebhookResponse</h1>
+			<h1>Interface IApiExtend</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>This accessor provides methods for adding a custom api.
+						It is provided during the initialization of your App</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IWebhookResponse</span>
+						<span class="target">IApiExtend</span>
 					</li>
 				</ul>
 			</section>
@@ -79,36 +87,47 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Properties</h3>
+							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iwebhookresponse.html#content" class="tsd-kind-icon">content</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iwebhookresponse.html#status" class="tsd-kind-icon">status</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iapiextend.html#provideapi" class="tsd-kind-icon">provide<wbr>Api</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="content" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> content</h3>
-					<div class="tsd-signature tsd-kind-icon">content<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/webhooks/IResponse.ts#L5">webhooks/IResponse.ts:5</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="status" class="tsd-anchor"></a>
-					<h3>status</h3>
-					<div class="tsd-signature tsd-kind-icon">status<span class="tsd-signature-symbol">:</span> <a href="../enums/httpstatuscode.html" class="tsd-signature-type">HttpStatusCode</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/webhooks/IResponse.ts#L4">webhooks/IResponse.ts:4</a></li>
-						</ul>
-					</aside>
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="provideapi" class="tsd-anchor"></a>
+					<h3>provide<wbr>Api</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">provide<wbr>Api<span class="tsd-signature-symbol">(</span>api<span class="tsd-signature-symbol">: </span><a href="iapi.html" class="tsd-signature-type">IApi</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/c5e9097/src/definition/accessors/IApiExtend.ts#L15">accessors/IApiExtend.ts:15</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds an api which can be called by external services lateron.
+									Should an api already exists an error will be thrown.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>api: <a href="iapi.html" class="tsd-signature-type">IApi</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the command information</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -125,13 +144,10 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface">
-						<a href="iwebhookresponse.html" class="tsd-kind-icon">IWebhook<wbr>Response</a>
+						<a href="iapiextend.html" class="tsd-kind-icon">IApi<wbr>Extend</a>
 						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="iwebhookresponse.html#content" class="tsd-kind-icon">content</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="iwebhookresponse.html#status" class="tsd-kind-icon">status</a>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="iapiextend.html#provideapi" class="tsd-kind-icon">provide<wbr>Api</a>
 							</li>
 						</ul>
 					</li>
