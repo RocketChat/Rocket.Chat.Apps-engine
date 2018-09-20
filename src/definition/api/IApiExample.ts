@@ -1,7 +1,7 @@
 /**
- * Represents the parameters of a webhook example.
+ * Represents the parameters of an api example.
  */
-export interface IWebhookExample {
+export interface IApiExample {
     params?: {[key: string]: string};
     query?: {[key: string]: string};
     headers?: {[key: string]: string};
@@ -9,9 +9,9 @@ export interface IWebhookExample {
 }
 
 /**
- * Decorator to describe webhook examples
+ * Decorator to describe api examples
  */
-export function example(options: IWebhookExample) {
+export function example(options: IApiExample) {
     return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
         target.examples = target.examples || {};
         target.examples[propertyKey] = options;

@@ -12,6 +12,7 @@ import {
     IUserBridge,
 } from '../../../src/server/bridges';
 import { TestsActivationBridge } from './activationBridge';
+import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
@@ -21,12 +22,11 @@ import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsUserBridge } from './userBridge';
-import { TestsWebhookBridge } from './webhookBridge';
 
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
-    private readonly webhookBridge: TestsWebhookBridge;
+    private readonly apiBridge: TestsApiBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
     private readonly rlActBridge: TestsActivationBridge;
@@ -40,7 +40,7 @@ export class TestsAppBridges extends AppBridges {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
-        this.webhookBridge = new TestsWebhookBridge();
+        this.apiBridge = new TestsApiBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
         this.rlActBridge = new TestsActivationBridge();
@@ -55,8 +55,8 @@ export class TestsAppBridges extends AppBridges {
         return this.cmdBridge;
     }
 
-    public getWebhookBridge(): TestsWebhookBridge {
-        return this.webhookBridge;
+    public getApiBridge(): TestsApiBridge {
+        return this.apiBridge;
     }
 
     public getServerSettingBridge(): IServerSettingBridge {

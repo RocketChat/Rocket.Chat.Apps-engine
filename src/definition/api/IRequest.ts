@@ -1,6 +1,6 @@
 import { RequestMethod } from '../accessors';
 
-export interface IWebhookRequest {
+export interface IApiRequest {
     method: RequestMethod;
     headers: { [key: string]: string };
     query: { [key: string]: string };

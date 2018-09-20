@@ -1,8 +1,8 @@
 import { AppBridges } from './AppBridges';
 import { IAppActivationBridge } from './IAppActivationBridge';
+import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
-import { IAppWebhookBridge } from './IAppWebhookBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IListenerBridge } from './IListenerBridge';
@@ -22,7 +22,7 @@ export {
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppCommandBridge,
-    IAppWebhookBridge,
+    IAppApiBridge,
     IRoomBridge,
     IServerSettingBridge,
     IUserBridge,

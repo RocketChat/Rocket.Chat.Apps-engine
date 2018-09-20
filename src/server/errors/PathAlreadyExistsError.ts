@@ -3,6 +3,6 @@ export class PathAlreadyExistsError implements Error {
     public message: string;
 
     constructor(path: string) {
-        this.message = `The webhook path "${path}" already exists in the system.`;
+        this.message = `The api path "${path}" already exists in the system.`;
     }
 }

@@ -13,7 +13,7 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppSlashCommandManager, AppWebhookManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
@@ -61,8 +61,8 @@ export class AppSlashCommandManagerTestFixture {
             getCommandManager() {
                 return {} as AppSlashCommandManager;
             },
-            getWebhookManager() {
-                return {} as AppWebhookManager;
+            getApiManager() {
+                return {} as AppApiManager;
             },
             getOneById(appId: string): ProxiedApp {
                 return appId === 'failMePlease' ? undefined : app;

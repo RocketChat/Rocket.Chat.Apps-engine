@@ -1,7 +1,7 @@
 import { IAppActivationBridge } from './IAppActivationBridge';
+import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
-import { IAppWebhookBridge } from './IAppWebhookBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge } from './IHttpBridge';
 import { IListenerBridge } from './IListenerBridge';
@@ -13,7 +13,7 @@ import { IUserBridge } from './IUserBridge';
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): IAppCommandBridge;
-    public abstract getWebhookBridge(): IAppWebhookBridge;
+    public abstract getApiBridge(): IAppApiBridge;
     public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
     public abstract getHttpBridge(): IHttpBridge;

@@ -1,7 +1,7 @@
+import { IApiExtend } from './IApiExtend';
 import { IHttpExtend } from './IHttp';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
-import { IWebhooksExtend } from './IWebhooksExtend';
 
 /**
  * This accessor provides methods for declaring the configuration
@@ -16,5 +16,5 @@ export interface IConfigurationExtend {
 
     /** Accessor for declaring the commands which your App provides. */
     readonly slashCommands: ISlashCommandsExtend;
-    readonly webhooks: IWebhooksExtend;
+    readonly api: IApiExtend;
 }

@@ -11,7 +11,7 @@ import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';
 import { TestsAppStorage } from './storage';
 
-import { IWebhook, IWebhookRequest, IWebhookResponse, WebhookSecurity, WebhookVisibility } from '../../src/definition/webhooks';
+import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { AppBridges } from '../../src/server/bridges';
 import { AppLogStorage, AppStorage } from '../../src/server/storage';
 
@@ -163,12 +163,12 @@ export class TestData {
         };
     }
 
-    public static getWebhook(path: string = 'testing-path', visibility: WebhookVisibility = WebhookVisibility.PUBLIC, security: WebhookSecurity = WebhookSecurity.UNSECURE): IWebhook {
+    public static getApi(path: string = 'testing-path', visibility: ApiVisibility = ApiVisibility.PUBLIC, security: ApiSecurity = ApiSecurity.UNSECURE): IApi {
         return {
             path,
             visibility,
             security,
-            get(request: IWebhookRequest, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IWebhookResponse> {
+            get(request: IApiRequest, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
                 return Promise.resolve({
                     status: HttpStatusCode.OK,
                 });
