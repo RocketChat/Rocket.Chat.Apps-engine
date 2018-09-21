@@ -110,8 +110,8 @@ export class AppCompiler {
         });
 
         // Our "current working directory" needs to be adjusted for module resolution
-        const cwd = (__dirname.includes('node_modules/@rocket.chat/apps-engine')
-            ? __dirname.split('node_modules/@rocket.chat/apps-engine')[0] : process.cwd()) + '/npm';
+        const cwd = __dirname.includes('node_modules/@rocket.chat/apps-engine')
+            ? __dirname.split('node_modules/@rocket.chat/apps-engine')[0] : process.cwd();
 
         const host: ts.LanguageServiceHost = {
             getScriptFileNames: () => Object.keys(result.files),
