@@ -1,18 +1,34 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IApiExample } from './IApiExample';
-import { IApiEndpoint } from './IEndpoint';
+import { IApiEndpointInfo } from './IEndpoint';
 import { IApiRequest } from './IRequest';
 import { IApiResponse } from './IResponse';
 
-/**
- * Represents an api that is being provided.
- */
-export interface IApi {
+export interface IApiEndpoint {
     /**
      * Path to complete the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
      * or https://{your-server-address}/api/apps/private/{your-app-id}/{private-hash}/{path}
      */
     path: string;
+    examples?: {[key: string]: IApiExample};
+
+    /**
+     * Called whenever the publically accessible url for this App is called,
+     * if you handle the methods differently then split it out so your code doesn't get too big.
+     */
+    get?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    post?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    put?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    delete?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    head?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    options?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    patch?(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+}
+
+/**
+ * Represents an api that is being provided.
+ */
+export interface IApi {
     /**
      * Provides the visibility method of the URL, see the ApiVisibility descriptions for more information
      */
@@ -22,22 +38,9 @@ export interface IApi {
      */
     security: ApiSecurity;
     /**
-     * Provide the examples for each method you have implemented, use the `@example` decorator imported
-     * from `IApiExample` on top of each method to provide this information.
+     * Provide enpoints for this api registry
      */
-    examples?: {[key: string]: IApiExample};
-
-    /**
-     * Called whenever the publically accessible url for this App is called,
-     * if you handle the methods differently then split it out so your code doesn't get too big.
-     */
-    get?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    post?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    put?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    delete?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    head?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    options?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
-    patch?(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse>;
+    endpoints: Array<IApiEndpoint>;
 }
 
 export enum ApiVisibility {

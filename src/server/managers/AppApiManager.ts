@@ -37,13 +37,8 @@ export class AppApiManager {
      * @param api the api to add to the system
      */
     public addApi(appId: string, api: IApi): void {
-        if (typeof api.path !== 'string') {
-            throw new Error('Invalid Api parameter provided, it must be a valid IApi object.');
-        }
-
-        // Verify the api's path doesn't exist already
-        if (this.providedApis.get(appId) && this.providedApis.get(appId).has(api.path)) {
-            throw new PathAlreadyExistsError(api.path);
+        if (api.endpoints.length === 0) {
+            throw new Error('Invalid Api parameter provided, endpoints must contain, at least, one IApiEndpoint.');
         }
 
         const app = this.manager.getOneById(appId);
@@ -51,11 +46,22 @@ export class AppApiManager {
             throw new Error('App must exist in order for an api to be added.');
         }
 
+        // Verify the api's path doesn't exist already
+        if (this.providedApis.get(appId)) {
+            api.endpoints.forEach((endpoint) => {
+                if (this.providedApis.get(appId).has(endpoint.path)) {
+                    throw new PathAlreadyExistsError(endpoint.path);
+                }
+            });
+        }
+
         if (!this.providedApis.has(appId)) {
             this.providedApis.set(appId, new Map<string, AppApi>());
         }
 
-        this.providedApis.get(appId).set(api.path, new AppApi(app, api));
+        api.endpoints.forEach((endpoint) => {
+            this.providedApis.get(appId).set(endpoint.path, new AppApi(app, api, endpoint));
+        });
     }
 
     /**
@@ -128,10 +134,10 @@ export class AppApiManager {
 
         for (const api of apis.values()) {
             result.push({
-                path: api.api.path,
+                path: api.endpoint.path,
                 computedPath: api.computedPath,
                 methods: api.implementedMethods,
-                examples: api.api.examples,
+                examples: api.endpoint.examples,
             });
         }
 

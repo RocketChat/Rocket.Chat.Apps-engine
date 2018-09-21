@@ -1,7 +1,8 @@
 import { AppMethod } from '../../definition/metadata';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../definition/api';
-import { IApiEndpoint } from '../../definition/api/IEndpoint';
+import { IApiEndpoint } from '../../definition/api/IApi';
+import { IApiEndpointInfo } from '../../definition/api/IEndpoint';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
 import { AppAccessorManager } from './AppAccessorManager';
@@ -23,7 +24,7 @@ export class AppApi {
     public readonly hash?: string;
     public readonly implementedMethods: Array<string>;
 
-    constructor(public app: ProxiedApp, public api: IApi) {
+    constructor(public app: ProxiedApp, public api: IApi, public endpoint: IApiEndpoint) {
         this.appId = app.getID();
 
         switch (this.api.visibility) {
@@ -37,7 +38,7 @@ export class AppApi {
                 break;
         }
 
-        this.computedPath = `${this.basePath}/${api.path}`;
+        this.computedPath = `${this.basePath}/${endpoint.path}`;
 
         this.implementedMethods = methods.filter((m) => typeof (api as any)[m] === 'function');
     }
@@ -46,12 +47,12 @@ export class AppApi {
                              logStorage: AppLogStorage,
                              accessors: AppAccessorManager): Promise<IApiResponse> {
 
-        const { path } = this.api;
+        const { path } = this.endpoint;
 
         const method = request.method;
 
         // Ensure the api has the property before going on
-        if (typeof this.api[method] !== 'function') {
+        if (typeof this.endpoint[method] !== 'function') {
             return;
         }
 
@@ -67,7 +68,7 @@ export class AppApi {
             };
         }
 
-        const endpoint: IApiEndpoint = {
+        const endpoint: IApiEndpointInfo = {
             basePath: this.basePath,
             fullPath: this.computedPath,
             appId: this.appId,
@@ -75,7 +76,12 @@ export class AppApi {
         };
 
         const runContext = this.app.makeContext({
-            api: this.api,
+            endpoint: this.endpoint,
+            context: {
+                api: this.api,
+                endpoint: this.endpoint,
+                app: this.app,
+            },
             args: [
                 request,
                 endpoint,
@@ -89,7 +95,7 @@ export class AppApi {
         const logger = this.app.setupLogger(AppMethod._API_EXECUTOR);
         logger.debug(`${ path }'s ${ method } is being executed...`, request);
 
-        const runCode = `api.${ method }.apply(api, args)`;
+        const runCode = `endpoint.${ method }.apply(context, args)`;
         try {
             const result: IApiResponse = await this.app.runInContext(runCode, runContext);
             logger.debug(`${ path }'s ${ method } was successfully executed.`);

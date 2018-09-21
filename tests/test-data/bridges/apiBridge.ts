@@ -17,11 +17,17 @@ export class TestsApiBridge implements IAppApiBridge {
             this.apis.set(appId, new Map<string, IApi>());
         }
 
-        if (this.apis.get(appId).has(api.api.path)) {
-            throw new Error(`Api "${api.api.path}" has already been registered for app ${appId}.`);
-        }
+        if (this.apis.get(appId)) {
+            api.api.endpoints.forEach((endpoint) => {
+                if (this.apis.get(appId).has(endpoint.path)) {
+                    throw new Error(`Api "${api.endpoint.path}" has already been registered for app ${appId}.`);
+                }
+            });
 
-        this.apis.get(appId).set(api.api.path, api.api);
+            api.api.endpoints.forEach((endpoint) => {
+                this.apis.get(appId).set(api.endpoint.path, api.api);
+            });
+        }
     }
 
     public unregisterApis(appId: string): void {

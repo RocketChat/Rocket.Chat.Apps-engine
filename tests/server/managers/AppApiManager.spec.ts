@@ -9,7 +9,7 @@ import { TestsAppLogStorage } from '../../test-data/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 import { RequestMethod } from '../../../src/definition/accessors';
-import { IApiRequest } from '../../../src/definition/api';
+import { IApi, IApiRequest } from '../../../src/definition/api';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { PathAlreadyExistsError } from '../../../src/server/errors';
@@ -115,7 +115,8 @@ export class AppApiManagerTestFixture {
     public registerApi() {
         const ascm = new AppApiManager(this.mockManager);
 
-        const regInfo = new AppApi(this.mockApp, TestData.getApi('path'));
+        const api: IApi = TestData.getApi('path');
+        const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
 
         Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrow();
         Expect(this.mockBridges.getApiBridge().registerApi).toHaveBeenCalledWith(regInfo, 'testing');
