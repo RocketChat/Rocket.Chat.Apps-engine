@@ -12,6 +12,7 @@ import { TestsAppLogStorage } from './logStorage';
 import { TestsAppStorage } from './storage';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
+import { IApiEndpoint } from '../../src/definition/api/IEndpoint';
 import { AppBridges } from '../../src/server/bridges';
 import { AppLogStorage, AppStorage } from '../../src/server/storage';
 
@@ -168,7 +169,7 @@ export class TestData {
             path,
             visibility,
             security,
-            get(request: IApiRequest, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
+            get(request: IApiRequest, endpoint: IApiEndpoint, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
                 return Promise.resolve({
                     status: HttpStatusCode.OK,
                 });

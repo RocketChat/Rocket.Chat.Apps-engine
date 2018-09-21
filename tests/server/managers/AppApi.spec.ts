@@ -9,7 +9,11 @@ export class AppApiRegistrationTestFixture {
 
     @SetupFixture
     public setupFixture() {
-        this.mockApp = {} as ProxiedApp;
+        this.mockApp = {
+            getID() {
+                return 'id';
+            },
+        } as ProxiedApp;
     }
 
     @Test()
