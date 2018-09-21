@@ -4,6 +4,13 @@ import * as vm from 'vm';
 
 import { ICompilerFile } from '../compiler';
 
+enum AllowedInternalModules {
+    path,
+    url,
+    crypto,
+    buffer,
+}
+
 export class Utilities {
     public static deepClone<T>(item: T): T {
         return cloneDeep(item);
@@ -30,18 +37,28 @@ export class Utilities {
         return path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts';
     }
 
+    public static allowedInternalModuleRequire(moduleName: string): boolean {
+        return moduleName in AllowedInternalModules;
+    }
+
     public static buildCustomRequire(files: { [s: string]: ICompilerFile }): (mod: string) => {} {
         return function _requirer(mod: string): any {
             // Keep compatibility with apps importing apps-ts-definition
             if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
                 mod = path.normalize(mod);
                 mod = mod.replace('@rocket.chat/apps-ts-definition/', '../../definition/');
-            } else if (mod.startsWith('@rocket.chat/apps-engine/definition/')) {
-                mod = path.normalize(mod);
-                mod = mod.replace('@rocket.chat/apps-engine/definition/', '../../definition/');
+                return require(mod);
             }
 
-            if (files[Utilities.transformModuleForCustomRequire(mod)]) {
+            if (mod.startsWith('@rocket.chat/apps-engine/definition/')) {
+                mod = path.normalize(mod);
+                mod = mod.replace('@rocket.chat/apps-engine/definition/', '../../definition/');
+                return require(mod);
+            }
+
+            const transformedModule = Utilities.transformModuleForCustomRequire(mod);
+
+            if (files[transformedModule]) {
                 const ourExport = {};
                 const context = vm.createContext({
                     require: Utilities.buildCustomRequire(files),
@@ -49,10 +66,12 @@ export class Utilities {
                     process: {},
                 });
 
-                vm.runInContext(files[Utilities.transformModuleForCustomRequire(mod)].compiled, context);
+                vm.runInContext(files[transformedModule].compiled, context);
 
                 return ourExport;
-            } else {
+            }
+
+            if (Utilities.allowedInternalModuleRequire(mod)) {
                 return require(mod);
             }
         };
