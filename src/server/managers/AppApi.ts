@@ -29,11 +29,11 @@ export class AppApi {
 
         switch (this.api.visibility) {
             case ApiVisibility.PUBLIC:
-                this.basePath = `/apps/public/${app.getID()}`;
+                this.basePath = `/api/apps/public/${app.getID()}`;
                 break;
 
             case ApiVisibility.PRIVATE:
-                this.basePath = `/apps/private/${app.getID()}/${app.getStorageItem()._id}`;
+                this.basePath = `/api/apps/private/${app.getID()}/${app.getStorageItem()._id}`;
                 this.hash = app.getStorageItem()._id;
                 break;
         }
