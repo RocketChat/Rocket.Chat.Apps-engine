@@ -1,7 +1,7 @@
 import { AppMethod } from '../../definition/metadata';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../definition/api';
-import { IApiEndpoint } from '../../definition/api/IApi';
+import { IApiEndpoint } from '../../definition/api/IApiEndpoint';
 import { IApiEndpointInfo } from '../../definition/api/IApiEndpointInfo';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
@@ -77,11 +77,6 @@ export class AppApi {
 
         const runContext = this.app.makeContext({
             endpoint: this.endpoint,
-            context: {
-                api: this.api,
-                endpoint: this.endpoint,
-                app: this.app,
-            },
             args: [
                 request,
                 endpoint,
@@ -95,7 +90,7 @@ export class AppApi {
         const logger = this.app.setupLogger(AppMethod._API_EXECUTOR);
         logger.debug(`${ path }'s ${ method } is being executed...`, request);
 
-        const runCode = `endpoint.${ method }.apply(context, args)`;
+        const runCode = `endpoint.${ method }.apply(endpoint, args)`;
         try {
             const result: IApiResponse = await this.app.runInContext(runCode, runContext);
             logger.debug(`${ path }'s ${ method } was successfully executed.`);

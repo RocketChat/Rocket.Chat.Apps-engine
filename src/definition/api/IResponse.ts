@@ -5,3 +5,9 @@ export interface IApiResponse {
     headers?: { [key: string]: string };
     content?: any;
 }
+
+export interface IApiResponseJSON {
+    status: HttpStatusCode;
+    headers?: { [key: string]: string };
+    content?: { [key: string]: any };
+}
