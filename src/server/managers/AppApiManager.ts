@@ -1,5 +1,6 @@
 import { AppStatusUtils } from '../../definition/AppStatus';
 
+import { HttpStatusCode } from '../../definition/accessors';
 import { IApi, IApiRequest, IApiResponse } from '../../definition/api';
 import { AppManager } from '../AppManager';
 import { IAppApiBridge } from '../bridges';
@@ -100,11 +101,13 @@ export class AppApiManager {
      * @param path the path to be executed in app's api's
      * @param request the request data to be evaluated byt the app
      */
-    public executeApi(appId: string, path: string, request: IApiRequest): Promise<IApiResponse> {
+    public async executeApi(appId: string, path: string, request: IApiRequest): Promise<IApiResponse> {
         const api = this.providedApis.get(appId).get(path);
 
         if (!api) {
-            return;
+            return {
+                status: HttpStatusCode.NOT_FOUND,
+            };
         }
 
         const app = this.manager.getOneById(appId);
@@ -112,7 +115,9 @@ export class AppApiManager {
         if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
-            return;
+            return {
+                status: HttpStatusCode.NOT_FOUND,
+            };
         }
 
         return api.runExecutor(request, this.manager.getLogStorage(), this.accessors);

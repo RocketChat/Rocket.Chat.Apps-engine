@@ -1,6 +1,6 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import { IApiEndpointInfo } from './IApiEndpointInfo';
 import { IApiExample } from './IApiExample';
-import { IApiEndpointInfo } from './IEndpoint';
 import { IApiRequest } from './IRequest';
 import { IApiResponse } from './IResponse';
 
@@ -45,21 +45,23 @@ export interface IApi {
 
 export enum ApiVisibility {
     /**
-     * Public api's have a fixed URL format, they are easy to remember
-     * but they are easy to be hacked as well.
-     * We recomend not use `ApiSecurity.UNSECURE` when keeping it as
-     * public.
+     * A public Api has a fixed format for a url. Using it enables an
+     * easy to remember structure, however, it also means the url is
+     * intelligently guessed. As a result, we recommend having some
+     * sort of security setup if you must have a public api.Whether
+     * you use the provided security, ApiSecurity, or implement your own.
      * Url format:
      * `https://{your-server-address}/api/apps/public/{your-app-id}/{path}`
      */
     PUBLIC,
     /**
-     * Private api's have a random part that generates a dynamic URL
-     * format, they are more security by default.
-     * The dynamic part will be generated on app installation, what means
-     * that the URL will chenge only on and for every app installation,
-     * on app updates the URL will stay the same, but if the user uninstall
-     * and installed later the path will change.
+     * Private Api's contain a random value in the url format,
+     * making them harder go guess by default. The random value
+     * will be generated whenever the App is installed on a server.
+     * This means that the URL will not be the same on any server,
+     * but will remain the same throughout the lifecycle of an App
+     * including updates. As a result, if a user uninstalls the App
+     * and reinstalls the App, then the random value will change.
      * Url format:
      * `https://{your-server-address}/api/apps/private/{random-hash}/{your-app-id}/{path}`
      */

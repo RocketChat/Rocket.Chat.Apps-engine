@@ -12,7 +12,7 @@ import { TestsAppLogStorage } from './logStorage';
 import { TestsAppStorage } from './storage';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
-import { IApiEndpointInfo } from '../../src/definition/api/IEndpoint';
+import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { AppBridges } from '../../src/server/bridges';
 import { AppLogStorage, AppStorage } from '../../src/server/storage';
 

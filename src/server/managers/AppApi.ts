@@ -2,7 +2,7 @@ import { AppMethod } from '../../definition/metadata';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../definition/api';
 import { IApiEndpoint } from '../../definition/api/IApi';
-import { IApiEndpointInfo } from '../../definition/api/IEndpoint';
+import { IApiEndpointInfo } from '../../definition/api/IApiEndpointInfo';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
 import { AppAccessorManager } from './AppAccessorManager';
