@@ -3,6 +3,7 @@ import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './comp
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
+    AppApiManager,
     AppListenerManger,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -28,6 +29,7 @@ export class AppManager {
     private readonly accessorManager: AppAccessorManager;
     private readonly listenerManager: AppListenerManger;
     private readonly commandManager: AppSlashCommandManager;
+    private readonly apiManager: AppApiManager;
     private readonly settingsManager: AppSettingsManager;
 
     private isLoaded: boolean;
@@ -63,6 +65,7 @@ export class AppManager {
         this.accessorManager = new AppAccessorManager(this);
         this.listenerManager = new AppListenerManger(this);
         this.commandManager = new AppSlashCommandManager(this);
+        this.apiManager = new AppApiManager(this);
         this.settingsManager = new AppSettingsManager(this);
 
         this.isLoaded = false;
@@ -107,6 +110,11 @@ export class AppManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): AppSlashCommandManager {
         return this.commandManager;
+    }
+
+    /** Gets the api manager's instance. */
+    public getApiManager(): AppApiManager {
+        return this.apiManager;
     }
 
     /** Gets the manager of the settings, updates and getting. */
@@ -217,6 +225,7 @@ export class AppManager {
             } else if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
+                this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
                 continue;
             }
@@ -337,6 +346,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(storageItem.id);
+        this.apiManager.unregisterApis(storageItem.id);
         this.accessorManager.purifyApp(storageItem.id);
 
         if (isManual) {
@@ -413,6 +423,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
+        this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.logStorage.removeEntriesFor(app.getID());
@@ -602,6 +613,7 @@ export class AppManager {
 
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
+            this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
             await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
@@ -662,9 +674,11 @@ export class AppManager {
 
         if (enable) {
             this.commandManager.registerCommands(app.getID());
+            this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
+            this.apiManager.unregisterApis(app.getID());
         }
 
         if (saveToDb) {

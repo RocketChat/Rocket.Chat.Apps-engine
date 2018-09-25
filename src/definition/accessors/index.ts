@@ -1,3 +1,4 @@
+import { IApiExtend } from './IApiExtend';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
@@ -75,4 +76,5 @@ export {
     IUserRead,
     LogMessageSeverity,
     RequestMethod,
+    IApiExtend,
 };

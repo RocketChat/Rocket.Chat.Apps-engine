@@ -144,20 +144,31 @@ export class AppCompiler {
                 // tslint:disable-next-line
                 const moduleResHost: ts.ModuleResolutionHost = { fileExists: host.fileExists, readFile: host.readFile, trace: (traceDetail) => console.log(traceDetail) };
 
-                for (let moduleName of moduleNames) {
+                const resolver = (moduleName: string) => {
                     // Keep compatibility with apps importing apps-ts-definition
                     moduleName = moduleName.replace(/@rocket.chat\/apps-ts-definition\//, '@rocket.chat/apps-engine/definition/');
 
-                    // Let's ensure we search for the App's modules first
-                    if (result.files[Utilities.transformModuleForCustomRequire(moduleName)]) {
-                        resolvedModules.push({ resolvedFileName: Utilities.transformModuleForCustomRequire(moduleName) });
-                    } else {
-                        // Now, let's try the "standard" resolution but with our little twist on it
-                        const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
-                        if (rs.resolvedModule) {
-                            resolvedModules.push(rs.resolvedModule);
-                        }
+                    if (Utilities.allowedInternalModuleRequire(moduleName)) {
+                        return resolvedModules.push({ resolvedFileName: moduleName + '.js' });
                     }
+
+                    // Let's ensure we search for the App's modules first
+                    const transformedModule = Utilities.transformModuleForCustomRequire(moduleName);
+                    if (result.files[transformedModule]) {
+                        return resolvedModules.push({ resolvedFileName: transformedModule });
+                    }
+
+                    // Now, let's try the "standard" resolution but with our little twist on it
+                    const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
+                    if (rs.resolvedModule) {
+                        return resolvedModules.push(rs.resolvedModule);
+                    }
+
+                    console.log(`Failed to resolve module: ${ moduleName }`);
+                };
+
+                for (const moduleName of moduleNames) {
+                    resolver(moduleName);
                 }
 
                 if (moduleNames.length > resolvedModules.length) {

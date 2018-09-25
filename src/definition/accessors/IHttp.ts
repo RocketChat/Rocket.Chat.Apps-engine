@@ -20,6 +20,9 @@ export enum RequestMethod {
     POST = 'post',
     PUT = 'put',
     DELETE = 'delete',
+    HEAD = 'head',
+    OPTIONS = 'options',
+    PATCH = 'patch',
 }
 
 export interface IHttpRequest {

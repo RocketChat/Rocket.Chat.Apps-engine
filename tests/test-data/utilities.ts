@@ -1,6 +1,6 @@
 // tslint:disable:max-classes-per-file
 // tslint:disable:max-line-length
-import { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
+import { HttpStatusCode, IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
 import { IMessage } from '../../src/definition/messages';
 import { IRoom, RoomType } from '../../src/definition/rooms';
 import { ISetting, SettingType } from '../../src/definition/settings';
@@ -11,6 +11,8 @@ import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';
 import { TestsAppStorage } from './storage';
 
+import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
+import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { AppBridges } from '../../src/server/bridges';
 import { AppLogStorage, AppStorage } from '../../src/server/storage';
 
@@ -159,6 +161,21 @@ export class TestData {
             executePreviewItem: (item: ISlashCommandPreviewItem, context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
                 return Promise.resolve();
             },
+        };
+    }
+
+    public static getApi(path: string = 'testing-path', visibility: ApiVisibility = ApiVisibility.PUBLIC, security: ApiSecurity = ApiSecurity.UNSECURE): IApi {
+        return {
+            visibility,
+            security,
+            endpoints: [{
+                path,
+                get(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
+                    return Promise.resolve({
+                        status: HttpStatusCode.OK,
+                    });
+                },
+            }],
         };
     }
 }

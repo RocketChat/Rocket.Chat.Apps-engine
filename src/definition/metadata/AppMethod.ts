@@ -1,4 +1,5 @@
 export enum AppMethod {
+    _API_EXECUTOR = 'apiExecutor',
     _CONSTRUCTOR = 'constructor',
     _COMMAND_EXECUTOR = 'executor',
     _COMMAND_PREVIEWER = 'previewer',
