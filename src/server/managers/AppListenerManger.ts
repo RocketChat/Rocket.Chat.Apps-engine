@@ -67,6 +67,15 @@ export class AppListenerManger {
             case AppInterface.IPostMessageDeleted:
                 this.executePostMessageDelete(data as IMessage);
                 return;
+            case AppInterface.IPreMessageUpdatedPrevent:
+                return this.executePreMessageUpdatedPrevent(data as IMessage);
+            case AppInterface.IPreMessageUpdatedExtend:
+                return this.executePreMessageUpdatedExtend(data as IMessage);
+            case AppInterface.IPreMessageUpdatedModify:
+                return this.executePreMessageUpdatedModify(data as IMessage);
+            case AppInterface.IPostMessageUpdated:
+                this.executePostMessageUpdated(data as IMessage);
+                return;
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -258,6 +267,125 @@ export class AppListenerManger {
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePreMessageUpdatedPrevent(data: IMessage): Promise<boolean> {
+        let prevented = false;
+        const cfMsg = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT)) {
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT)) {
+                prevented = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
+    }
+
+    private async executePreMessageUpdatedExtend(data: IMessage): Promise<IMessage> {
+        const msg = data;
+        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND)) {
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND)) {
+                await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND,
+                    cfMsg,
+                    new MessageExtender(msg), // This mutates the passed in object
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+
+        return msg;
+    }
+
+    private async executePreMessageUpdatedModify(data: IMessage): Promise<IMessage> {
+        let msg = data;
+        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+
+        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY)) {
+                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY)) {
+                msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
+                    cfMsg,
+                    new MessageBuilder(msg),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as IMessage;
+            }
+        }
+
+        return data;
+    }
+
+    private async executePostMessageUpdated(data: IMessage): Promise<void> {
+        const cfMsg = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEUPDATED)) {
+                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED,
+                    cfMsg,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEUPDATED)) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
