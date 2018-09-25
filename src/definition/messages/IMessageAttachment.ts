@@ -1,3 +1,4 @@
+import { IMessageAction } from './IMessageAction';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
@@ -33,5 +34,6 @@ export interface IMessageAttachment {
     /** Allows users to describe what the attachment is. */
     description?: string;
     /** The field property of the attachments allows for "tables" or "columns" to be displayed on messages. */
+    actions?: Array<IMessageAction>;
     fields?: Array<IMessageAttachmentField>;
 }

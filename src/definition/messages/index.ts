@@ -1,8 +1,10 @@
 import { IMessage } from './IMessage';
+import { IMessageAction } from './IMessageAction';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageSent } from './IPostMessageSent';
 import { IPostMessageUpdated } from './IPostMessageUpdated';
@@ -20,6 +22,9 @@ export {
     IMessageAttachmentAuthor,
     IMessageAttachmentTitle,
     IMessageAttachmentField,
+    IMessageAction,
+    IMessageReactions,
+    IMessageReaction,
     IPostMessageDeleted,
     IPostMessageSent,
     IPostMessageUpdated,
