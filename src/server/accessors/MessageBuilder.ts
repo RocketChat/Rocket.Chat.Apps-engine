@@ -128,6 +128,15 @@ export class MessageBuilder implements IMessageBuilder {
         return this.msg.editor;
     }
 
+    public setGroupable(groupable: boolean): IMessageBuilder {
+        this.msg.groupable = groupable;
+        return this;
+    }
+
+    public getGroupable(): boolean {
+        return this.msg.groupable;
+    }
+
     public getMessage(): IMessage {
         if (!this.msg.room) {
             throw new Error('The "room" property is required.');
