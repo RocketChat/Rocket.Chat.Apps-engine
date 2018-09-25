@@ -1,4 +1,5 @@
 export enum AppMethod {
+    _API_EXECUTOR = 'apiExecutor',
     _CONSTRUCTOR = 'constructor',
     _COMMAND_EXECUTOR = 'executor',
     _COMMAND_PREVIEWER = 'previewer',
@@ -21,6 +22,14 @@ export enum AppMethod {
     EXECUTEPREMESSAGEDELETEPREVENT = 'executePreMessageDeletePrevent',
     CHECKPOSTMESSAGEDELETED = 'checkPostMessageDeleted',
     EXECUTEPOSTMESSAGEDELETED = 'executePostMessageDeleted',
+    CHECKPREMESSAGEUPDATEDPREVENT = 'checkPreMessageUpdatedPrevent',
+    EXECUTEPREMESSAGEUPDATEDPREVENT = 'executePreMessageUpdatedPrevent',
+    CHECKPREMESSAGEUPDATEDEXTEND = 'checkPreMessageUpdatedExtend',
+    EXECUTEPREMESSAGEUPDATEDEXTEND = 'executePreMessageUpdatedExtend',
+    CHECKPREMESSAGEUPDATEDMODIFY = 'checkPreMessageUpdatedModify',
+    EXECUTEPREMESSAGEUPDATEDMODIFY = 'executePreMessageUpdatedModify',
+    CHECKPOSTMESSAGEUPDATED = 'checkPostMessageUpdated',
+    EXECUTEPOSTMESSAGEUPDATED = 'executePostMessageUpdated',
     // Room handlers
     CHECKPREROOMCREATEPREVENT = 'checkPreRoomCreatePrevent',
     EXECUTEPREROOMCREATEPREVENT = 'executePreRoomCreatePrevent',

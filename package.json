@@ -40,7 +40,6 @@
     "@types/adm-zip": "^0.4.31",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/nedb": "^1.8.5",
-    "@types/node": "^9.6.4",
     "@types/semver": "^5.5.0",
     "@types/stack-trace": "0.0.29",
     "@types/uuid": "^3.4.3",
@@ -57,11 +56,11 @@
     "http-server": "^0.11.1",
     "merge2": "^1.2.1",
     "nedb": "^1.8.0",
-    "nyc": "^11.7.1",
+    "nyc": "^11.9.0",
     "pre-commit": "^1.2.2",
     "tap-bark": "^1.0.0",
-    "ts-node": "^6.0.2",
-    "tslint": "^5.9.1",
+    "ts-node": "^6.2.0",
+    "tslint": "^5.11.0",
     "typedoc": "^0.11.1"
   },
   "dependencies": {
@@ -69,7 +68,7 @@
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.5.0",
     "stack-trace": "0.0.10",
-    "typescript": "^2.8.3",
+    "typescript": "^2.9.2",
     "uuid": "^3.2.1"
   },
   "nyc": {

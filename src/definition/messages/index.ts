@@ -7,10 +7,14 @@ import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageSent } from './IPostMessageSent';
+import { IPostMessageUpdated } from './IPostMessageUpdated';
 import { IPreMessageDeletePrevent } from './IPreMessageDeletePrevent';
 import { IPreMessageSentExtend } from './IPreMessageSentExtend';
 import { IPreMessageSentModify } from './IPreMessageSentModify';
 import { IPreMessageSentPrevent } from './IPreMessageSentPrevent';
+import { IPreMessageUpdatedExtend } from './IPreMessageUpdatedExtend';
+import { IPreMessageUpdatedModify } from './IPreMessageUpdatedModify';
+import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
 
 export {
     IMessage,
@@ -23,8 +27,12 @@ export {
     IMessageReaction,
     IPostMessageDeleted,
     IPostMessageSent,
+    IPostMessageUpdated,
     IPreMessageDeletePrevent,
     IPreMessageSentExtend,
     IPreMessageSentModify,
     IPreMessageSentPrevent,
+    IPreMessageUpdatedExtend,
+    IPreMessageUpdatedModify,
+    IPreMessageUpdatedPrevent,
 };

@@ -1,5 +1,6 @@
 import { AppBridges } from './AppBridges';
 import { IAppActivationBridge } from './IAppActivationBridge';
+import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
@@ -21,6 +22,7 @@ export {
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppCommandBridge,
+    IAppApiBridge,
     IRoomBridge,
     IServerSettingBridge,
     IUserBridge,

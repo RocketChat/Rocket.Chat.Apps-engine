@@ -12,6 +12,7 @@ import {
     IUserBridge,
 } from '../../../src/server/bridges';
 import { TestsActivationBridge } from './activationBridge';
+import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
@@ -25,6 +26,7 @@ import { TestsUserBridge } from './userBridge';
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
+    private readonly apiBridge: TestsApiBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
     private readonly rlActBridge: TestsActivationBridge;
@@ -38,6 +40,7 @@ export class TestsAppBridges extends AppBridges {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
+        this.apiBridge = new TestsApiBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
         this.rlActBridge = new TestsActivationBridge();
@@ -50,6 +53,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getCommandBridge(): TestsCommandBridge {
         return this.cmdBridge;
+    }
+
+    public getApiBridge(): TestsApiBridge {
+        return this.apiBridge;
     }
 
     public getServerSettingBridge(): IServerSettingBridge {
