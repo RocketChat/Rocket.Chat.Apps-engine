@@ -40,7 +40,7 @@ export class AppApi {
 
         this.computedPath = `${this.basePath}/${endpoint.path}`;
 
-        this.implementedMethods = methods.filter((m) => typeof (api as any)[m] === 'function');
+        this.implementedMethods = methods.filter((m) => typeof (endpoint as any)[m] === 'function');
     }
 
     public async runExecutor(request: IApiRequest,

@@ -142,7 +142,7 @@ export class AppApiManager {
                 path: api.endpoint.path,
                 computedPath: api.computedPath,
                 methods: api.implementedMethods,
-                examples: api.endpoint.examples,
+                examples: api.endpoint.examples || {},
             });
         }
 
