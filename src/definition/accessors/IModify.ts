@@ -422,6 +422,7 @@ export interface IRoomBuilder {
      * Adds a user to the room, these are by username until further notice.
      *
      * @param username the user's username to add to the room
+     * @deprecated This method will be removed soon and may not work as expected
      */
     addUsername(username: string): IRoomBuilder;
 
@@ -429,11 +430,13 @@ export interface IRoomBuilder {
      * Sets the usernames of who are joined to the room.
      *
      * @param usernames the list of usernames
+     * @deprecated This method will be removed soon and may not work as expected
      */
     setUsernames(usernames: Array<string>): IRoomBuilder;
 
     /**
      * Gets the usernames of users in the room.
+     * @deprecated
      */
     getUsernames(): Array<string>;
 

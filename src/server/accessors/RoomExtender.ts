@@ -27,6 +27,7 @@ export class RoomExtender implements IRoomExtender {
     }
 
     public addMember(user: IUser): IRoomExtender {
+        // TODO:
         if (!Array.isArray(this.room.usernames)) {
             this.room.usernames = new Array<string>();
         }

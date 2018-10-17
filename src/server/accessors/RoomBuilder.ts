@@ -56,20 +56,21 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public addUsername(username: string): IRoomBuilder {
-        if (!this.room.usernames) {
-            this.room.usernames = new Array<string>();
-        }
+        // if (!this.room.usernames) {
+        //     this.room.usernames = new Array<string>();
+        // }
 
-        this.room.usernames.push(username);
+        // this.room.usernames.push(username);
         return this;
     }
 
     public setUsernames(usernames: Array<string>): IRoomBuilder {
-        this.room.usernames = usernames;
+        // this.room.usernames = usernames;
         return this;
     }
 
     public getUsernames(): Array<string> {
+        // TODO:
         return this.room.usernames;
     }
 

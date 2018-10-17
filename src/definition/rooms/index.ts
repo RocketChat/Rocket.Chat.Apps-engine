@@ -4,11 +4,12 @@ import { IPreRoomCreateExtend } from './IPreRoomCreateExtend';
 import { IPreRoomCreateModify } from './IPreRoomCreateModify';
 import { IPreRoomCreatePrevent } from './IPreRoomCreatePrevent';
 import { IPreRoomDeletePrevent } from './IPreRoomDeletePrevent';
-import { IRoom } from './IRoom';
+import { IRoom, Room } from './IRoom';
 import { RoomType } from './RoomType';
 
 export {
     IRoom,
+    Room,
     RoomType,
     IPostRoomCreate,
     IPostRoomDeleted,
