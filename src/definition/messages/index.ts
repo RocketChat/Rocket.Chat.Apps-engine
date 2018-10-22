@@ -15,6 +15,8 @@ import { IPreMessageSentPrevent } from './IPreMessageSentPrevent';
 import { IPreMessageUpdatedExtend } from './IPreMessageUpdatedExtend';
 import { IPreMessageUpdatedModify } from './IPreMessageUpdatedModify';
 import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
+import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
+import { MessageActionType } from './MessageActionType';
 
 export {
     IMessage,
@@ -35,4 +37,6 @@ export {
     IPreMessageUpdatedExtend,
     IPreMessageUpdatedModify,
     IPreMessageUpdatedPrevent,
+    MessageActionButtonsAlignment,
+    MessageActionType,
 };
