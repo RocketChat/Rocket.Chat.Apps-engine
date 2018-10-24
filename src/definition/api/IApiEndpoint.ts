@@ -5,11 +5,11 @@ import { IApiRequest } from './IRequest';
 import { IApiResponse } from './IResponse';
 
 /**
- * Represents an api enpoint that is being provided.
+ * Represents an api endpoint that is being provided.
  */
 export interface IApiEndpoint {
     /**
-     * Path to complete the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
+     * The last part of the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
      * or https://{your-server-address}/api/apps/private/{your-app-id}/{private-hash}/{path}
      */
     path: string;

@@ -2,6 +2,7 @@ import { IMessageAction } from './IMessageAction';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
 
 /**
  * Interface which represents an attachment which can be added to a message.
@@ -33,7 +34,10 @@ export interface IMessageAttachment {
     type?: string;
     /** Allows users to describe what the attachment is. */
     description?: string;
-    /** The field property of the attachments allows for "tables" or "columns" to be displayed on messages. */
+    /** States how the action buttons are aligned. */
+    actionButtonsAlignment?: MessageActionButtonsAlignment;
+    /** Allows displaying action items, such as buttons, on the attachment. */
     actions?: Array<IMessageAction>;
+    /** The field property of the attachments allows for "tables" or "columns" to be displayed on messages. */
     fields?: Array<IMessageAttachmentField>;
 }

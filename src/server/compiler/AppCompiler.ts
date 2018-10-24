@@ -152,8 +152,11 @@ export class AppCompiler {
                         return resolvedModules.push({ resolvedFileName: moduleName + '.js' });
                     }
 
+                    const currentFolderPath = path.dirname(containingFile).replace(cwd, '');
+                    const modulePath = path.join(currentFolderPath, moduleName);
+
                     // Let's ensure we search for the App's modules first
-                    const transformedModule = Utilities.transformModuleForCustomRequire(moduleName);
+                    const transformedModule = Utilities.transformModuleForCustomRequire(modulePath);
                     if (result.files[transformedModule]) {
                         return resolvedModules.push({ resolvedFileName: transformedModule });
                     }
