@@ -6,7 +6,7 @@ import { IApiResponse, IApiResponseJSON } from './IResponse';
 /** Represents an api endpoint that is being provided. */
 export abstract class ApiEndpoint implements IApiEndpoint {
     /**
-     * Path to complete the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
+     * The last part of the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
      * or https://{your-server-address}/api/apps/private/{your-app-id}/{private-hash}/{path}
      */
     public path: string;
