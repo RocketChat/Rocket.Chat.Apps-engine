@@ -39,7 +39,7 @@ export enum ApiVisibility {
      * including updates. As a result, if a user uninstalls the App
      * and reinstalls the App, then the random value will change.
      * Url format:
-     * `https://{your-server-address}/api/apps/private//{your-app-id}{random-hash}/{path}`
+     * `https://{your-server-address}/api/apps/private/{your-app-id}/{random-hash}/{path}`
      */
     PRIVATE,
 }
