@@ -5,7 +5,7 @@ import { IApiRequest } from './IRequest';
 import { IApiResponse } from './IResponse';
 
 /**
- * Represents an api enpoint that is being provided.
+ * Represents an api endpoint that is being provided.
  */
 export interface IApiEndpoint {
     /**

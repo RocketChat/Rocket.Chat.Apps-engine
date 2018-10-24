@@ -3,9 +3,7 @@ import { IApp } from '../IApp';
 import { IApiEndpoint } from './IApiEndpoint';
 import { IApiResponse, IApiResponseJSON } from './IResponse';
 
-/**
- * Represents an api enpoint that is being provided.
- */
+/** Represents an api endpoint that is being provided. */
 export abstract class ApiEndpoint implements IApiEndpoint {
     /**
      * Path to complete the api URL. Example: https://{your-server-address}/api/apps/public/{your-app-id}/{path}
