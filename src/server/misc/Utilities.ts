@@ -34,7 +34,7 @@ export class Utilities {
     }
 
     public static transformModuleForCustomRequire(moduleName: string): string {
-        return path.normalize(moduleName).replace(/\.\.\//g, '') + '.ts';
+        return path.normalize(moduleName).replace(/\.\.?\//g, '').replace(/^\//, '') + '.ts';
     }
 
     public static allowedInternalModuleRequire(moduleName: string): boolean {
