@@ -4,7 +4,7 @@ import {
     IModifyExtender,
     IModifyUpdater,
     INotifier,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 import { AppBridges } from '../bridges';
 import { ModifyCreator } from './ModifyCreator';
@@ -37,7 +37,7 @@ export class Modify implements IModify {
         return this.extender;
     }
 
-    public getNotifer(): INotifier {
+    public getNotifier(): INotifier {
         return this.notifier;
     }
 }

@@ -1,7 +1,7 @@
-import { IMessageBuilder, INotifier } from '@rocket.chat/apps-ts-definition/accessors';
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IMessageBuilder, INotifier } from '../../definition/accessors';
+import { IMessage } from '../../definition/messages';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 import { IMessageBridge } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';

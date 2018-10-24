@@ -1,5 +1,5 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { Expect, Test } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
@@ -83,5 +83,13 @@ export class MessageBuilderAccessorTestFixture {
         Expect(mb.getMessage()).toBe(msg);
         delete msg.room;
         Expect(() => mb.getMessage()).toThrowError(Error, 'The "room" property is required.');
+
+        Expect(mb.setGroupable(true)).toBe(mb);
+        Expect(msg.groupable).toEqual(true);
+        Expect(mb.getGroupable()).toEqual(true);
+
+        Expect(mb.setGroupable(false)).toBe(mb);
+        Expect(msg.groupable).toEqual(false);
+        Expect(mb.getGroupable()).toEqual(false);
     }
 }

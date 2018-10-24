@@ -1,7 +1,7 @@
 import * as stackTrace from 'stack-trace';
 
-import { ILogEntry, ILogger, LogMessageSeverity } from '@rocket.chat/apps-ts-definition/accessors';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
+import { ILogEntry, ILogger, LogMessageSeverity } from '../../definition/accessors';
+import { AppMethod } from '../../definition/metadata';
 import { ILoggerStorageEntry } from './ILoggerStorageEntry';
 
 export class AppConsole implements ILogger {
@@ -74,6 +74,8 @@ export class AppConsole implements ILogger {
     private addEntry(severity: LogMessageSeverity, caller: string, ...items: Array<any>): void {
         const i = items.map((v) => {
             if (v instanceof Error) {
+                return JSON.stringify(v, Object.getOwnPropertyNames(v));
+            } else if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
             } else {
                 return v;

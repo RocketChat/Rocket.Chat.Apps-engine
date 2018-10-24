@@ -18,6 +18,7 @@ import {
     SlashCommandsModify,
     UserRead,
 } from '../accessors';
+import { ApiExtend } from '../accessors/ApiExtend';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { AppManager } from '../AppManager';
@@ -32,7 +33,7 @@ import {
     IModify,
     IPersistence,
     IRead,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;
@@ -80,9 +81,10 @@ export class AppAccessorManager {
 
             const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
+            const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis));
         }
 
         return this.configExtenders.get(appId);

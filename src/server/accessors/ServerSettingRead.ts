@@ -1,7 +1,7 @@
 import { IServerSettingBridge } from '../bridges/IServerSettingBridge';
 
-import { IIterator, IServerSettingRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { IServerSettingRead } from '../../definition/accessors';
+import { ISetting } from '../../definition/settings';
 
 export class ServerSettingRead implements IServerSettingRead {
     constructor(private readonly settingBridge: IServerSettingBridge, private readonly appId: string) { }
@@ -20,7 +20,7 @@ export class ServerSettingRead implements IServerSettingRead {
         return set.value || set.packageValue;
     }
 
-    public getAll(): Promise<IIterator<ISetting>> {
+    public getAll(): Promise<IterableIterator<ISetting>> {
         throw new Error('Method not implemented.');
         // return this.settingBridge.getAll(this.appId);
     }

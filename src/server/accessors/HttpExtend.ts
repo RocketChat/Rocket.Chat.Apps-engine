@@ -2,7 +2,7 @@ import {
     IHttpExtend,
     IHttpPreRequestHandler,
     IHttpPreResponseHandler,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class HttpExtend implements IHttpExtend {
     private headers: Map<string, string>;

@@ -1,7 +1,7 @@
 import { AppSlashCommandManager } from '../managers/AppSlashCommandManager';
 
-import { ISlashCommandsExtend } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { ISlashCommandsExtend } from '../../definition/accessors';
+import { ISlashCommand } from '../../definition/slashcommands';
 
 export class SlashCommandsExtend implements ISlashCommandsExtend {
     constructor(private readonly manager: AppSlashCommandManager, private readonly appId: string) { }

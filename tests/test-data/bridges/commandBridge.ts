@@ -1,15 +1,17 @@
-import { IHttp, IModify, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISlashCommand, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { IHttp, IModify, IPersistence, IRead } from '../../../src/definition/accessors';
+import { ISlashCommand, SlashCommandContext } from '../../../src/definition/slashcommands';
 
 import { IAppCommandBridge } from '../../../src/server/bridges';
+import { TestData } from '../utilities';
 
 export class TestsCommandBridge implements IAppCommandBridge {
     // tslint:disable-next-line:max-line-length
-    private commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
+    public commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
 
     constructor() {
         // tslint:disable-next-line:max-line-length
         this.commands = new Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>();
+        this.commands.set('it-exists', TestData.getSlashCommand('it-exists').executor);
     }
 
     public doesCommandExist(command: string, appId: string): boolean {
@@ -17,15 +19,19 @@ export class TestsCommandBridge implements IAppCommandBridge {
     }
 
     public enableCommand(command: string, appId: string): void {
-        console.log(`Enabling the command "${command}" per request of the app: ${appId}`);
+        return;
     }
 
     public disableCommand(command: string, appId: string): void {
-        console.log(`Disabling the command "${command}" per request of the app: ${appId}`);
+        return;
     }
 
     public modifyCommand(command: ISlashCommand, appId: string): void {
-        throw new Error('Not implemented.');
+        return;
+    }
+
+    public restoreCommand(comand: string, appId: string): void {
+        return;
     }
 
     public registerCommand(command: ISlashCommand, appId: string): void {
@@ -34,14 +40,9 @@ export class TestsCommandBridge implements IAppCommandBridge {
         }
 
         this.commands.set(command.command, command.executor);
-        console.log(`Registered the command "${command.command}".`);
     }
 
     public unregisterCommand(command: string, appId: string): void {
-        const removed = this.commands.delete(command);
-
-        if (removed) {
-            console.log(`Unregistered the command "${command}".`);
-        }
+        this.commands.delete(command);
     }
 }

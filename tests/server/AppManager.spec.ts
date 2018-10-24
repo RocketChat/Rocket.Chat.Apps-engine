@@ -1,11 +1,12 @@
 // tslint:disable:max-line-length
-import { Expect, SetupFixture, Test } from 'alsatian';
+import { Expect, SetupFixture, Teardown, Test } from 'alsatian';
 import { SimpleClass, TestInfastructureSetup } from '../test-data/utilities';
 
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
 import { AppCompiler, AppPackageParser } from '../../src/server/compiler';
-import { AppAccessorManager, AppListenerManager, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppListenerManager, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
+import { AppLogStorage, AppStorage } from '../../src/server/storage';
 
 export class AppManagerTestFixture {
     private testingInfastructure: TestInfastructureSetup;
@@ -13,6 +14,11 @@ export class AppManagerTestFixture {
     @SetupFixture
     public setupFixture() {
         this.testingInfastructure = new TestInfastructureSetup();
+    }
+
+    @Teardown
+    public teardown() {
+        AppManager.Instance = undefined;
     }
 
     @Test('Setup of the AppManager')
@@ -23,6 +29,8 @@ export class AppManagerTestFixture {
         Expect(manager.getLogStorage()).toBe(this.testingInfastructure.getLogStorage());
         Expect(manager.getBridges()).toBe(this.testingInfastructure.getAppBridges());
         Expect(manager.areAppsLoaded()).toBe(false);
+
+        Expect(() => new AppManager({} as AppStorage, {} as AppLogStorage, {} as AppBridges)).toThrowError(Error, 'There is already a valid AppManager instance.');
     }
 
     @Test('Invalid Storage and Bridge')
@@ -43,6 +51,7 @@ export class AppManagerTestFixture {
         Expect(manager.getBridges() instanceof AppBridges).toBe(true);
         Expect(manager.getListenerManager() instanceof AppListenerManager).toBe(true);
         Expect(manager.getCommandManager() instanceof AppSlashCommandManager).toBe(true);
+        Expect(manager.getApiManager() instanceof AppApiManager).toBe(true);
         Expect(manager.getSettingsManager() instanceof AppSettingsManager).toBe(true);
     }
 }

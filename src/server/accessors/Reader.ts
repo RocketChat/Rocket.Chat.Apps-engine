@@ -6,7 +6,7 @@ import {
     IRead,
     IRoomRead,
     IUserRead,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class Reader implements IRead {
     constructor(private env: IEnvironmentRead, private message: IMessageRead,

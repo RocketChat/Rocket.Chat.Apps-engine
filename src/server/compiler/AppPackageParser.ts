@@ -3,12 +3,12 @@ import { AppCompiler } from './AppCompiler';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata/IAppInfo';
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
+import { IAppInfo } from '../../definition/metadata/IAppInfo';
 
 export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
@@ -21,7 +21,7 @@ export class AppPackageParser {
     }
 
     public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(new Buffer(zipBase64, 'base64'));
+        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
         const infoZip = zip.getEntry('app.json');
         let info: IAppInfo;
 
@@ -146,9 +146,8 @@ export class AppPackageParser {
     }
 
     private getTsDefVersion(): string {
-        const devLocation = 'node_modules/@rocket.chat/apps-ts-definition/package.json';
-        // tslint:disable-next-line
-        const prodLocation = __dirname.split('@rocket.chat/apps-engine')[0] + '@rocket.chat/apps-ts-definition/package.json';
+        const devLocation = path.join(__dirname, '../../../package.json');
+        const prodLocation = path.join(__dirname, '../../package.json');
 
         if (fs.existsSync(devLocation)) {
             const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));

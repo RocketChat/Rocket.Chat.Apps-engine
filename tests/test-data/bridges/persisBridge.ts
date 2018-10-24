@@ -1,4 +1,4 @@
-import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
+import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { IPersistenceBridge } from '../../../src/server/bridges';
 

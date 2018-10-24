@@ -1,7 +1,7 @@
 // tslint:disable:max-line-length
 
-import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { AsyncTest, Expect, Test } from 'alsatian';
+import { ISlashCommand } from '../../../src/definition/slashcommands';
 
 import { SlashCommandsExtend } from '../../../src/server/accessors';
 import { CommandAlreadyExistsError } from '../../../src/server/errors';

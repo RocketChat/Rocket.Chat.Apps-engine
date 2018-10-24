@@ -1,7 +1,7 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
+import { IRoom } from '../../../src/definition/rooms';
+import { IUser } from '../../../src/definition/users';
 
 import { MessageBuilder, Notifier } from '../../../src/server/accessors';
 import { IMessageBridge } from '../../../src/server/bridges';

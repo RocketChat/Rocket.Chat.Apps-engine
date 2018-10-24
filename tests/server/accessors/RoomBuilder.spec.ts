@@ -1,5 +1,5 @@
-import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
 import { Expect, Test } from 'alsatian';
+import { IRoom, RoomType } from '../../../src/definition/rooms';
 import { TestData } from '../../test-data/utilities';
 
 import { RoomBuilder } from '../../../src/server/accessors';
@@ -65,7 +65,7 @@ export class RoomBuilderAccessorTestFixture {
         Expect(rb.addCustomField('thing', {})).toBe(rb);
         Expect(room.customFields).not.toBeEmpty();
         Expect(rb.getCustomFields()).not.toBeEmpty();
-        Expect(room.customFields.thing).toBeEmpty();
+        Expect(room.customFields.thing).toBeDefined();
         Expect(rb.getCustomFields().thing).toBeEmpty();
         Expect(rb.addCustomField('another', { thingy: 'two' })).toBe(rb);
         Expect(room.customFields.another).toEqual({ thingy: 'two' });

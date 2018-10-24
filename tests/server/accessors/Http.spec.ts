@@ -1,5 +1,5 @@
-import { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, IPersistence, IRead } from '@rocket.chat/apps-ts-definition/accessors';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, IPersistence, IRead } from '../../../src/definition/accessors';
 
 import { Http, HttpExtend } from '../../../src/server/accessors';
 import { AppBridges, IHttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';

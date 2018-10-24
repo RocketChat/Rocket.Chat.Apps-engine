@@ -1,6 +1,7 @@
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { AppMethod } from '../../definition/metadata';
+import { ISetting } from '../../definition/settings';
 import { AppManager } from '../AppManager';
+import { Utilities } from '../misc/Utilities';
 
 export class AppSettingsManager {
     constructor(private manager: AppManager) { }
@@ -12,7 +13,7 @@ export class AppSettingsManager {
             throw new Error('No App found by the provided id.');
         }
 
-        return Object.assign({}, rl.getStorageItem().settings);
+        return Utilities.deepCloneAndFreeze(rl.getStorageItem().settings);
     }
 
     public getAppSetting(appId: string, settingId: string): ISetting {
@@ -22,7 +23,7 @@ export class AppSettingsManager {
             throw new Error('No setting found for the App by the provided id.');
         }
 
-        return Object.assign({}, settings[settingId]);
+        return Utilities.deepCloneAndFreeze(settings[settingId]);
     }
 
     public async updateAppSetting(appId: string, setting: ISetting): Promise<void> {

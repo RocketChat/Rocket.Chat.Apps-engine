@@ -1,8 +1,8 @@
-import { IMessageBuilder } from '@rocket.chat/apps-ts-definition/accessors';
-import { IMessage, IMessageAttachment } from '@rocket.chat/apps-ts-definition/messages';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IMessageBuilder } from '../../definition/accessors';
+import { IMessage, IMessageAttachment } from '../../definition/messages';
+import { RocketChatAssociationModel } from '../../definition/metadata';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
@@ -126,6 +126,15 @@ export class MessageBuilder implements IMessageBuilder {
 
     public getEditor(): IUser {
         return this.msg.editor;
+    }
+
+    public setGroupable(groupable: boolean): IMessageBuilder {
+        this.msg.groupable = groupable;
+        return this;
+    }
+
+    public getGroupable(): boolean {
+        return this.msg.groupable;
     }
 
     public getMessage(): IMessage {

@@ -20,4 +20,5 @@ export abstract class AppLogStorage {
 
     public abstract async storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry>;
     public abstract async getEntriesFor(appId: string): Promise<Array<ILoggerStorageEntry>>;
+    public abstract async removeEntriesFor(appId: string): Promise<void>;
 }

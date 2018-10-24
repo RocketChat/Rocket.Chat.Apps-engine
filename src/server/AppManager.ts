@@ -3,6 +3,7 @@ import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './comp
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
+    AppApiManager,
     AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -11,12 +12,11 @@ import { DisabledApp } from './misc/DisabledApp';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
-import { AppStatus, AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
+import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
+import { AppMethod } from '../definition/metadata';
 
 export class AppManager {
-    public static ENV_VAR_NAME_FOR_ENABLING = 'USE_UNRELEASED_ROCKETAPPS_FRAMEWORK';
-    public static SUPER_FUN_ENV_ENABLEMENT_NAME = 'LET_ME_HAVE_FUN_WITH_ROCKETS_NOW';
+    public static Instance: AppManager;
 
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
@@ -29,11 +29,17 @@ export class AppManager {
     private readonly accessorManager: AppAccessorManager;
     private readonly listenerManager: AppListenerManager;
     private readonly commandManager: AppSlashCommandManager;
+    private readonly apiManager: AppApiManager;
     private readonly settingsManager: AppSettingsManager;
 
     private isLoaded: boolean;
 
     constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
+        // Singleton style. There can only ever be one AppManager instance
+        if (typeof AppManager.Instance !== 'undefined') {
+            throw new Error('There is already a valid AppManager instance.');
+        }
+
         if (rlStorage instanceof AppStorage) {
             this.storage = rlStorage;
         } else {
@@ -59,9 +65,11 @@ export class AppManager {
         this.accessorManager = new AppAccessorManager(this);
         this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
+        this.apiManager = new AppApiManager(this);
         this.settingsManager = new AppSettingsManager(this);
 
         this.isLoaded = false;
+        AppManager.Instance = this;
     }
 
     /** Gets the instance of the storage connector. */
@@ -104,6 +112,11 @@ export class AppManager {
         return this.commandManager;
     }
 
+    /** Gets the api manager's instance. */
+    public getApiManager(): AppApiManager {
+        return this.apiManager;
+    }
+
     /** Gets the manager of the settings, updates and getting. */
     public getSettingsManager(): AppSettingsManager {
         return this.settingsManager;
@@ -120,6 +133,12 @@ export class AppManager {
      * long process of loading all the Apps up.
      */
     public async load(): Promise<Array<AppFabricationFulfillment>> {
+        // You can not load the AppManager system again
+        // if it has already been loaded.
+        if (this.isLoaded) {
+            return;
+        }
+
         const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
         const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
@@ -170,6 +189,17 @@ export class AppManager {
             await this.initializeApp(items.get(rl.getID()), rl, true);
         }
 
+        // Let's ensure the required settings are all set
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                continue;
+            }
+
+            if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+            }
+        }
+
         // Now let's enable the apps which were once enabled
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
@@ -180,6 +210,33 @@ export class AppManager {
 
         this.isLoaded = true;
         return affs;
+    }
+
+    public async unload(isManual: boolean): Promise<void> {
+        // If the AppManager hasn't been loaded yet, then
+        // there is nothing to unload
+        if (!this.isLoaded) {
+            return;
+        }
+
+        for (const rl of this.apps.values()) {
+            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+                continue;
+            } else if (rl.getStatus() === AppStatus.INITIALIZED) {
+                this.listenerManager.unregisterListeners(rl);
+                this.commandManager.unregisterCommands(rl.getID());
+                this.apiManager.unregisterApis(rl.getID());
+                this.accessorManager.purifyApp(rl.getID());
+                continue;
+            }
+
+            await this.disable(rl.getID(), isManual);
+        }
+
+        // Remove all the apps from the system now that we have unloaded everything
+        this.apps.clear();
+
+        this.isLoaded = false;
     }
 
     /** Gets the Apps which match the filter passed in. */
@@ -254,7 +311,7 @@ export class AppManager {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
-        const isSetup = await this.runStartUpProcess(storageItem, rl, true);
+        const isSetup = await this.runStartUpProcess(storageItem, rl, true, false);
         if (isSetup) {
             storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
@@ -289,6 +346,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(storageItem.id);
+        this.apiManager.unregisterApis(storageItem.id);
         this.accessorManager.purifyApp(storageItem.id);
 
         if (isManual) {
@@ -348,7 +406,7 @@ export class AppManager {
         // Otherwise, we only initialize it.
         if (enable) {
             // Start up the app
-            await this.runStartUpProcess(created, app, false);
+            await this.runStartUpProcess(created, app, false, false);
         } else {
             await this.initializeApp(created, app, true);
         }
@@ -363,7 +421,12 @@ export class AppManager {
             await this.disable(id);
         }
 
+        this.listenerManager.unregisterListeners(app);
+        this.commandManager.unregisterCommands(app.getID());
+        this.apiManager.unregisterApis(app.getID());
+        this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
+        await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
@@ -426,7 +489,7 @@ export class AppManager {
         aff.setApp(app);
 
         // Start up the app
-        await this.runStartUpProcess(stored, app, false);
+        await this.runStartUpProcess(stored, app, false, true);
 
         // Let everyone know that the App has been updated
         try {
@@ -502,22 +565,31 @@ export class AppManager {
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
 
-        if (AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+        if (!this.areRequiredSettingsSet(item)) {
+            await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+        }
+
+        if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
             await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
         return this.apps.get(item.id);
     }
 
-    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean): Promise<boolean> {
+    private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean, silenceStatus: boolean): Promise<boolean> {
         if (app.getStatus() !== AppStatus.INITIALIZED) {
-            const isInitialized = await this.initializeApp(storageItem, app, true);
+            const isInitialized = await this.initializeApp(storageItem, app, true, silenceStatus);
             if (!isInitialized) {
                 return false;
             }
         }
 
-        const isEnabled = await this.enableApp(storageItem, app, true, isManual);
+        if (!this.areRequiredSettingsSet(storageItem)) {
+            await app.setStatus(AppStatus.INVALID_SETTINGS_DISABLED, silenceStatus);
+            return false;
+        }
+
+        const isEnabled = await this.enableApp(storageItem, app, true, isManual, silenceStatus);
         if (!isEnabled) {
             return false;
         }
@@ -525,7 +597,7 @@ export class AppManager {
         return true;
     }
 
-    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true): Promise<boolean> {
+    private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
@@ -533,7 +605,7 @@ export class AppManager {
         try {
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             result = true;
-            await app.setStatus(AppStatus.INITIALIZED);
+            await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
         } catch (e) {
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -541,9 +613,10 @@ export class AppManager {
 
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
+            this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
-            await app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
         }
 
         if (saveToDb) {
@@ -556,14 +629,38 @@ export class AppManager {
         return result;
     }
 
-    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean): Promise<boolean> {
+    /**
+     * Determines if the App's required settings are set or not.
+     * Should a packageValue be provided and not empty, then it's considered set.
+     */
+    private areRequiredSettingsSet(storageItem: IAppStorageItem): boolean {
+        let result = true;
+
+        for (const setk of Object.keys(storageItem.settings)) {
+            const sett = storageItem.settings[setk];
+            // If it's not required, ignore
+            if (!sett.required) {
+                continue;
+            }
+
+            if (sett.value !== 'undefined' || sett.packageValue !== 'undefined') {
+                continue;
+            }
+
+            result = false;
+        }
+
+        return result;
+    }
+
+    private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean, silenceStatus = false): Promise<boolean> {
         let enable: boolean;
 
         try {
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
-            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED);
+            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
         } catch (e) {
             enable = false;
 
@@ -572,14 +669,16 @@ export class AppManager {
             }
 
             console.error(e);
-            await app.setStatus(AppStatus.ERROR_DISABLED);
+            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
         }
 
         if (enable) {
             this.commandManager.registerCommands(app.getID());
+            this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
+            this.apiManager.unregisterApis(app.getID());
         }
 
         if (saveToDb) {

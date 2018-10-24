@@ -1,8 +1,8 @@
-import { ILogger } from '@rocket.chat/apps-ts-definition/accessors';
-import { App } from '@rocket.chat/apps-ts-definition/App';
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IApp } from '@rocket.chat/apps-ts-definition/IApp';
-import { AppMethod, IAppAuthorInfo, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
+import { ILogger } from '../definition/accessors';
+import { App } from '../definition/App';
+import { AppStatus } from '../definition/AppStatus';
+import { IApp } from '../definition/IApp';
+import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 
 import { NotEnoughMethodArgumentsError } from './errors';
 import { IAppStorageItem } from './storage';
@@ -33,11 +33,11 @@ export class ProxiedApp implements IApp {
         this.storageItem = item;
     }
 
-    public getPreviousStatus() {
+    public getPreviousStatus(): AppStatus {
         return this.previousStatus;
     }
 
-    public getImplementationList() {
+    public getImplementationList(): { [inter: string]: boolean } {
         return this.storageItem.implemented;
     }
 
@@ -99,9 +99,12 @@ export class ProxiedApp implements IApp {
         return this.app.getStatus();
     }
 
-    public async setStatus(status: AppStatus): Promise<void> {
+    public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {
         await this.call(AppMethod.SETSTATUS, status);
-        await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, this.getStatus());
+
+        if (!silent) {
+            await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, status);
+        }
     }
 
     public getName(): string {

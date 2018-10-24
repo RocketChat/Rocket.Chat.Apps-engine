@@ -1,4 +1,4 @@
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { ISetting } from '../../definition/settings';
 
 /**
  * An interface which will contain various methods related to Apps
