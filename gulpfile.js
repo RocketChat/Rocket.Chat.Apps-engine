@@ -51,6 +51,8 @@ function watch() {
 
 const compile = gulp.series(clean_generated, lint_ts, compile_ts, update_ts_definition_version, ts_definition_module_files);
 
+gulp.task('clean', clean_generated);
+
 gulp.task('compile', compile);
 
 gulp.task('default', gulp.series(compile, watch));

@@ -1,8 +1,10 @@
+import { MessageActionType } from './MessageActionType';
+
 /**
  * Interface which represents an action which can be added to a message.
  */
 export interface IMessageAction {
-    type?: string;
+    type: MessageActionType;
     text?: string;
     url?: string;
     image_url?: string;
