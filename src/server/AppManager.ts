@@ -4,7 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
-    AppListenerManger,
+    AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
@@ -27,7 +27,7 @@ export class AppManager {
     private readonly compiler: AppCompiler;
 
     private readonly accessorManager: AppAccessorManager;
-    private readonly listenerManager: AppListenerManger;
+    private readonly listenerManager: AppListenerManager;
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
     private readonly settingsManager: AppSettingsManager;
@@ -63,7 +63,7 @@ export class AppManager {
         this.parser = new AppPackageParser();
         this.compiler = new AppCompiler();
         this.accessorManager = new AppAccessorManager(this);
-        this.listenerManager = new AppListenerManger(this);
+        this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
         this.settingsManager = new AppSettingsManager(this);
@@ -103,7 +103,7 @@ export class AppManager {
     }
 
     /** Gets the instance of the listener manager. */
-    public getListenerManager(): AppListenerManger {
+    public getListenerManager(): AppListenerManager {
         return this.listenerManager;
     }
 
