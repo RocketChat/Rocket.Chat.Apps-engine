@@ -11,7 +11,7 @@ import { IUser } from '../../definition/users';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
 
-export class AppListenerManger {
+export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
 
