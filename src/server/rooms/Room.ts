@@ -17,6 +17,7 @@ export class Room implements IRoom {
     public lastModifiedAt?: Date;
     public customFields?: { [key: string]: any };
     private _USERNAMES: Array<string>;
+
     /**
      * @deprecated
      */
