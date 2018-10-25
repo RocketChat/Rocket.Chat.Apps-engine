@@ -19,6 +19,7 @@ export class Message implements IMessage {
     public groupable?: boolean;
     public customFields?: { [key: string]: any };
     private _ROOM: Room;
+
     public get room(): Room {
         return this._ROOM;
     }
