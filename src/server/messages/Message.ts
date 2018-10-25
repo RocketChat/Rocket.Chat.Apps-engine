@@ -25,6 +25,7 @@ export class Message implements IMessage {
     public set room(room) {
         this._ROOM = new Room(room, this.manager);
     }
+
     public constructor(message: IMessage, private manager: AppManager) {
         Object.assign(this, message);
     }
