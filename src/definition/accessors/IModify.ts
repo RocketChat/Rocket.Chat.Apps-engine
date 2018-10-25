@@ -194,6 +194,7 @@ export interface IRoomExtender {
      * Get a list of usernames of users being added to the room.
      */
     getUsernamesOfMembersBeingAdded(): Array<string>;
+
     /**
      * Gets the resulting room that has been extended at the point of calling this.
      * Note: modifying the returned value will have no effect.
