@@ -10,6 +10,7 @@ import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
+import { Room } from '../rooms/Room';
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -398,7 +399,7 @@ export class AppListenerManager {
 
     // Rooms
     private async executePreRoomCreatePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
@@ -432,7 +433,7 @@ export class AppListenerManager {
 
     private async executePreRoomCreateExtend(data: IRoom): Promise<IRoom> {
         const room = data;
-        const cfRoom = Utilities.deepCloneAndFreeze(room);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
             const app = this.manager.getOneById(appId);
@@ -462,7 +463,7 @@ export class AppListenerManager {
 
     private async executePreRoomCreateModify(data: IRoom): Promise<IRoom> {
         let room = data;
-        const cfRoom = Utilities.deepCloneAndFreeze(room);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
             const app = this.manager.getOneById(appId);
@@ -491,7 +492,7 @@ export class AppListenerManager {
     }
 
     private async executePostRoomCreate(data: IRoom): Promise<void> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
             const app = this.manager.getOneById(appId);
@@ -517,7 +518,7 @@ export class AppListenerManager {
     }
 
     private async executePreRoomDeletePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
@@ -550,7 +551,7 @@ export class AppListenerManager {
     }
 
     private async executePostRoomDeleted(data: IRoom): Promise<void> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
             const app = this.manager.getOneById(appId);
