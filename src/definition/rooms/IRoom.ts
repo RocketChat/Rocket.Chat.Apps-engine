@@ -8,7 +8,7 @@ export interface IRoom {
     type: RoomType;
     creator: IUser;
     /**
-     * @deprecated
+     * @deprecated usernames will be removed on version 2.0.0
      */
     usernames: Array<string>;
     isDefault?: boolean;

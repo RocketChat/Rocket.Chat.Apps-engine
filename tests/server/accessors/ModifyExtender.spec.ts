@@ -20,7 +20,7 @@ export class ModifyExtenderTestFixture {
             getById(roomId: string, appId: string): Promise<IRoom> {
                 return Promise.resolve(TestData.getRoom());
             },
-            update(room: IRoom, appId: string): Promise<void> {
+            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IRoomBridge;

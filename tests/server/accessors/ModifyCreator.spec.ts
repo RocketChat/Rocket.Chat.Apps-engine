@@ -17,7 +17,7 @@ export class ModifyCreatorTestFixture {
         this.mockAppId = 'testing-app';
 
         this.mockRoomBridge = {
-            create(room: IRoom, appId: string): Promise<string> {
+            create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
                 return Promise.resolve('roomId');
             },
         } as IRoomBridge;
@@ -96,7 +96,7 @@ export class ModifyCreatorTestFixture {
 
         const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
         Expect(await mc.finish(roomBd)).toBe('roomId');
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, this.mockAppId);
+        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();
     }
 }
