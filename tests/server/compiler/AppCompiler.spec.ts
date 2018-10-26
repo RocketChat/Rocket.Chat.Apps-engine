@@ -89,6 +89,33 @@ export class AppCompilerTestFixture {
     }
 
     @Test()
+    public resolvePath() {
+        const compiler = new AppCompiler();
+
+        const cwd = '/rc/appengine/app/';
+
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './commands/command', cwd)).toBe('commands/command.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './commands/index', cwd)).toBe('commands/index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './utils', cwd)).toBe('utils.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './command', cwd)).toBe('commands/command.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './index', cwd)).toBe('commands/index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../utils', cwd)).toBe('utils.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', '../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', '.././index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './../index', cwd)).toBe('index.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../.././index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './../../index', cwd)).toBe('index.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../commands/command', cwd)).toBe('commands/command.ts');
+    }
+
+    @Test()
     public getLibraryFileMethod() {
         const compiler = new AppCompiler();
 
