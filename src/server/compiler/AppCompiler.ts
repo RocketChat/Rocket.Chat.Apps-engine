@@ -80,6 +80,50 @@ export class AppCompiler {
         return this.libraryFiles[norm];
     }
 
+    public resolvePath(
+        containingFile: string,
+        moduleName: string,
+        cwd: string,
+    ): string {
+        const currentFolderPath = path.dirname(containingFile).replace(cwd.replace(/\/$/, ''), '');
+        const modulePath = path.join(currentFolderPath, moduleName);
+
+        // Let's ensure we search for the App's modules first
+        const transformedModule = Utilities.transformModuleForCustomRequire(modulePath);
+        if (transformedModule) {
+            return transformedModule;
+        }
+    }
+
+    public resolver(
+        moduleName: string,
+        resolvedModules: Array<ts.ResolvedModule>,
+        containingFile: string,
+        result: ICompilerResult,
+        cwd: string,
+        moduleResHost: ts.ModuleResolutionHost,
+    ) {
+        // Keep compatibility with apps importing apps-ts-definition
+        moduleName = moduleName.replace(/@rocket.chat\/apps-ts-definition\//, '@rocket.chat/apps-engine/definition/');
+
+        if (Utilities.allowedInternalModuleRequire(moduleName)) {
+            return resolvedModules.push({ resolvedFileName: moduleName + '.js' });
+        }
+
+        const resolvedPath = this.resolvePath(containingFile, moduleName, cwd);
+        if (result.files[resolvedPath]) {
+            return resolvedModules.push({ resolvedFileName: resolvedPath });
+        }
+
+        // Now, let's try the "standard" resolution but with our little twist on it
+        const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
+        if (rs.resolvedModule) {
+            return resolvedModules.push(rs.resolvedModule);
+        }
+
+        console.log(`Failed to resolve module: ${ moduleName }`);
+    }
+
     /**
      * Attempts to compile the TypeScript down into JavaScript which we can understand.
      * It returns the files, what the App implements, and whether there are errors or not.
@@ -144,34 +188,8 @@ export class AppCompiler {
                 // tslint:disable-next-line
                 const moduleResHost: ts.ModuleResolutionHost = { fileExists: host.fileExists, readFile: host.readFile, trace: (traceDetail) => console.log(traceDetail) };
 
-                const resolver = (moduleName: string) => {
-                    // Keep compatibility with apps importing apps-ts-definition
-                    moduleName = moduleName.replace(/@rocket.chat\/apps-ts-definition\//, '@rocket.chat/apps-engine/definition/');
-
-                    if (Utilities.allowedInternalModuleRequire(moduleName)) {
-                        return resolvedModules.push({ resolvedFileName: moduleName + '.js' });
-                    }
-
-                    const currentFolderPath = path.dirname(containingFile).replace(cwd, '');
-                    const modulePath = path.join(currentFolderPath, moduleName);
-
-                    // Let's ensure we search for the App's modules first
-                    const transformedModule = Utilities.transformModuleForCustomRequire(modulePath);
-                    if (result.files[transformedModule]) {
-                        return resolvedModules.push({ resolvedFileName: transformedModule });
-                    }
-
-                    // Now, let's try the "standard" resolution but with our little twist on it
-                    const rs = ts.resolveModuleName(moduleName, containingFile, this.compilerOptions, moduleResHost);
-                    if (rs.resolvedModule) {
-                        return resolvedModules.push(rs.resolvedModule);
-                    }
-
-                    console.log(`Failed to resolve module: ${ moduleName }`);
-                };
-
                 for (const moduleName of moduleNames) {
-                    resolver(moduleName);
+                    this.resolver(moduleName, resolvedModules, containingFile, result, cwd, moduleResHost);
                 }
 
                 if (moduleNames.length > resolvedModules.length) {
