@@ -8,7 +8,9 @@ import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
+import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
+import { Room } from '../rooms/Room';
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -100,7 +102,7 @@ export class AppListenerManager {
     // Messages
     private async executePreMessageSentPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
             const app = this.manager.getOneById(appId);
@@ -133,7 +135,7 @@ export class AppListenerManager {
 
     private async executePreMessageSentExtend(data: IMessage): Promise<IMessage> {
         const msg = data;
-        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
             const app = this.manager.getOneById(appId);
@@ -163,7 +165,7 @@ export class AppListenerManager {
 
     private async executePreMessageSentModify(data: IMessage): Promise<IMessage> {
         let msg = data;
-        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentModify)) {
             const app = this.manager.getOneById(appId);
@@ -192,7 +194,7 @@ export class AppListenerManager {
     }
 
     private async executePostMessageSent(data: IMessage): Promise<void> {
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
             const app = this.manager.getOneById(appId);
@@ -219,7 +221,7 @@ export class AppListenerManager {
 
     private async executePreMessageDeletePrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageDeletePrevent)) {
             const app = this.manager.getOneById(appId);
@@ -251,7 +253,7 @@ export class AppListenerManager {
     }
 
     private async executePostMessageDelete(data: IMessage): Promise<void> {
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
@@ -278,7 +280,7 @@ export class AppListenerManager {
 
     private async executePreMessageUpdatedPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
             const app = this.manager.getOneById(appId);
@@ -311,7 +313,7 @@ export class AppListenerManager {
 
     private async executePreMessageUpdatedExtend(data: IMessage): Promise<IMessage> {
         const msg = data;
-        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
             const app = this.manager.getOneById(appId);
@@ -341,7 +343,7 @@ export class AppListenerManager {
 
     private async executePreMessageUpdatedModify(data: IMessage): Promise<IMessage> {
         let msg = data;
-        const cfMsg = Utilities.deepCloneAndFreeze(msg);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
             const app = this.manager.getOneById(appId);
@@ -370,7 +372,7 @@ export class AppListenerManager {
     }
 
     private async executePostMessageUpdated(data: IMessage): Promise<void> {
-        const cfMsg = Utilities.deepCloneAndFreeze(data);
+        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
             const app = this.manager.getOneById(appId);
@@ -397,7 +399,7 @@ export class AppListenerManager {
 
     // Rooms
     private async executePreRoomCreatePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
@@ -431,7 +433,7 @@ export class AppListenerManager {
 
     private async executePreRoomCreateExtend(data: IRoom): Promise<IRoom> {
         const room = data;
-        const cfRoom = Utilities.deepCloneAndFreeze(room);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
             const app = this.manager.getOneById(appId);
@@ -461,7 +463,7 @@ export class AppListenerManager {
 
     private async executePreRoomCreateModify(data: IRoom): Promise<IRoom> {
         let room = data;
-        const cfRoom = Utilities.deepCloneAndFreeze(room);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
             const app = this.manager.getOneById(appId);
@@ -490,7 +492,7 @@ export class AppListenerManager {
     }
 
     private async executePostRoomCreate(data: IRoom): Promise<void> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
             const app = this.manager.getOneById(appId);
@@ -516,7 +518,7 @@ export class AppListenerManager {
     }
 
     private async executePreRoomDeletePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
@@ -549,7 +551,7 @@ export class AppListenerManager {
     }
 
     private async executePostRoomDeleted(data: IRoom): Promise<void> {
-        const cfRoom = Utilities.deepCloneAndFreeze(data);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
             const app = this.manager.getOneById(appId);

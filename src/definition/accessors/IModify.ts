@@ -186,6 +186,16 @@ export interface IRoomExtender {
     addMember(user: IUser): IRoomExtender;
 
     /**
+     * Get a list of users being added to the room.
+     */
+    getMembersBeingAdded(): Array<IUser>;
+
+    /**
+     * Get a list of usernames of users being added to the room.
+     */
+    getUsernamesOfMembersBeingAdded(): Array<string>;
+
+    /**
      * Gets the resulting room that has been extended at the point of calling this.
      * Note: modifying the returned value will have no effect.
      */
@@ -422,6 +432,7 @@ export interface IRoomBuilder {
      * Adds a user to the room, these are by username until further notice.
      *
      * @param username the user's username to add to the room
+     * @deprecated in favor of `addMemberByUsername`. This method will be removed on version 2.0.0
      */
     addUsername(username: string): IRoomBuilder;
 
@@ -429,13 +440,34 @@ export interface IRoomBuilder {
      * Sets the usernames of who are joined to the room.
      *
      * @param usernames the list of usernames
+     * @deprecated in favor of `setMembersByUsernames`. This method will be removed on version 2.0.0
      */
     setUsernames(usernames: Array<string>): IRoomBuilder;
 
     /**
      * Gets the usernames of users in the room.
+     * @deprecated in favor of `getMembersUsernames`. This method will be removed on version 2.0.0
      */
     getUsernames(): Array<string>;
+
+    /**
+     * Adds a member to the room by username
+     *
+     * @param username the user's username to add to the room
+     */
+    addMemberToBeAddedByUsername(username: string): IRoomBuilder;
+
+    /**
+     * Sets a list of members to the room by usernames
+     *
+     * @param usernames the list of usernames
+     */
+    setMembersToBeAddedByUsernames(usernames: Array<string>): IRoomBuilder;
+
+    /**
+     * Gets the list of usernames of the members who are been added to the room
+     */
+    getMembersToBeAddedUsernames(): Array<string>;
 
     /**
      * Sets whether this room should be a default room or not.

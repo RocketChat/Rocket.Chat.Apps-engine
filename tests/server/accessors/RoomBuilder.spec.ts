@@ -38,17 +38,26 @@ export class RoomBuilderAccessorTestFixture {
         Expect(rb.getCreator()).toEqual(TestData.getUser());
 
         Expect(rb.addUsername('testing.username')).toBe(rb);
-        Expect(room.usernames).not.toBeEmpty();
+        Expect(room.usernames).not.toBeDefined();
         Expect(rb.getUsernames()).not.toBeEmpty();
-        Expect(room.usernames[0]).toEqual('testing.username');
+        Expect(room.usernames).not.toBeDefined();
         Expect(rb.getUsernames()[0]).toEqual('testing.username');
         Expect(rb.addUsername('another.username')).toBe(rb);
-        Expect(room.usernames.length).toBe(2);
+        Expect(room.usernames).not.toBeDefined();
         Expect(rb.getUsernames().length).toBe(2);
 
         Expect(rb.setUsernames([])).toBe(rb);
-        Expect(room.usernames).toBeEmpty();
+        Expect(room.usernames).not.toBeDefined();
         Expect(rb.getUsernames()).toBeEmpty();
+
+        Expect(rb.addMemberToBeAddedByUsername('testing.username')).toBe(rb);
+        Expect(rb.getMembersToBeAddedUsernames()).not.toBeEmpty();
+        Expect(rb.getMembersToBeAddedUsernames()[0]).toEqual('testing.username');
+        Expect(rb.addMemberToBeAddedByUsername('another.username')).toBe(rb);
+        Expect(rb.getMembersToBeAddedUsernames().length).toBe(2);
+
+        Expect(rb.setMembersToBeAddedByUsernames([])).toBe(rb);
+        Expect(rb.getMembersToBeAddedUsernames()).toBeEmpty();
 
         Expect(rb.setDefault(true)).toBe(rb);
         Expect(room.isDefault).toBeTruthy();

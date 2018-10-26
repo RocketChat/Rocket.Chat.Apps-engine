@@ -6,10 +6,12 @@ import { IUser } from '../../definition/users';
 export class RoomBuilder implements IRoomBuilder {
     public kind: RocketChatAssociationModel.ROOM;
     private room: IRoom;
+    private members: Array<string>;
 
     constructor(data?: IRoom) {
         this.kind = RocketChatAssociationModel.ROOM;
         this.room = data ? data : ({ customFields: {} } as IRoom);
+        this.members = new Array<string>();
     }
 
     public setData(data: IRoom): IRoomBuilder {
@@ -55,22 +57,45 @@ export class RoomBuilder implements IRoomBuilder {
         return this.room.creator;
     }
 
+    /**
+     * @deprecated
+     */
     public addUsername(username: string): IRoomBuilder {
-        if (!this.room.usernames) {
-            this.room.usernames = new Array<string>();
-        }
-
-        this.room.usernames.push(username);
+        this.addMemberToBeAddedByUsername(username);
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public setUsernames(usernames: Array<string>): IRoomBuilder {
-        this.room.usernames = usernames;
+        this.setMembersToBeAddedByUsernames(usernames);
         return this;
     }
 
+    /**
+     * @deprecated
+     */
     public getUsernames(): Array<string> {
-        return this.room.usernames;
+        const usernames = this.getMembersToBeAddedUsernames();
+        if (usernames && usernames.length > 0) {
+            return usernames;
+        }
+        return this.room.usernames || [];
+    }
+
+    public addMemberToBeAddedByUsername(username: string): IRoomBuilder {
+        this.members.push(username);
+        return this;
+    }
+
+    public setMembersToBeAddedByUsernames(usernames: Array<string>): IRoomBuilder {
+        this.members = usernames;
+        return this;
+    }
+
+    public getMembersToBeAddedUsernames(): Array<string> {
+        return this.members;
     }
 
     public setDefault(isDefault: boolean): IRoomBuilder {

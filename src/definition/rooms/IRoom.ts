@@ -7,6 +7,9 @@ export interface IRoom {
     slugifiedName: string;
     type: RoomType;
     creator: IUser;
+    /**
+     * @deprecated usernames will be removed on version 2.0.0
+     */
     usernames: Array<string>;
     isDefault?: boolean;
     isReadOnly?: boolean;

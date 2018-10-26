@@ -4,6 +4,7 @@ import {
     IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
+    IInternalBridge,
     IListenerBridge,
     IMessageBridge,
     IPersistenceBridge,
@@ -17,6 +18,7 @@ import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
+import { TestsInternalBridge } from './internalBridge';
 import { TestsMessageBridge } from './messageBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
@@ -33,6 +35,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly msgBridge: TestsMessageBridge;
     private readonly persisBridge: TestsPersisBridge;
     private readonly roomBridge: TestsRoomBridge;
+    private readonly internalBridge: TestsInternalBridge;
     private readonly userBridge: TestsUserBridge;
     private readonly httpBridge: TestsHttpBridge;
 
@@ -47,6 +50,7 @@ export class TestsAppBridges extends AppBridges {
         this.msgBridge = new TestsMessageBridge();
         this.persisBridge = new TestsPersisBridge();
         this.roomBridge = new TestsRoomBridge();
+        this.internalBridge = new TestsInternalBridge();
         this.userBridge = new TestsUserBridge();
         this.httpBridge = new TestsHttpBridge();
     }
@@ -93,6 +97,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getRoomBridge(): IRoomBridge {
         return this.roomBridge;
+    }
+
+    public getInternalBridge(): IInternalBridge {
+        return this.internalBridge;
     }
 
     public getUserBridge(): IUserBridge {

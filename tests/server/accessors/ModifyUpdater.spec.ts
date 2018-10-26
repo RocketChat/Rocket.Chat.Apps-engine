@@ -20,7 +20,7 @@ export class ModifyUpdaterTestFixture {
             getById(roomId: string, appId: string): Promise<IRoom> {
                 return Promise.resolve(TestData.getRoom());
             },
-            update(room: IRoom, appId: string): Promise<void> {
+            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IRoomBridge;
@@ -104,7 +104,7 @@ export class ModifyUpdaterTestFixture {
 
         const roomBriSpy = SpyOn(this.mockRoomBridge, 'update');
         Expect(await mc.finish(roomBd)).not.toBeDefined();
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, this.mockAppId);
+        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();
     }
 }

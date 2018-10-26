@@ -68,6 +68,6 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid type assigned to the room.');
         }
 
-        return this.bridges.getRoomBridge().create(result, this.appId);
+        return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
 }

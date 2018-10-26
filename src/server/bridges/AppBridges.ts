@@ -4,6 +4,7 @@ import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge } from './IHttpBridge';
+import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
@@ -22,6 +23,7 @@ export abstract class AppBridges {
     public abstract getPersistenceBridge(): IPersistenceBridge;
     public abstract getAppActivationBridge(): IAppActivationBridge;
     public abstract getRoomBridge(): IRoomBridge;
+    public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): IServerSettingBridge;
     public abstract getUserBridge(): IUserBridge;
 }

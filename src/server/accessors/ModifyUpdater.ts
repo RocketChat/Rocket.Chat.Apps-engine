@@ -69,6 +69,6 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid type assigned to the room.');
         }
 
-        return this.bridges.getRoomBridge().update(result, this.appId);
+        return this.bridges.getRoomBridge().update(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
 }
