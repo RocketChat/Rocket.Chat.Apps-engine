@@ -88,6 +88,8 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="imessageattachment.html#actionbuttonsalignment" class="tsd-kind-icon">action<wbr>Buttons<wbr>Alignment</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="imessageattachment.html#actions" class="tsd-kind-icon">actions</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="imessageattachment.html#audiourl" class="tsd-kind-icon">audio<wbr>Url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="imessageattachment.html#author" class="tsd-kind-icon">author</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="imessageattachment.html#collapsed" class="tsd-kind-icon">collapsed</a></li>
@@ -110,12 +112,42 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="actionbuttonsalignment" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> action<wbr>Buttons<wbr>Alignment</h3>
+					<div class="tsd-signature tsd-kind-icon">action<wbr>Buttons<wbr>Alignment<span class="tsd-signature-symbol">:</span> <a href="../enums/messageactionbuttonsalignment.html" class="tsd-signature-type">MessageActionButtonsAlignment</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L38">messages/IMessageAttachment.ts:38</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>States how the action buttons are aligned.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="actions" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> actions</h3>
+					<div class="tsd-signature tsd-kind-icon">actions<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="imessageaction.html" class="tsd-signature-type">IMessageAction</a><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L40">messages/IMessageAttachment.ts:40</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Allows displaying action items, such as buttons, on the attachment.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="audiourl" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> audio<wbr>Url</h3>
 					<div class="tsd-signature tsd-kind-icon">audio<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L28">messages/IMessageAttachment.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L30">messages/IMessageAttachment.ts:30</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -130,7 +162,7 @@
 					<div class="tsd-signature tsd-kind-icon">author<span class="tsd-signature-symbol">:</span> <a href="imessageattachmentauthor.html" class="tsd-signature-type">IMessageAttachmentAuthor</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L22">messages/IMessageAttachment.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L24">messages/IMessageAttachment.ts:24</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -145,7 +177,7 @@
 					<div class="tsd-signature tsd-kind-icon">collapsed<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L10">messages/IMessageAttachment.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L12">messages/IMessageAttachment.ts:12</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -160,7 +192,7 @@
 					<div class="tsd-signature tsd-kind-icon">color<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L12">messages/IMessageAttachment.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L14">messages/IMessageAttachment.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -175,7 +207,7 @@
 					<div class="tsd-signature tsd-kind-icon">description<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L34">messages/IMessageAttachment.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L36">messages/IMessageAttachment.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -190,7 +222,7 @@
 					<div class="tsd-signature tsd-kind-icon">fields<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="imessageattachmentfield.html" class="tsd-signature-type">IMessageAttachmentField</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L36">messages/IMessageAttachment.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L42">messages/IMessageAttachment.ts:42</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -205,7 +237,7 @@
 					<div class="tsd-signature tsd-kind-icon">image<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L26">messages/IMessageAttachment.ts:26</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L28">messages/IMessageAttachment.ts:28</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -220,7 +252,7 @@
 					<div class="tsd-signature tsd-kind-icon">text<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L14">messages/IMessageAttachment.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L16">messages/IMessageAttachment.ts:16</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -235,7 +267,7 @@
 					<div class="tsd-signature tsd-kind-icon">thumbnail<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L20">messages/IMessageAttachment.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L22">messages/IMessageAttachment.ts:22</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -250,7 +282,7 @@
 					<div class="tsd-signature tsd-kind-icon">timestamp<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Date</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L16">messages/IMessageAttachment.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L18">messages/IMessageAttachment.ts:18</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -265,7 +297,7 @@
 					<div class="tsd-signature tsd-kind-icon">timestamp<wbr>Link<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L18">messages/IMessageAttachment.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L20">messages/IMessageAttachment.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -280,7 +312,7 @@
 					<div class="tsd-signature tsd-kind-icon">title<span class="tsd-signature-symbol">:</span> <a href="imessageattachmenttitle.html" class="tsd-signature-type">IMessageAttachmentTitle</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L24">messages/IMessageAttachment.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L26">messages/IMessageAttachment.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -295,7 +327,7 @@
 					<div class="tsd-signature tsd-kind-icon">type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L32">messages/IMessageAttachment.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L34">messages/IMessageAttachment.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -310,7 +342,7 @@
 					<div class="tsd-signature tsd-kind-icon">video<wbr>Url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/messages/IMessageAttachment.ts#L30">messages/IMessageAttachment.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/messages/IMessageAttachment.ts#L32">messages/IMessageAttachment.ts:32</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -336,6 +368,12 @@
 					<li class="current tsd-kind-interface">
 						<a href="imessageattachment.html" class="tsd-kind-icon">IMessage<wbr>Attachment</a>
 						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="imessageattachment.html#actionbuttonsalignment" class="tsd-kind-icon">action<wbr>Buttons<wbr>Alignment</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="imessageattachment.html#actions" class="tsd-kind-icon">actions</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="imessageattachment.html#audiourl" class="tsd-kind-icon">audio<wbr>Url</a>
 							</li>
