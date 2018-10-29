@@ -97,6 +97,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#addcustomfield" class="tsd-kind-icon">add<wbr>Custom<wbr>Field</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#addmembertobeaddedbyusername" class="tsd-kind-icon">add<wbr>Member<wbr>ToBe<wbr>Added<wbr>ByUsername</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#addusername" class="tsd-kind-icon">add<wbr>Username</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getcreator" class="tsd-kind-icon">get<wbr>Creator</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getcustomfields" class="tsd-kind-icon">get<wbr>Custom<wbr>Fields</a></li>
@@ -104,6 +105,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getdisplayingofsystemmessages" class="tsd-kind-icon">get<wbr>Displaying<wbr>OfSystem<wbr>Messages</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getisdefault" class="tsd-kind-icon">get<wbr>IsDefault</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getisreadonly" class="tsd-kind-icon">get<wbr>IsRead<wbr>Only</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getmemberstobeaddedusernames" class="tsd-kind-icon">get<wbr>Members<wbr>ToBe<wbr>Added<wbr>Usernames</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getroom" class="tsd-kind-icon">get<wbr>Room</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#getslugifiedname" class="tsd-kind-icon">get<wbr>Slugified<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#gettype" class="tsd-kind-icon">get<wbr>Type</a></li>
@@ -114,6 +116,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setdefault" class="tsd-kind-icon">set<wbr>Default</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setdisplayname" class="tsd-kind-icon">set<wbr>Display<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setdisplayingofsystemmessages" class="tsd-kind-icon">set<wbr>Displaying<wbr>OfSystem<wbr>Messages</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setmemberstobeaddedbyusernames" class="tsd-kind-icon">set<wbr>Members<wbr>ToBe<wbr>Added<wbr>ByUsernames</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setreadonly" class="tsd-kind-icon">set<wbr>Read<wbr>Only</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#setslugifiedname" class="tsd-kind-icon">set<wbr>Slugified<wbr>Name</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroombuilder.html#settype" class="tsd-kind-icon">set<wbr>Type</a></li>
@@ -131,7 +134,7 @@
 					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <a href="../enums/rocketchatassociationmodel.html#room" class="tsd-signature-type">ROOM</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L349">accessors/IModify.ts:349</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L372">accessors/IModify.ts:372</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -148,7 +151,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L477">accessors/IModify.ts:477</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L522">accessors/IModify.ts:522</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -177,6 +180,37 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="addmembertobeaddedbyusername" class="tsd-anchor"></a>
+					<h3>add<wbr>Member<wbr>ToBe<wbr>Added<wbr>ByUsername</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Member<wbr>ToBe<wbr>Added<wbr>ByUsername<span class="tsd-signature-symbol">(</span>username<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="iroombuilder.html" class="tsd-signature-type">IRoomBuilder</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L458">accessors/IModify.ts:458</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Adds a member to the room by username</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>username: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the user&#39;s username to add to the room</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="iroombuilder.html" class="tsd-signature-type">IRoomBuilder</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="addusername" class="tsd-anchor"></a>
 					<h3>add<wbr>Username</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -186,13 +220,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L413">accessors/IModify.ts:413</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L437">accessors/IModify.ts:437</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Adds a user to the room, these are by username until further notice.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>in favor of <code>addMemberByUsername</code>. This method will be removed on version 2.0.0</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -217,7 +256,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L406">accessors/IModify.ts:406</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L429">accessors/IModify.ts:429</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -239,7 +278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L490">accessors/IModify.ts:490</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L535">accessors/IModify.ts:535</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -266,7 +305,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L369">accessors/IModify.ts:369</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L392">accessors/IModify.ts:392</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -288,7 +327,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L468">accessors/IModify.ts:468</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L513">accessors/IModify.ts:513</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -310,7 +349,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L439">accessors/IModify.ts:439</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L484">accessors/IModify.ts:484</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -332,7 +371,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L454">accessors/IModify.ts:454</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L499">accessors/IModify.ts:499</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -341,6 +380,28 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getmemberstobeaddedusernames" class="tsd-anchor"></a>
+					<h3>get<wbr>Members<wbr>ToBe<wbr>Added<wbr>Usernames</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Members<wbr>ToBe<wbr>Added<wbr>Usernames<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L470">accessors/IModify.ts:470</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets the list of usernames of the members who are been added to the room</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -354,7 +415,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L496">accessors/IModify.ts:496</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L541">accessors/IModify.ts:541</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,7 +438,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L382">accessors/IModify.ts:382</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L405">accessors/IModify.ts:405</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -399,7 +460,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L394">accessors/IModify.ts:394</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L417">accessors/IModify.ts:417</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -421,13 +482,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L425">accessors/IModify.ts:425</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L451">accessors/IModify.ts:451</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Gets the usernames of users in the room.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>in favor of <code>getMembersUsernames</code>. This method will be removed on version 2.0.0</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
@@ -443,7 +509,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L401">accessors/IModify.ts:401</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L424">accessors/IModify.ts:424</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -474,7 +540,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L485">accessors/IModify.ts:485</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L530">accessors/IModify.ts:530</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -511,7 +577,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L357">accessors/IModify.ts:357</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L380">accessors/IModify.ts:380</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -543,7 +609,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L434">accessors/IModify.ts:434</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L479">accessors/IModify.ts:479</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -576,7 +642,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L364">accessors/IModify.ts:364</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L387">accessors/IModify.ts:387</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -607,7 +673,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L463">accessors/IModify.ts:463</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L508">accessors/IModify.ts:508</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -631,6 +697,37 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="setmemberstobeaddedbyusernames" class="tsd-anchor"></a>
+					<h3>set<wbr>Members<wbr>ToBe<wbr>Added<wbr>ByUsernames</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Members<wbr>ToBe<wbr>Added<wbr>ByUsernames<span class="tsd-signature-symbol">(</span>usernames<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="iroombuilder.html" class="tsd-signature-type">IRoomBuilder</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L465">accessors/IModify.ts:465</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Sets a list of members to the room by usernames</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>usernames: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the list of usernames</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="iroombuilder.html" class="tsd-signature-type">IRoomBuilder</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="setreadonly" class="tsd-anchor"></a>
 					<h3>set<wbr>Read<wbr>Only</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -640,7 +737,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L449">accessors/IModify.ts:449</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L494">accessors/IModify.ts:494</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -674,7 +771,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L377">accessors/IModify.ts:377</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L400">accessors/IModify.ts:400</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -706,7 +803,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L389">accessors/IModify.ts:389</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L412">accessors/IModify.ts:412</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -737,13 +834,18 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/4e6e40a/src/definition/accessors/IModify.ts#L420">accessors/IModify.ts:420</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IModify.ts#L445">accessors/IModify.ts:445</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Sets the usernames of who are joined to the room.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>deprecated</dt>
+									<dd><p>in favor of <code>setMembersByUsernames</code>. This method will be removed on version 2.0.0</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -782,6 +884,9 @@
 								<a href="iroombuilder.html#addcustomfield" class="tsd-kind-icon">add<wbr>Custom<wbr>Field</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="iroombuilder.html#addmembertobeaddedbyusername" class="tsd-kind-icon">add<wbr>Member<wbr>ToBe<wbr>Added<wbr>ByUsername</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroombuilder.html#addusername" class="tsd-kind-icon">add<wbr>Username</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
@@ -801,6 +906,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroombuilder.html#getisreadonly" class="tsd-kind-icon">get<wbr>IsRead<wbr>Only</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="iroombuilder.html#getmemberstobeaddedusernames" class="tsd-kind-icon">get<wbr>Members<wbr>ToBe<wbr>Added<wbr>Usernames</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroombuilder.html#getroom" class="tsd-kind-icon">get<wbr>Room</a>
@@ -831,6 +939,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroombuilder.html#setdisplayingofsystemmessages" class="tsd-kind-icon">set<wbr>Displaying<wbr>OfSystem<wbr>Messages</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="iroombuilder.html#setmemberstobeaddedbyusernames" class="tsd-kind-icon">set<wbr>Members<wbr>ToBe<wbr>Added<wbr>ByUsernames</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroombuilder.html#setreadonly" class="tsd-kind-icon">set<wbr>Read<wbr>Only</a>
