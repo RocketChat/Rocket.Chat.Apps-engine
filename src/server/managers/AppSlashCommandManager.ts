@@ -5,6 +5,7 @@ import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCom
 import { AppManager } from '../AppManager';
 import { IAppCommandBridge } from '../bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../errors';
+import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 import { AppSlashCommand } from './AppSlashCommand';
 
@@ -319,8 +320,19 @@ export class AppSlashCommandManager {
             return;
         }
 
+        // Due to the internal changes for the usernames property, we need to ensure the room
+        // is a class and not just an interface
+        let room: Room;
+        if (context.getRoom() instanceof Room) {
+            room = context.getRoom() as Room;
+        } else {
+            room = new Room(context.getRoom(), this.manager);
+        }
+
+        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
+
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, context, this.manager.getLogStorage(), this.accessors);
+        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, newContext, this.manager.getLogStorage(), this.accessors);
 
         return;
     }
@@ -340,8 +352,19 @@ export class AppSlashCommandManager {
             return;
         }
 
+        // Due to the internal changes for the usernames property, we need to ensure the room
+        // is a class and not just an interface
+        let room: Room;
+        if (context.getRoom() instanceof Room) {
+            room = context.getRoom() as Room;
+        } else {
+            room = new Room(context.getRoom(), this.manager);
+        }
+
+        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
+
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, context, this.manager.getLogStorage(), this.accessors);
+        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, newContext, this.manager.getLogStorage(), this.accessors);
 
         if (!result) {
             // Failed to get the preview, thus returning is fine
@@ -366,8 +389,19 @@ export class AppSlashCommandManager {
             return;
         }
 
+        // Due to the internal changes for the usernames property, we need to ensure the room
+        // is a class and not just an interface
+        let room: Room;
+        if (context.getRoom() instanceof Room) {
+            room = context.getRoom() as Room;
+        } else {
+            room = new Room(context.getRoom(), this.manager);
+        }
+
+        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
+
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runPreviewExecutor(previewItem, context, this.manager.getLogStorage(), this.accessors);
+        await appCmd.runPreviewExecutor(previewItem, newContext, this.manager.getLogStorage(), this.accessors);
 
         return;
     }
