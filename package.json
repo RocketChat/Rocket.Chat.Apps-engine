@@ -38,6 +38,7 @@
   "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
   "devDependencies": {
     "@types/adm-zip": "^0.4.31",
+    "@types/later": "^1.2.4",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/nedb": "^1.8.5",
     "@types/semver": "^5.5.0",
@@ -65,6 +66,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.9",
+    "later": "^1.2.0",
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.5.0",
     "stack-trace": "0.0.10",

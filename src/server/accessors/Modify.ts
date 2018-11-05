@@ -1,4 +1,5 @@
 import {
+    IConfigurationModify,
     IModify,
     IModifyCreator,
     IModifyExtender,
@@ -18,7 +19,7 @@ export class Modify implements IModify {
     private extender: IModifyExtender;
     private notifier: INotifier;
 
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+    constructor(private readonly bridges: AppBridges, private readonly config: IConfigurationModify, private readonly appId: string) {
         this.creator = new ModifyCreator(this.bridges, this.appId);
         this.updater = new ModifyUpdater(this.bridges, this.appId);
         this.extender = new ModifyExtender(this.bridges, this.appId);
@@ -35,6 +36,10 @@ export class Modify implements IModify {
 
     public getExtender(): IModifyExtender {
         return this.extender;
+    }
+
+    public getConfiguration(): IConfigurationModify {
+        return this.config;
     }
 
     public getNotifier(): INotifier {

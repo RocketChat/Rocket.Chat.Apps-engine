@@ -15,22 +15,21 @@ import {
 } from './IHttp';
 import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
+import { IMessageBuilder } from './IMessageBuilder';
+import { IMessageExtender } from './IMessageExtender';
 import { IMessageRead } from './IMessageRead';
-import {
-    IMessageBuilder,
-    IMessageExtender,
-    IModify,
-    IModifyCreator,
-    IModifyExtender,
-    IModifyUpdater,
-    INotifier,
-    IRoomBuilder,
-    IRoomExtender,
-} from './IModify';
+import { IModify } from './IModify';
+import { IModifyCreator } from './IModifyCreator';
+import { IModifyExtender } from './IModifyExtender';
+import { IModifyUpdater } from './IModifyUpdater';
+import { INotifier } from './INotifier';
 import { IPersistence } from './IPersistence';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRead } from './IRead';
+import { IRoomBuilder } from './IRoomBuilder';
+import { IRoomExtender } from './IRoomExtender';
 import { IRoomRead } from './IRoomRead';
+import { ISchedulerExtend } from './ISchedulerExtend';
 import { IServerSettingRead } from './IServerSettingRead';
 import { IServerSettingsModify } from './IServerSettingsModify';
 import { ISettingRead } from './ISettingRead';
@@ -67,6 +66,7 @@ export {
     IRoomBuilder,
     IRoomExtender,
     IRoomRead,
+    ISchedulerExtend,
     IServerSettingRead,
     IServerSettingsModify,
     ISettingRead,

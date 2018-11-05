@@ -11,6 +11,7 @@ import {
     PersistenceRead,
     Reader,
     RoomRead,
+    SchedulerExtend,
     ServerSettingRead,
     SettingRead,
     SettingsExtend,
@@ -83,8 +84,9 @@ export class AppAccessorManager {
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
             const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
+            const sch = new SchedulerExtend(appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, sch));
         }
 
         return this.configExtenders.get(appId);
@@ -136,7 +138,9 @@ export class AppAccessorManager {
 
     public getModifier(appId: string): IModify {
         if (!this.modifiers.has(appId)) {
-            this.modifiers.set(appId, new Modify(this.bridges, appId));
+            const config = this.getConfigurationModify(appId);
+
+            this.modifiers.set(appId, new Modify(this.bridges, config, appId));
         }
 
         return this.modifiers.get(appId);
