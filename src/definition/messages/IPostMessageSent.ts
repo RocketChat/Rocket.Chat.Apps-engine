@@ -1,4 +1,4 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IMessage } from './IMessage';
 
 /** Handler for after a message is sent. */
@@ -23,5 +23,5 @@ export interface IPostMessageSent {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    executePostMessageSent(message: IMessage, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    executePostMessageSent(message: IMessage, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
 }
