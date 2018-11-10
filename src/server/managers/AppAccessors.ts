@@ -1,10 +1,11 @@
 import { IEnvironmentRead, IHttp, IRead } from '../../definition/accessors';
 import { AppManager } from '../AppManager';
-import { AppAccessorManager } from './AppAccessorManager';
-import { AppApiManager } from './AppApiManager';
-import { AppSlashCommandManager } from './AppSlashCommandManager';
-import { AppApi } from './AppApi';
 import { Utilities } from '../misc/Utilities';
+import { AppAccessorManager } from './AppAccessorManager';
+import { AppApi } from './AppApi';
+import { AppApiManager } from './AppApiManager';
+import { AppSlashCommand } from './AppSlashCommand';
+import { AppSlashCommandManager } from './AppSlashCommandManager';
 
 export class AppAccessor {
     private accessorManager: AppAccessorManager;
@@ -31,13 +32,13 @@ export class AppAccessor {
     public getReader(): IRead {
         this.assertAppId();
 
-        return this.accessorManager.getReader();
+        return this.accessorManager.getReader(this.appId);
     }
 
     public getHttp(): IHttp {
         this.assertAppId();
 
-        return this.accessorManager.getHttp();
+        return this.accessorManager.getHttp(this.appId);
     }
 
     public getProvidedApiEndpoints(): Map<string, AppApi> {
