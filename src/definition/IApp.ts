@@ -1,9 +1,11 @@
+import { IAppAccessors } from './accessors';
 import { ILogger } from './accessors/ILogger';
 import { AppStatus } from './AppStatus';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 
 export interface IApp {
+    readonly accessors?: IAppAccessors;
     /**
      * Gets the status of this App.
      *
