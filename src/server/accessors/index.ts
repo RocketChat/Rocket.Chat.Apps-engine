@@ -1,3 +1,4 @@
+import { AppAccessors } from './AppAccessors';
 import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
@@ -27,6 +28,7 @@ import { SlashCommandsModify } from './SlashCommandsModify';
 import { UserRead } from './UserRead';
 
 export {
+    AppAccessors,
     ConfigurationExtend,
     ConfigurationModify,
     EnvironmentalVariableRead,

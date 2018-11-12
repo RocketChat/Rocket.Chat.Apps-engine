@@ -1,7 +1,6 @@
-import { AppStatusUtils } from '../../definition/AppStatus';
-
 import { HttpStatusCode } from '../../definition/accessors';
-import { IApi, IApiRequest, IApiResponse } from '../../definition/api';
+import { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
+import { AppStatusUtils } from '../../definition/AppStatus';
 import { AppManager } from '../AppManager';
 import { IAppApiBridge } from '../bridges';
 import { PathAlreadyExistsError } from '../errors';
@@ -132,7 +131,7 @@ export class AppApiManager {
      *
      * @param appId the app which is providing the api
      */
-    public listApis(appId: string): Array<object> {
+    public listApis(appId: string): Array<IApiEndpointMetadata> {
         const apis = this.providedApis.get(appId);
 
         if (!apis) {
@@ -142,12 +141,14 @@ export class AppApiManager {
         const result = [];
 
         for (const api of apis.values()) {
-            result.push({
+            const metadata: IApiEndpointMetadata = {
                 path: api.endpoint.path,
                 computedPath: api.computedPath,
                 methods: api.implementedMethods,
                 examples: api.endpoint.examples || {},
-            });
+            };
+
+            result.push(metadata);
         }
 
         return result;

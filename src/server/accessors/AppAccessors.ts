@@ -1,26 +1,19 @@
-import { IEnvironmentRead, IHttp, IRead } from '../../definition/accessors';
+import { IAppAccessors, IEnvironmentRead, IHttp, IRead } from '../../definition/accessors';
+import { IApiEndpointMetadata } from '../../definition/api';
 import { AppManager } from '../AppManager';
-import { Utilities } from '../misc/Utilities';
-import { AppAccessorManager } from './AppAccessorManager';
-import { AppApi } from './AppApi';
-import { AppApiManager } from './AppApiManager';
-import { AppSlashCommand } from './AppSlashCommand';
-import { AppSlashCommandManager } from './AppSlashCommandManager';
+import { AppAccessorManager } from '../managers/AppAccessorManager';
+import { AppApiManager } from '../managers/AppApiManager';
+import { AppSlashCommandManager } from '../managers/AppSlashCommandManager';
 
-export class AppAccessor {
+export class AppAccessors implements IAppAccessors {
     private accessorManager: AppAccessorManager;
     private apiManager: AppApiManager;
     private slashcommandManager: AppSlashCommandManager;
-    private appId: string;
 
-    constructor(manager: AppManager) {
+    constructor(manager: AppManager, private readonly appId: string) {
         this.accessorManager = manager.getAccessorManager();
         this.apiManager = manager.getApiManager();
         this.slashcommandManager = manager.getCommandManager();
-    }
-
-    public setAppId(appId: string) {
-        this.appId = appId;
     }
 
     public getEnvironmentRead(): IEnvironmentRead {
@@ -41,15 +34,14 @@ export class AppAccessor {
         return this.accessorManager.getHttp(this.appId);
     }
 
-    public getProvidedApiEndpoints(): Map<string, AppApi> {
+    public getProvidedApiEndpoints(): Array<IApiEndpointMetadata> {
         this.assertAppId();
 
-        return Utilities.deepClone(this.apiManager.getProvidedApis().get(this.appId));
+        return this.apiManager.listApis(this.appId);
     }
-    public getProvidedSlashcommands(): Map<string, AppSlashCommand> {
-        this.assertAppId();
 
-        return Utilities.deepClone(this.slashcommandManager.getProvidedCommands().get(this.appId));
+    public getSlashcommandManager() {
+        return this.slashcommandManager;
     }
 
     private assertAppId(): void {
