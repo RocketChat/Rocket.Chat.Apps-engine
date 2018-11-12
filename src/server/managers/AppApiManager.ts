@@ -27,10 +27,6 @@ export class AppApiManager {
         this.providedApis = new Map<string, Map<string, AppApi>>();
     }
 
-    public getProvidedApis(): Map<string, Map<string, AppApi>> {
-        return this.providedApis;
-    }
-
     /**
      * Adds an to *be* registered. This will *not register* it with the
      * bridged system yet as this is only called on an App's

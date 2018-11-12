@@ -43,10 +43,6 @@ export class AppSlashCommandManager {
         this.modifiedCommands = new Map<string, AppSlashCommand>();
     }
 
-    public getProvidedCommands(): Map<string, Map<string, AppSlashCommand>> {
-        return this.providedCommands;
-    }
-
     /**
      * Checks whether an App can touch a command or not. There are only two ways an App can touch
      * a command:
