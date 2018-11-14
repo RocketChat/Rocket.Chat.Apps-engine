@@ -320,19 +320,8 @@ export class AppSlashCommandManager {
             return;
         }
 
-        // Due to the internal changes for the usernames property, we need to ensure the room
-        // is a class and not just an interface
-        let room: Room;
-        if (context.getRoom() instanceof Room) {
-            room = context.getRoom() as Room;
-        } else {
-            room = new Room(context.getRoom(), this.manager);
-        }
-
-        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
-
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, newContext, this.manager.getLogStorage(), this.accessors);
+        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
 
         return;
     }
@@ -352,19 +341,10 @@ export class AppSlashCommandManager {
             return;
         }
 
-        // Due to the internal changes for the usernames property, we need to ensure the room
-        // is a class and not just an interface
-        let room: Room;
-        if (context.getRoom() instanceof Room) {
-            room = context.getRoom() as Room;
-        } else {
-            room = new Room(context.getRoom(), this.manager);
-        }
-
-        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
-
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, newContext, this.manager.getLogStorage(), this.accessors);
+
+        // tslint:disable-next-line:max-line-length
+        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
 
         if (!result) {
             // Failed to get the preview, thus returning is fine
@@ -389,6 +369,13 @@ export class AppSlashCommandManager {
             return;
         }
 
+        const appCmd = this.retrieveCommandInfo(cmd, app.getID());
+        await appCmd.runPreviewExecutor(previewItem, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
+
+        return;
+    }
+
+    private ensureContext(context: SlashCommandContext): SlashCommandContext {
         // Due to the internal changes for the usernames property, we need to ensure the room
         // is a class and not just an interface
         let room: Room;
@@ -398,12 +385,7 @@ export class AppSlashCommandManager {
             room = new Room(context.getRoom(), this.manager);
         }
 
-        const newContext = new SlashCommandContext(context.getSender(), room, context.getArguments());
-
-        const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runPreviewExecutor(previewItem, newContext, this.manager.getLogStorage(), this.accessors);
-
-        return;
+        return new SlashCommandContext(context.getSender(), room, context.getArguments());
     }
 
     /**
