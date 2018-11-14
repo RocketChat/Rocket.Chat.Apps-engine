@@ -131,7 +131,7 @@ export class AppApiManager {
         const apis = this.providedApis.get(appId);
 
         if (!apis) {
-            throw new Error('No app found for the provided id.');
+            return [];
         }
 
         const result = [];

@@ -195,7 +195,7 @@ export class AppApiManagerTestFixture {
     public listApis() {
         const ascm = new AppApiManager(this.mockManager);
 
-        Expect(() => ascm.listApis('testing')).toThrow();
+        Expect(ascm.listApis('testing')).toEqual([]);
 
         ascm.addApi('testing', TestData.getApi('api1'));
         ascm.registerApis('testing');

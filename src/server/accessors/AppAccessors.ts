@@ -34,10 +34,6 @@ export class AppAccessors implements IAppAccessors {
     }
 
     public get providedApiEndpoints(): Array<IApiEndpointMetadata> {
-        try {
-            return this.apiManager.listApis(this.appId);
-        } catch (e) {
-            return [];
-        }
+        return this.apiManager.listApis(this.appId);
     }
 }
