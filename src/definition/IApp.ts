@@ -5,7 +5,6 @@ import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 
 export interface IApp {
-    readonly accessors?: IAppAccessors;
     /**
      * Gets the status of this App.
      *
@@ -76,4 +75,6 @@ export interface IApp {
      * @return the logger instance
      */
     getLogger(): ILogger;
+
+    getAccessors(): IAppAccessors;
 }
