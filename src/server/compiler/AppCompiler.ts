@@ -302,7 +302,7 @@ export class AppCompiler {
         }
 
         const customRequire = Utilities.buildCustomRequire(files);
-        const context = vm.createContext({ require: customRequire, exports, process: {} });
+        const context = vm.createContext({ require: customRequire, exports, process: {}, console });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)].compiled);
         const result = script.runInContext(context);
