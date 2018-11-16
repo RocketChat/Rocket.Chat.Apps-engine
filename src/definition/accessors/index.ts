@@ -1,4 +1,5 @@
 import { IApiExtend } from './IApiExtend';
+import { IAppAccessors } from './IAppAccessors';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
@@ -41,6 +42,7 @@ import { IUserRead } from './IUserRead';
 
 export {
     HttpStatusCode,
+    IAppAccessors,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentalVariableRead,
