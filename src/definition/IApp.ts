@@ -1,3 +1,4 @@
+import { IAppAccessors } from './accessors';
 import { ILogger } from './accessors/ILogger';
 import { AppStatus } from './AppStatus';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
@@ -74,4 +75,6 @@ export interface IApp {
      * @return the logger instance
      */
     getLogger(): ILogger;
+
+    getAccessors(): IAppAccessors;
 }
