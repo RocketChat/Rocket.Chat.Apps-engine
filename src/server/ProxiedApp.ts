@@ -49,7 +49,6 @@ export class ProxiedApp implements IApp {
     public makeContext(data: object): vm.Context {
         return vm.createContext(Object.assign({}, {
             require: this.customRequire,
-            console: this.app.getLogger(),
         }, data));
     }
 

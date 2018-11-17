@@ -62,6 +62,7 @@ export class Utilities {
                 const ourExport = {};
                 const context = vm.createContext({
                     require: Utilities.buildCustomRequire(files),
+                    console,
                     exports: ourExport,
                     process: {},
                 });
