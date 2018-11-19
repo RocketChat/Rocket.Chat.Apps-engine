@@ -78,7 +78,7 @@ export class AppConsole implements ILogger {
             } else if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
             } else {
-                return v;
+                return JSON.parse(JSON.stringify(v, null, 2)); // force call toJSON to prevent circular references
             }
         });
 
