@@ -9,15 +9,18 @@ import { TestData } from '../../test-data/utilities';
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
     private user: IUser;
+    private userIterator: IterableIterator<IUser>;
     private mockRoomBridgeWithRoom: IRoomBridge;
 
     @SetupFixture
     public setupFixture() {
         this.room = TestData.getRoom();
         this.user = TestData.getUser();
+        this.userIterator = TestData.getUserIterator(this.user);
 
         const theRoom = this.room;
         const theUser = this.user;
+        const theUserIterator = this.userIterator;
         this.mockRoomBridgeWithRoom = {
             getById(id, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
@@ -31,6 +34,11 @@ export class RoomReadAccessorTestFixture {
             getCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
+
+            getMembers(name, appId): Promise<IterableIterator<IUser>> {
+                return Promise.resolve(theUserIterator);
+            },
+
         } as IRoomBridge;
     }
 
@@ -48,6 +56,8 @@ export class RoomReadAccessorTestFixture {
         Expect(await rr.getCreatorUserById('testing')).toBe(this.user);
         Expect(await rr.getCreatorUserByName('testing')).toBeDefined();
         Expect(await rr.getCreatorUserByName('testing')).toBe(this.user);
+        Expect(await rr.getMembers('testing-room')).toBeDefined();
+        Expect((await rr.getMembers('testing-room')).next()).toBe(this.user);
     }
 
     @AsyncTest()
@@ -56,6 +66,6 @@ export class RoomReadAccessorTestFixture {
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
         await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
-        await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+        // await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
     }
 }

@@ -24,6 +24,10 @@ export class TestsRoomBridge implements IRoomBridge {
         throw new Error('Method not implemented.');
     }
 
+    public getMembers(roomName: string, appId: string): Promise<IterableIterator<IUser>> {
+        throw new Error('Method not implemented.');
+    }
+
     public update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
