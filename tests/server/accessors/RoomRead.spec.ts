@@ -56,8 +56,6 @@ export class RoomReadAccessorTestFixture {
         Expect(await rr.getCreatorUserById('testing')).toBe(this.user);
         Expect(await rr.getCreatorUserByName('testing')).toBeDefined();
         Expect(await rr.getCreatorUserByName('testing')).toBe(this.user);
-        Expect(await rr.getMembers('testing-room')).toBeDefined();
-        Expect((await rr.getMembers('testing-room')).next()).toBe(this.user);
     }
 
     @AsyncTest()
@@ -66,6 +64,8 @@ export class RoomReadAccessorTestFixture {
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
         await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
-        // await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+
+        Expect(await rr.getMembers('testing-room')).toBeDefined();
+        Expect((await rr.getMembers('testing-room')).next()).toBe(this.user);
     }
 }
