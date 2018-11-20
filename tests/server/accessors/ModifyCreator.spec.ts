@@ -82,6 +82,10 @@ export class ModifyCreatorTestFixture {
         roomBd.setCreator(TestData.getUser());
         Expect(room.creator).toBeDefined();
 
+        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
+        roomBd.setType(RoomType.CHANNEL);
+        Expect(room.type).toBe(RoomType.CHANNEL);
+
         await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
         roomBd.setSlugifiedName('testing-room');
         Expect(room.slugifiedName).toBe('testing-room');
@@ -89,10 +93,6 @@ export class ModifyCreatorTestFixture {
         await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
-
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
-        roomBd.setType(RoomType.CHANNEL);
-        Expect(room.type).toBe(RoomType.CHANNEL);
 
         const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
         Expect(await mc.finish(roomBd)).toBe('roomId');
