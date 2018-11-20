@@ -178,12 +178,6 @@ export class TestData {
             }],
         };
     }
-
-    public static getUserIterator(user: IUser | any): IterableIterator<IUser> {
-        return {
-            next() { return user; },
-        } as IterableIterator<IUser>;
-    }
 }
 
 export class SimpleClass {

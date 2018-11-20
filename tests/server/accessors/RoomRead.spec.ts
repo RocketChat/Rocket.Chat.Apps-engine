@@ -9,18 +9,15 @@ import { TestData } from '../../test-data/utilities';
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
     private user: IUser;
-    private userIterator: IterableIterator<IUser>;
     private mockRoomBridgeWithRoom: IRoomBridge;
 
     @SetupFixture
     public setupFixture() {
         this.room = TestData.getRoom();
         this.user = TestData.getUser();
-        this.userIterator = TestData.getUserIterator(this.user);
 
         const theRoom = this.room;
         const theUser = this.user;
-        const theUserIterator = this.userIterator;
         this.mockRoomBridgeWithRoom = {
             getById(id, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
@@ -35,8 +32,8 @@ export class RoomReadAccessorTestFixture {
                 return Promise.resolve(theUser);
             },
 
-            getMembers(name, appId): Promise<IterableIterator<IUser>> {
-                return Promise.resolve(theUserIterator);
+            getMembers(name, appId): Promise<Array<IUser>> {
+                return Promise.resolve([theUser]);
             },
 
         } as IRoomBridge;
@@ -65,7 +62,8 @@ export class RoomReadAccessorTestFixture {
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
         await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
 
-        Expect(await rr.getMembers('testing-room')).toBeDefined();
-        Expect((await rr.getMembers('testing-room')).next()).toBe(this.user);
+        Expect(await rr.getMembers('testing')).toBeDefined();
+        Expect(await rr.getMembers('testing') as Array<IUser>).not.toBeEmpty();
+        Expect((await rr.getMembers('testing'))[0]).toBe(this.user);
     }
 }
