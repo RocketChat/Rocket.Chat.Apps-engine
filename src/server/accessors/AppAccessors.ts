@@ -25,14 +25,6 @@ export class AppAccessors implements IAppAccessors {
         return this.accessorManager.getHttp(this.appId);
     }
 
-    public get modifier(): IModify {
-        return this.accessorManager.getModifier(this.appId);
-    }
-
-    public get persistence(): IPersistence {
-        return this.accessorManager.getPersistence(this.appId);
-    }
-
     public get providedApiEndpoints(): Array<IApiEndpointMetadata> {
         return this.apiManager.listApis(this.appId);
     }
