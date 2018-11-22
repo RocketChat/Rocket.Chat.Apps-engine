@@ -1,7 +1,7 @@
 import { IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom } from '../../definition/rooms';
+import { IRoom, RoomType } from '../../definition/rooms';
 
 import { AppBridges } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
@@ -56,16 +56,18 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid creator assigned to the room.');
         }
 
-        if (!result.slugifiedName || !result.slugifiedName.trim()) {
-            throw new Error('Invalid slugifiedName assigned to the room.');
-        }
-
-        if (!result.displayName || !result.displayName.trim()) {
-            throw new Error('Invalid displayName assigned to the room.');
-        }
-
         if (!result.type) {
             throw new Error('Invalid type assigned to the room.');
+        }
+
+        if (result.type !== RoomType.DIRECT_MESSAGE) {
+            if (!result.slugifiedName || !result.slugifiedName.trim()) {
+                throw new Error('Invalid slugifiedName assigned to the room.');
+            }
+
+            if (!result.displayName || !result.displayName.trim()) {
+                throw new Error('Invalid displayName assigned to the room.');
+            }
         }
 
         return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);

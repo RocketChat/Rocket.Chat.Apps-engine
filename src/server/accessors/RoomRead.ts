@@ -31,4 +31,8 @@ export class RoomRead implements IRoomRead {
     public getMembers(roomId: string): Promise<Array<IUser>> {
         return this.roomBridge.getMembers(roomId, this.appId);
     }
+
+    public getDirectByUsernames(usernames: Array<string>): Promise<IRoom> {
+        return this.roomBridge.getDirectByUsernames(usernames, this.appId);
+    }
 }

@@ -31,11 +31,12 @@ export class RoomReadAccessorTestFixture {
             getCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-
+            getDirectByUsernames(usernames, appId): Promise<IRoom> {
+                return Promise.resolve(theRoom);
+            },
             getMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
-
         } as IRoomBridge;
     }
 
@@ -53,6 +54,8 @@ export class RoomReadAccessorTestFixture {
         Expect(await rr.getCreatorUserById('testing')).toBe(this.user);
         Expect(await rr.getCreatorUserByName('testing')).toBeDefined();
         Expect(await rr.getCreatorUserByName('testing')).toBe(this.user);
+        Expect(await rr.getDirectByUsernames([this.user.username])).toBeDefined();
+        Expect(await rr.getDirectByUsernames([this.user.username])).toBe(this.room);
     }
 
     @AsyncTest()

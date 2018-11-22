@@ -54,4 +54,11 @@ export interface IRoomRead {
      * @returns an iterator for the users in the room
      */
     getMembers(roomId: string): Promise<Array<IUser>>;
+
+    /**
+     * Gets a direct room with all usernames
+     * @param usernames all usernames belonging to the direct room
+     * @returns the room
+     */
+    getDirectByUsernames(usernames: Array<string>): Promise<IRoom>;
 }
