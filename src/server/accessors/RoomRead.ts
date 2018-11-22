@@ -28,7 +28,7 @@ export class RoomRead implements IRoomRead {
         throw new Error('Method not implemented.');
     }
 
-    public getMembers(roomId: string): Promise<IterableIterator<IUser>> {
-        throw new Error('Method not implemented.');
+    public getMembers(roomId: string): Promise<Array<IUser>> {
+        return this.roomBridge.getMembers(roomId, this.appId);
     }
 }

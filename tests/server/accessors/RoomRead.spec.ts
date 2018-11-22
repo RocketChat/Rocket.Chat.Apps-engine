@@ -31,6 +31,11 @@ export class RoomReadAccessorTestFixture {
             getCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
+
+            getMembers(name, appId): Promise<Array<IUser>> {
+                return Promise.resolve([theUser]);
+            },
+
         } as IRoomBridge;
     }
 
@@ -56,6 +61,9 @@ export class RoomReadAccessorTestFixture {
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
         await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
-        await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+
+        Expect(await rr.getMembers('testing')).toBeDefined();
+        Expect(await rr.getMembers('testing') as Array<IUser>).not.toBeEmpty();
+        Expect((await rr.getMembers('testing'))[0]).toBe(this.user);
     }
 }
