@@ -46,6 +46,18 @@ export interface IPersistence {
     update(id: string, data: object, upsert?: boolean): Promise<string>;
 
     /**
+     * Updates an existing record with the data provided in the App's persistent storage which are
+     * associated with provided information.
+     * This will throw an error if the record doesn't currently exist or if the data is not an object.
+     *
+     * @param association the association record
+     * @param data the actual data to store, must be an object otherwise it will error out
+     * @param upsert whether a record should be created if the id to be updated does not exist
+     * @return the id of the updated/upserted record
+     */
+    updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert?: boolean): Promise<string>;
+
+    /**
      * Removes a record by the provided id and returns the removed record.
      *
      * @param id of the record to remove

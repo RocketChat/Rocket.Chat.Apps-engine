@@ -8,5 +8,6 @@ export interface IRoomBridge {
     getCreatorById(roomId: string, appId: string): Promise<IUser>;
     getCreatorByName(roomName: string, appId: string): Promise<IUser>;
     getDirectByUsernames(username: Array<string>, appId: string): Promise<IRoom>;
+    getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
 }

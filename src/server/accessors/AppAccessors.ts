@@ -1,4 +1,4 @@
-import { IAppAccessors, IEnvironmentRead, IHttp, IModify, IPersistence, IRead } from '../../definition/accessors';
+import { IAppAccessors, IEnvironmentRead, IHttp, IRead } from '../../definition/accessors';
 import { IApiEndpointMetadata } from '../../definition/api';
 import { AppManager } from '../AppManager';
 import { AppAccessorManager } from '../managers/AppAccessorManager';
@@ -23,14 +23,6 @@ export class AppAccessors implements IAppAccessors {
 
     public get http(): IHttp {
         return this.accessorManager.getHttp(this.appId);
-    }
-
-    public get modifier(): IModify {
-        return this.accessorManager.getModifier(this.appId);
-    }
-
-    public get persistence(): IPersistence {
-        return this.accessorManager.getPersistence(this.appId);
     }
 
     public get providedApiEndpoints(): Array<IApiEndpointMetadata> {
