@@ -34,4 +34,8 @@ export class TestsPersisBridge implements IPersistenceBridge {
     public update(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
+
+    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string> {
+        throw new Error('Method not implemented');
+    }
 }
