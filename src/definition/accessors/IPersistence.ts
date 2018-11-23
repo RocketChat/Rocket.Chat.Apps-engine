@@ -82,4 +82,24 @@ export interface IPersistence {
      * @return the data of the removed records
      */
     removeByAssociations(associations: Array<RocketChatAssociationRecord>): Promise<Array<object>>;
+
+    /**
+     * Finds and modify an existing record with the data provided in the App's persistent storage which are
+     * associated with provided information.
+     *
+     * @param association the association record
+     * @param update the actual data to store, must be an object otherwise it will error out
+     * @param returnNew whether to return the record before modification or after
+     * @param upsert whether a record should be created if the id to be updated does not exist
+     * @return the record found
+     */
+    findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew?: boolean, upsert?: boolean): Promise<any>;
+
+    /**
+     * Finds and removes an existing record based on association
+     *
+     * @param association the association record
+     * @return the removed record
+     */
+    findAndRemoveByAssociation(association: RocketChatAssociationRecord): Promise<any>;
 }

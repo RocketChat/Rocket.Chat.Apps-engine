@@ -38,4 +38,13 @@ export class TestsPersisBridge implements IPersistenceBridge {
     public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string> {
         throw new Error('Method not implemented');
     }
+
+    // tslint:disable-next-line:max-line-length
+    public findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew: boolean, upsert: boolean, appId: string): Promise<any> {
+        throw new Error('Method not implemented');
+    }
+
+    public findAndRemoveByAssociation(association: RocketChatAssociationRecord, appId: string): Promise<any> {
+        throw new Error('Method not implemented');
+    }
 }

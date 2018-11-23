@@ -86,4 +86,25 @@ export interface IPersistenceBridge {
      * @returns the id, whether the new one or the existing one
      */
     updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string>;
+
+    /**
+     * Finds and modify the record in the database, with the option of creating a new one if it doesn't exist.
+     *
+     * @argument association the association which to update records
+     * @argument update the updated data to set in the record
+     * @argument returnNew whether to return the object before updating or after
+     * @argument upsert whether to create if the id doesn't exist
+     * @argument appId the id of the app calling this
+     * @returns the id, whether the new one or the existing one
+     */
+    findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew: boolean, upsert: boolean, appId: string): Promise<any>;
+
+    /**
+     * Finds and removes the record in the database
+     *
+     * @argument association the association which to update records
+     * @argument appId the id of the app calling this
+     * @returns the id, whether the new one or the existing one
+     */
+    findAndRemoveByAssociation(association: RocketChatAssociationRecord, appId: string): Promise<any>;
 }
