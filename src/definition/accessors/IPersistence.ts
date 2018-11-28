@@ -53,9 +53,12 @@ export interface IPersistence {
      * @param association the association record
      * @param data the actual data to store, must be an object otherwise it will error out
      * @param upsert whether a record should be created if the id to be updated does not exist
+     * @param atomic whether the update should be atomic
+     * @param returnNew whether the update operation returns the new record or the record before updating
      * @return the id of the updated/upserted record
      */
-    updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert?: boolean): Promise<string>;
+    // tslint:disable-next-line:max-line-length
+    updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert?: boolean, atomic?: boolean, returnNew?: boolean): Promise<string | object>;
 
     /**
      * Removes a record by the provided id and returns the removed record.
@@ -71,7 +74,7 @@ export interface IPersistence {
      * @param association the information about the association for the records to be removed
      * @return the data of the removed records
      */
-    removeByAssociation(association: RocketChatAssociationRecord): Promise<Array<object>>;
+    removeByAssociation(association: RocketChatAssociationRecord, atomic?: boolean): Promise<Array<object>>;
 
     /**
      * Removes all of the records in persistent storage which are associated with the provided information.
@@ -79,27 +82,8 @@ export interface IPersistence {
      * of the associations to be considered a match.
      *
      * @param associations the information about the associations for the records to be removed
+     * @param atomic whether the remove operation should run atomically
      * @return the data of the removed records
      */
-    removeByAssociations(associations: Array<RocketChatAssociationRecord>): Promise<Array<object>>;
-
-    /**
-     * Finds and modify an existing record with the data provided in the App's persistent storage which are
-     * associated with provided information.
-     *
-     * @param association the association record
-     * @param update the actual data to store, must be an object otherwise it will error out
-     * @param returnNew whether to return the record before modification or after
-     * @param upsert whether a record should be created if the id to be updated does not exist
-     * @return the record found
-     */
-    findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew?: boolean, upsert?: boolean): Promise<any>;
-
-    /**
-     * Finds and removes an existing record based on association
-     *
-     * @param association the association record
-     * @return the removed record
-     */
-    findAndRemoveByAssociation(association: RocketChatAssociationRecord): Promise<any>;
+    removeByAssociations(associations: Array<RocketChatAssociationRecord>, atomic?: boolean): Promise<Array<object>>;
 }

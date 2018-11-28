@@ -29,19 +29,14 @@ export class PersistenceAccessorTestFixture {
             remove(id: string, appId: string): Promise<object> {
                 return Promise.resolve(theData);
             },
-            removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+            removeByAssociations(assocs: Array<RocketChatAssociationRecord>, atomic: boolean, appId: string): Promise<Array<object>> {
                 return Promise.resolve([theData]);
             },
-            updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string> {
+            // tslint:disable-next-line:max-line-length
+            updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, atomic: boolean, returnNew: boolean, appId: string): Promise<string | object> {
                 return Promise.resolve('id4');
             },
             // tslint:disable-next-line:max-line-length
-            findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew: boolean, upsert: boolean, appId: string): Promise<any> {
-                return Promise.resolve(theData);
-            },
-            findAndRemoveByAssociation(association: RocketChatAssociationRecord, appId: string): Promise<any> {
-                return Promise.resolve(theData);
-            },
         } as IPersistenceBridge;
         this.mockAssoc = new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'fake-id');
     }
@@ -56,8 +51,6 @@ export class PersistenceAccessorTestFixture {
         const sp4 = SpyOn(this.mockPersisBridge, 'remove');
         const sp5 = SpyOn(this.mockPersisBridge, 'removeByAssociations');
         const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociation');
-        const sp7 = SpyOn(this.mockPersisBridge, 'findAndUpdateByAssociation');
-        const sp8 = SpyOn(this.mockPersisBridge, 'findAndRemoveByAssociation');
 
         const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
 
@@ -74,11 +67,7 @@ export class PersistenceAccessorTestFixture {
         Expect(await ps.removeByAssociations([this.mockAssoc])).toBeDefined();
         Expect(this.mockPersisBridge.removeByAssociations).toHaveBeenCalled().exactly(2);
         Expect(await ps.updateByAssociation(this.mockAssoc, this.data)).toBeDefined();
-        Expect(this.mockPersisBridge.updateByAssociation).toHaveBeenCalledWith(this.mockAssoc, this.data, false, this.mockAppId);
-        Expect(await ps.findAndUpdateByAssociation(this.mockAssoc, this.data)).toBeDefined();
-        Expect(this.mockPersisBridge.findAndUpdateByAssociation).toHaveBeenCalledWith(this.mockAssoc, this.data, false, false, this.mockAppId);
-        Expect(await ps.findAndRemoveByAssociation(this.mockAssoc)).toBeDefined();
-        Expect(this.mockPersisBridge.findAndRemoveByAssociation).toHaveBeenCalledWith(this.mockAssoc, this.mockAppId);
+        Expect(this.mockPersisBridge.updateByAssociation).toHaveBeenCalledWith(this.mockAssoc, this.data, false, false, true, this.mockAppId);
 
         sp1.restore();
         sp2.restore();
@@ -86,7 +75,5 @@ export class PersistenceAccessorTestFixture {
         sp4.restore();
         sp5.restore();
         sp6.restore();
-        sp7.restore();
-        sp8.restore();
     }
 }

@@ -22,27 +22,20 @@ export class Persistence implements IPersistence {
         return this.persistBridge.update(id, data, upsert, this.appId);
     }
 
-    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert = false): Promise<string> {
-        return this.persistBridge.updateByAssociation(association, data, upsert, this.appId);
+    // tslint:disable-next-line:max-line-length
+    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert = false, atomic = false, returnNew = true): Promise<string | object> {
+        return this.persistBridge.updateByAssociation(association, data, upsert, atomic, returnNew, this.appId);
     }
 
     public remove(id: string): Promise<object> {
         return this.persistBridge.remove(id, this.appId);
     }
 
-    public removeByAssociation(association: RocketChatAssociationRecord): Promise<Array<object>> {
-        return this.persistBridge.removeByAssociations(new Array(association), this.appId);
+    public removeByAssociation(association: RocketChatAssociationRecord, atomic = false): Promise<Array<object>> {
+        return this.persistBridge.removeByAssociations(new Array(association), atomic, this.appId);
     }
 
-    public removeByAssociations(associations: Array<RocketChatAssociationRecord>): Promise<Array<object>> {
-        return this.persistBridge.removeByAssociations(associations, this.appId);
-    }
-
-    public findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew = false, upsert = false): Promise<any> {
-        return this.persistBridge.findAndUpdateByAssociation(association, update, returnNew, upsert, this.appId);
-    }
-
-    public findAndRemoveByAssociation(association: RocketChatAssociationRecord): Promise<any> {
-        return this.persistBridge.findAndRemoveByAssociation(association, this.appId);
+    public removeByAssociations(associations: Array<RocketChatAssociationRecord>, atomic = false): Promise<Array<object>> {
+        return this.persistBridge.removeByAssociations(associations, atomic, this.appId);
     }
 }

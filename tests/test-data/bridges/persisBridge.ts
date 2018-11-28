@@ -27,7 +27,7 @@ export class TestsPersisBridge implements IPersistenceBridge {
         throw new Error('Method not implemented.');
     }
 
-    public removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+    public removeByAssociations(associations: Array<RocketChatAssociationRecord>, atomic: boolean, appId: string): Promise<Array<object>> {
         throw new Error('Method not implemented.');
     }
 
@@ -35,16 +35,8 @@ export class TestsPersisBridge implements IPersistenceBridge {
         throw new Error('Method not implemented.');
     }
 
-    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string> {
-        throw new Error('Method not implemented');
-    }
-
     // tslint:disable-next-line:max-line-length
-    public findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew: boolean, upsert: boolean, appId: string): Promise<any> {
-        throw new Error('Method not implemented');
-    }
-
-    public findAndRemoveByAssociation(association: RocketChatAssociationRecord, appId: string): Promise<any> {
+    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, atomic: boolean, returnNew: boolean, appId: string): Promise<string | object> {
         throw new Error('Method not implemented');
     }
 }

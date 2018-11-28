@@ -60,10 +60,11 @@ export interface IPersistenceBridge {
      * Removes any data which has been associated with the provided records.
      *
      * @argument associations the associations which to remove records
+     * @argument atomic whether the remove operation should be atomic
      * @argument appId the id of the app calling this
      * @returns the data of the removed records
      */
-    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>>;
+    removeByAssociations(associations: Array<RocketChatAssociationRecord>, atomic: boolean, appId: string): Promise<Array<object>>;
 
     /**
      * Updates the record in the database, with the option of creating a new one if it doesn't exist.
@@ -82,29 +83,10 @@ export interface IPersistenceBridge {
      * @argument association the association which to update records
      * @argument data the updated data to set in the record
      * @argument upsert whether to create if the id doesn't exist
+     * @argument atomic whether the update operation should be atomic
      * @argument appId the id of the app calling this
      * @returns the id, whether the new one or the existing one
      */
-    updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string>;
-
-    /**
-     * Finds and modify the record in the database, with the option of creating a new one if it doesn't exist.
-     *
-     * @argument association the association which to update records
-     * @argument update the updated data to set in the record
-     * @argument returnNew whether to return the object before updating or after
-     * @argument upsert whether to create if the id doesn't exist
-     * @argument appId the id of the app calling this
-     * @returns the id, whether the new one or the existing one
-     */
-    findAndUpdateByAssociation(association: RocketChatAssociationRecord, update: object, returnNew: boolean, upsert: boolean, appId: string): Promise<any>;
-
-    /**
-     * Finds and removes the record in the database
-     *
-     * @argument association the association which to update records
-     * @argument appId the id of the app calling this
-     * @returns the id, whether the new one or the existing one
-     */
-    findAndRemoveByAssociation(association: RocketChatAssociationRecord, appId: string): Promise<any>;
+    // tslint:disable-next-line:max-line-length
+    updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, atomic: boolean, returnNew: boolean, appId: string): Promise<string | object>;
 }
