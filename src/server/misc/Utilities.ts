@@ -41,7 +41,7 @@ export class Utilities {
         return moduleName in AllowedInternalModules;
     }
 
-    public static buildCustomRequire(files: { [s: string]: ICompilerFile }): (mod: string) => {} {
+    public static buildCustomRequire(files: { [s: string]: ICompilerFile }, currentPath: string = '.'): (mod: string) => {} {
         return function _requirer(mod: string): any {
             // Keep compatibility with apps importing apps-ts-definition
             if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
@@ -56,12 +56,20 @@ export class Utilities {
                 return require(mod);
             }
 
+            if (Utilities.allowedInternalModuleRequire(mod)) {
+                return require(mod);
+            }
+
+            if (currentPath !== '.') {
+                mod = path.join(currentPath, mod);
+            }
+
             const transformedModule = Utilities.transformModuleForCustomRequire(mod);
 
             if (files[transformedModule]) {
                 const ourExport = {};
                 const context = vm.createContext({
-                    require: Utilities.buildCustomRequire(files),
+                    require: Utilities.buildCustomRequire(files, path.dirname(transformedModule) + '/'),
                     console,
                     exports: ourExport,
                     process: {},
@@ -70,10 +78,6 @@ export class Utilities {
                 vm.runInContext(files[transformedModule].compiled, context);
 
                 return ourExport;
-            }
-
-            if (Utilities.allowedInternalModuleRequire(mod)) {
-                return require(mod);
             }
         };
     }
