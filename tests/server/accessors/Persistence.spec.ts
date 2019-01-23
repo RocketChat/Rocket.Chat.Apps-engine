@@ -32,7 +32,7 @@ export class PersistenceAccessorTestFixture {
             removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
                 return Promise.resolve([theData]);
             },
-            updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert: boolean, appId: string): Promise<string> {
+            updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
                 return Promise.resolve('id4');
             },
         } as IPersistenceBridge;
@@ -48,7 +48,7 @@ export class PersistenceAccessorTestFixture {
         const sp3 = SpyOn(this.mockPersisBridge, 'update');
         const sp4 = SpyOn(this.mockPersisBridge, 'remove');
         const sp5 = SpyOn(this.mockPersisBridge, 'removeByAssociations');
-        const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociation');
+        const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociations');
 
         const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
 
@@ -64,8 +64,10 @@ export class PersistenceAccessorTestFixture {
         Expect(await ps.removeByAssociation(this.mockAssoc)).toBeDefined();
         Expect(await ps.removeByAssociations([this.mockAssoc])).toBeDefined();
         Expect(this.mockPersisBridge.removeByAssociations).toHaveBeenCalled().exactly(2);
+
         Expect(await ps.updateByAssociation(this.mockAssoc, this.data)).toBeDefined();
-        Expect(this.mockPersisBridge.updateByAssociation).toHaveBeenCalledWith(this.mockAssoc, this.data, false, this.mockAppId);
+        Expect(await ps.updateByAssociations([this.mockAssoc], this.data)).toBeDefined();
+        Expect(this.mockPersisBridge.updateByAssociations).toHaveBeenCalled().exactly(2);
 
         sp1.restore();
         sp2.restore();
