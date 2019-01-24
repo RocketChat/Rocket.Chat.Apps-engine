@@ -137,6 +137,15 @@ export class MessageBuilder implements IMessageBuilder {
         return this.msg.groupable;
     }
 
+    public setParseUrls(parseUrls: boolean): IMessageBuilder {
+        this.msg.parseUrls = parseUrls;
+        return this;
+    }
+
+    public getParseUrls(): boolean {
+        return this.msg.parseUrls;
+    }
+
     public getMessage(): IMessage {
         if (!this.msg.room) {
             throw new Error('The "room" property is required.');

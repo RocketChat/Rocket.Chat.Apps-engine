@@ -18,5 +18,6 @@ export interface IMessage {
     attachments?: Array<IMessageAttachment>;
     reactions?: IMessageReactions;
     groupable?: boolean;
+    parseUrls?: boolean;
     customFields?: { [key: string]: any };
 }
