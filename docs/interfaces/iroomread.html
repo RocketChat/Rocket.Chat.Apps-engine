@@ -93,6 +93,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getbyname" class="tsd-kind-icon">get<wbr>ByName</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getcreatoruserbyid" class="tsd-kind-icon">get<wbr>Creator<wbr>User<wbr>ById</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getcreatoruserbyname" class="tsd-kind-icon">get<wbr>Creator<wbr>User<wbr>ByName</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getdirectbyusernames" class="tsd-kind-icon">get<wbr>Direct<wbr>ByUsernames</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getmembers" class="tsd-kind-icon">get<wbr>Members</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="iroomread.html#getmessages" class="tsd-kind-icon">get<wbr>Messages</a></li>
 							</ul>
@@ -112,7 +113,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L16">accessors/IRoomRead.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L16">accessors/IRoomRead.ts:16</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -144,7 +145,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L32">accessors/IRoomRead.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L32">accessors/IRoomRead.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -176,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L24">accessors/IRoomRead.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L24">accessors/IRoomRead.ts:24</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -208,7 +209,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L40">accessors/IRoomRead.ts:40</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L40">accessors/IRoomRead.ts:40</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -231,16 +232,48 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="getmembers" class="tsd-anchor"></a>
-					<h3>get<wbr>Members</h3>
+					<a name="getdirectbyusernames" class="tsd-anchor"></a>
+					<h3>get<wbr>Direct<wbr>ByUsernames</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Members<span class="tsd-signature-symbol">(</span>roomId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Direct<wbr>ByUsernames<span class="tsd-signature-symbol">(</span>usernames<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="iroom.html" class="tsd-signature-type">IRoom</a><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L56">accessors/IRoomRead.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L63">accessors/IRoomRead.ts:63</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Gets a direct room with all usernames</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>usernames: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>all usernames belonging to the direct room</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="iroom.html" class="tsd-signature-type">IRoom</a><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>the room</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="getmembers" class="tsd-anchor"></a>
+					<h3>get<wbr>Members</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Members<span class="tsd-signature-symbol">(</span>roomId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L56">accessors/IRoomRead.ts:56</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -257,7 +290,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><a href="iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="iuser.html" class="tsd-signature-type">IUser</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>an iterator for the users in the room</p>
 						</li>
 					</ul>
@@ -272,7 +305,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/13c3872/src/definition/accessors/IRoomRead.ts#L48">accessors/IRoomRead.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/8d3ad3b/src/definition/accessors/IRoomRead.ts#L48">accessors/IRoomRead.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -322,6 +355,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroomread.html#getcreatoruserbyname" class="tsd-kind-icon">get<wbr>Creator<wbr>User<wbr>ByName</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="iroomread.html#getdirectbyusernames" class="tsd-kind-icon">get<wbr>Direct<wbr>ByUsernames</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="iroomread.html#getmembers" class="tsd-kind-icon">get<wbr>Members</a>
