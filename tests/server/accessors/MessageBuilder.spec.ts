@@ -91,5 +91,13 @@ export class MessageBuilderAccessorTestFixture {
         Expect(mb.setGroupable(false)).toBe(mb);
         Expect(msg.groupable).toEqual(false);
         Expect(mb.getGroupable()).toEqual(false);
+
+        Expect(mb.setParseUrls(true)).toBe(mb);
+        Expect(msg.parseUrls).toEqual(true);
+        Expect(mb.getParseUrls()).toEqual(true);
+
+        Expect(mb.setParseUrls(false)).toBe(mb);
+        Expect(msg.parseUrls).toEqual(false);
+        Expect(mb.getParseUrls()).toEqual(false);
     }
 }
