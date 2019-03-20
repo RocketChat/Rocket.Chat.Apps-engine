@@ -12,6 +12,9 @@ export interface ISlashCommandPreviewItem {
     type: SlashCommandPreviewItemType;
     /** The value of this preview item, url or text (could even be base64). */
     value: string;
+    /** If SlashCommandPreviewItemType != Text or other, allow setting height and width. */
+    height: number;
+    width: number;
 }
 
 export enum SlashCommandPreviewItemType {
