@@ -1,4 +1,5 @@
 import { MessageActionType } from './MessageActionType';
+import { MessageProcessingType } from './MessageProcessingType';
 
 /**
  * Interface which represents an action which can be added to a message.
@@ -12,4 +13,5 @@ export interface IMessageAction {
     webview_height_ratio?: string;
     msg?: string;
     msg_in_chat_window?: boolean;
+    msg_processing_type?: MessageProcessingType;
 }
