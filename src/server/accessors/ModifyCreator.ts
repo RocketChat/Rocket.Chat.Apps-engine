@@ -1,14 +1,26 @@
-import { IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import { ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
+import { ILivechatCreator } from '../../definition/accessors/IModify';
+import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { AppBridges } from '../bridges';
+import { LivechatCreator } from './LivechatCreator';
+import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyCreator implements IModifyCreator {
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
+    private livechatCreator: LivechatCreator;
+
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+        this.livechatCreator = new LivechatCreator(bridges, appId);
+    }
+
+    public getLivechatCreator(): ILivechatCreator {
+        return this.livechatCreator;
+    }
 
     public startMessage(data?: IMessage): IMessageBuilder {
         if (data) {
@@ -16,6 +28,14 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return new MessageBuilder(data);
+    }
+
+    public startLivechatMessage(data?: ILivechatMessage): ILivechatMessageBuilder {
+        if (data) {
+            delete data.id;
+        }
+
+        return new LivechatMessageBuilder(data);
     }
 
     public startRoom(data?: IRoom): IRoomBuilder {
@@ -26,10 +46,12 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | IRoomBuilder): Promise<string> {
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
+            case RocketChatAssociationModel.LIVECHAT_MESSAGE:
+                return this._finishLivechatMessage(builder);
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
             default:
@@ -46,6 +68,23 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getMessageBridge().create(result, this.appId);
+    }
+
+    private _finishLivechatMessage(builder: ILivechatMessageBuilder): Promise<string> {
+        if (builder.getSender() && !builder.getVisitor()) {
+            return this._finishMessage(builder.getMessageBuilder());
+        }
+
+        const result = builder.getMessage();
+        delete result.id;
+
+        if (!result.token && (!result.visitor || !result.visitor.token)) {
+            throw new Error('Invalid visitor sending the message');
+        }
+
+        result.token = result.visitor ? result.visitor.token : result.token;
+
+        return this.bridges.getLivechatBridge().createMessage(result, this.appId);
     }
 
     private _finishRoom(builder: IRoomBuilder): Promise<string> {

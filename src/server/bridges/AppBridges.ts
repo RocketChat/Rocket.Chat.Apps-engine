@@ -6,6 +6,7 @@ import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
+import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
@@ -19,6 +20,7 @@ export abstract class AppBridges {
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
     public abstract getHttpBridge(): IHttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
+    public abstract getLivechatBridge(): ILivechatBridge;
     public abstract getMessageBridge(): IMessageBridge;
     public abstract getPersistenceBridge(): IPersistenceBridge;
     public abstract getAppActivationBridge(): IAppActivationBridge;

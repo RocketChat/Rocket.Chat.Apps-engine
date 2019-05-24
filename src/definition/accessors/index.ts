@@ -18,6 +18,7 @@ import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
 import { IMessageRead } from './IMessageRead';
 import {
+    ILivechatMessageBuilder,
     IMessageBuilder,
     IMessageExtender,
     IModify,
@@ -53,6 +54,7 @@ export {
     IHttpPreResponseHandler,
     IHttpRequest,
     IHttpResponse,
+    ILivechatMessageBuilder,
     ILogEntry,
     ILogger,
     IMessageBuilder,

@@ -6,6 +6,7 @@ import {
     IHttpBridge,
     IInternalBridge,
     IListenerBridge,
+    ILivechatBridge,
     IMessageBridge,
     IPersistenceBridge,
     IRoomBridge,
@@ -19,6 +20,7 @@ import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
 import { TestsInternalBridge } from './internalBridge';
+import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
@@ -38,6 +40,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly internalBridge: TestsInternalBridge;
     private readonly userBridge: TestsUserBridge;
     private readonly httpBridge: TestsHttpBridge;
+    private readonly livechatBridge: TestLivechatBridge;
 
     constructor() {
         super();
@@ -53,6 +56,7 @@ export class TestsAppBridges extends AppBridges {
         this.internalBridge = new TestsInternalBridge();
         this.userBridge = new TestsUserBridge();
         this.httpBridge = new TestsHttpBridge();
+        this.livechatBridge = new TestLivechatBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -105,5 +109,9 @@ export class TestsAppBridges extends AppBridges {
 
     public getUserBridge(): IUserBridge {
         return this.userBridge;
+    }
+
+    public getLivechatBridge(): ILivechatBridge {
+        return this.livechatBridge;
     }
 }
