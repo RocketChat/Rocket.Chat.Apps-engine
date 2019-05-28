@@ -5,6 +5,7 @@ import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
+import { LivechatRead } from './LivechatRead';
 import { MessageBuilder } from './MessageBuilder';
 import { MessageExtender } from './MessageExtender';
 import { MessageRead } from './MessageRead';
@@ -35,6 +36,7 @@ export {
     EnvironmentRead,
     Http,
     HttpExtend,
+    LivechatRead,
     MessageBuilder,
     MessageExtender,
     MessageRead,

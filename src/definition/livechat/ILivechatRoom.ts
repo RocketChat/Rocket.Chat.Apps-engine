@@ -6,7 +6,7 @@ export interface ILivechatRoom extends IRoom {
     visitor: IVisitor;
     servedBy?: IUser;
     responseBy?: IUser;
-    waitingResponse: boolean;
-    closed: boolean;
+    isWaitingResponse: boolean;
+    isOpen: boolean;
     closedAt?: Date;
 }

@@ -14,11 +14,13 @@ import {
     IHttpResponse,
     RequestMethod,
 } from './IHttp';
+import { ILivechatRead } from './ILivechatRead';
 import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
 import { IMessageRead } from './IMessageRead';
 import {
     ILivechatMessageBuilder,
+    ILivechatUpdater,
     IMessageBuilder,
     IMessageExtender,
     IModify,
@@ -55,6 +57,8 @@ export {
     IHttpRequest,
     IHttpResponse,
     ILivechatMessageBuilder,
+    ILivechatRead,
+    ILivechatUpdater,
     ILogEntry,
     ILogger,
     IMessageBuilder,

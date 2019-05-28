@@ -1,5 +1,4 @@
-import { ILivechatMessage } from '../livechat/ILivechatMessage';
-import { ILivechatRoom } from '../livechat/ILivechatRoom';
+import { ILivechatMessage, ILivechatRoom, ILivechatTransferData } from '../livechat';
 import { IVisitor } from '../livechat/IVisitor';
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
@@ -49,6 +48,11 @@ export interface INotifier {
 }
 
 export interface IModifyUpdater {
+    /**
+     * Get the updater object responsible for the
+     * Livechat integrations
+     */
+    getLivechatUpdater(): ILivechatUpdater;
     /**
      * Modifies an existing message.
      * Raises an exception if a non-existent messageId is supplied
@@ -108,6 +112,11 @@ export interface IModifyExtender {
 
 export interface IModifyCreator {
     /**
+     * Get the creator object responsible for the
+     * Livechat integrations
+     */
+    getLivechatCreator(): ILivechatCreator;
+    /**
      * Starts the process for building a new message object.
      *
      * @param data (optional) the initial data to pass into the builder,
@@ -144,8 +153,39 @@ export interface IModifyCreator {
 }
 
 export interface ILivechatCreator {
+    /**
+     * Creates a room to connect the `visitor` to an `agent`.
+     *
+     * This method uses the Livechat routing method configured
+     * in the server
+     *
+     * @param visitor The Livechat Visitor that started the conversation
+     * @param agent The agent responsible for the room
+     */
     createRoom(visitor: IVisitor, agent: IUser): Promise<ILivechatRoom>;
+    /**
+     * Creates a Livechat visitor
+     *
+     * @param visitor Data of the visitor to be created
+     */
     createVisitor(visitor: IVisitor): Promise<string>;
+}
+
+export interface ILivechatUpdater {
+    /**
+     * Transfer a Livechat visitor to another room
+     *
+     * @param visitor Visitor to be transfered
+     * @param transferData The data to execute the transfering
+     */
+    transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData): Promise<boolean>;
+    /**
+     * Closes a Livechat room
+     *
+     * @param room The room to be closed
+     * @param comment The comment explaining the reason for closing the room
+     */
+    closeRoom(room: IRoom, comment: string): Promise<boolean>;
 }
 
 export interface IMessageExtender {

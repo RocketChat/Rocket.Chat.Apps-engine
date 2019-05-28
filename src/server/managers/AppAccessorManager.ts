@@ -4,6 +4,7 @@ import {
     EnvironmentRead,
     Http,
     HttpExtend,
+    LivechatRead,
     MessageRead,
     Modify,
     Notifier,
@@ -127,8 +128,9 @@ export class AppAccessorManager {
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
             const noti = new Notifier(this.bridges.getMessageBridge(), appId);
+            const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat));
         }
 
         return this.readers.get(appId);

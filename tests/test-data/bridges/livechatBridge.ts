@@ -1,6 +1,4 @@
-import { ILivechatMessage } from '../../../src/definition/livechat/ILivechatMessage';
-import { ILivechatRoom } from '../../../src/definition/livechat/ILivechatRoom';
-import { IVisitor } from '../../../src/definition/livechat/IVisitor';
+import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
 import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
@@ -17,10 +15,16 @@ export class TestLivechatBridge implements ILivechatBridge {
     public createVisitor(visitor: IVisitor, appId: string): Promise<string> {
         throw new Error('Method not implemented');
     }
+    public transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented');
+    }
     public findVisitors(query: object, appId: string): Promise<Array<IVisitor>> {
         throw new Error('Method not implemented');
     }
     public createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
+        throw new Error('Method not implemented');
+    }
+    public closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
     public findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {

@@ -1,5 +1,6 @@
 import {
     IEnvironmentRead,
+    ILivechatRead,
     IMessageRead,
     INotifier,
     IPersistenceRead,
@@ -9,9 +10,15 @@ import {
 } from '../../definition/accessors';
 
 export class Reader implements IRead {
-    constructor(private env: IEnvironmentRead, private message: IMessageRead,
-                private persist: IPersistenceRead, private room: IRoomRead,
-                private user: IUserRead, private noti: INotifier) { }
+    constructor(
+        private env: IEnvironmentRead,
+        private message: IMessageRead,
+        private persist: IPersistenceRead,
+        private room: IRoomRead,
+        private user: IUserRead,
+        private noti: INotifier,
+        private livechat: ILivechatRead,
+    ) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
@@ -35,5 +42,9 @@ export class Reader implements IRead {
 
     public getNotifier(): INotifier {
         return this.noti;
+    }
+
+    public getLivechatReader(): ILivechatRead {
+        return this.livechat;
     }
 }
