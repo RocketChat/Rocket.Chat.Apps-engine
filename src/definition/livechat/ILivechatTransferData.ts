@@ -1,8 +1,8 @@
-import { IRoom } from '../rooms';
 import { IUser } from '../users';
+import { ILivechatRoom } from './ILivechatRoom';
 
 export interface ILivechatTransferData {
-    currentRoom: IRoom;
+    currentRoom: ILivechatRoom;
     targetAgent?: IUser;
     targetDepartment?: string;
 }
