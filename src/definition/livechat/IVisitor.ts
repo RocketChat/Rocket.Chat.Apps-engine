@@ -2,12 +2,13 @@ import { IVisitorEmail } from './IVisitorEmail';
 import { IVisitorPhone } from './IVisitorPhone';
 
 export interface IVisitor {
-    id: string;
-    department: string;
+    id?: string;
+    token: string;
     username: string;
     updatedAt: Date;
     name: string;
-    token: string;
-    phone: Array<IVisitorPhone>;
+    department?: string;
+    phone?: Array<IVisitorPhone>;
     visitorEmails: Array<IVisitorEmail>;
+    customFields?: { [key: string]: any };
 }
