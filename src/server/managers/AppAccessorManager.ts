@@ -17,6 +17,7 @@ import {
     SettingsExtend,
     SlashCommandsExtend,
     SlashCommandsModify,
+    UploadRead,
     UserRead,
 } from '../accessors';
 import { ApiExtend } from '../accessors/ApiExtend';
@@ -129,8 +130,9 @@ export class AppAccessorManager {
             const user = new UserRead(this.bridges.getUserBridge(), appId);
             const noti = new Notifier(this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
+            const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload));
         }
 
         return this.readers.get(appId);

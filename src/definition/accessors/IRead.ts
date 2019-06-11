@@ -4,6 +4,7 @@ import { IMessageRead } from './IMessageRead';
 import { INotifier } from './IModify';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
+import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
 /**
@@ -31,4 +32,5 @@ export interface IRead {
     getNotifier(): INotifier;
 
     getLivechatReader(): ILivechatRead;
+    getUploadReader(): IUploadRead;
 }

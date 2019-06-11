@@ -12,6 +12,7 @@ import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
+import { IUploadBridge } from './IUploadBridge';
 import { IUserBridge } from './IUserBridge';
 
 export {
@@ -30,5 +31,6 @@ export {
     IInternalBridge,
     IServerSettingBridge,
     IUserBridge,
+    IUploadBridge,
     AppBridges,
 };

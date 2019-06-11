@@ -6,6 +6,7 @@ import {
     IPersistenceRead,
     IRead,
     IRoomRead,
+    IUploadRead,
     IUserRead,
 } from '../../definition/accessors';
 
@@ -18,6 +19,7 @@ export class Reader implements IRead {
         private user: IUserRead,
         private noti: INotifier,
         private livechat: ILivechatRead,
+        private upload: IUploadRead,
     ) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
@@ -46,5 +48,9 @@ export class Reader implements IRead {
 
     public getLivechatReader(): ILivechatRead {
         return this.livechat;
+    }
+
+    public getUploadReader(): IUploadRead {
+        return this.upload;
     }
 }
