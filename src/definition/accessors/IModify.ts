@@ -169,6 +169,12 @@ export interface ILivechatCreator {
      * @param visitor Data of the visitor to be created
      */
     createVisitor(visitor: IVisitor): Promise<string>;
+
+    /**
+     * Creates a token to be used when
+     * creating a new livechat visitor
+     */
+    createToken(): string;
 }
 
 export interface ILivechatUpdater {

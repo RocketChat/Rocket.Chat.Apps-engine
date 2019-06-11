@@ -15,4 +15,8 @@ export class LivechatCreator implements ILivechatCreator {
     public createVisitor(visitor: IVisitor): Promise<string> {
         return this.bridges.getLivechatBridge().createVisitor(visitor, this.appId);
     }
+
+    public createToken(): string {
+        return (Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
+    }
 }
