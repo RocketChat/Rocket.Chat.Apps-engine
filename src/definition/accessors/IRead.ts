@@ -1,4 +1,5 @@
 import { IEnvironmentRead } from './IEnvironmentRead';
+import { ILivechatRead } from './ILivechatRead';
 import { IMessageRead } from './IMessageRead';
 import { INotifier } from './IModify';
 import { IPersistenceRead } from './IPersistenceRead';
@@ -28,4 +29,6 @@ export interface IRead {
 
     /** Gets the INotifier for notifying users/rooms. */
     getNotifier(): INotifier;
+
+    getLivechatReader(): ILivechatRead;
 }
