@@ -24,7 +24,7 @@
         "version": {
             "description": "The version of this App which will be used for display publicly and letting users know there is an update. This uses the semver format.",
             "type": "string",
-            "pattern": "\\bv?(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?(?:\\+[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?\\b",
+            "pattern": "^(?:\\d*)\\.(?:\\d*)\\.(?:\\d*)$",
             "minLength": 5
         },
         "description": {
@@ -34,7 +34,7 @@
         "requiredApiVersion": {
             "description": "The required version of the App's API which this App depends on. This uses the semver format.",
             "type": "string",
-            "pattern": "\\bv?(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)\\.(?:0|[1-9]\\d*)(?:-[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?(?:\\+[\\da-z\\-]+(?:\\.[\\da-z\\-]+)*)?\\b",
+            "pattern": "^(?:\\^|~)?(?:\\d*)\\.(?:\\d*)\\.(?:\\d*)$",
             "minLength": 5
         },
         "author": {
