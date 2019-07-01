@@ -15,5 +15,5 @@ export interface IAppMarketplaceInfo extends IAppInfo {
     modifiedDate: string;
     price: number;
     pricingInfo: IAppMarketplacePricingInfo;
-    bundledIn: Array<IAppMarketplaceSimpleBundleInfo>;
+    bundledIn?: Array<IAppMarketplaceSimpleBundleInfo>;
 }
