@@ -9,8 +9,11 @@ export class AppFabricationFulfillment {
     public implemented: { [int: string]: boolean };
     public compilerErrors: Array<ICompilerError>;
 
+    public licenseError: Error | null;
+
     constructor() {
         this.compilerErrors = new Array<ICompilerError>();
+        this.licenseError = null;
     }
 
     public setAppInfo(information: IAppInfo): void {
@@ -43,5 +46,13 @@ export class AppFabricationFulfillment {
 
     public getCompilerErrors(): Array<ICompilerError> {
         return this.compilerErrors;
+    }
+
+    public setLicenseError(error: Error) {
+        this.licenseError = error;
+    }
+
+    public getLicenseError(): Error {
+        return this.licenseError;
     }
 }

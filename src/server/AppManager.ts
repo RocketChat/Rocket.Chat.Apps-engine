@@ -364,7 +364,7 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true, marketplaceData?: IAppMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IAppMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
@@ -385,11 +385,14 @@ export class AppManager {
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
+            marketplaceInfo,
         });
 
         if (!created) {
             throw new Error('Failed to create the App, the storage did not return it.');
         }
+
+        this.licenseManager.validate(marketplaceInfo, aff);
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
