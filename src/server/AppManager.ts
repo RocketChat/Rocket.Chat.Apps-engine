@@ -4,6 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
+    AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -13,7 +14,7 @@ import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
-import { AppMethod } from '../definition/metadata';
+import { AppMethod, IAppMarketplaceInfo } from '../definition/metadata';
 
 export class AppManager {
     public static Instance: AppManager;
@@ -31,6 +32,7 @@ export class AppManager {
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
     private readonly settingsManager: AppSettingsManager;
+    private readonly licenseManager: AppLicenseManager;
 
     private isLoaded: boolean;
 
@@ -67,6 +69,7 @@ export class AppManager {
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
         this.settingsManager = new AppSettingsManager(this);
+        this.licenseManager = new AppLicenseManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -361,7 +364,7 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceData?: IAppMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 

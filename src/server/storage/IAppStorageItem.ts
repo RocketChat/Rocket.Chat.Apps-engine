@@ -1,5 +1,5 @@
 import { AppStatus } from '../../definition/AppStatus';
-import { IAppInfo } from '../../definition/metadata';
+import { IAppInfo, IAppMarketplaceInfo } from '../../definition/metadata';
 import { ISetting } from '../../definition/settings';
 
 export interface IAppStorageItem {
@@ -14,4 +14,5 @@ export interface IAppStorageItem {
     languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
     implemented: { [int: string]: boolean };
+    marketplaceInfo?: IAppMarketplaceInfo;
 }
