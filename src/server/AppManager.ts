@@ -14,7 +14,8 @@ import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
-import { AppMethod, IAppMarketplaceInfo } from '../definition/metadata';
+import { AppMethod } from '../definition/metadata';
+import { IMarketplaceInfo } from './marketplace';
 
 export class AppManager {
     public static Instance: AppManager;
@@ -364,7 +365,7 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IAppMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
@@ -392,7 +393,11 @@ export class AppManager {
             throw new Error('Failed to create the App, the storage did not return it.');
         }
 
-        this.licenseManager.validate(marketplaceInfo, aff);
+        try {
+            await this.licenseManager.validate(marketplaceInfo, aff.getLicenseValidationResult());
+        } catch (err) {
+            return aff;
+        }
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.

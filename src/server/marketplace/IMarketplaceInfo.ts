@@ -16,7 +16,7 @@ export interface IMarketplaceInfo extends IAppInfo {
     createdDate: string;
     modifiedDate: string;
     price: number;
-    subscriptionInfo: IMarketplaceSubscriptionInfo;
+    subscriptionInfo?: IMarketplaceSubscriptionInfo;
     puchaseType: MarketplacePurchaseType;
     pricingPlans?: Array<IMarketplacePricingPlan>;
     bundledIn?: Array<IMarketplaceSimpleBundleInfo>;

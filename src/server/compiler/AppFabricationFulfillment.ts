@@ -1,5 +1,5 @@
 import { IAppInfo } from '../../definition/metadata';
-
+import { AppLicenseValidationResult } from '../marketplace/license';
 import { ProxiedApp } from '../ProxiedApp';
 import { ICompilerError } from './ICompilerError';
 
@@ -9,15 +9,16 @@ export class AppFabricationFulfillment {
     public implemented: { [int: string]: boolean };
     public compilerErrors: Array<ICompilerError>;
 
-    public licenseError: Error | null;
+    public licenseValidationResult: AppLicenseValidationResult;
 
     constructor() {
         this.compilerErrors = new Array<ICompilerError>();
-        this.licenseError = null;
+        this.licenseValidationResult = new AppLicenseValidationResult();
     }
 
     public setAppInfo(information: IAppInfo): void {
         this.info = information;
+        this.licenseValidationResult.setAppId(information.id);
     }
 
     public getAppInfo(): IAppInfo {
@@ -48,11 +49,7 @@ export class AppFabricationFulfillment {
         return this.compilerErrors;
     }
 
-    public setLicenseError(error: Error) {
-        this.licenseError = error;
-    }
-
-    public getLicenseError(): Error {
-        return this.licenseError;
+    public getLicenseValidationResult(): AppLicenseValidationResult {
+        return this.licenseValidationResult;
     }
 }
