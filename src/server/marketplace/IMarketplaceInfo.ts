@@ -1,4 +1,4 @@
-import { IAppInfo } from '..';
+import { IAppInfo } from '../../definition/metadata';
 import { IMarketplacePricingPlan } from './IMarketplacePricingPlan';
 import { IMarketplaceSimpleBundleInfo } from './IMarketplaceSimpleBundleInfo';
 import { IMarketplaceSubscriptionInfo } from './IMarketplaceSubscriptionInfo';
