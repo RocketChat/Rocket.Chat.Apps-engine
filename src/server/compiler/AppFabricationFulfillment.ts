@@ -8,8 +8,8 @@ export class AppFabricationFulfillment {
     public app: ProxiedApp;
     public implemented: { [int: string]: boolean };
     public compilerErrors: Array<ICompilerError>;
-
     public licenseValidationResult: AppLicenseValidationResult;
+    public storageError: string;
 
     constructor() {
         this.compilerErrors = new Array<ICompilerError>();
@@ -47,6 +47,18 @@ export class AppFabricationFulfillment {
 
     public getCompilerErrors(): Array<ICompilerError> {
         return this.compilerErrors;
+    }
+
+    public setStorageError(errorMessage: string): void {
+        this.storageError = errorMessage;
+    }
+
+    public getStorageError(): string {
+        return this.storageError;
+    }
+
+    public hasStorageError(): boolean {
+        return !!this.storageError;
     }
 
     public getLicenseValidationResult(): AppLicenseValidationResult {

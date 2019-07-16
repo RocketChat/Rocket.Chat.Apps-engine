@@ -13,7 +13,7 @@ export class AppLicenseManager {
     }
 
     // tslint:disable-next-line: no-empty
-    public async validate(appMarketplaceInfo: IMarketplaceInfo | null, validationResult: AppLicenseValidationResult): Promise<void> {
+    public async validate(validationResult: AppLicenseValidationResult, appMarketplaceInfo?: IMarketplaceInfo): Promise<void> {
         if (!appMarketplaceInfo || !appMarketplaceInfo.subscriptionInfo) {
             return;
         }
@@ -22,13 +22,19 @@ export class AppLicenseManager {
 
         const { id: appId, subscriptionInfo } = appMarketplaceInfo;
         // tslint:disable-next-line: max-line-length
-        // const encryptedLicense = 'Bj3ZsimHLPBILKhHIl94Rk0Kx6myNWQG8jOwoJVIO8fPAaA9iRol4OhXhRdo14S/Wc8edfGtgeQRxxtSSTU5uwgx4OxSfDU8POOmciTkvkoor4F5smm61K26aYzVEod7x4zm5mLNl8j7IT+nKbyVA3wpecBzznWaeKooCuTv/Z8='; // appMarketplaceInfo.somepath.license
+        // const encryptedLicense = 'Bj3ZsimHLPBILKhHIl94Rk0Kx6myNWQG8jOwoJVIO8fPAaA9iRol4OhXhRdo14S/Wc8edfGtgeQRxxtSSTU5uwgx4OxSfDU8POOmciTkvkoor4F5smm61K26aYzVEod7x4zm5mLNl8j7IT+nKbyVA3wpecBzznWaeKooCuTv/Z8=';
 
-        const license = await this.crypto.decryptLicense(subscriptionInfo.license.license, appId) as any;
+        let license;
+        try {
+            license = await this.crypto.decryptLicense(subscriptionInfo.license.license, appId) as any;
+        } catch (err) {
+            validationResult.addError('publicKey', err.message);
+
+            throw new Error('Invalid license');
+        }
 
         if (license.appId !== appId) {
             validationResult.addError('appId', `License hasn't been issued for this app`);
-            throw new Error('Invalid license');
         }
 
         const renewal = new Date(license.renewalDate);
@@ -50,7 +56,7 @@ export class AppLicenseManager {
         }
 
         if (renewal < now) {
-            validationResult.addWarning('renewal', 'License has expired, has to be renewed');
+            validationResult.addWarning('renewal', 'License has expired and needs to be renewed');
         }
 
         if (license.seats < currentActiveUsers) {

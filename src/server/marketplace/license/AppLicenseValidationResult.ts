@@ -1,30 +1,24 @@
 
 export class AppLicenseValidationResult {
-    private errors: Map<string, string>;
-    private warnings: Map<string, string>;
-    private validated: boolean;
+    private errors: {[key: string]: string} = {};
+    private warnings: {[key: string]: string} = {};
+    private validated: boolean = false;
     private appId: string;
 
-    constructor() {
-        this.validated = false;
-        this.errors = new Map<string, string>();
-        this.warnings = new Map<string, string>();
-    }
-
     public addError(field: string, message: string): void {
-        this.errors.set(field, message);
+        this.errors[field] = message;
     }
 
     public addWarning(field: string, message: string): void {
-        this.warnings.set(field, message);
+        this.warnings[field] = message;
     }
 
     public get hasErrors(): boolean {
-        return !!this.errors.size;
+        return !!Object.keys(this.errors).length;
     }
 
     public get hasWarnings(): boolean {
-        return !!this.warnings.size;
+        return !!Object.keys(this.warnings).length;
     }
 
     public get hasBeenValidated(): boolean {
@@ -43,11 +37,18 @@ export class AppLicenseValidationResult {
         return this.appId;
     }
 
-    public getErrors(): Map<string, string> {
+    public getErrors(): object {
         return this.errors;
     }
 
-    public getWarnings(): Map<string, string> {
+    public getWarnings(): object {
         return this.warnings;
+    }
+
+    public toJSON(): object {
+        return {
+            errors: this.errors,
+            warnings: this.warnings,
+        };
     }
 }

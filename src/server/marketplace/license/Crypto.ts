@@ -12,7 +12,7 @@ export class Crypto {
             throw new Error('Public key not available, cannot decrypt'); // TODO: add custom error?
         }
 
-        const decoded = publicDecrypt(Buffer.from(publicKeySetting.value, 'base64'), Buffer.from(content, 'base64'));
+        const decoded = publicDecrypt(publicKeySetting.value, Buffer.from(content, 'base64'));
 
         let license;
         try {

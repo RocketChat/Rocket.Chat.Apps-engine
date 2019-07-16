@@ -377,26 +377,33 @@ export class AppManager {
             return aff;
         }
 
-        const created = await this.storage.create({
-            id: result.info.id,
-            info: result.info,
-            status: AppStatus.UNKNOWN,
-            zip: zipContentsBase64d,
-            compiled: result.compiledFiles,
-            languageContent: result.languageContent,
-            settings: {},
-            implemented: result.implemented.getValues(),
-            marketplaceInfo,
-        });
-
-        if (!created) {
-            throw new Error('Failed to create the App, the storage did not return it.');
-        }
+        let status = AppStatus.UNKNOWN;
+        let created: IAppStorageItem;
 
         try {
-            await this.licenseManager.validate(marketplaceInfo, aff.getLicenseValidationResult());
+            await this.licenseManager.validate(aff.getLicenseValidationResult(), marketplaceInfo);
         } catch (err) {
+            status = AppStatus.INVALID_LICENSE_DISABLED;
+
             return aff;
+        } finally {
+            created = await this.storage.create({
+                id: result.info.id,
+                info: result.info,
+                zip: zipContentsBase64d,
+                compiled: result.compiledFiles,
+                languageContent: result.languageContent,
+                settings: {},
+                implemented: result.implemented.getValues(),
+                marketplaceInfo,
+                status,
+            });
+
+            if (!created) {
+                aff.setStorageError('Failed to create the App, the satorage did not return it.');
+
+                return aff;
+            }
         }
 
         // Now that is has all been compiled, let's get the
