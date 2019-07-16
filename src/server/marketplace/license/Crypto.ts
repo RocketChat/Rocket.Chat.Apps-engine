@@ -1,12 +1,10 @@
 import { publicDecrypt } from 'crypto';
-import { IServerSettingBridge } from '../../bridges';
-
-const publicKeySettingName = 'Cloud_Workspace_PublicKey';
+import { IInternalBridge } from '../../bridges';
 export class Crypto {
-    constructor(private readonly settingsBridge: IServerSettingBridge) {}
+    constructor(private readonly internalBridge: IInternalBridge) {}
 
-    public async decryptLicense(content: string, appId: string): Promise<object> {
-        const publicKeySetting = await this.settingsBridge.getOneById(publicKeySettingName, appId);
+    public async decryptLicense(content: string): Promise<object> {
+        const publicKeySetting = await this.internalBridge.getWorkspacePublicKey();
 
         if (!publicKeySetting || !publicKeySetting.value) {
             throw new Error('Public key not available, cannot decrypt'); // TODO: add custom error?

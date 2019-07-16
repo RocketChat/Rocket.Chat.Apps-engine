@@ -8,7 +8,7 @@ export class AppLicenseManager {
     private readonly crypto: Crypto;
     private readonly userBridge: IUserBridge;
     constructor(private readonly manager: AppManager) {
-        this.crypto = new Crypto(this.manager.getBridges().getServerSettingBridge());
+        this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
         this.userBridge = this.manager.getBridges().getUserBridge();
     }
 
@@ -26,7 +26,7 @@ export class AppLicenseManager {
 
         let license;
         try {
-            license = await this.crypto.decryptLicense(subscriptionInfo.license.license, appId) as any;
+            license = await this.crypto.decryptLicense(subscriptionInfo.license.license) as any;
         } catch (err) {
             validationResult.addError('publicKey', err.message);
 
