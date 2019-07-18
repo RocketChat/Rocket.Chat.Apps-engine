@@ -1,5 +1,6 @@
 import { publicDecrypt } from 'crypto';
 import { IInternalBridge } from '../../bridges';
+
 export class Crypto {
     constructor(private readonly internalBridge: IInternalBridge) {}
 
