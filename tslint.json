@@ -5,7 +5,6 @@
     "no-console": [false],
     "no-duplicate-variable": true,
     "object-literal-sort-keys": false,
-    "no-unsafe-finally": false,
     "quotemark": [true, "single"],
     "max-line-length": [true, {
         "limit": 160,
