@@ -5,6 +5,10 @@ import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
 import { Crypto } from '../marketplace/license';
 
+enum LicenseVersion {
+    v1 = 1,
+}
+
 export class AppLicenseManager {
     private readonly crypto: Crypto;
     private readonly userBridge: IUserBridge;
@@ -13,7 +17,6 @@ export class AppLicenseManager {
         this.userBridge = this.manager.getBridges().getUserBridge();
     }
 
-    // tslint:disable-next-line: no-empty
     public async validate(validationResult: AppLicenseValidationResult, appMarketplaceInfo?: IMarketplaceInfo): Promise<void> {
         if (!appMarketplaceInfo || !appMarketplaceInfo.subscriptionInfo) {
             return;
@@ -22,8 +25,6 @@ export class AppLicenseManager {
         validationResult.setValidated(true);
 
         const { id: appId, subscriptionInfo } = appMarketplaceInfo;
-        // tslint:disable-next-line: max-line-length
-        // const encryptedLicense = 'Bj3ZsimHLPBILKhHIl94Rk0Kx6myNWQG8jOwoJVIO8fPAaA9iRol4OhXhRdo14S/Wc8edfGtgeQRxxtSSTU5uwgx4OxSfDU8POOmciTkvkoor4F5smm61K26aYzVEod7x4zm5mLNl8j7IT+nKbyVA3wpecBzznWaeKooCuTv/Z8=';
 
         let license;
         try {
@@ -38,6 +39,14 @@ export class AppLicenseManager {
             validationResult.addError('appId', `License hasn't been issued for this app`);
         }
 
+        switch (license.version) {
+            case LicenseVersion.v1:
+                await this.validateV1(license, validationResult);
+                break;
+        }
+    }
+
+    private async validateV1(license: any, validationResult: AppLicenseValidationResult): Promise<void> {
         const renewal = new Date(license.renewalDate);
         const expire = new Date(license.expireDate);
         const now = new Date();
@@ -63,7 +72,7 @@ export class AppLicenseManager {
         if (license.seats < currentActiveUsers) {
             validationResult.addWarning(
                 'seats',
-                'License does not accomodateLicense does not accomodate the currently active users. Please expand number of seats',
+                'License does not accomodate the currently active users. Please expand number of seats',
             );
         }
     }
