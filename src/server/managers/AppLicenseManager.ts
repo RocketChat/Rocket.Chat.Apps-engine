@@ -1,5 +1,6 @@
 import { AppManager } from '../AppManager';
 import { IUserBridge } from '../bridges';
+import { InvalidLicenseError } from '../errors';
 import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
 import { Crypto } from '../marketplace/license';
@@ -30,7 +31,7 @@ export class AppLicenseManager {
         } catch (err) {
             validationResult.addError('publicKey', err.message);
 
-            throw new Error('Invalid license');
+            throw new InvalidLicenseError(validationResult);
         }
 
         if (license.appId !== appId) {
@@ -52,7 +53,7 @@ export class AppLicenseManager {
         }
 
         if (validationResult.hasErrors) {
-            throw new Error('Invalid license');
+            throw new InvalidLicenseError(validationResult);
         }
 
         if (renewal < now) {

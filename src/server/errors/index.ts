@@ -1,6 +1,7 @@
 import { CommandAlreadyExistsError } from './CommandAlreadyExistsError';
 import { CommandHasAlreadyBeenTouchedError } from './CommandHasAlreadyBeenTouchedError';
 import { CompilerError } from './CompilerError';
+import { InvalidLicenseError } from './InvalidLicenseError';
 import { MustContainFunctionError } from './MustContainFunctionError';
 import { MustExtendAppError } from './MustExtendAppError';
 import { NotEnoughMethodArgumentsError } from './NotEnoughMethodArgumentsError';
@@ -16,4 +17,5 @@ export {
     MustExtendAppError,
     NotEnoughMethodArgumentsError,
     RequiredApiVersionError,
+    InvalidLicenseError,
 };
