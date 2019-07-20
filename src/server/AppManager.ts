@@ -562,40 +562,49 @@ export class AppManager {
         return rl;
     }
 
-    public async updateAppsMarketplaceInfo(appsOverview: Array<any>): Promise<void> {
-        appsOverview.forEach(async ({ latest: appInfo }: { latest: IMarketplaceInfo }) => {
-            if (!appInfo.subscriptionInfo) {
+    public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
+        try {
+            appsOverview.forEach(({ latest: appInfo }) => {
+                if (!appInfo.subscriptionInfo) {
+                    return;
+                }
+
+                const app = this.apps.get(appInfo.id);
+
+                if (!app) {
+                    return;
+                }
+
+                const appStorageItem = app.getStorageItem();
+                const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+
+                if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
+                    return;
+                }
+
+                appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
+
+                this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
+            });
+        } catch (err) {
+            // Errors here are not important
+        }
+
+        const queue = [] as Array<Promise<void>>;
+
+        this.apps.forEach((app) => queue.push(app.validateLicense().catch((error) => {
+            if (!(error instanceof InvalidLicenseError)) {
+                console.error(error);
                 return;
             }
 
-            const app = this.apps.get(appInfo.id);
+            this.commandManager.unregisterCommands(app.getID());
+            this.apiManager.unregisterApis(app.getID());
 
-            if (!app) {
-                return;
-            }
+            return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+        })));
 
-            const appStorageItem = app.getStorageItem();
-            const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
-
-            if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
-                return;
-            }
-
-            appStorageItem.marketplaceInfo = appInfo;
-
-            try {
-                await this.storage.update(appStorageItem);
-                await app.validateLicense();
-            } catch (e) {
-                console.log(e);
-                if (!(e instanceof InvalidLicenseError)) { return; }
-
-                this.commandManager.unregisterCommands(appStorageItem.id);
-                this.apiManager.unregisterApis(appStorageItem.id);
-
-                await app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
-            }
-        });
+        await Promise.all(queue);
     }
 
     /**
