@@ -397,7 +397,9 @@ export class AppManager {
         });
 
         if (!created) {
-            throw new Error('Failed to create the App, the storage did not return it.');
+            aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            return aff;
         }
 
         // Now that is has all been compiled, let's get the
@@ -558,6 +560,42 @@ export class AppManager {
         }
 
         return rl;
+    }
+
+    public async updateAppsMarketplaceInfo(appsOverview: Array<any>): Promise<void> {
+        appsOverview.forEach(async ({ latest: appInfo }: { latest: IMarketplaceInfo }) => {
+            if (!appInfo.subscriptionInfo) {
+                return;
+            }
+
+            const app = this.apps.get(appInfo.id);
+
+            if (!app) {
+                return;
+            }
+
+            const appStorageItem = app.getStorageItem();
+            const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+
+            if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
+                return;
+            }
+
+            appStorageItem.marketplaceInfo = appInfo;
+
+            try {
+                await this.storage.update(appStorageItem);
+                await app.validateLicense();
+            } catch (e) {
+                console.log(e);
+                if (!(e instanceof InvalidLicenseError)) { return; }
+
+                this.commandManager.unregisterCommands(appStorageItem.id);
+                this.apiManager.unregisterApis(appStorageItem.id);
+
+                await app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+            }
+        });
     }
 
     /**

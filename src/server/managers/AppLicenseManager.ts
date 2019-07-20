@@ -41,12 +41,12 @@ export class AppLicenseManager {
 
         switch (license.version) {
             case LicenseVersion.v1:
-                await this.validateV1(license, validationResult);
+                await this.validateV1(appMarketplaceInfo, license, validationResult);
                 break;
         }
     }
 
-    private async validateV1(license: any, validationResult: AppLicenseValidationResult): Promise<void> {
+    private async validateV1(appMarketplaceInfo: IMarketplaceInfo, license: any, validationResult: AppLicenseValidationResult): Promise<void> {
         const renewal = new Date(license.renewalDate);
         const expire = new Date(license.expireDate);
         const now = new Date();
@@ -72,7 +72,9 @@ export class AppLicenseManager {
         if (license.seats < currentActiveUsers) {
             validationResult.addWarning(
                 'seats',
-                'License does not accomodate the currently active users. Please expand number of seats',
+                `The license for the app "${
+                    appMarketplaceInfo.name
+                }" does not have enough seats to accommodate the current amount of active users. Please increase the number of seats`,
             );
         }
     }
