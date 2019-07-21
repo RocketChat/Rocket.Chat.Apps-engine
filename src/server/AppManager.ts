@@ -4,6 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
+    AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -14,6 +15,8 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { InvalidLicenseError } from './errors';
+import { IMarketplaceInfo } from './marketplace';
 
 export class AppManager {
     public static Instance: AppManager;
@@ -31,6 +34,7 @@ export class AppManager {
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
     private readonly settingsManager: AppSettingsManager;
+    private readonly licenseManager: AppLicenseManager;
 
     private isLoaded: boolean;
 
@@ -67,6 +71,7 @@ export class AppManager {
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
         this.settingsManager = new AppSettingsManager(this);
+        this.licenseManager = new AppLicenseManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -110,6 +115,10 @@ export class AppManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): AppSlashCommandManager {
         return this.commandManager;
+    }
+
+    public getLicenseManager(): AppLicenseManager {
+        return this.licenseManager;
     }
 
     /** Gets the api manager's instance. */
@@ -222,7 +231,9 @@ export class AppManager {
         for (const rl of this.apps.values()) {
             if (AppStatusUtils.isDisabled(rl.getStatus())) {
                 continue;
-            } else if (rl.getStatus() === AppStatus.INITIALIZED) {
+            }
+
+            if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
@@ -361,7 +372,7 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
@@ -382,10 +393,13 @@ export class AppManager {
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
+            marketplaceInfo,
         });
 
         if (!created) {
-            throw new Error('Failed to create the App, the storage did not return it.');
+            aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            return aff;
         }
 
         // Now that is has all been compiled, let's get the
@@ -548,6 +562,51 @@ export class AppManager {
         return rl;
     }
 
+    public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
+        try {
+            appsOverview.forEach(({ latest: appInfo }) => {
+                if (!appInfo.subscriptionInfo) {
+                    return;
+                }
+
+                const app = this.apps.get(appInfo.id);
+
+                if (!app) {
+                    return;
+                }
+
+                const appStorageItem = app.getStorageItem();
+                const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+
+                if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
+                    return;
+                }
+
+                appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
+
+                this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
+            });
+        } catch (err) {
+            // Errors here are not important
+        }
+
+        const queue = [] as Array<Promise<void>>;
+
+        this.apps.forEach((app) => queue.push(app.validateLicense().catch((error) => {
+            if (!(error instanceof InvalidLicenseError)) {
+                console.error(error);
+                return;
+            }
+
+            this.commandManager.unregisterCommands(app.getID());
+            this.apiManager.unregisterApis(app.getID());
+
+            return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+        })));
+
+        await Promise.all(queue);
+    }
+
     /**
      * Goes through the entire loading up process. WARNING: Do not use. ;)
      *
@@ -603,12 +662,21 @@ export class AppManager {
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
+            await app.validateLicense();
+
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
-            result = true;
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
+
+            result = true;
         } catch (e) {
+            let status = AppStatus.ERROR_DISABLED;
+
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
+            }
+
+            if (e instanceof InvalidLicenseError) {
+                status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
             console.error(e);
@@ -616,7 +684,7 @@ export class AppManager {
             this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
-            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
+            await app.setStatus(status, silenceStatus);
         }
 
         if (saveToDb) {
@@ -657,19 +725,27 @@ export class AppManager {
         let enable: boolean;
 
         try {
+            await app.validateLicense();
+
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
+
             await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
         } catch (e) {
             enable = false;
+            let status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
             }
 
+            if (e instanceof InvalidLicenseError) {
+                status = AppStatus.INVALID_LICENSE_DISABLED;
+            }
+
             console.error(e);
-            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
+            await app.setStatus(status, silenceStatus);
         }
 
         if (enable) {

@@ -3,4 +3,10 @@ import { IAppAuthorInfo } from './IAppAuthorInfo';
 import { IAppInfo } from './IAppInfo';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from './RocketChatAssociations';
 
-export { AppMethod, IAppAuthorInfo, IAppInfo, RocketChatAssociationModel, RocketChatAssociationRecord };
+export {
+    AppMethod,
+    IAppAuthorInfo,
+    IAppInfo,
+    RocketChatAssociationModel,
+    RocketChatAssociationRecord,
+};
