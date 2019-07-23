@@ -3,6 +3,7 @@ import {
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
+    IExternalComponentBridge,
     IHttpBridge,
     IInternalBridge,
     IListenerBridge,
@@ -17,6 +18,7 @@ import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
+import { TestExternalComponentBridge } from './externalComponentBridge';
 import { TestsHttpBridge } from './httpBridge';
 import { TestsInternalBridge } from './internalBridge';
 import { TestsMessageBridge } from './messageBridge';
@@ -28,6 +30,7 @@ import { TestsUserBridge } from './userBridge';
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
+    private readonly componentBridge: TestExternalComponentBridge;
     private readonly apiBridge: TestsApiBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
@@ -43,6 +46,7 @@ export class TestsAppBridges extends AppBridges {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
+        this.componentBridge = new TestExternalComponentBridge();
         this.apiBridge = new TestsApiBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
@@ -73,6 +77,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getAppDetailChangesBridge(): IAppDetailChangesBridge {
         return this.appDetails;
+    }
+
+    public getExternalComponentBridge(): IExternalComponentBridge {
+        return this.componentBridge;
     }
 
     public getHttpBridge(): IHttpBridge {
