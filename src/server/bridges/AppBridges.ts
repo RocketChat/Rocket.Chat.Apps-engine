@@ -3,6 +3,7 @@ import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
+import { IExternalComponentBridge } from './IExternalComponentBridge';
 import { IHttpBridge } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
@@ -16,6 +17,7 @@ export abstract class AppBridges {
     public abstract getCommandBridge(): IAppCommandBridge;
     public abstract getApiBridge(): IAppApiBridge;
     public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
+    public abstract getExternalComponentBridge(): IExternalComponentBridge;
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
     public abstract getHttpBridge(): IHttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
