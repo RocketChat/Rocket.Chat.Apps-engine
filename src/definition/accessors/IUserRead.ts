@@ -8,4 +8,6 @@ export interface IUserRead {
     getById(id: string): Promise<IUser>;
 
     getByUsername(username: string): Promise<IUser>;
+
+    createBot(username: string, email: string, name: string, password: string): Promise<void>;
 }

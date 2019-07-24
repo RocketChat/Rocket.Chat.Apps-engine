@@ -12,4 +12,8 @@ export class UserRead implements IUserRead {
     public getByUsername(username: string): Promise<IUser> {
         return this.userBridge.getByUsername(username, this.appId);
     }
+
+    public createBot(username: string, email: string, name: string, password: string): Promise<void> {
+      return this.userBridge.createBot(username, email, name, password, this.appId);
+    }
 }
