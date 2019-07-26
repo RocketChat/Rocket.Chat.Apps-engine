@@ -24,19 +24,13 @@ export class AppLicenseManager {
 
         validationResult.setValidated(true);
 
-        const { id: appId, subscriptionInfo } = appMarketplaceInfo;
-
         let license;
         try {
-            license = await this.crypto.decryptLicense(subscriptionInfo.license.license) as any;
+            license = await this.crypto.decryptLicense(appMarketplaceInfo.subscriptionInfo.license.license) as any;
         } catch (err) {
             validationResult.addError('publicKey', err.message);
 
             throw new InvalidLicenseError(validationResult);
-        }
-
-        if (license.appId !== appId) {
-            validationResult.addError('appId', `License hasn't been issued for this app`);
         }
 
         switch (license.version) {
@@ -47,6 +41,12 @@ export class AppLicenseManager {
     }
 
     private async validateV1(appMarketplaceInfo: IMarketplaceInfo, license: any, validationResult: AppLicenseValidationResult): Promise<void> {
+        if (license.isBundle && (!appMarketplaceInfo.bundledIn || !appMarketplaceInfo.bundledIn.find((value) => value.bundleId === license.appId))) {
+            validationResult.addError('bundle', 'License issued for a bundle that does not contain the app');
+        } else if (license.appId !== appMarketplaceInfo.id) {
+            validationResult.addError('appId', `License hasn't been issued for this app`);
+        }
+
         const renewal = new Date(license.renewalDate);
         const expire = new Date(license.expireDate);
         const now = new Date();
@@ -58,7 +58,7 @@ export class AppLicenseManager {
         const currentActiveUsers = await this.userBridge.getActiveUserCount();
 
         if (license.maxSeats < currentActiveUsers) {
-            validationResult.addError('maxSeats', 'License does not accomodate the currently active users');
+            validationResult.addError('maxSeats', 'License does not accomodate the current active user count');
         }
 
         if (validationResult.hasErrors) {
