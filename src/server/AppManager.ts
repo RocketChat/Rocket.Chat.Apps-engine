@@ -360,6 +360,17 @@ export class AppManager {
         this.apiManager.unregisterApis(storageItem.id);
         this.accessorManager.purifyApp(storageItem.id);
 
+        if (storageItem.status === AppStatus.INVALID_LICENSE_DISABLED) {
+            await rl.validateLicense().catch(() => {
+                /**
+                 * This case would happen when the app has been disabled due to
+                 * license validation errors in another instance of a cluster.
+                 * We need to validate the license in this instance as well so
+                 * we get the error messages to show in the UI
+                 */
+            });
+        }
+
         if (isManual) {
             await rl.setStatus(AppStatus.MANUALLY_DISABLED);
         }
