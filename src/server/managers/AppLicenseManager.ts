@@ -4,6 +4,7 @@ import { InvalidLicenseError } from '../errors';
 import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
 import { Crypto } from '../marketplace/license';
+import { MarketplacePurchaseType } from '../marketplace/MarketplacePurchaseType';
 
 enum LicenseVersion {
     v1 = 1,
@@ -18,7 +19,7 @@ export class AppLicenseManager {
     }
 
     public async validate(validationResult: AppLicenseValidationResult, appMarketplaceInfo?: IMarketplaceInfo): Promise<void> {
-        if (!appMarketplaceInfo || !appMarketplaceInfo.subscriptionInfo) {
+        if (!appMarketplaceInfo || appMarketplaceInfo.purchaseType !== MarketplacePurchaseType.PurchaseTypeSubscription) {
             return;
         }
 
