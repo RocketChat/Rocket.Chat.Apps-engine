@@ -195,7 +195,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.initializeApp(items.get(rl.getID()), rl, true);
+            await this.initializeApp(items.get(rl.getID()), rl, true).catch(console.error);
         }
 
         // Let's ensure the required settings are all set
@@ -205,7 +205,7 @@ export class AppManager {
             }
 
             if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
-                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED).catch(console.error);
             }
         }
 
@@ -213,7 +213,7 @@ export class AppManager {
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
             if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             }
         }
 
@@ -702,7 +702,11 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            this.storage.update(storageItem);
+            this.storage.update(storageItem).catch(() => {
+                /**
+                 * Avoiding some UNHANDLED_PROMISE_REJECTION
+                 */
+            });
         }
 
         return result;
