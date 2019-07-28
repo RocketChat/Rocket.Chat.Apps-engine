@@ -44,7 +44,7 @@ export class AppLicenseManager {
     private async validateV1(appMarketplaceInfo: IMarketplaceInfo, license: any, validationResult: AppLicenseValidationResult): Promise<void> {
         if (license.isBundle && (!appMarketplaceInfo.bundledIn || !appMarketplaceInfo.bundledIn.find((value) => value.bundleId === license.appId))) {
             validationResult.addError('bundle', 'License issued for a bundle that does not contain the app');
-        } else if (license.appId !== appMarketplaceInfo.id) {
+        } else if (!license.isBundle && license.appId !== appMarketplaceInfo.id) {
             validationResult.addError('appId', `License hasn't been issued for this app`);
         }
 
