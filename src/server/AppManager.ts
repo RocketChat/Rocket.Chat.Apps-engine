@@ -589,7 +589,7 @@ export class AppManager {
                 const appStorageItem = app.getStorageItem();
                 const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
 
-                if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
+                if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
                     return;
                 }
 
