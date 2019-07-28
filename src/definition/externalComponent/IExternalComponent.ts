@@ -8,6 +8,10 @@ export interface IExternalComponent {
      */
     name: string;
     /**
+     * Provides the description of the external component.
+     */
+    description: string;
+    /**
      * Provides the icon's url or base64 string.
      */
     icon: string;
