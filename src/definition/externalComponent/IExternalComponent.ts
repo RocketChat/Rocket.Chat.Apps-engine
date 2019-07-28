@@ -1,4 +1,4 @@
-import { IExternalComponentLocationOptions } from './IExternalComponentLocationOptions';
+import { IExternalComponentLocationOptions } from './IExternalComponentOptions';
 /**
  * Represents an external component that is being provided.
  */
