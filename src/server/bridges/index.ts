@@ -4,7 +4,6 @@ import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
-import { IExternalComponentBridge } from './IExternalComponentBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
@@ -16,7 +15,6 @@ import { IUserBridge } from './IUserBridge';
 
 export {
     IEnvironmentalVariableBridge,
-    IExternalComponentBridge,
     IHttpBridge,
     IHttpBridgeRequestInfo,
     IListenerBridge,
