@@ -40,7 +40,6 @@ export class AppAccessorManagerTestFixture {
         this.spies = new Array<RestorableFunctionSpy>();
         this.spies.push(SpyOn(this.bridges, 'getServerSettingBridge'));
         this.spies.push(SpyOn(this.bridges, 'getEnvironmentalVariableBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getExternalComponentBridge'));
         this.spies.push(SpyOn(this.bridges, 'getMessageBridge'));
         this.spies.push(SpyOn(this.bridges, 'getPersistenceBridge'));
         this.spies.push(SpyOn(this.bridges, 'getRoomBridge'));
