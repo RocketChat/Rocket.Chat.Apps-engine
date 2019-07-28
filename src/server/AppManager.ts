@@ -68,7 +68,7 @@ export class AppManager {
         this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
-        this.externalComponentManager = new AppExternalComponentManager(this);
+        this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
 
         this.isLoaded = false;

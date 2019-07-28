@@ -1,8 +1,5 @@
 import { IExternalComponent } from '../../definition/externalComponent';
 
-import { AppManager } from '../AppManager';
-import { IExternalComponentBridge } from '../bridges';
-
 /**
  * The external component manager for the Apps.
  *
@@ -13,17 +10,19 @@ import { IExternalComponentBridge } from '../bridges';
  * Registered means the component has been provided to the bridged system.
  */
 export class AppExternalComponentManager {
-    private readonly bridge: IExternalComponentBridge;
-    constructor(private readonly manager: AppManager) {
-        this.bridge = this.manager.getBridges().getExternalComponentBridge();
+    /**
+     * The map that maintain the list of all registered components.
+     */
+    private providedComponents: Map<string, IExternalComponent>;
+    constructor() {
+        this.providedComponents = new Map<string, IExternalComponent>();
     }
     /**
-     * Actually goes and provide's the bridged system with the external
-     * component information.
+     * Add the external component to the providedComponents.
      * @param appId the id of the app calling this
      * @param externalComponent the external component to register
      */
     public registerComponent(appId: string, externalComponent: IExternalComponent): void {
-        this.bridge.registerExternalComponent(externalComponent, appId);
+        this.providedComponents.set(appId, externalComponent);
     }
 }
