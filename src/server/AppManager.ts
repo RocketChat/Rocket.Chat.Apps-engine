@@ -575,7 +575,7 @@ export class AppManager {
 
     public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
         try {
-            appsOverview.forEach(({ latest: appInfo }) => {
+            await Promise.all(appsOverview.map(async ({ latest: appInfo }) => {
                 if (!appInfo.subscriptionInfo) {
                     return;
                 }
@@ -595,15 +595,15 @@ export class AppManager {
 
                 appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
 
-                this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
-            });
+                return this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
+            }));
         } catch (err) {
             // Errors here are not important
         }
 
         const queue = [] as Array<Promise<void>>;
 
-        this.apps.forEach((app) => queue.push(app.validateLicense().catch((error) => {
+        this.apps.forEach((app) => queue.push(app.validateLicense().catch(async (error) => {
             if (!(error instanceof InvalidLicenseError)) {
                 console.error(error);
                 return;
@@ -612,7 +612,12 @@ export class AppManager {
             this.commandManager.unregisterCommands(app.getID());
             this.apiManager.unregisterApis(app.getID());
 
-            return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+            await app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+
+            const storageItem = app.getStorageItem();
+            storageItem.status = app.getStatus();
+
+            return this.storage.update(storageItem).catch(console.error) as Promise<void>;
         })));
 
         await Promise.all(queue);
