@@ -603,22 +603,36 @@ export class AppManager {
 
         const queue = [] as Array<Promise<void>>;
 
-        this.apps.forEach((app) => queue.push(app.validateLicense().catch(async (error) => {
-            if (!(error instanceof InvalidLicenseError)) {
-                console.error(error);
-                return;
-            }
+        this.apps.forEach((app) => queue.push(app.validateLicense()
+            .then(() => {
+                if (app.getStatus() !== AppStatus.INVALID_LICENSE_DISABLED) {
+                    return;
+                }
 
-            this.commandManager.unregisterCommands(app.getID());
-            this.apiManager.unregisterApis(app.getID());
+                return app.setStatus(AppStatus.DISABLED);
+            })
+            .catch((error) => {
+                if (!(error instanceof InvalidLicenseError)) {
+                    console.error(error);
+                    return;
+                }
 
-            await app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+                this.commandManager.unregisterCommands(app.getID());
+                this.apiManager.unregisterApis(app.getID());
 
-            const storageItem = app.getStorageItem();
-            storageItem.status = app.getStatus();
+                return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+            })
+            .then(() => {
+                if (app.getStatus() === app.getPreviousStatus()) {
+                    return;
+                }
 
-            return this.storage.update(storageItem).catch(console.error) as Promise<void>;
-        })));
+                const storageItem = app.getStorageItem();
+                storageItem.status = app.getStatus();
+
+                return this.storage.update(storageItem).catch(console.error) as Promise<void>;
+            }),
+        ));
 
         await Promise.all(queue);
     }
