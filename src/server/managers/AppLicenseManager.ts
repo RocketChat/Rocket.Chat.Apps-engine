@@ -53,13 +53,13 @@ export class AppLicenseManager {
         const now = new Date();
 
         if (expire < now) {
-            validationResult.addError('expire', 'License is no longer valid');
+            validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
         }
 
         const currentActiveUsers = await this.userBridge.getActiveUserCount();
 
         if (license.maxSeats < currentActiveUsers) {
-            validationResult.addError('maxSeats', 'License does not accomodate the current active user count');
+            validationResult.addError('maxSeats', 'License does not accomodate the current amount of active users. Please increase the number of seats');
         }
 
         if (validationResult.hasErrors) {
@@ -73,9 +73,7 @@ export class AppLicenseManager {
         if (license.seats < currentActiveUsers) {
             validationResult.addWarning(
                 'seats',
-                `The license for the app "${
-                    appMarketplaceInfo.name
-                }" does not have enough seats to accommodate the current amount of active users. Please increase the number of seats`,
+                'License does not have enough seats to accommodate the current amount of active users. Please increase the number of seats',
             );
         }
     }
