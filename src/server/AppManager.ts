@@ -195,7 +195,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.initializeApp(items.get(rl.getID()), rl, true);
+            await this.initializeApp(items.get(rl.getID()), rl, true).catch(console.error);
         }
 
         // Let's ensure the required settings are all set
@@ -205,7 +205,7 @@ export class AppManager {
             }
 
             if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
-                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED).catch(console.error);
             }
         }
 
@@ -213,7 +213,7 @@ export class AppManager {
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
             if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             }
         }
 
@@ -359,6 +359,17 @@ export class AppManager {
         this.commandManager.unregisterCommands(storageItem.id);
         this.apiManager.unregisterApis(storageItem.id);
         this.accessorManager.purifyApp(storageItem.id);
+
+        if (storageItem.status === AppStatus.INVALID_LICENSE_DISABLED) {
+            await rl.validateLicense().catch(() => {
+                /**
+                 * This case would happen when the app has been disabled due to
+                 * license validation errors in another instance of a cluster.
+                 * We need to validate the license in this instance as well so
+                 * we get the error messages to show in the UI
+                 */
+            });
+        }
 
         if (isManual) {
             await rl.setStatus(AppStatus.MANUALLY_DISABLED);
@@ -564,7 +575,7 @@ export class AppManager {
 
     public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
         try {
-            appsOverview.forEach(({ latest: appInfo }) => {
+            await Promise.all(appsOverview.map(async ({ latest: appInfo }) => {
                 if (!appInfo.subscriptionInfo) {
                     return;
                 }
@@ -578,31 +589,50 @@ export class AppManager {
                 const appStorageItem = app.getStorageItem();
                 const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
 
-                if (subscriptionInfo && subscriptionInfo.startDate === appInfo.subscriptionInfo.startDate) {
+                if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
                     return;
                 }
 
                 appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
 
-                this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
-            });
+                return this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
+            }));
         } catch (err) {
             // Errors here are not important
         }
 
         const queue = [] as Array<Promise<void>>;
 
-        this.apps.forEach((app) => queue.push(app.validateLicense().catch((error) => {
-            if (!(error instanceof InvalidLicenseError)) {
-                console.error(error);
-                return;
-            }
+        this.apps.forEach((app) => queue.push(app.validateLicense()
+            .then(() => {
+                if (app.getStatus() !== AppStatus.INVALID_LICENSE_DISABLED) {
+                    return;
+                }
 
-            this.commandManager.unregisterCommands(app.getID());
-            this.apiManager.unregisterApis(app.getID());
+                return app.setStatus(AppStatus.DISABLED);
+            })
+            .catch((error) => {
+                if (!(error instanceof InvalidLicenseError)) {
+                    console.error(error);
+                    return;
+                }
 
-            return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
-        })));
+                this.commandManager.unregisterCommands(app.getID());
+                this.apiManager.unregisterApis(app.getID());
+
+                return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+            })
+            .then(() => {
+                if (app.getStatus() === app.getPreviousStatus()) {
+                    return;
+                }
+
+                const storageItem = app.getStorageItem();
+                storageItem.status = app.getStatus();
+
+                return this.storage.update(storageItem).catch(console.error) as Promise<void>;
+            }),
+        ));
 
         await Promise.all(queue);
     }
@@ -691,7 +721,11 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            this.storage.update(storageItem);
+            this.storage.update(storageItem).catch(() => {
+                /**
+                 * Avoiding some UNHANDLED_PROMISE_REJECTION
+                 */
+            });
         }
 
         return result;
