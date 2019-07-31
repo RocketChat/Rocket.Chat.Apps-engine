@@ -241,7 +241,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.disable(rl.getID(), isManual);
+            await this.disable(rl.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
         }
 
         // Remove all the apps from the system now that we have unloaded everything
@@ -310,7 +310,7 @@ export class AppManager {
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error('The App is already enabled.');
+            return true;
         }
 
         if (rl.getStatus() === AppStatus.COMPILER_ERROR_DISABLED) {
@@ -327,58 +327,44 @@ export class AppManager {
             storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            this.storage.update(storageItem);
+            await this.storage.update(storageItem).catch();
         }
 
         return isSetup;
     }
 
-    public async disable(id: string, isManual = false): Promise<boolean> {
+    public async disable(id: string, status: AppStatus = AppStatus.DISABLED, silent?: boolean): Promise<boolean> {
+        if (!AppStatusUtils.isDisabled(status)) {
+            throw new Error('Invalid disabled status');
+        }
+
         const rl = this.apps.get(id);
 
         if (!rl) {
             throw new Error(`No App by the id "${id}" exists.`);
         }
 
-        if (!AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error(`No App by the id of "${id}" is enabled."`);
-        }
-
-        const storageItem = await this.storage.retrieveOne(id);
-        if (!storageItem) {
-            throw new Error(`Could not disable an App with the id of "${id}" as it doesn't exist.`);
-        }
-
-        try {
-            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
-        } catch (e) {
-            console.warn('Error while disabling:', e);
+        if (AppStatusUtils.isEnabled(rl.getStatus())) {
+            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(rl.getID()))
+                .catch((e) => console.warn('Error while disabling:', e));
         }
 
         this.listenerManager.unregisterListeners(rl);
-        this.commandManager.unregisterCommands(storageItem.id);
-        this.apiManager.unregisterApis(storageItem.id);
-        this.accessorManager.purifyApp(storageItem.id);
+        this.commandManager.unregisterCommands(rl.getID());
+        this.apiManager.unregisterApis(rl.getID());
+        this.accessorManager.purifyApp(rl.getID());
 
-        if (storageItem.status === AppStatus.INVALID_LICENSE_DISABLED) {
-            await rl.validateLicense().catch(() => {
-                /**
-                 * This case would happen when the app has been disabled due to
-                 * license validation errors in another instance of a cluster.
-                 * We need to validate the license in this instance as well so
-                 * we get the error messages to show in the UI
-                 */
-            });
-        }
+        await rl.setStatus(status, silent);
 
-        if (isManual) {
-            await rl.setStatus(AppStatus.MANUALLY_DISABLED);
-        }
+        const storageItem = await this.storage.retrieveOne(id);
+
+        rl.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
+        await rl.validateLicense().catch();
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
         storageItem.status = rl.getStatus();
-        this.storage.update(storageItem);
+        await this.storage.update(storageItem).catch();
 
         return true;
     }
@@ -421,11 +407,9 @@ export class AppManager {
         aff.setApp(app);
 
         // Let everyone know that the App has been added
-        try {
-            await this.bridges.getAppActivationBridge().appAdded(app);
-        } catch (e) {
+        await this.bridges.getAppActivationBridge().appAdded(app).catch(() => {
             // If an error occurs during this, oh well.
-        }
+        });
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -443,7 +427,7 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id);
+            await this.disable(id).catch();
         }
 
         this.listenerManager.unregisterListeners(app);
@@ -455,11 +439,7 @@ export class AppManager {
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        try {
-            await this.bridges.getAppActivationBridge().appRemoved(app);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
+        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
 
         this.apps.delete(app.getID());
 
@@ -484,12 +464,7 @@ export class AppManager {
             throw new Error('Can not update an App that does not currently exist.');
         }
 
-        // Attempt to disable it, if it wasn't enabled then it will error and we don't care
-        try {
-            await this.disable(old.id);
-        } catch (e) {
-            // We don't care
-        }
+        await this.disable(old.id).catch();
 
         // TODO: We could show what new interfaces have been added
 
@@ -503,6 +478,7 @@ export class AppManager {
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
+            marketplaceInfo: old.marketplaceInfo,
         });
 
         // Now that is has all been compiled, let's get the
@@ -517,11 +493,7 @@ export class AppManager {
         await this.runStartUpProcess(stored, app, false, true);
 
         // Let everyone know that the App has been updated
-        try {
-            await this.bridges.getAppActivationBridge().appUpdated(app);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
+        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
 
         return aff;
     }
@@ -567,39 +539,35 @@ export class AppManager {
                 throw new Error('Can not disable an App which is not enabled.');
             }
 
-            await this.disable(rl.getID(), true);
+            await this.disable(rl.getID(), AppStatus.MANUALLY_DISABLED);
         }
 
         return rl;
     }
 
     public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
-        try {
-            await Promise.all(appsOverview.map(async ({ latest: appInfo }) => {
-                if (!appInfo.subscriptionInfo) {
-                    return;
-                }
+        await Promise.all(appsOverview.map(async ({ latest: appInfo }) => {
+            if (!appInfo.subscriptionInfo) {
+                return;
+            }
 
-                const app = this.apps.get(appInfo.id);
+            const app = this.apps.get(appInfo.id);
 
-                if (!app) {
-                    return;
-                }
+            if (!app) {
+                return;
+            }
 
-                const appStorageItem = app.getStorageItem();
-                const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+            const appStorageItem = app.getStorageItem();
+            const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
 
-                if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
-                    return;
-                }
+            if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
+                return;
+            }
 
-                appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
+            appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
 
-                return this.storage.update(appStorageItem).catch(console.error); // TODO: Figure out something better
-            }));
-        } catch (err) {
-            // Errors here are not important
-        }
+            return this.storage.update(appStorageItem);
+        })).catch();
 
         const queue = [] as Array<Promise<void>>;
 
@@ -643,6 +611,10 @@ export class AppManager {
      * @param appId the id of the application to load
      */
     protected async loadOne(appId: string): Promise<ProxiedApp> {
+        if (this.apps.get(appId)) {
+            return this.apps.get(appId);
+        }
+
         const item: IAppStorageItem = await this.storage.retrieveOne(appId);
 
         if (!item) {
@@ -678,12 +650,7 @@ export class AppManager {
             return false;
         }
 
-        const isEnabled = await this.enableApp(storageItem, app, true, isManual, silenceStatus);
-        if (!isEnabled) {
-            return false;
-        }
-
-        return true;
+        return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
@@ -721,11 +688,7 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            this.storage.update(storageItem).catch(() => {
-                /**
-                 * Avoiding some UNHANDLED_PROMISE_REJECTION
-                 */
-            });
+            await this.storage.update(storageItem).catch();
         }
 
         return result;
@@ -795,7 +758,7 @@ export class AppManager {
             storageItem.status = app.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            this.storage.update(storageItem);
+            await this.storage.update(storageItem).catch();
         }
 
         return enable;
