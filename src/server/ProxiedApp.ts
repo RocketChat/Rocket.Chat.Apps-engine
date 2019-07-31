@@ -101,11 +101,7 @@ export class ProxiedApp implements IApp {
     }
 
     public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {
-        const previousStatus = this.getStatus();
-
         await this.call(AppMethod.SETSTATUS, status);
-
-        this.previousStatus = previousStatus;
 
         if (!silent) {
             await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, status);
