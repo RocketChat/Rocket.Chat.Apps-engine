@@ -14,6 +14,10 @@ export enum AppStatus {
      * An attempt to enable it again will fail, as it needs to be updated.
      */
     COMPILER_ERROR_DISABLED = 'compiler_error_disabled',
+    /**
+     * The App was disable due to its license being invalid
+     */
+    INVALID_LICENSE_DISABLED = 'invalid_license_disabled',
     /** The App was disabled due to an unrecoverable error being thrown. */
     ERROR_DISABLED = 'error_disabled',
     /** The App was manually disabled by a user. */
@@ -40,6 +44,7 @@ export class AppStatusUtilsDef {
             case AppStatus.ERROR_DISABLED:
             case AppStatus.MANUALLY_DISABLED:
             case AppStatus.INVALID_SETTINGS_DISABLED:
+            case AppStatus.INVALID_LICENSE_DISABLED:
             case AppStatus.DISABLED:
                 return true;
             default:

@@ -5,6 +5,7 @@ import {
     AppAccessorManager,
     AppApiManager,
     AppExternalComponentManager,
+    AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -15,6 +16,8 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { InvalidLicenseError } from './errors';
+import { IMarketplaceInfo } from './marketplace';
 
 export class AppManager {
     public static Instance: AppManager;
@@ -33,6 +36,7 @@ export class AppManager {
     private readonly apiManager: AppApiManager;
     private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
+    private readonly licenseManager: AppLicenseManager;
 
     private isLoaded: boolean;
 
@@ -70,6 +74,7 @@ export class AppManager {
         this.apiManager = new AppApiManager(this);
         this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
+        this.licenseManager = new AppLicenseManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -113,6 +118,10 @@ export class AppManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): AppSlashCommandManager {
         return this.commandManager;
+    }
+
+    public getLicenseManager(): AppLicenseManager {
+        return this.licenseManager;
     }
 
     /** Gets the api manager's instance. */
@@ -194,7 +203,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.initializeApp(items.get(rl.getID()), rl, true);
+            await this.initializeApp(items.get(rl.getID()), rl, true).catch(console.error);
         }
 
         // Let's ensure the required settings are all set
@@ -204,7 +213,7 @@ export class AppManager {
             }
 
             if (!this.areRequiredSettingsSet(rl.getStorageItem())) {
-                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
+                await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED).catch(console.error);
             }
         }
 
@@ -212,7 +221,7 @@ export class AppManager {
         // but are not currently disabled.
         for (const rl of this.apps.values()) {
             if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
+                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             }
         }
 
@@ -230,7 +239,9 @@ export class AppManager {
         for (const rl of this.apps.values()) {
             if (AppStatusUtils.isDisabled(rl.getStatus())) {
                 continue;
-            } else if (rl.getStatus() === AppStatus.INITIALIZED) {
+            }
+
+            if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
@@ -238,7 +249,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.disable(rl.getID(), isManual);
+            await this.disable(rl.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
         }
 
         // Remove all the apps from the system now that we have unloaded everything
@@ -307,7 +318,7 @@ export class AppManager {
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error('The App is already enabled.');
+            return true;
         }
 
         if (rl.getStatus() === AppStatus.COMPILER_ERROR_DISABLED) {
@@ -324,52 +335,49 @@ export class AppManager {
             storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            this.storage.update(storageItem);
+            await this.storage.update(storageItem).catch();
         }
 
         return isSetup;
     }
 
-    public async disable(id: string, isManual = false): Promise<boolean> {
+    public async disable(id: string, status: AppStatus = AppStatus.DISABLED, silent?: boolean): Promise<boolean> {
+        if (!AppStatusUtils.isDisabled(status)) {
+            throw new Error('Invalid disabled status');
+        }
+
         const rl = this.apps.get(id);
 
         if (!rl) {
             throw new Error(`No App by the id "${id}" exists.`);
         }
 
-        if (!AppStatusUtils.isEnabled(rl.getStatus())) {
-            throw new Error(`No App by the id of "${id}" is enabled."`);
-        }
-
-        const storageItem = await this.storage.retrieveOne(id);
-        if (!storageItem) {
-            throw new Error(`Could not disable an App with the id of "${id}" as it doesn't exist.`);
-        }
-
-        try {
-            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(storageItem.id));
-        } catch (e) {
-            console.warn('Error while disabling:', e);
+        if (AppStatusUtils.isEnabled(rl.getStatus())) {
+            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(rl.getID()))
+                .catch((e) => console.warn('Error while disabling:', e));
         }
 
         this.listenerManager.unregisterListeners(rl);
-        this.commandManager.unregisterCommands(storageItem.id);
-        this.apiManager.unregisterApis(storageItem.id);
-        this.accessorManager.purifyApp(storageItem.id);
+        this.commandManager.unregisterCommands(rl.getID());
+        this.apiManager.unregisterApis(rl.getID());
+        this.accessorManager.purifyApp(rl.getID());
 
-        if (isManual) {
-            await rl.setStatus(AppStatus.MANUALLY_DISABLED);
-        }
+        await rl.setStatus(status, silent);
+
+        const storageItem = await this.storage.retrieveOne(id);
+
+        rl.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
+        await rl.validateLicense().catch();
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
         storageItem.status = rl.getStatus();
-        this.storage.update(storageItem);
+        await this.storage.update(storageItem).catch();
 
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
@@ -390,10 +398,13 @@ export class AppManager {
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
+            marketplaceInfo,
         });
 
         if (!created) {
-            throw new Error('Failed to create the App, the storage did not return it.');
+            aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            return aff;
         }
 
         // Now that is has all been compiled, let's get the
@@ -404,11 +415,9 @@ export class AppManager {
         aff.setApp(app);
 
         // Let everyone know that the App has been added
-        try {
-            await this.bridges.getAppActivationBridge().appAdded(app);
-        } catch (e) {
+        await this.bridges.getAppActivationBridge().appAdded(app).catch(() => {
             // If an error occurs during this, oh well.
-        }
+        });
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -426,7 +435,7 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id);
+            await this.disable(id).catch();
         }
 
         this.listenerManager.unregisterListeners(app);
@@ -438,11 +447,7 @@ export class AppManager {
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        try {
-            await this.bridges.getAppActivationBridge().appRemoved(app);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
+        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
 
         this.apps.delete(app.getID());
 
@@ -467,12 +472,7 @@ export class AppManager {
             throw new Error('Can not update an App that does not currently exist.');
         }
 
-        // Attempt to disable it, if it wasn't enabled then it will error and we don't care
-        try {
-            await this.disable(old.id);
-        } catch (e) {
-            // We don't care
-        }
+        await this.disable(old.id).catch();
 
         // TODO: We could show what new interfaces have been added
 
@@ -486,6 +486,7 @@ export class AppManager {
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
+            marketplaceInfo: old.marketplaceInfo,
         });
 
         // Now that is has all been compiled, let's get the
@@ -500,11 +501,7 @@ export class AppManager {
         await this.runStartUpProcess(stored, app, false, true);
 
         // Let everyone know that the App has been updated
-        try {
-            await this.bridges.getAppActivationBridge().appUpdated(app);
-        } catch (e) {
-            // If an error occurs during this, oh well.
-        }
+        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
 
         return aff;
     }
@@ -550,10 +547,70 @@ export class AppManager {
                 throw new Error('Can not disable an App which is not enabled.');
             }
 
-            await this.disable(rl.getID(), true);
+            await this.disable(rl.getID(), AppStatus.MANUALLY_DISABLED);
         }
 
         return rl;
+    }
+
+    public async updateAppsMarketplaceInfo(appsOverview: Array<{ latest: IMarketplaceInfo }>): Promise<void> {
+        await Promise.all(appsOverview.map(async ({ latest: appInfo }) => {
+            if (!appInfo.subscriptionInfo) {
+                return;
+            }
+
+            const app = this.apps.get(appInfo.id);
+
+            if (!app) {
+                return;
+            }
+
+            const appStorageItem = app.getStorageItem();
+            const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+
+            if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
+                return;
+            }
+
+            appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
+
+            return this.storage.update(appStorageItem);
+        })).catch();
+
+        const queue = [] as Array<Promise<void>>;
+
+        this.apps.forEach((app) => queue.push(app.validateLicense()
+            .then(() => {
+                if (app.getStatus() !== AppStatus.INVALID_LICENSE_DISABLED) {
+                    return;
+                }
+
+                return app.setStatus(AppStatus.DISABLED);
+            })
+            .catch((error) => {
+                if (!(error instanceof InvalidLicenseError)) {
+                    console.error(error);
+                    return;
+                }
+
+                this.commandManager.unregisterCommands(app.getID());
+                this.apiManager.unregisterApis(app.getID());
+
+                return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
+            })
+            .then(() => {
+                if (app.getStatus() === app.getPreviousStatus()) {
+                    return;
+                }
+
+                const storageItem = app.getStorageItem();
+                storageItem.status = app.getStatus();
+
+                return this.storage.update(storageItem).catch(console.error) as Promise<void>;
+            }),
+        ));
+
+        await Promise.all(queue);
     }
 
     /**
@@ -562,6 +619,10 @@ export class AppManager {
      * @param appId the id of the application to load
      */
     protected async loadOne(appId: string): Promise<ProxiedApp> {
+        if (this.apps.get(appId)) {
+            return this.apps.get(appId);
+        }
+
         const item: IAppStorageItem = await this.storage.retrieveOne(appId);
 
         if (!item) {
@@ -597,12 +658,7 @@ export class AppManager {
             return false;
         }
 
-        const isEnabled = await this.enableApp(storageItem, app, true, isManual, silenceStatus);
-        if (!isEnabled) {
-            return false;
-        }
-
-        return true;
+        return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
@@ -611,12 +667,21 @@ export class AppManager {
         const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
+            await app.validateLicense();
+
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
-            result = true;
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
+
+            result = true;
         } catch (e) {
+            let status = AppStatus.ERROR_DISABLED;
+
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
+            }
+
+            if (e instanceof InvalidLicenseError) {
+                status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
             console.error(e);
@@ -624,14 +689,14 @@ export class AppManager {
             this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
-            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
+            await app.setStatus(status, silenceStatus);
         }
 
         if (saveToDb) {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            this.storage.update(storageItem);
+            await this.storage.update(storageItem).catch();
         }
 
         return result;
@@ -665,19 +730,27 @@ export class AppManager {
         let enable: boolean;
 
         try {
+            await app.validateLicense();
+
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
+
             await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
         } catch (e) {
             enable = false;
+            let status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
             }
 
+            if (e instanceof InvalidLicenseError) {
+                status = AppStatus.INVALID_LICENSE_DISABLED;
+            }
+
             console.error(e);
-            await app.setStatus(AppStatus.ERROR_DISABLED, silenceStatus);
+            await app.setStatus(status, silenceStatus);
         }
 
         if (enable) {
@@ -693,7 +766,7 @@ export class AppManager {
             storageItem.status = app.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            this.storage.update(storageItem);
+            await this.storage.update(storageItem).catch();
         }
 
         return enable;

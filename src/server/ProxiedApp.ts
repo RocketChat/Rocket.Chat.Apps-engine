@@ -8,10 +8,13 @@ import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { AppConsole } from './logging';
+import { AppLicenseValidationResult } from './marketplace/license';
 import { IAppStorageItem } from './storage';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
+
+    private latestLicenseValidationResult: AppLicenseValidationResult;
 
     constructor(private readonly manager: AppManager,
                 private storageItem: IAppStorageItem,
@@ -142,5 +145,17 @@ export class ProxiedApp implements IApp {
 
     public getAccessors(): IAppAccessors {
         return this.app.getAccessors();
+    }
+
+    public getLatestLicenseValidationResult(): AppLicenseValidationResult {
+        return this.latestLicenseValidationResult;
+    }
+
+    public validateLicense(): Promise<void> {
+        const { marketplaceInfo } = this.getStorageItem();
+
+        this.latestLicenseValidationResult = new AppLicenseValidationResult();
+
+        return this.manager.getLicenseManager().validate(this.latestLicenseValidationResult, marketplaceInfo);
     }
 }
