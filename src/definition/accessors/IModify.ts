@@ -1,7 +1,7 @@
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom, RoomType } from '../rooms';
-import { IUser } from '../users';
+import { IUser, IUserGenerate } from '../users';
 
 export interface IModify {
     getCreator(): IModifyCreator;
@@ -122,13 +122,15 @@ export interface IModifyCreator {
      */
     startRoom(data?: IRoom): IRoomBuilder;
 
+    startUser(data?: IUserGenerate): IUserBuilder;
+
     /**
      * Finishes the creating process, saving the object to the database.
      *
      * @param builder the builder instance
      * @return the resulting `id` of the resulting object
      */
-    finish(builder: IMessageBuilder | IRoomBuilder): Promise<string>;
+    finish(builder: IMessageBuilder | IRoomBuilder | IUserBuilder): Promise<string>;
 }
 
 export interface IMessageExtender {
@@ -553,4 +555,73 @@ export interface IRoomBuilder {
      * Note: modifying the returned value will have no effect.
      */
     getRoom(): IRoom;
+}
+
+/**
+ * Interface for creating a user.
+ */
+export interface IUserBuilder {
+  kind: RocketChatAssociationModel.USER;
+
+  /**
+   * Provides a convient way to set the data for the user.
+   * Note: Providing an "id" field here will be ignored.
+   *
+   * @param user the user data to set
+   */
+   setData(user: IUserGenerate): IUserBuilder;
+
+   /**
+    * Sets the email of the user
+    *
+    * @param email the email address of the user
+    */
+    setEmail(email: string): IUserBuilder;
+
+   /**
+    * Gets the email address of the user
+    */
+    getEmail(): string;
+
+   /**
+    * Sets the display name of this user.
+    *
+    * @param name the display name of the user
+    */
+    setDisplayName(name: string): IUserBuilder;
+
+   /**
+    * Gets the display name of this user.
+    */
+    getDisplayName(): string;
+
+    setUsername(username: string): IUserBuilder;
+
+    getUsername(): string;
+
+    setActive(active: boolean): IUserBuilder;
+
+    getActive(): boolean;
+
+    setRoles(roles: Array<string>): IUserBuilder;
+
+    getRoles(): Array<string>;
+
+    setVerified(verified: boolean): IUserBuilder;
+
+    getVerified(): boolean;
+
+    setJoinDefaultChannels(join: boolean): IUserBuilder;
+
+    getJoinDefaultChannels(): boolean;
+
+    setSendWelcomeEmail(sendEmail: boolean): IUserBuilder;
+
+    getSendWelcomeEmail(): boolean;
+
+    setRequirePasswordchange(require: boolean): IUserBuilder;
+
+    getRequirePasswordchange(): boolean;
+
+    getUser(): IUserGenerate;
 }

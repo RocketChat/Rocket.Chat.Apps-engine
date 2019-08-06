@@ -3,9 +3,12 @@ import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
+import { IUserBuilder } from '../../definition/accessors/IModify';
+import { IUserGenerate } from '../../definition/users';
 import { AppBridges } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
+import { UserBuilder } from './UserBuilder';
 
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
@@ -26,12 +29,22 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | IRoomBuilder): Promise<string> {
+    public startUser(data?: IUserGenerate): IUserBuilder {
+        if (data) {
+            delete data.id;
+        }
+
+        return new UserBuilder(data);
+    }
+
+    public finish(builder: IMessageBuilder | IRoomBuilder | IUserBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
+            case RocketChatAssociationModel.USER:
+                return this._finishUser(builder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
@@ -71,5 +84,11 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
+    }
+
+    private _finishUser(builder: IUserBuilder): Promise<string> {
+        const result = builder.getUser();
+        delete result.id;
+        return this.bridges.getUserBridge().create(result, this.appId);
     }
 }

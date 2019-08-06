@@ -27,6 +27,7 @@ import {
     INotifier,
     IRoomBuilder,
     IRoomExtender,
+    IUserBuilder,
 } from './IModify';
 import { IPersistence } from './IPersistence';
 import { IPersistenceRead } from './IPersistenceRead';
@@ -75,6 +76,7 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUserBuilder,
     IUserRead,
     LogMessageSeverity,
     RequestMethod,
