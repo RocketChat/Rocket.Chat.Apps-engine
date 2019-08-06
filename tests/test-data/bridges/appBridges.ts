@@ -28,6 +28,7 @@ import { TestsUserBridge } from './userBridge';
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
+
     private readonly apiBridge: TestsApiBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;

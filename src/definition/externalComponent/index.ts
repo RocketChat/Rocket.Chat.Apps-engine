@@ -1,0 +1,1 @@
+export { IExternalComponent } from './IExternalComponent';

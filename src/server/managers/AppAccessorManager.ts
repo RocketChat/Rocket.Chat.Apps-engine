@@ -2,6 +2,7 @@ import {
     ConfigurationExtend,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    ExternalComponentsExtend,
     Http,
     HttpExtend,
     MessageRead,
@@ -83,8 +84,9 @@ export class AppAccessorManager {
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
             const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
+            const excs = new ExternalComponentsExtend(this.manager.getExternalComponentManager(), appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs));
         }
 
         return this.configExtenders.get(appId);

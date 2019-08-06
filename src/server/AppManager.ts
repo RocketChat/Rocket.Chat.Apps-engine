@@ -4,6 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
+    AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
@@ -33,6 +34,7 @@ export class AppManager {
     private readonly listenerManager: AppListenerManager;
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
+    private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
 
@@ -70,6 +72,7 @@ export class AppManager {
         this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
+        this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
 
@@ -124,6 +127,11 @@ export class AppManager {
     /** Gets the api manager's instance. */
     public getApiManager(): AppApiManager {
         return this.apiManager;
+    }
+
+    /** Gets the external component manager's instance. */
+    public getExternalComponentManager(): AppExternalComponentManager {
+        return this.externalComponentManager;
     }
 
     /** Gets the manager of the settings, updates and getting. */
