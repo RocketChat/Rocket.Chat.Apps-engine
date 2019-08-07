@@ -4,7 +4,7 @@ export interface IUserGenerate {
     name: string;
     username: string;
     active?: boolean;
-    roles: Array<string>;
+    roles?: Array<string>;
     verified?: boolean;
     joinDefaultChannels?: boolean;
     sendWelcomeEmail?: boolean;

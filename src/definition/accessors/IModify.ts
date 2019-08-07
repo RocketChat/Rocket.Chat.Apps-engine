@@ -595,33 +595,92 @@ export interface IUserBuilder {
     */
     getDisplayName(): string;
 
+    /**
+     * Sets the username for the user
+     *
+     * @param  {string} username username of the user
+     */
     setUsername(username: string): IUserBuilder;
 
+    /**
+     * Gets the username of this user
+     */
     getUsername(): string;
 
+    /**
+     * Sets whether the user is active or not
+     *
+     * @param  {boolean} active active status of user
+     */
     setActive(active: boolean): IUserBuilder;
 
+    /**
+     * Gets whether the user is active or not
+     */
     getActive(): boolean;
 
+    /**
+     * Sets the roles for this user
+     *
+     * @param  {Array<string>} roles roles for a user
+     */
     setRoles(roles: Array<string>): IUserBuilder;
 
+    /**
+     * Gets the roles of this user
+     */
     getRoles(): Array<string>;
 
+    /**
+     * Sets whether the user is verified
+     *
+     * @param  {boolean} verified whether user is verified
+     */
     setVerified(verified: boolean): IUserBuilder;
 
+    /**
+     * Gets whether the user is verified
+     */
     getVerified(): boolean;
 
+    /**
+     * Sets whether user can join default channels
+     *
+     * @param  {boolean} join whether user can join default channels
+     */
     setJoinDefaultChannels(join: boolean): IUserBuilder;
 
+    /**
+     * Gets whether user can join default channels
+     */
     getJoinDefaultChannels(): boolean;
 
+    /**
+     * Sets whether user should recieve welcome email
+     *
+     * @param  {boolean} sendEmail whether user recieve welcome email on succesfull registration
+     */
     setSendWelcomeEmail(sendEmail: boolean): IUserBuilder;
 
+    /**
+     * Gets whether user can revieve welcome email
+     */
     getSendWelcomeEmail(): boolean;
 
+    /**
+     * Sets if the user require password change
+     *
+     * @param  {boolean} require whether the user should require password change on first login
+     */
     setRequirePasswordchange(require: boolean): IUserBuilder;
 
+    /**
+     * Gets whether user should require password change
+     */
     getRequirePasswordchange(): boolean;
 
+    /**
+     * Gets the user
+     */
     getUser(): IUserGenerate;
 }
