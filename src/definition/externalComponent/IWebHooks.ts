@@ -5,5 +5,6 @@
 export interface IWebHooks {
     // When a game is closed, Rocket.Chat will post all
     // relevant information to that URL.
+    sessionStarts?: string;
     sessionEnds?: string;
 }
