@@ -19,10 +19,9 @@ export class AppEmbeddedSDK {
     }
 
     /**
-     * Create a message listener with id and add them to callbacks map set.
-     * @param id the id of the message event listener
+     * Initialize the App Embedded SDK for communicating with Rocket.Chat
      */
-    private initListener(): void {
+    public init(): void {
         this.listener = ({ data }) => {
             if (!data.hasOwnProperty('rcEmbeddedSDK')) {
                 return;
@@ -41,16 +40,12 @@ export class AppEmbeddedSDK {
         };
         window.addEventListener('message', this.listener);
     }
+
     private call(action: string, payload?: any ): Promise<any>  {
         return new Promise((resolve) => {
             const id = randomString(ACTION_ID_LENGTH);
 
-            this.initListener();
-
-            if (window.parent) {
-                window.parent.postMessage({ rcEmbeddedSDK: { action, payload, id } }, '*');
-            }
-
+            window.parent.postMessage({ rcEmbeddedSDK: { action, payload, id } }, '*');
             this.callbacks.set(id, resolve);
         });
     }
