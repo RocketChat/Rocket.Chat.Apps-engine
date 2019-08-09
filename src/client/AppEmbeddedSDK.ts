@@ -1,6 +1,5 @@
+import { ACTION_ID_LENGTH } from './constants';
 import { randomString } from './utils';
-
-const ACTION_ID_LENFTH = 80;
 
 export class AppEmbeddedSDK {
     private listener: (this: Window, ev: MessageEvent) => any;
@@ -44,7 +43,7 @@ export class AppEmbeddedSDK {
     }
     private call(action: string, payload?: any ): Promise<any>  {
         return new Promise((resolve) => {
-            const id = randomString(ACTION_ID_LENFTH);
+            const id = randomString(ACTION_ID_LENGTH);
 
             this.initListener();
 
