@@ -6,4 +6,5 @@ export interface IUserBridge {
     getByUsername(username: string, appId: string): Promise<IUser>;
 
     create(user: IUserGenerate, appId: string): Promise<string>;
+    getActiveUserCount(): Promise<number>;
 }
