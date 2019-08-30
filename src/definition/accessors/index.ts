@@ -14,10 +14,13 @@ import {
     IHttpResponse,
     RequestMethod,
 } from './IHttp';
+import { ILivechatRead } from './ILivechatRead';
 import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
 import { IMessageRead } from './IMessageRead';
 import {
+    ILivechatMessageBuilder,
+    ILivechatUpdater,
     IMessageBuilder,
     IMessageExtender,
     IModify,
@@ -38,6 +41,7 @@ import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
+import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
 export {
@@ -53,6 +57,9 @@ export {
     IHttpPreResponseHandler,
     IHttpRequest,
     IHttpResponse,
+    ILivechatMessageBuilder,
+    ILivechatRead,
+    ILivechatUpdater,
     ILogEntry,
     ILogger,
     IMessageBuilder,
@@ -75,6 +82,7 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUploadRead,
     IUserRead,
     LogMessageSeverity,
     RequestMethod,

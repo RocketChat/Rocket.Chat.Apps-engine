@@ -1,13 +1,22 @@
-import { IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
+import { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IUser } from '../../definition/users';
 
 import { AppBridges } from '../bridges';
+import { LivechatUpdater } from './LivechatUpdater';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyUpdater implements IModifyUpdater {
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
+    private livechatUpdater: ILivechatUpdater;
+
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+        this.livechatUpdater = new LivechatUpdater(this.bridges, this.appId);
+    }
+
+    public getLivechatUpdater(): ILivechatUpdater {
+        return this.livechatUpdater;
+    }
 
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
         const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
