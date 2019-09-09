@@ -2,6 +2,25 @@ import { ACTION_ID_LENGTH } from './constants';
 import { randomString } from './utils';
 
 export class AppEmbeddedSDK {
+    public persistence = {
+        getItem: async (key: string) => {
+            const { value } = await this.call(AppEmbeddedSDKActions.PERSISTENCE_GET_ITEM, { key });
+
+            return value;
+        },
+        setItem: (key: string, value: any) => {
+            this.call(AppEmbeddedSDKActions.PERSISTENCE_SET_ITEM, { key, value });
+        },
+        getAll: () => {
+            return this.call(AppEmbeddedSDKActions.PERSISTENCE_GET_ALL);
+        },
+        removeItem: (key: string) => {
+            this.call(AppEmbeddedSDKActions.PERSISTENCE_REMOVE_ITEM, { key });
+        },
+        clear: () => {
+            this.call(AppEmbeddedSDKActions.PERSISTENCE_CLEAR);
+        },
+    };
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
@@ -54,4 +73,14 @@ export class AppEmbeddedSDK {
 export enum AppEmbeddedSDKActions {
     GET_USER_INFO = 'getUserInfo',
     GET_ROOM_INFO = 'getRoomInfo',
+
+    PERSISTENCE_SET_ITEM = 'persistence.setItem',
+
+    PERSISTENCE_GET_ITEM = 'persistence.getItem',
+
+    PERSISTENCE_GET_ALL = 'persistence.getAll',
+
+    PERSISTENCE_REMOVE_ITEM = 'persistence.removeItem',
+
+    PERSISTENCE_CLEAR = 'persistence.clear',
 }
