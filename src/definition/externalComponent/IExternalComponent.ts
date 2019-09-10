@@ -33,4 +33,6 @@ export interface IExternalComponent {
 
 export enum ExternalComponentLocation {
     CONTEXTUAL_BAR,
+
+    MODAL,
 }
