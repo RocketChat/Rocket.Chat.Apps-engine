@@ -89,10 +89,18 @@ jobs:
           name: Publish package
           command: |
             export CIRCLE_TAG=${CIRCLE_TAG:=}
+            export CIRCLE_BRANCH=${CIRCLE_BRANCH:=}
+
             if [[ $CIRCLE_TAG ]]; then
                 npm publish --tag latest
             else
-                npm publish --tag dev
+                # Add build number to the end of the version
+                npm version --no-git-tag-version "$(node -p "require('./package.json').version").$CIRCLE_BUILD_NUM"
+                if [[ $CIRCLE_BRANCH == 'alpha' ]]; then
+                    npm publish --tag alpha
+                else
+                    npm publish --tag beta
+                fi;
             fi;
 
   codecov:
@@ -130,6 +138,8 @@ workflows:
             - build
           filters:
               branches:
-                only: master
+                only:
+                    - alpha
+                    - beta
               tags:
                 only: /^v.*/
