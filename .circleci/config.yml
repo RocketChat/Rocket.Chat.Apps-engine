@@ -76,6 +76,25 @@ jobs:
           root: ~/repo
           <<: *whitelist
 
+  publish:
+    <<: *defaults
+
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Publish package
+          command: |
+            export CIRCLE_TAG=${CIRCLE_TAG:=}
+            if [[ $CIRCLE_TAG ]]; then
+                npm publish --tag latest
+            else
+                npm publish --tag dev
+            fi;
+
   codecov:
     <<: *defaults
 
@@ -105,6 +124,12 @@ workflows:
             - test
       - codecov:
           requires:
-            - test
-            - lint
             - build
+      - publish:
+          requires:
+            - build
+          filters:
+              branches:
+                only: master
+              tags:
+                only: /^v.*/
