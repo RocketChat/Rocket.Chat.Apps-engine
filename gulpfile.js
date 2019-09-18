@@ -66,3 +66,11 @@ gulp.task('publish', gulp.series(clean_generated, lint_ts, compile_ts, shell.tas
 ], [
     'cd definition && npm publish --access public && npm pack'
 ])));
+
+gulp.task('publish-beta', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
+    'npm publish --access public --tag beta'
+])));
+
+gulp.task('publish-alpha', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
+    'npm publish --access public --tag alpha'
+])));
