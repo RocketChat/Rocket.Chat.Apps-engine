@@ -1,5 +1,6 @@
 import { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
+import { RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
 import { AppBridges } from '../bridges';
@@ -62,20 +63,22 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid room, can not update a room without an id.');
         }
 
-        if (!result.creator || !result.creator.id) {
-            throw new Error('Invalid creator assigned to the room.');
+        if (!result.type) {
+            throw new Error('Invalid type assigned to the room.');
         }
 
-        if (!result.slugifiedName || !result.slugifiedName.trim()) {
-            throw new Error('Invalid slugifiedName assigned to the room.');
+        if (result.type !== RoomType.LIVE_CHAT) {
+            if (!result.creator || !result.creator.id) {
+                throw new Error('Invalid creator assigned to the room.');
+            }
+
+            if (!result.slugifiedName || !result.slugifiedName.trim()) {
+                throw new Error('Invalid slugifiedName assigned to the room.');
+            }
         }
 
         if (!result.displayName || !result.displayName.trim()) {
             throw new Error('Invalid displayName assigned to the room.');
-        }
-
-        if (!result.type) {
-            throw new Error('Invalid type assigned to the room.');
         }
 
         return this.bridges.getRoomBridge().update(result, builder.getMembersToBeAddedUsernames(), this.appId);

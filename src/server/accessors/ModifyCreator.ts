@@ -91,17 +91,21 @@ export class ModifyCreator implements IModifyCreator {
         const result = builder.getRoom();
         delete result.id;
 
-        if (!result.creator || !result.creator.id) {
-            throw new Error('Invalid creator assigned to the room.');
-        }
-
         if (!result.type) {
             throw new Error('Invalid type assigned to the room.');
         }
 
+        if (result.type !== RoomType.LIVE_CHAT) {
+            if (!result.creator || !result.creator.id) {
+                throw new Error('Invalid creator assigned to the room.');
+            }
+        }
+
         if (result.type !== RoomType.DIRECT_MESSAGE) {
-            if (!result.slugifiedName || !result.slugifiedName.trim()) {
-                throw new Error('Invalid slugifiedName assigned to the room.');
+            if (result.type !== RoomType.LIVE_CHAT) {
+                if (!result.slugifiedName || !result.slugifiedName.trim()) {
+                    throw new Error('Invalid slugifiedName assigned to the room.');
+                }
             }
 
             if (!result.displayName || !result.displayName.trim()) {
