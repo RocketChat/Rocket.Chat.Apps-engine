@@ -97,9 +97,9 @@ jobs:
                 # Add build number to the end of the version
                 npm version --no-git-tag-version "$(node -p "require('./package.json').version").$CIRCLE_BUILD_NUM"
                 if [[ $CIRCLE_BRANCH == 'alpha' ]]; then
-                    npm publish --tag alpha
+                    npm run go-publish-alpha
                 else
-                    npm publish --tag beta
+                    npm run go-publish-beta
                 fi;
             fi;
 
