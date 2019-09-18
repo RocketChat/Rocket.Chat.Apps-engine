@@ -441,7 +441,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
-        this.externalComponentManager.unregisterComponent(app.getID());
+        this.externalComponentManager.purgeComponent(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());

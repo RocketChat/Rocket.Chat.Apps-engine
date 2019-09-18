@@ -53,4 +53,17 @@ export class AppExternalComponentManager {
 
         return null;
     }
+    /**
+     * Remove the external compoent from both the providedComponents
+     * and the appTouchedComponents by the appId.
+     * @param appId the id of the app
+     */
+    public purgeComponent(appId: string): void {
+        if (this.appTouchedComponents.has(appId)) {
+            this.appTouchedComponents.delete(appId);
+        }
+        if (this.providedComponents.has(appId)) {
+            this.providedComponents.delete(appId);
+        }
+    }
 }
