@@ -25,13 +25,18 @@ export class AppExternalComponentManager {
         this.appTouchedComponents = new Map<string, IExternalComponent>();
     }
     /**
-     * Add the external component to the providedComponents.
+     * Add the external component to the appTouchedComponents.
      * @param appId the id of the app
      * @param externalComponent the external component to register
+     * @param addToProvidedComponents whether also add the external
+     * component to the providedComponents, the value is false by default.
      */
-    public registerComponent(appId: string, externalComponent: IExternalComponent): void {
-        this.providedComponents.set(appId, externalComponent);
+    public registerComponent(appId: string, externalComponent: IExternalComponent, addToProvidedComponents: boolean = false): void {
         this.appTouchedComponents.set(appId, externalComponent);
+
+        if (addToProvidedComponents) {
+            this.providedComponents.set(appId, externalComponent);
+        }
     }
     /**
      * Remove the external compoent from the providedComponents by appId.

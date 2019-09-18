@@ -761,7 +761,7 @@ export class AppManager {
             const externalComponent = this.externalComponentManager.getExternalComponent(app.getID());
 
             this.commandManager.registerCommands(app.getID());
-            this.externalComponentManager.registerComponent(app.getID(), externalComponent);
+            this.externalComponentManager.registerComponent(app.getID(), externalComponent, true);
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
