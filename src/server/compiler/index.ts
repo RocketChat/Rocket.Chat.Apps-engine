@@ -5,7 +5,7 @@ import { AppPackageParser } from './AppPackageParser';
 import { ICompilerError } from './ICompilerError';
 import { ICompilerFile } from './ICompilerFile';
 import { ICompilerResult } from './ICompilerResult';
-import { IParseZipResult } from './IParseZipResult';
+import { IParseAppZipResult } from './IParseAppZipResult';
 
 export {
     AppCompiler,
@@ -16,5 +16,5 @@ export {
     ICompilerFile,
     ICompilerError,
     ICompilerResult,
-    IParseZipResult,
+    IParseAppZipResult,
 };
