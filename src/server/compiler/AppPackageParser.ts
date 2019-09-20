@@ -14,10 +14,10 @@ export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
     public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
-    private appsEngineVersion: string;
+    private appsTsDefVer: string;
 
     constructor() {
-        this.appsEngineVersion = this.getEngineVersion();
+        this.appsTsDefVer = this.getTsDefVersion();
     }
 
     public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
@@ -42,8 +42,8 @@ export class AppPackageParser {
             throw new Error('Invalid App package. No "app.json" file.');
         }
 
-        if (!semver.satisfies(this.appsEngineVersion, info.requiredApiVersion)) {
-            throw new RequiredApiVersionError(info, this.appsEngineVersion);
+        if (!semver.satisfies(this.appsTsDefVer, info.requiredApiVersion)) {
+            throw new RequiredApiVersionError(info, this.appsTsDefVer);
         }
 
         // Load all of the TypeScript only files
@@ -145,20 +145,18 @@ export class AppPackageParser {
         return `data:image/${ ext.replace('.', '') };base64,${ base64 }`;
     }
 
-    private getEngineVersion(): string {
+    private getTsDefVersion(): string {
         const devLocation = path.join(__dirname, '../../../package.json');
         const prodLocation = path.join(__dirname, '../../package.json');
 
-        let info: { version: string };
-
         if (fs.existsSync(devLocation)) {
-            info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
+            const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
+            return info.version as string;
         } else if (fs.existsSync(prodLocation)) {
-            info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
+            const info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
+            return info.version as string;
         } else {
             throw new Error('Could not find the Apps TypeScript Definition Package Version!');
         }
-
-        return info.version.replace(/^[^0-9]/, '').split('-')[0];
     }
 }
