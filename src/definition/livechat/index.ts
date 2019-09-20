@@ -1,3 +1,4 @@
+import { IDepartment } from './IDepartment';
 import { ILivechatMessage } from './ILivechatMessage';
 import { ILivechatRoom } from './ILivechatRoom';
 import { ILivechatTransferData } from './ILivechatTransferData';
@@ -9,6 +10,7 @@ export {
     ILivechatMessage,
     ILivechatRoom,
     ILivechatTransferData,
+    IDepartment,
     IVisitor,
     IVisitorEmail,
     IVisitorPhone,
