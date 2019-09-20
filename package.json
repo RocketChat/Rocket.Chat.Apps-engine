@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-engine",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index",
   "typings": "index",
@@ -33,22 +33,22 @@
     "definition/**"
   ],
   "author": {
-      "name": "Rocket.Chat",
-      "url": "https://rocket.chat/"
+    "name": "Rocket.Chat",
+    "url": "https://rocket.chat/"
   },
   "contributors": [
-      {
-          "name": "Bradley Hilton",
-          "email": "bradley.hilton@rocket.chat"
-      },
-      {
-          "name": "Rodrigo Nascimento",
-          "email": "rodrigo.nascimento@rocket.chat"
-      },
-      {
-          "name": "Douglas Gubert",
-          "email": "douglas.gubert@rocket.chat"
-      }
+    {
+      "name": "Bradley Hilton",
+      "email": "bradley.hilton@rocket.chat"
+    },
+    {
+      "name": "Rodrigo Nascimento",
+      "email": "rodrigo.nascimento@rocket.chat"
+    },
+    {
+      "name": "Douglas Gubert",
+      "email": "douglas.gubert@rocket.chat"
+    }
   ],
   "license": "MIT",
   "bugs": {
