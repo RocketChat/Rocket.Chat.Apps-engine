@@ -21,6 +21,7 @@ export class AppEmbeddedSDK {
             this.call(AppEmbeddedSDKActions.PERSISTENCE_CLEAR);
         },
     };
+  
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
@@ -73,14 +74,9 @@ export class AppEmbeddedSDK {
 export enum AppEmbeddedSDKActions {
     GET_USER_INFO = 'getUserInfo',
     GET_ROOM_INFO = 'getRoomInfo',
-
     PERSISTENCE_SET_ITEM = 'persistence.setItem',
-
     PERSISTENCE_GET_ITEM = 'persistence.getItem',
-
     PERSISTENCE_GET_ALL = 'persistence.getAll',
-
     PERSISTENCE_REMOVE_ITEM = 'persistence.removeItem',
-
     PERSISTENCE_CLEAR = 'persistence.clear',
 }
