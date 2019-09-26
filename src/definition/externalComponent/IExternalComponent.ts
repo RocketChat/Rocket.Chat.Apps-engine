@@ -4,6 +4,10 @@ import { IExternalComponentOptions } from './IExternalComponentOptions';
  */
 export interface IExternalComponent {
     /**
+     * Provides the appId of the app which the external component belongs to.
+     */
+    appId: string;
+    /**
      * Provides the name of the external component.
      */
     name: string;
