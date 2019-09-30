@@ -87,7 +87,7 @@
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.5.0",
     "stack-trace": "0.0.10",
-    "typescript": "^2.9.2",
+    "typescript": "^3.6.3",
     "uuid": "^3.2.1"
   },
   "nyc": {
