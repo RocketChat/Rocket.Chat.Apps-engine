@@ -10,11 +10,19 @@ export class AppEmbeddedSDK {
         this.listener = () => console.log('init');
         this.callbacks = new Map();
     }
-
+    /**
+     * Get the current user's information.
+     *
+     * @return {Promise<IUserInfo>} the information of the current user.
+     */
     public getUserInfo(): Promise<IUserInfo> {
         return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
     }
-
+    /**
+     * Get the current room's information.
+     *
+     * @return {Promise<IRoomInfo>} the information of the current room.
+     */
     public getRoomInfo(): Promise<IRoomInfo> {
         return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
     }
