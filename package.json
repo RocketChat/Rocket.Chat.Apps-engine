@@ -83,6 +83,7 @@
     "typedoc": "^0.11.1"
   },
   "dependencies": {
+    "@types/node": "^12.7.8",
     "adm-zip": "^0.4.9",
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.5.0",
