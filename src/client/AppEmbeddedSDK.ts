@@ -1,4 +1,5 @@
 import { ACTION_ID_LENGTH } from './constants';
+import { IRoomInfo, IUserInfo } from './interfaces';
 import { randomString } from './utils';
 
 export class AppEmbeddedSDK {
@@ -10,11 +11,11 @@ export class AppEmbeddedSDK {
         this.callbacks = new Map();
     }
 
-    public getUserInfo(): Promise<any> {
+    public getUserInfo(): Promise<IUserInfo> {
         return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
     }
 
-    public getRoomInfo(): Promise<any> {
+    public getRoomInfo(): Promise<IRoomInfo> {
         return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
     }
 
