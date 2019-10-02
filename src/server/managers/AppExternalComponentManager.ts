@@ -3,7 +3,7 @@ import { IExternalComponent } from '../../definition/externalComponent';
 /**
  * The external component manager for the Apps.
  *
- * An App will register external component during their `initialize` method.
+ * An App will register an external component during their `initialize` method.
  * Then once an App's `onEnable` is called and it returns true,
  * only then will that App's external component be enabled.
  */
@@ -20,12 +20,14 @@ export class AppExternalComponentManager {
      * it is listed here.
      */
     private appTouchedComponents: Map<string, IExternalComponent>;
+
     constructor() {
         this.providedComponents = new Map<string, IExternalComponent>();
         this.appTouchedComponents = new Map<string, IExternalComponent>();
     }
     /**
      * Add the external component to the appTouchedComponents.
+     *
      * @param appId the id of the app
      * @param externalComponent the external component to register
      * @param addToProvidedComponents whether also add the external
@@ -39,7 +41,8 @@ export class AppExternalComponentManager {
         }
     }
     /**
-     * Remove the external compoent from the providedComponents by appId.
+     * Remove the external component from the providedComponents by appId.
+     *
      * @param appId the id of the app
      */
     public unregisterComponent(appId: string): void {
@@ -49,6 +52,7 @@ export class AppExternalComponentManager {
     }
     /**
      * Get the external component by the appId.
+     *
      * @param appId the id of the app
      */
     public getExternalComponent(appId: string): IExternalComponent {
@@ -59,8 +63,9 @@ export class AppExternalComponentManager {
         return null;
     }
     /**
-     * Remove the external compoent from both the providedComponents
+     * Remove the external component from both the providedComponents
      * and the appTouchedComponents by the appId.
+     *
      * @param appId the id of the app
      */
     public purgeComponent(appId: string): void {

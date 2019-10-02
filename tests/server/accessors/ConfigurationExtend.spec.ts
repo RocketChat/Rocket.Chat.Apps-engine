@@ -1,5 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IApiExtend, IExternalComponentsExtend, IHttpExtend, ISettingsExtend, ISlashCommandsExtend } from '../../../src/definition/accessors';
+import { IApiExtend, IExternalComponentExtend, IHttpExtend, ISettingsExtend, ISlashCommandsExtend } from '../../../src/definition/accessors';
 
 import { ConfigurationExtend } from '../../../src/server/accessors';
 
@@ -8,7 +8,7 @@ export class ConfigurationExtendTestFixture {
     private se: ISettingsExtend;
     private sce: ISlashCommandsExtend;
     private api: IApiExtend;
-    private externalComponent: IExternalComponentsExtend;
+    private externalComponent: IExternalComponentExtend;
 
     @SetupFixture
     public setupFixture() {
@@ -16,7 +16,7 @@ export class ConfigurationExtendTestFixture {
         this.se = {} as ISettingsExtend;
         this.sce = {} as ISlashCommandsExtend;
         this.api = {} as IApiExtend;
-        this.externalComponent = {} as IExternalComponentsExtend;
+        this.externalComponent = {} as IExternalComponentExtend;
     }
 
     @Test()
@@ -27,6 +27,6 @@ export class ConfigurationExtendTestFixture {
         Expect(se.http).toBeDefined();
         Expect(se.settings).toBeDefined();
         Expect(se.slashCommands).toBeDefined();
-        Expect(se.externalComponents).toBeDefined();
+        Expect(se.externalComponent).toBeDefined();
     }
 }

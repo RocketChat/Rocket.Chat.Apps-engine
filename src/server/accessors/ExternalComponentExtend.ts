@@ -1,9 +1,9 @@
 import { AppExternalComponentManager } from '../managers/AppExternalComponentManager';
 
-import { IExternalComponentsExtend } from '../../definition/accessors';
+import { IExternalComponentExtend } from '../../definition/accessors';
 import { IExternalComponent } from '../../definition/externalComponent/IExternalComponent';
 
-export class ExternalComponentsExtend implements IExternalComponentsExtend {
+export class ExternalComponentExtend implements IExternalComponentExtend {
     constructor(private readonly manager: AppExternalComponentManager, private readonly appId: string) { }
 
     public async register(externalComponent: IExternalComponent): Promise<void> {
