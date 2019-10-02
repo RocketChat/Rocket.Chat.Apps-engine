@@ -43,6 +43,18 @@ export class AppExternalComponentManager {
         return this.appTouchedExternalComponents;
     }
     /**
+     * Get all external components of an app by specifying the appId.
+     *
+     * @param appId the id of the app
+     */
+    public getExternalComponents(appId: string): Map<string, IExternalComponent> {
+        if (this.appTouchedExternalComponents.has(appId)) {
+            return this.appTouchedExternalComponents.get(appId);
+        }
+
+        return null;
+    }
+    /**
      * Add an external component to the appTouchedExternalComponents.
      *
      * @param appId the id of the app
@@ -78,10 +90,9 @@ export class AppExternalComponentManager {
             return;
         }
 
+        // update appTouchedExternalComponents
         Array.from(externalComponents.values()).forEach((externalComponent) => {
-            if (externalComponent.appId !== appId) {
-                throw new ExternalComponentNotMatchWithAppError();
-            }
+            this.addExternalComponent(appId, externalComponent);
         });
 
         this.providedExternalComponents.set(appId, externalComponents);
@@ -94,20 +105,8 @@ export class AppExternalComponentManager {
      */
     public unregisterExternalComponents(appId: string): void {
         if (this.providedExternalComponents.has(appId)) {
-            this.providedExternalComponents.get(appId).clear();
+            this.providedExternalComponents.delete(appId);
         }
-    }
-    /**
-     * Get all external components of an app by specifying the appId.
-     *
-     * @param appId the id of the app
-     */
-    public getExternalComponents(appId: string): Map<string, IExternalComponent> {
-        if (this.appTouchedExternalComponents.has(appId)) {
-            return this.appTouchedExternalComponents.get(appId);
-        }
-
-        return null;
     }
     /**
      * Remove all external components of an app from both the
@@ -118,10 +117,10 @@ export class AppExternalComponentManager {
      */
     public purgeExternalComponents(appId: string): void {
         if (this.appTouchedExternalComponents.has(appId)) {
-            this.appTouchedExternalComponents.get(appId).clear();
+            this.appTouchedExternalComponents.delete(appId);
         }
         if (this.providedExternalComponents.has(appId)) {
-            this.providedExternalComponents.get(appId).clear();
+            this.providedExternalComponents.delete(appId);
         }
     }
 }
