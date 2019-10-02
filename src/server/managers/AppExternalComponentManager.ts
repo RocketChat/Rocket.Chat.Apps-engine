@@ -1,4 +1,5 @@
 import { IExternalComponent } from '../../definition/externalComponent';
+import { ExternalComponentAlreadyTouchedError, ExternalComponentNotMatchWithAppError } from '../errors';
 
 /**
  * The external component manager for the apps.
@@ -35,10 +36,20 @@ export class AppExternalComponentManager {
      * @param externalComponent the external component need to be added
      */
     public addExternalComponent(appId: string, externalComponent: IExternalComponent): void {
+        if (externalComponent.appId !== appId) {
+            throw new ExternalComponentNotMatchWithAppError();
+        }
+
         if (!this.appTouchedExternalComponents.get(appId)) {
             this.appTouchedExternalComponents.set(appId, new Map(Object.entries({ [externalComponent.name]: externalComponent})));
         } else {
             const appExternalComponents = this.appTouchedExternalComponents.get(appId);
+
+            if (appExternalComponents.get(externalComponent.name)) {
+                const touchedExternalComponent = appExternalComponents.get(externalComponent.name);
+
+                throw new ExternalComponentAlreadyTouchedError(touchedExternalComponent);
+            }
 
             appExternalComponents.set(externalComponent.name, externalComponent);
         }
@@ -50,6 +61,16 @@ export class AppExternalComponentManager {
      * @param externalComponents the external components need to be registered
      */
     public registerExternalComponents(appId: string, externalComponents: Map<string, IExternalComponent>): void {
+        if (!externalComponents) {
+            return;
+        }
+
+        Array.from(externalComponents.values()).forEach((externalComponent) => {
+            if (externalComponent.appId !== appId) {
+                throw new ExternalComponentNotMatchWithAppError();
+            }
+        });
+
         this.providedExternalComponents.set(appId, externalComponents);
     }
     /**
