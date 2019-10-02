@@ -1,7 +1,7 @@
 import {
     IApiExtend,
     IConfigurationExtend,
-    IExternalComponentsExtend,
+    IExternalComponentExtend,
     IHttpExtend,
     ISettingsExtend,
     ISlashCommandsExtend,
@@ -13,19 +13,19 @@ export class ConfigurationExtend implements IConfigurationExtend {
     public readonly slashCommands: ISlashCommandsExtend;
     public readonly api: IApiExtend;
 
-    public readonly externalComponents: IExternalComponentsExtend;
+    public readonly externalComponent: IExternalComponentExtend;
 
     constructor(
         https: IHttpExtend,
         sets: ISettingsExtend,
         cmds: ISlashCommandsExtend,
         api: IApiExtend,
-        externalComponents: IExternalComponentsExtend,
+        externalComponent: IExternalComponentExtend,
     ) {
         this.http = https;
         this.settings = sets;
         this.slashCommands = cmds;
         this.api = api;
-        this.externalComponents = externalComponents;
+        this.externalComponent = externalComponent;
     }
 }

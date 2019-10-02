@@ -4,7 +4,7 @@ import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
 import { IEnvironmentRead } from './IEnvironmentRead';
-import { IExternalComponentsExtend } from './IExternalComponentsExtend';
+import { IExternalComponentExtend } from './IExternalComponentsExtend';
 import {
     HttpStatusCode,
     IHttp,
@@ -48,7 +48,7 @@ export {
     IConfigurationModify,
     IEnvironmentalVariableRead,
     IEnvironmentRead,
-    IExternalComponentsExtend,
+    IExternalComponentExtend,
     IHttp,
     IHttpExtend,
     IHttpPreRequestHandler,
