@@ -3,7 +3,7 @@ import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
-import { ExternalComponentExtend } from './ExternalComponentExtend';
+import { ExternalComponentsExtend } from './ExternalComponentsExtend';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
 import { MessageBuilder } from './MessageBuilder';
@@ -34,7 +34,7 @@ export {
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
-    ExternalComponentExtend,
+    ExternalComponentsExtend,
     Http,
     HttpExtend,
     MessageBuilder,
