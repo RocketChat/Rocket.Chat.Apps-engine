@@ -3,7 +3,7 @@ import { IExternalComponent } from '../../definition/externalComponent';
 /**
  * The external component manager for the Apps.
  *
- * An App will register external component during their `initialize` method.
+ * An App will register an external component during their `initialize` method.
  * Then once an App's `onEnable` is called and it returns true,
  * only then will that App's external component be enabled.
  */
