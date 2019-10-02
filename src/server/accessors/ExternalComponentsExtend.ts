@@ -7,6 +7,6 @@ export class ExternalComponentsExtend implements IExternalComponentsExtend {
     constructor(private readonly manager: AppExternalComponentManager, private readonly appId: string) { }
 
     public async register(externalComponent: IExternalComponent): Promise<void> {
-        return Promise.resolve(this.manager.registerComponent(this.appId, externalComponent));
+        return Promise.resolve(this.manager.addExternalComponent(this.appId, externalComponent));
     }
 }
