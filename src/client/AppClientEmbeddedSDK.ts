@@ -1,7 +1,11 @@
 import { ACTION_ID_LENGTH } from './constants';
+import { IClientRoomInfo, IClientUserInfo } from './interfaces';
 import { randomString } from './utils';
 
-export class AppEmbeddedSDK {
+/**
+ * Represents the SDK provided to the external component.
+ */
+export class AppClientEmbeddedSDK {
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
@@ -9,17 +13,25 @@ export class AppEmbeddedSDK {
         this.listener = () => console.log('init');
         this.callbacks = new Map();
     }
-
-    public getUserInfo(): Promise<any> {
+    /**
+     * Get the current user's information.
+     *
+     * @return the information of the current user.
+     */
+    public getUserInfo(): Promise<IClientUserInfo> {
         return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
     }
-
-    public getRoomInfo(): Promise<any> {
+    /**
+     * Get the current room's information.
+     *
+     * @return the information of the current room.
+     */
+    public getRoomInfo(): Promise<IClientRoomInfo> {
         return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
     }
 
     /**
-     * Initialize the App Embedded SDK for communicating with Rocket.Chat
+     * Initialize the app embedded SDK for communicating with Rocket.Chat
      */
     public init(): void {
         this.listener = ({ data }) => {
