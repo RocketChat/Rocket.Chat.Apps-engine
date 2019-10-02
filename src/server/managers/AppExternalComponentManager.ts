@@ -30,6 +30,19 @@ export class AppExternalComponentManager {
         this.appTouchedExternalComponents = new Map<string, Map<string, IExternalComponent>>();
     }
     /**
+     * Get all registered components.
+     */
+    public getProvidedExternalComponents(): Map<string, Map<string, IExternalComponent>> {
+        return this.providedExternalComponents;
+    }
+    /**
+     * Get all external components that apps have registered
+     * before, including disabled apps' external components.
+     */
+    public getAppTouchedExternalComponents(): Map<string, Map<string, IExternalComponent>> {
+        return this.appTouchedExternalComponents;
+    }
+    /**
      * Add an external component to the appTouchedExternalComponents.
      *
      * @param appId the id of the app
