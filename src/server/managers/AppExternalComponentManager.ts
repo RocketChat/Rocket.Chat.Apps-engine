@@ -69,10 +69,9 @@ export class AppExternalComponentManager {
             this.appTouchedExternalComponents.set(appId, new Map(Object.entries({ [externalComponent.name]: externalComponent})));
         } else {
             const appExternalComponents = this.appTouchedExternalComponents.get(appId);
+            const touchedExternalComponent = appExternalComponents.get(externalComponent.name);
 
-            if (appExternalComponents.get(externalComponent.name)) {
-                const touchedExternalComponent = appExternalComponents.get(externalComponent.name);
-
+            if (touchedExternalComponent && !Object.is(touchedExternalComponent, externalComponent)) {
                 throw new ExternalComponentAlreadyTouchedError(touchedExternalComponent);
             }
 
