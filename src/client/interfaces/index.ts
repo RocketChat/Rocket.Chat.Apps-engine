@@ -1,2 +1,2 @@
-export * from './IUserInfo';
-export * from './IRoomInfo';
+export * from './IClientUserInfo';
+export * from './IClientRoomInfo';

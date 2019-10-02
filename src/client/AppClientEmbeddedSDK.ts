@@ -1,5 +1,5 @@
 import { ACTION_ID_LENGTH } from './constants';
-import { IRoomInfo, IUserInfo } from './interfaces';
+import { IClientRoomInfo, IClientUserInfo } from './interfaces';
 import { randomString } from './utils';
 
 /**
@@ -16,17 +16,17 @@ export class AppClientEmbeddedSDK {
     /**
      * Get the current user's information.
      *
-     * @return {Promise<IUserInfo>} the information of the current user.
+     * @return the information of the current user.
      */
-    public getUserInfo(): Promise<IUserInfo> {
+    public getUserInfo(): Promise<IClientUserInfo> {
         return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
     }
     /**
      * Get the current room's information.
      *
-     * @return {Promise<IRoomInfo>} the information of the current room.
+     * @return the information of the current room.
      */
-    public getRoomInfo(): Promise<IRoomInfo> {
+    public getRoomInfo(): Promise<IClientRoomInfo> {
         return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
     }
 

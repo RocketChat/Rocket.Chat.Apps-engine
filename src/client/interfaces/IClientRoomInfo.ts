@@ -1,6 +1,10 @@
-import { IUserInfo } from './IUserInfo';
+import { IClientUserInfo } from './IClientUserInfo';
 
-export interface IRoomInfo {
+/**
+ * Represents the room's information returned to the
+ * external component.
+ */
+export interface IClientRoomInfo {
     /**
      * the id of the Rocket.Chat room
      */
@@ -13,5 +17,5 @@ export interface IRoomInfo {
      * the list that contains all the users belonging
      * to this room.
      */
-    members: Array<IUserInfo>;
+    members: Array<IClientUserInfo>;
 }

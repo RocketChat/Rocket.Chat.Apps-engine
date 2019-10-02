@@ -1,4 +1,8 @@
-export interface IUserInfo {
+/**
+ * Represents the user's information returned to
+ * the external component.
+ */
+export interface IClientUserInfo {
     /**
      * the user id of the Rocket.Chat user
      */
