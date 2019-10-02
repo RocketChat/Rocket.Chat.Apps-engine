@@ -2,7 +2,10 @@ import { ACTION_ID_LENGTH } from './constants';
 import { IRoomInfo, IUserInfo } from './interfaces';
 import { randomString } from './utils';
 
-export class AppEmbeddedSDK {
+/**
+ * Represents the SDK provided to the external component.
+ */
+export class AppClientEmbeddedSDK {
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
@@ -28,7 +31,7 @@ export class AppEmbeddedSDK {
     }
 
     /**
-     * Initialize the App Embedded SDK for communicating with Rocket.Chat
+     * Initialize the app embedded SDK for communicating with Rocket.Chat
      */
     public init(): void {
         this.listener = ({ data }) => {
