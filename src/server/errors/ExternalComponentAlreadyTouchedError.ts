@@ -5,6 +5,6 @@ export class ExternalComponentAlreadyTouchedError implements Error {
     public message: string;
 
     constructor(externalComponent: IExternalComponent) {
-        this.message = `The app(${externalComponent.appId}) has already touched the external component(${externalComponent.name})`;
+        this.message = `The app (${externalComponent.appId}) has already touched the external component (${externalComponent.name})`;
     }
 }

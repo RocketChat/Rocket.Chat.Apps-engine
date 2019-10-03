@@ -22,6 +22,6 @@ export class ExternalComponentAlreadyTouchedErrorTestFixture {
         const err = new ExternalComponentAlreadyTouchedError(this.mockExternalComponent);
 
         Expect(err.name).toBe('ExternalComponentAlreadyTouched');
-        Expect(err.message).toBe('The app(1eb382c0-3679-44a6-8af0-18802e342fb1) has already touched the external component(TestExternalComponent)');
+        Expect(err.message).toBe('The app (1eb382c0-3679-44a6-8af0-18802e342fb1) has already touched the external component (TestExternalComponent)');
     }
 }

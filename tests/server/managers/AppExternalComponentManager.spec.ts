@@ -107,7 +107,7 @@ export class AppExternalComponentManagerTestFixture {
             component1.appId, component4,
         )).toThrowError(
             ExternalComponentAlreadyTouchedError,
-            `The app(${component1.appId}) has already touched the external component(${component1.name})`,
+            `The app (${component1.appId}) has already touched the external component (${component1.name})`,
         );
 
         aecm1.addExternalComponent(component1.appId, component1);
