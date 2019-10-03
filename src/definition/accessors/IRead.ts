@@ -1,7 +1,7 @@
 import { IEnvironmentRead } from './IEnvironmentRead';
 import { ILivechatRead } from './ILivechatRead';
 import { IMessageRead } from './IMessageRead';
-import { INotifier } from './IModify';
+import { INotifier } from './INotifier';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
 import { IUploadRead } from './IUploadRead';
