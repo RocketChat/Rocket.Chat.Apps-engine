@@ -71,7 +71,11 @@ export class AppExternalComponentManager {
             const appExternalComponents = this.appTouchedExternalComponents.get(appId);
             const touchedExternalComponent = appExternalComponents.get(externalComponent.name);
 
-            if (touchedExternalComponent && !Object.is(touchedExternalComponent, externalComponent)) {
+            if (
+                touchedExternalComponent
+                && touchedExternalComponent.name === externalComponent.name
+                && JSON.stringify(touchedExternalComponent) !== JSON.stringify(externalComponent)
+            ) {
                 throw new ExternalComponentAlreadyTouchedError(touchedExternalComponent);
             }
 
