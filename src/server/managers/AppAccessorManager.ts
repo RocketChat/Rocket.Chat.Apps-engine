@@ -13,6 +13,7 @@ import {
     Reader,
     RoomRead,
     SchedulerExtend,
+    SchedulerRead,
     ServerSettingRead,
     SettingRead,
     SettingsExtend,
@@ -133,8 +134,9 @@ export class AppAccessorManager {
             const noti = new Notifier(this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
+            const schedule = new SchedulerRead(appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, schedule));
         }
 
         return this.readers.get(appId);

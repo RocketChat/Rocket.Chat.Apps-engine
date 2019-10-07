@@ -1,6 +1,6 @@
+import { IUser } from '../users';
 import { IHttp, IModify, IPersistence, IRead } from './../accessors';
 import { IJobResult } from './IJobResult';
-import { Schedule } from './Schedule';
 
 export interface IJob {
     /**
@@ -12,7 +12,12 @@ export interface IJob {
     name: string;
     /** A brief description of what this job is for. */
     description?: string;
-    schedule: Schedule;
-    data: { [key: string]: any };
-    executor(job: IJob, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IJobResult>;
+    /** The user who created this job, but not always required. */
+    creator?: IUser;
+
+    /**
+     * The function which gets excuted when the job runs.
+     * See the IJobResult documentation for what to return.
+     */
+    executor(read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IJobResult>;
 }

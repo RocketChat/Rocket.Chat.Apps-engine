@@ -6,6 +6,7 @@ import {
     IPersistenceRead,
     IRead,
     IRoomRead,
+    ISchedulerRead,
     IUploadRead,
     IUserRead,
 } from '../../definition/accessors';
@@ -20,6 +21,7 @@ export class Reader implements IRead {
         private noti: INotifier,
         private livechat: ILivechatRead,
         private upload: IUploadRead,
+        private scheduler: ISchedulerRead,
     ) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
@@ -52,5 +54,9 @@ export class Reader implements IRead {
 
     public getUploadReader(): IUploadRead {
         return this.upload;
+    }
+
+    public getSchedulerReader(): ISchedulerRead {
+        return this.scheduler;
     }
 }

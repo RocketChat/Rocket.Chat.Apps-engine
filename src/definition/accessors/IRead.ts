@@ -4,6 +4,7 @@ import { IMessageRead } from './IMessageRead';
 import { INotifier } from './INotifier';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
+import { ISchedulerRead } from './ISchedulerRead';
 import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
@@ -31,6 +32,12 @@ export interface IRead {
     /** Gets the INotifier for notifying users/rooms. */
     getNotifier(): INotifier;
 
+    /** Gets the ILivechatRead instance. */
     getLivechatReader(): ILivechatRead;
+
+    /** Gets the IUploadRead instance. */
     getUploadReader(): IUploadRead;
+
+    /** Gets the ISchedulerRead instance. */
+    getSchedulerReader(): ISchedulerRead;
 }

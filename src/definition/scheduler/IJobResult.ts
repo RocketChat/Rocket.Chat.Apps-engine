@@ -1,10 +1,10 @@
 import { Schedule } from './Schedule';
 
 /**
- * A job will return this value when their job completes or fails.
- * We provide an option to then reschedule a job, ideally used when
- * the job fails but could be used to run it again. Should the job
- * fail to run and throw an error, we will automatically mark it as
+ * A job **must** return this value when their job completes or fails.
+ * We provide an option to reschedule the job, ideally used when
+ * the job fails but could be used to run it again. If the job
+ * fails to run or throws an error, we will automatically mark it as
  * a failure and not rerun it.
  */
 export interface IJobResult {
