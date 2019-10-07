@@ -17,6 +17,7 @@ export class Message implements IMessage {
     public attachments?: Array<IMessageAttachment>;
     public reactions?: IMessageReactions;
     public groupable?: boolean;
+    public parseUrls?: boolean;
     public customFields?: { [key: string]: any };
     private _ROOM: Room;
 

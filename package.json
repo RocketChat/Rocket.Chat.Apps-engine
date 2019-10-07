@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-engine",
-  "version": "1.2.1",
+  "version": "1.6.0",
   "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index",
   "typings": "index",
@@ -10,6 +10,8 @@
     "fix-lint": "tslint --project tsconfig.json --fix",
     "compile": "gulp compile",
     "go-publish": "gulp publish",
+    "go-publish-beta": "gulp publish-beta",
+    "go-publish-alpha": "gulp publish-alpha",
     "unit-tests": "ts-node ./tests/runner.ts",
     "test-and-coverage": "nyc npm run unit-tests && nyc report",
     "view-coverage": "npm run test-and-coverage && http-server coverage -p 9082 -c-1",
@@ -30,7 +32,24 @@
     "server/**",
     "definition/**"
   ],
-  "author": "Bradley Hilton <bradley.hilton@rocket.chat>",
+  "author": {
+    "name": "Rocket.Chat",
+    "url": "https://rocket.chat/"
+  },
+  "contributors": [
+    {
+      "name": "Bradley Hilton",
+      "email": "bradley.hilton@rocket.chat"
+    },
+    {
+      "name": "Rodrigo Nascimento",
+      "email": "rodrigo.nascimento@rocket.chat"
+    },
+    {
+      "name": "Douglas Gubert",
+      "email": "douglas.gubert@rocket.chat"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/RocketChat/Rocket.Chat.Apps-engine/issues"

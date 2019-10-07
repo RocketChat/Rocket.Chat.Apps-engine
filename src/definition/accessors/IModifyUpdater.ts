@@ -1,8 +1,15 @@
 import { IUser } from '../users';
+import { ILivechatUpdater } from './ILivechatUpdater';
 import { IMessageBuilder } from './IMessageBuilder';
 import { IRoomBuilder } from './IRoomBuilder';
 
 export interface IModifyUpdater {
+    /**
+     * Get the updater object responsible for the
+     * Livechat integrations
+     */
+    getLivechatUpdater(): ILivechatUpdater;
+
     /**
      * Modifies an existing message.
      * Raises an exception if a non-existent messageId is supplied

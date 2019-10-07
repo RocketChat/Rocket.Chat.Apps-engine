@@ -1,18 +1,20 @@
-import { ILogger } from '../definition/accessors';
+import * as vm from 'vm';
+
+import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
 import { IApp } from '../definition/IApp';
 import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
-
-import { NotEnoughMethodArgumentsError } from './errors';
-import { IAppStorageItem } from './storage';
-
-import * as vm from 'vm';
 import { AppManager } from './AppManager';
-import { AppConsole } from './logging/index';
+import { NotEnoughMethodArgumentsError } from './errors';
+import { AppConsole } from './logging';
+import { AppLicenseValidationResult } from './marketplace/license';
+import { IAppStorageItem } from './storage';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
+
+    private latestLicenseValidationResult: AppLicenseValidationResult;
 
     constructor(private readonly manager: AppManager,
                 private storageItem: IAppStorageItem,
@@ -49,7 +51,6 @@ export class ProxiedApp implements IApp {
     public makeContext(data: object): vm.Context {
         return vm.createContext(Object.assign({}, {
             require: this.customRequire,
-            console: this.app.getLogger(),
         }, data));
     }
 
@@ -140,5 +141,21 @@ export class ProxiedApp implements IApp {
 
     public getLogger(): ILogger {
         return this.app.getLogger();
+    }
+
+    public getAccessors(): IAppAccessors {
+        return this.app.getAccessors();
+    }
+
+    public getLatestLicenseValidationResult(): AppLicenseValidationResult {
+        return this.latestLicenseValidationResult;
+    }
+
+    public validateLicense(): Promise<void> {
+        const { marketplaceInfo } = this.getStorageItem();
+
+        this.latestLicenseValidationResult = new AppLicenseValidationResult();
+
+        return this.manager.getLicenseManager().validate(this.latestLicenseValidationResult, marketplaceInfo);
     }
 }

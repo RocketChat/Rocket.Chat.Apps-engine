@@ -3,19 +3,19 @@ import * as path from 'path';
 import * as ts from 'typescript';
 import * as vm from 'vm';
 
+import { App } from '../../definition/App';
+import { AppMethod, IAppInfo } from '../../definition/metadata';
+import { AppAccessors } from '../accessors';
 import { AppManager } from '../AppManager';
 import { CompilerError, MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
+import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
 import { IAppStorageItem } from '../storage/IAppStorageItem';
 import { AppImplements } from './AppImplements';
 import { ICompilerError } from './ICompilerError';
 import { ICompilerFile } from './ICompilerFile';
 import { ICompilerResult } from './ICompilerResult';
-
-import { App } from '../../definition/App';
-import { AppMethod, IAppInfo } from '../../definition/metadata';
-import { Utilities } from '../misc/Utilities';
 
 export class AppCompiler {
     private readonly compilerOptions: ts.CompilerOptions;
@@ -33,6 +33,7 @@ export class AppCompiler {
             noImplicitReturns: true,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
+            types: ['node'],
             // Set this to true if you would like to see the module resolution process
             traceResolution: false,
         };
@@ -302,7 +303,7 @@ export class AppCompiler {
         }
 
         const customRequire = Utilities.buildCustomRequire(files);
-        const context = vm.createContext({ require: customRequire, exports, process: {} });
+        const context = vm.createContext({ require: customRequire, exports, process: {}, console });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)].compiled);
         const result = script.runInContext(context);
@@ -312,13 +313,14 @@ export class AppCompiler {
             throw new Error(`The App's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
         }
 
+        const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = vm.runInNewContext('new App(info, rcLogger);', vm.createContext({
-            console: logger,
+        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', vm.createContext({
             rcLogger: logger,
             info: storage.info,
             App: result,
             process: {},
+            appAccessors,
         }), { timeout: 1000, filename: `App_${storage.info.nameSlug}.js` });
 
         if (!(rl instanceof App)) {

@@ -1,4 +1,5 @@
 import { IApiExtend } from './IApiExtend';
+import { IAppAccessors } from './IAppAccessors';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
@@ -13,6 +14,10 @@ import {
     IHttpResponse,
     RequestMethod,
 } from './IHttp';
+import { ILivechatCreator } from './ILivechatCreator';
+import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
+import { ILivechatRead } from './ILivechatRead';
+import { ILivechatUpdater } from './ILivechatUpdater';
 import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
 import { IMessageBuilder } from './IMessageBuilder';
@@ -36,10 +41,12 @@ import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
+import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
 export {
     HttpStatusCode,
+    IAppAccessors,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentalVariableRead,
@@ -50,6 +57,10 @@ export {
     IHttpPreResponseHandler,
     IHttpRequest,
     IHttpResponse,
+    ILivechatCreator,
+    ILivechatMessageBuilder,
+    ILivechatRead,
+    ILivechatUpdater,
     ILogEntry,
     ILogger,
     IMessageBuilder,
@@ -73,6 +84,7 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUploadRead,
     IUserRead,
     LogMessageSeverity,
     RequestMethod,

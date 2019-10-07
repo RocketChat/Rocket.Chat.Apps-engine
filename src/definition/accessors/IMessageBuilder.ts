@@ -157,6 +157,20 @@ export interface IMessageBuilder {
     getGroupable(): boolean;
 
     /**
+     * Sets whether this message should have any URLs in the text
+     * parsed by Rocket.Chat and get the details added to the message's
+     * attachments.
+     *
+     * @param parseUrls whether URLs should be parsed in this message
+     */
+    setParseUrls(parseUrls: boolean): IMessageBuilder;
+
+    /**
+     * Gets whether this message should have its URLs parsed
+     */
+    getParseUrls(): boolean;
+
+    /**
      * Gets the resulting message that has been built up to the point of calling it.
      *
      * *Note:* This will error out if the Room has not been defined.

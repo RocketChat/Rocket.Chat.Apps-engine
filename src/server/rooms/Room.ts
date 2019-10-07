@@ -37,4 +37,34 @@ export class Room implements IRoom {
     public constructor(room: IRoom, private manager: AppManager) {
         Object.assign(this, room);
     }
+
+    get value(): object {
+        return {
+            id: this.id,
+            displayName: this.displayName,
+            slugifiedName: this.slugifiedName,
+            type: this.type,
+            creator: this.creator,
+            isDefault: this.isDefault,
+            isReadOnly: this.isReadOnly,
+            displaySystemMessages: this.displaySystemMessages,
+            messageCount: this.messageCount,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            lastModifiedAt: this.lastModifiedAt,
+            customFields: this.customFields,
+        };
+    }
+
+    public toJSON() {
+        return this.value;
+    }
+
+    public toString() {
+        return this.value;
+    }
+
+    public valueOf() {
+        return this.value;
+    }
 }

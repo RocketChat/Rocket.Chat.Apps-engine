@@ -4,6 +4,7 @@ import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { IMessageFile } from './IMessageFile';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageSent } from './IPostMessageSent';
@@ -17,6 +18,7 @@ import { IPreMessageUpdatedModify } from './IPreMessageUpdatedModify';
 import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
 import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
 import { MessageActionType } from './MessageActionType';
+import { MessageProcessingType } from './MessageProcessingType';
 
 export {
     IMessage,
@@ -25,6 +27,7 @@ export {
     IMessageAttachmentTitle,
     IMessageAttachmentField,
     IMessageAction,
+    IMessageFile,
     IMessageReactions,
     IMessageReaction,
     IPostMessageDeleted,
@@ -39,4 +42,5 @@ export {
     IPreMessageUpdatedPrevent,
     MessageActionButtonsAlignment,
     MessageActionType,
+    MessageProcessingType,
 };

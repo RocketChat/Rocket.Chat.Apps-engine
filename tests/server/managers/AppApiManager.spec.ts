@@ -1,15 +1,11 @@
 // tslint:disable:max-line-length
-
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 import * as vm from 'vm';
-import { AppStatus } from '../../../src/definition/AppStatus';
-import { AppMethod } from '../../../src/definition/metadata';
-import { TestsAppBridges } from '../../test-data/bridges/appBridges';
-import { TestsAppLogStorage } from '../../test-data/logStorage';
-import { TestData } from '../../test-data/utilities';
 
 import { RequestMethod } from '../../../src/definition/accessors';
 import { IApi, IApiRequest } from '../../../src/definition/api';
+import { AppStatus } from '../../../src/definition/AppStatus';
+import { AppMethod } from '../../../src/definition/metadata';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { PathAlreadyExistsError } from '../../../src/server/errors';
@@ -18,6 +14,9 @@ import { AppAccessorManager, AppApiManager, AppSlashCommandManager } from '../..
 import { AppApi } from '../../../src/server/managers/AppApi';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
+import { TestsAppBridges } from '../../test-data/bridges/appBridges';
+import { TestsAppLogStorage } from '../../test-data/logStorage';
+import { TestData } from '../../test-data/utilities';
 
 export class AppApiManagerTestFixture {
     public static doThrow: boolean = false;
@@ -190,5 +189,24 @@ export class AppApiManagerTestFixture {
         await Expect(async () => await ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
 
         Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(3);
+    }
+
+    @Test()
+    public listApis() {
+        const ascm = new AppApiManager(this.mockManager);
+
+        Expect(ascm.listApis('testing')).toEqual([]);
+
+        ascm.addApi('testing', TestData.getApi('api1'));
+        ascm.registerApis('testing');
+
+        Expect(() => ascm.listApis('testing')).not.toThrow();
+        Expect(ascm.listApis('testing')).not.toEqual([]);
+        Expect(ascm.listApis('testing')).toEqual([{
+            path: 'api1',
+            computedPath: '/api/apps/public/testing/api1',
+            methods: ['get'],
+            examples: {},
+        }]);
     }
 }
