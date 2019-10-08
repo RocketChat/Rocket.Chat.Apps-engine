@@ -14,7 +14,7 @@ export class AppExternalComponentManager {
      * The key of the top map is app id and the key of inner map is the
      * external component name.
      */
-    private providedExternalComponents: Map<string, Map<string, IExternalComponent>>;
+    private registeredExternalComponents: Map<string, Map<string, IExternalComponent>>;
     /**
      * Contains the apps and the external components they have touhed.
      * The key of the top map is app id and the key of inner map is the
@@ -26,14 +26,14 @@ export class AppExternalComponentManager {
     private appTouchedExternalComponents: Map<string, Map<string, IExternalComponent>>;
 
     constructor() {
-        this.providedExternalComponents = new Map<string, Map<string, IExternalComponent>>();
+        this.registeredExternalComponents = new Map<string, Map<string, IExternalComponent>>();
         this.appTouchedExternalComponents = new Map<string, Map<string, IExternalComponent>>();
     }
     /**
      * Get all registered components.
      */
-    public getProvidedExternalComponents(): Map<string, Map<string, IExternalComponent>> {
-        return this.providedExternalComponents;
+    public getRegisteredExternalComponents(): Map<string, Map<string, IExternalComponent>> {
+        return this.registeredExternalComponents;
     }
     /**
      * Get all external components that apps have registered
@@ -83,38 +83,35 @@ export class AppExternalComponentManager {
         }
     }
     /**
-     * Add external components to the providedExternalComponents.
+     * Add enabled apps' external components from the appTouchedExternalComponents
+     * to the registeredExternalComponents.
      *
      * @param appId the id of the app
-     * @param externalComponents the external components need to be registered
      */
-    public registerExternalComponents(appId: string, externalComponents: Map<string, IExternalComponent>): void {
-        if (!externalComponents) {
+    public registerExternalComponents(appId: string): void {
+        if (!this.appTouchedExternalComponents.has(appId)) {
             return;
         }
 
-        // update appTouchedExternalComponents
-        Array.from(externalComponents.values()).forEach((externalComponent) => {
-            this.addExternalComponent(appId, externalComponent);
-        });
+        const externalComponents = this.appTouchedExternalComponents.get(appId);
 
-        this.providedExternalComponents.set(appId, externalComponents);
+        this.registeredExternalComponents.set(appId, externalComponents);
     }
     /**
-     * Remove all external components of an app from the providedExternalComponents.
-     * by specifying the appId.
+     * Remove all external components of an app from the
+     * registeredExternalComponents by specifying the appId.
      *
      * @param appId the id of the app
      */
     public unregisterExternalComponents(appId: string): void {
-        if (this.providedExternalComponents.has(appId)) {
-            this.providedExternalComponents.delete(appId);
+        if (this.registeredExternalComponents.has(appId)) {
+            this.registeredExternalComponents.delete(appId);
         }
     }
     /**
      * Remove all external components of an app from both the
-     * providedExternalComponents and the appTouchedComponents by specifying the
-     * appId.
+     * registeredExternalComponents and the appTouchedComponents
+     * by specifying the appId.
      *
      * @param appId the id of the app
      */
@@ -122,8 +119,8 @@ export class AppExternalComponentManager {
         if (this.appTouchedExternalComponents.has(appId)) {
             this.appTouchedExternalComponents.delete(appId);
         }
-        if (this.providedExternalComponents.has(appId)) {
-            this.providedExternalComponents.delete(appId);
+        if (this.registeredExternalComponents.has(appId)) {
+            this.registeredExternalComponents.delete(appId);
         }
     }
 }

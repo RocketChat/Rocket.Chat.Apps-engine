@@ -10,6 +10,13 @@ export class AppExternalComponentManagerTestFixture {
     private mockExternalComponent4: IExternalComponent;
     private mockAppExternalComponentManager: AppExternalComponentManager;
 
+    public register(aecm: AppExternalComponentManager, externalComponent: IExternalComponent): void {
+        const { appId } = externalComponent;
+
+        aecm.addExternalComponent(appId, externalComponent);
+        aecm.registerExternalComponents(appId);
+    }
+
     @SetupFixture
     public setupFixture() {
         this.mockExternalComponent1 = {
@@ -50,21 +57,19 @@ export class AppExternalComponentManagerTestFixture {
     public basicAppExternalComponentManager() {
         const aecm = new AppExternalComponentManager();
 
-        Expect((aecm as any).providedExternalComponents.size).toBe(0);
+        Expect((aecm as any).registeredExternalComponents.size).toBe(0);
         Expect((aecm as any).appTouchedExternalComponents.size).toBe(0);
     }
 
     @Test()
-    public verifyGetProvidedExternalComponents() {
+    public verifyGetRegisteredExternalComponents() {
         const aecm = new AppExternalComponentManager();
         const component = this.mockExternalComponent1;
 
-        Expect(aecm.getProvidedExternalComponents().size).toBe(0);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(0);
 
-        aecm.registerExternalComponents(component.appId, new Map([
-            [component.name, component],
-        ]));
-        Expect(aecm.getProvidedExternalComponents().size).toBe(1);
+        this.register(aecm, component);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(1);
     }
 
     @Test()
@@ -84,9 +89,7 @@ export class AppExternalComponentManagerTestFixture {
         const component = this.mockExternalComponent1;
 
         Expect(aecm.getExternalComponents(component.appId)).toBe(null);
-        aecm.registerExternalComponents(component.appId, new Map([
-            [component.name, component],
-        ]));
+        aecm.addExternalComponent(component.appId, component);
         Expect(aecm.getExternalComponents(component.appId).size).toBe(1);
     }
 
@@ -121,22 +124,11 @@ export class AppExternalComponentManagerTestFixture {
     @Test()
     public verifyRegisterExternalComponents() {
         const aecm = new AppExternalComponentManager();
-        const component1 = this.mockExternalComponent1;
-        const component3 = this.mockExternalComponent3;
+        const component = this.mockExternalComponent1;
 
-        Expect(() => aecm.registerExternalComponents('', new Map([
-            [component1.name, component1],
-        ]))).toThrowError(
-            ExternalComponentNotMatchWithAppError,
-            'The external component\'s appId does not match with the current app.',
-        );
-
-        aecm.registerExternalComponents(component1.appId, new Map([
-            [component1.name, component1],
-            [component3.name, component3],
-        ]));
-        Expect(aecm.getProvidedExternalComponents().size).toBe(1);
-        Expect(aecm.getExternalComponents(component1.appId).size).toBe(2);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(0);
+        this.register(aecm, component);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(1);
     }
 
     @Test()
@@ -144,15 +136,13 @@ export class AppExternalComponentManagerTestFixture {
         const aecm = new AppExternalComponentManager();
         const component = this.mockExternalComponent1;
 
-        aecm.registerExternalComponents(component.appId, new Map([
-            [component.name, component],
-        ]));
+        this.register(aecm, component);
         Expect(aecm.getAppTouchedExternalComponents().size).toBe(1);
-        Expect(aecm.getProvidedExternalComponents().size).toBe(1);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(1);
 
         aecm.unregisterExternalComponents(component.appId);
         Expect(aecm.getAppTouchedExternalComponents().size).toBe(1);
-        Expect(aecm.getProvidedExternalComponents().size).toBe(0);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(0);
     }
 
     @Test()
@@ -160,14 +150,12 @@ export class AppExternalComponentManagerTestFixture {
         const aecm = new AppExternalComponentManager();
         const component = this.mockExternalComponent1;
 
-        aecm.registerExternalComponents(component.appId, new Map([
-            [component.name, component],
-        ]));
+        this.register(aecm, component);
         Expect(aecm.getAppTouchedExternalComponents().size).toBe(1);
-        Expect(aecm.getProvidedExternalComponents().size).toBe(1);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(1);
 
         aecm.purgeExternalComponents(component.appId);
         Expect(aecm.getAppTouchedExternalComponents().size).toBe(0);
-        Expect(aecm.getProvidedExternalComponents().size).toBe(0);
+        Expect(aecm.getRegisteredExternalComponents().size).toBe(0);
     }
 }

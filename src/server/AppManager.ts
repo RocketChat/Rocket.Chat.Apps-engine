@@ -758,10 +758,8 @@ export class AppManager {
         }
 
         if (enable) {
-            const externalComponents = this.externalComponentManager.getExternalComponents(app.getID());
-
             this.commandManager.registerCommands(app.getID());
-            this.externalComponentManager.registerExternalComponents(app.getID(), externalComponents);
+            this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
