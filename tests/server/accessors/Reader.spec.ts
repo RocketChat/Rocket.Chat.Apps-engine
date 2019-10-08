@@ -37,6 +37,7 @@ export class ReaderAccessorTestFixture {
         Expect(rd.getNotifier()).toBeDefined();
         Expect(rd.getPersistenceReader()).toBeDefined();
         Expect(rd.getRoomReader()).toBeDefined();
+        Expect(rd.getSubscriptionReader()).toBeDefined();
         Expect(rd.getUserReader()).toBeDefined();
         Expect(rd.getLivechatReader()).toBeDefined();
         Expect(rd.getUploadReader()).toBeDefined();

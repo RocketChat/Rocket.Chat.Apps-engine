@@ -1,2 +1,1 @@
-import { ISubscription } from './ISubscription';
-export { ISubscription };
+export { ISubscription } from './ISubscription';

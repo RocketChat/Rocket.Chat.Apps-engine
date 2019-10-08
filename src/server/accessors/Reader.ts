@@ -39,6 +39,7 @@ export class Reader implements IRead {
     public getRoomReader(): IRoomRead {
         return this.room;
     }
+
     public getSubscriptionReader(): ISubscriptionRead {
         return this.subscription;
     }
