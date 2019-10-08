@@ -1,6 +1,10 @@
-import { IWebHooks } from './IWebHooks';
-
 export interface IExternalComponentOptions {
-    // The webhooks options. Please see IWebHooks.ts for the detail.
-    webhooks: IWebHooks;
+    /**
+     * The width of the external component
+     */
+    width?: number;
+    /**
+     * The height of the external component
+     */
+    height?: number;
 }
