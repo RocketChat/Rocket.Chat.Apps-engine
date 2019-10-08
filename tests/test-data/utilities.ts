@@ -5,7 +5,7 @@ import { IMessage } from '../../src/definition/messages';
 import { IRoom, RoomType } from '../../src/definition/rooms';
 import { ISetting, SettingType } from '../../src/definition/settings';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
-import { IUser, UserStatusConnection, UserType } from '../../src/definition/users';
+import { IUser, UserStatusConnection, UserType, IUserCreator } from '../../src/definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';
@@ -139,6 +139,16 @@ export class TestData {
                     },
                 ],
             }],
+        };
+    }
+
+    public static getUserCreator(id?: string, email?: string, username?: string, roles?: Array<string>): IUserCreator {
+        return {
+            id: id ? id : 'BBxwgCBzLeMC6esTb',
+            email: email ? email : 'testemail@gmail.com',
+            name: 'testBotName',
+            username: username ? username : 'testbot',
+            roles: roles ? roles : ['bot'],
         };
     }
 

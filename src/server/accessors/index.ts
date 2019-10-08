@@ -27,6 +27,7 @@ import { SettingsExtend } from './SettingsExtend';
 import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
+import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
 
 export {
@@ -59,5 +60,6 @@ export {
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
+    UserBuilder,
     UserRead,
 };
