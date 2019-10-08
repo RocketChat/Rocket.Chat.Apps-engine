@@ -13,6 +13,12 @@ export class UserBuilderAccessorTestFixture {
 
     @Test()
     public settingOnUserBuilder() {
+        const ubOnce = new UserBuilder();
+        Expect(ubOnce.setData({ name: 'Test User', email: 'testuser@gmail.com', username: 'testuser'  } as IUserCreator)).toBe(ubOnce);
+        Expect((ubOnce as any).room.displayName).toBe('Test User');
+        Expect((ubOnce as any).room.username).toBe('testuser');
+        Expect((ubOnce as any).room.email).toBe('testuser@gmail.com');
+
         const user: IUserCreator = {} as IUserCreator;
         const ub = new UserBuilder(user);
 
@@ -22,7 +28,7 @@ export class UserBuilderAccessorTestFixture {
 
         Expect(ub.setDisplayName('Test User')).toBe(ub);
         Expect(user.name).toEqual('Test User');
-        Expect(ub.getDisplayName).toEqual('Test User');
+        Expect(ub.getDisplayName()).toEqual('Test User');
 
         Expect(ub.setUsername('testuser')).toBe(ub);
         Expect(user.username).toEqual('testuser');
@@ -30,7 +36,7 @@ export class UserBuilderAccessorTestFixture {
 
         Expect(ub.setRoles(['bot'])).toBe(ub);
         Expect(user.roles).toEqual(['bot']);
-        Expect(ub.getUsername()).toEqual(['bot']);
+        Expect(ub.getRoles()).toEqual(['bot']);
 
         Expect(ub.setActive(true)).toBe(ub);
         Expect(user.active).toEqual(true);
@@ -73,16 +79,5 @@ export class UserBuilderAccessorTestFixture {
         Expect(ub.getSendWelcomeEmail()).toEqual(false);
 
         Expect(ub.getUser()).toBe(ub);
-        delete user.email;
-        Expect(() => ub.getUser()).toThrowError(Error, 'The "email" property is required.')
-
-        Expect(ub.getUser()).toBe(ub);
-        delete user.username;
-        Expect(() => ub.getUser()).toThrowError(Error, 'The "username" property is required.')
-
-        Expect(ub.getUser()).toBe(ub);
-        delete user.name;
-        Expect(() => ub.getUser()).toThrowError(Error, 'The "name" property is required.')
-
     }
 }
