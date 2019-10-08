@@ -1,5 +1,5 @@
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ExternalComponentAlreadyTouchedError, ExternalComponentNotMatchWithAppError } from '../errors';
+import { ExternalComponentNotMatchWithAppError } from '../errors';
 
 /**
  * The external component manager for the apps.
@@ -56,6 +56,9 @@ export class AppExternalComponentManager {
     }
     /**
      * Add an external component to the appTouchedExternalComponents.
+     * If you call this method twice and the component
+     * has the same name as before, the first one will be
+     * overwritten as the names provided **must** be unique.
      *
      * @param appId the id of the app
      * @param externalComponent the external component need to be added
@@ -69,15 +72,6 @@ export class AppExternalComponentManager {
             this.appTouchedExternalComponents.set(appId, new Map(Object.entries({ [externalComponent.name]: externalComponent})));
         } else {
             const appExternalComponents = this.appTouchedExternalComponents.get(appId);
-            const touchedExternalComponent = appExternalComponents.get(externalComponent.name);
-
-            if (
-                touchedExternalComponent
-                && touchedExternalComponent.name === externalComponent.name
-                && JSON.stringify(touchedExternalComponent) !== JSON.stringify(externalComponent)
-            ) {
-                throw new ExternalComponentAlreadyTouchedError(touchedExternalComponent);
-            }
 
             appExternalComponents.set(externalComponent.name, externalComponent);
         }
@@ -92,7 +86,6 @@ export class AppExternalComponentManager {
         if (!this.appTouchedExternalComponents.has(appId)) {
             return;
         }
-
         const externalComponents = this.appTouchedExternalComponents.get(appId);
 
         this.registeredExternalComponents.set(appId, externalComponents);

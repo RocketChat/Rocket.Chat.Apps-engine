@@ -1,13 +1,12 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 import { ExternalComponentLocation, IExternalComponent } from '../../../src/definition/externalComponent/IExternalComponent';
-import { ExternalComponentAlreadyTouchedError, ExternalComponentNotMatchWithAppError } from '../../../src/server/errors';
+import { ExternalComponentNotMatchWithAppError } from '../../../src/server/errors';
 import { AppExternalComponentManager } from '../../../src/server/managers';
 
 export class AppExternalComponentManagerTestFixture {
     private mockExternalComponent1: IExternalComponent;
     private mockExternalComponent2: IExternalComponent;
     private mockExternalComponent3: IExternalComponent;
-    private mockExternalComponent4: IExternalComponent;
     private mockAppExternalComponentManager: AppExternalComponentManager;
 
     public register(aecm: AppExternalComponentManager, externalComponent: IExternalComponent): void {
@@ -40,12 +39,6 @@ export class AppExternalComponentManagerTestFixture {
             appId: this.mockExternalComponent1.appId,
             name: this.mockExternalComponent2.name,
             description: 'TestExternalComponent3',
-        } as IExternalComponent;
-        this.mockExternalComponent4 = {
-            ...this.mockExternalComponent2,
-            appId: this.mockExternalComponent1.appId,
-            name: this.mockExternalComponent1.name,
-            description: 'TestExternalComponent4',
         } as IExternalComponent;
         this.mockAppExternalComponentManager = new AppExternalComponentManager();
         this.mockAppExternalComponentManager.addExternalComponent(
@@ -96,21 +89,12 @@ export class AppExternalComponentManagerTestFixture {
     @Test()
     public verifyAddExternalComponent() {
         const aecm1 = new AppExternalComponentManager();
-        const aecm2 = this.mockAppExternalComponentManager;
         const component1 = this.mockExternalComponent1;
         const component3 = this.mockExternalComponent3;
-        const component4 = this.mockExternalComponent4;
 
         Expect(() => aecm1.addExternalComponent('', this.mockExternalComponent1)).toThrowError(
             ExternalComponentNotMatchWithAppError,
             'The external component\'s appId does not match with the current app.',
-        );
-
-        Expect(() => aecm2.addExternalComponent(
-            component1.appId, component4,
-        )).toThrowError(
-            ExternalComponentAlreadyTouchedError,
-            `The app (${component1.appId}) has already touched the external component (${component1.name})`,
         );
 
         aecm1.addExternalComponent(component1.appId, component1);
