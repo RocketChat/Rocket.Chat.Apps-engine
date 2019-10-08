@@ -1,6 +1,6 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
+import { IRoom } from '../../../src/definition/rooms';
 
 import { ModifyExtender } from '../../../src/server/accessors';
 import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
@@ -20,7 +20,7 @@ export class ModifyExtenderTestFixture {
             getById(roomId: string, appId: string): Promise<IRoom> {
                 return Promise.resolve(TestData.getRoom());
             },
-            update(room: IRoom, appId: string): Promise<void> {
+            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IRoomBridge;

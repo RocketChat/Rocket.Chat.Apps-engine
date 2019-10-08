@@ -1,5 +1,5 @@
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { AppMethod } from '../../definition/metadata';
+import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';

@@ -1,5 +1,5 @@
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
-
+import { IAppInfo } from '../../definition/metadata';
+import { AppLicenseValidationResult } from '../marketplace/license';
 import { ProxiedApp } from '../ProxiedApp';
 import { ICompilerError } from './ICompilerError';
 
@@ -8,13 +8,17 @@ export class AppFabricationFulfillment {
     public app: ProxiedApp;
     public implemented: { [int: string]: boolean };
     public compilerErrors: Array<ICompilerError>;
+    public licenseValidationResult: AppLicenseValidationResult;
+    public storageError: string;
 
     constructor() {
         this.compilerErrors = new Array<ICompilerError>();
+        this.licenseValidationResult = new AppLicenseValidationResult();
     }
 
     public setAppInfo(information: IAppInfo): void {
         this.info = information;
+        this.licenseValidationResult.setAppId(information.id);
     }
 
     public getAppInfo(): IAppInfo {
@@ -43,5 +47,21 @@ export class AppFabricationFulfillment {
 
     public getCompilerErrors(): Array<ICompilerError> {
         return this.compilerErrors;
+    }
+
+    public setStorageError(errorMessage: string): void {
+        this.storageError = errorMessage;
+    }
+
+    public getStorageError(): string {
+        return this.storageError;
+    }
+
+    public hasStorageError(): boolean {
+        return !!this.storageError;
+    }
+
+    public getLicenseValidationResult(): AppLicenseValidationResult {
+        return this.licenseValidationResult;
     }
 }

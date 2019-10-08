@@ -1,11 +1,15 @@
 import { AppAccessorManager} from './AppAccessorManager';
-import { AppListenerManger } from './AppListenerManger';
+import { AppApiManager } from './AppApiManager';
+import { AppLicenseManager } from './AppLicenseManager';
+import { AppListenerManager } from './AppListenerManager';
 import { AppSettingsManager } from './AppSettingsManager';
 import { AppSlashCommandManager } from './AppSlashCommandManager';
 
 export {
     AppAccessorManager,
-    AppListenerManger,
+    AppLicenseManager,
+    AppListenerManager,
     AppSettingsManager,
     AppSlashCommandManager,
+    AppApiManager,
 };

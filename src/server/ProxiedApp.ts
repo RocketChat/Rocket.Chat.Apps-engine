@@ -1,18 +1,20 @@
-import { ILogger } from '@rocket.chat/apps-ts-definition/accessors';
-import { App } from '@rocket.chat/apps-ts-definition/App';
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IApp } from '@rocket.chat/apps-ts-definition/IApp';
-import { AppMethod, IAppAuthorInfo, IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
-
-import { NotEnoughMethodArgumentsError } from './errors';
-import { IAppStorageItem } from './storage';
-
 import * as vm from 'vm';
+
+import { IAppAccessors, ILogger } from '../definition/accessors';
+import { App } from '../definition/App';
+import { AppStatus } from '../definition/AppStatus';
+import { IApp } from '../definition/IApp';
+import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppManager } from './AppManager';
-import { AppConsole } from './logging/index';
+import { NotEnoughMethodArgumentsError } from './errors';
+import { AppConsole } from './logging';
+import { AppLicenseValidationResult } from './marketplace/license';
+import { IAppStorageItem } from './storage';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
+
+    private latestLicenseValidationResult: AppLicenseValidationResult;
 
     constructor(private readonly manager: AppManager,
                 private storageItem: IAppStorageItem,
@@ -49,7 +51,6 @@ export class ProxiedApp implements IApp {
     public makeContext(data: object): vm.Context {
         return vm.createContext(Object.assign({}, {
             require: this.customRequire,
-            console: this.app.getLogger(),
         }, data));
     }
 
@@ -83,7 +84,7 @@ export class ProxiedApp implements IApp {
         let result;
         try {
             // tslint:disable-next-line:max-line-length
-            result = await this.runInContext(`Promise.resolve(args).then((args) => app.${method}.apply(app, args))`, this.makeContext({ app: this.app, args })) as Promise<any>;
+            result = await this.runInContext(`app.${method}.apply(app, args)`, this.makeContext({ app: this.app, args })) as Promise<any>;
             logger.debug(`'${method}' was successfully called! The result is:`, result);
         } catch (e) {
             logger.error(e);
@@ -140,5 +141,21 @@ export class ProxiedApp implements IApp {
 
     public getLogger(): ILogger {
         return this.app.getLogger();
+    }
+
+    public getAccessors(): IAppAccessors {
+        return this.app.getAccessors();
+    }
+
+    public getLatestLicenseValidationResult(): AppLicenseValidationResult {
+        return this.latestLicenseValidationResult;
+    }
+
+    public validateLicense(): Promise<void> {
+        const { marketplaceInfo } = this.getStorageItem();
+
+        this.latestLicenseValidationResult = new AppLicenseValidationResult();
+
+        return this.manager.getLicenseManager().validate(this.latestLicenseValidationResult, marketplaceInfo);
     }
 }

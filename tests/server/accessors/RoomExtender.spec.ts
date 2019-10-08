@@ -1,5 +1,5 @@
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
 import { Expect, Test } from 'alsatian';
+import { IRoom } from '../../../src/definition/rooms';
 import { TestData } from '../../test-data/utilities';
 
 import { RoomExtender } from '../../../src/server/accessors';
@@ -24,9 +24,11 @@ export class RoomExtenderAccessorTestFixture {
 
         Expect(room.usernames).not.toBeDefined();
         Expect(re.addMember(TestData.getUser('theId', 'bradley'))).toBe(re);
-        Expect(room.usernames).toBeDefined();
-        Expect(room.usernames).not.toBeEmpty();
-        Expect(room.usernames[0]).toBe('bradley');
+        Expect(room.usernames).not.toBeDefined();
+        Expect(re.getMembersBeingAdded()).toBeDefined();
+        Expect(re.getMembersBeingAdded()).not.toBeEmpty();
+        Expect(re.getMembersBeingAdded()[0]).not.toBeEmpty();
+        Expect(re.getMembersBeingAdded()[0].username).toBe('bradley');
         Expect(() => re.addMember(TestData.getUser('theSameUsername', 'bradley'))).toThrowError(Error, 'The user is already in the room.');
 
         Expect(re.getRoom()).not.toBe(room);

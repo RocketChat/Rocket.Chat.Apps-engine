@@ -1,5 +1,5 @@
-import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { PersistenceRead } from '../../../src/server/accessors';
 import { IPersistenceBridge } from '../../../src/server/bridges';

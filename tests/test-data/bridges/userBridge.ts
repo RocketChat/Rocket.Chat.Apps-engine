@@ -1,4 +1,4 @@
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IUser } from '../../../src/definition/users';
 
 import { IUserBridge } from '../../../src/server/bridges';
 
@@ -8,6 +8,10 @@ export class TestsUserBridge implements IUserBridge {
     }
 
     public getByUsername(username: string, appId: string): Promise<IUser> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getActiveUserCount(): Promise<number> {
         throw new Error('Method not implemented.');
     }
 }

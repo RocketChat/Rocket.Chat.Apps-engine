@@ -1,7 +1,7 @@
 import { ProxiedApp } from '../ProxiedApp';
 
-import { ISettingRead } from '@rocket.chat/apps-ts-definition/accessors';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { ISettingRead } from '../../definition/accessors';
+import { ISetting } from '../../definition/settings';
 
 export class SettingRead implements ISettingRead {
     constructor(private readonly app: ProxiedApp) {}

@@ -1,10 +1,11 @@
-import { AppStatusUtils } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
+import { AppStatusUtils } from '../../definition/AppStatus';
+import { AppMethod } from '../../definition/metadata';
+import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 
 import { AppManager } from '../AppManager';
 import { IAppCommandBridge } from '../bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../errors';
+import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 import { AppSlashCommand } from './AppSlashCommand';
 
@@ -320,7 +321,7 @@ export class AppSlashCommandManager {
         }
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, context, this.manager.getLogStorage(), this.accessors);
+        await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
 
         return;
     }
@@ -341,7 +342,9 @@ export class AppSlashCommandManager {
         }
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, context, this.manager.getLogStorage(), this.accessors);
+
+        // tslint:disable-next-line:max-line-length
+        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
 
         if (!result) {
             // Failed to get the preview, thus returning is fine
@@ -367,9 +370,22 @@ export class AppSlashCommandManager {
         }
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
-        await appCmd.runPreviewExecutor(previewItem, context, this.manager.getLogStorage(), this.accessors);
+        await appCmd.runPreviewExecutor(previewItem, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
 
         return;
+    }
+
+    private ensureContext(context: SlashCommandContext): SlashCommandContext {
+        // Due to the internal changes for the usernames property, we need to ensure the room
+        // is a class and not just an interface
+        let room: Room;
+        if (context.getRoom() instanceof Room) {
+            room = context.getRoom() as Room;
+        } else {
+            room = new Room(context.getRoom(), this.manager);
+        }
+
+        return new SlashCommandContext(context.getSender(), room, context.getArguments());
     }
 
     /**

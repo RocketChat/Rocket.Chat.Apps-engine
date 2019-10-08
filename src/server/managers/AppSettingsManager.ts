@@ -1,5 +1,5 @@
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { AppMethod } from '../../definition/metadata';
+import { ISetting } from '../../definition/settings';
 import { AppManager } from '../AppManager';
 import { Utilities } from '../misc/Utilities';
 

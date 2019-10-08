@@ -1,10 +1,10 @@
 // tslint:disable:max-line-length
 
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISlashCommandPreviewItem, SlashCommandContext } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 import * as vm from 'vm';
+import { AppStatus } from '../../../src/definition/AppStatus';
+import { AppMethod } from '../../../src/definition/metadata';
+import { ISlashCommandPreviewItem, SlashCommandContext } from '../../../src/definition/slashcommands';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/logStorage';
 import { TestData } from '../../test-data/utilities';
@@ -13,9 +13,10 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import { Room } from '../../../src/server/rooms/Room';
 import { AppLogStorage } from '../../../src/server/storage';
 
 export class AppSlashCommandManagerTestFixture {
@@ -60,6 +61,9 @@ export class AppSlashCommandManagerTestFixture {
             },
             getCommandManager() {
                 return {} as AppSlashCommandManager;
+            },
+            getApiManager() {
+                return {} as AppApiManager;
             },
             getOneById(appId: string): ProxiedApp {
                 return appId === 'failMePlease' ? undefined : app;
@@ -338,6 +342,9 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.executeCommand('not-registered', context)).not.toThrowAsync();
         await Expect(async () => await ascm.executeCommand('disabled-command', context)).not.toThrowAsync();
 
+        const classContext = new SlashCommandContext(TestData.getUser(), new Room(TestData.getRoom(), this.mockManager), []);
+        await Expect(async () => await ascm.executeCommand('it-exists', classContext)).not.toThrowAsync();
+
         // set it up for no "no app failure"
         const failedItems = new Map<string, AppSlashCommand>();
         const asm = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('failure'));
@@ -351,7 +358,7 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
         AppSlashCommandManagerTestFixture.doThrow = false;
 
-        Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(3);
+        Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(4);
     }
 
     @AsyncTest()
@@ -372,6 +379,9 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.getPreviews('command', context)).not.toThrowAsync();
         await Expect(async () => await ascm.getPreviews('not-registered', context)).not.toThrowAsync();
         await Expect(async () => await ascm.getPreviews('disabled-command', context)).not.toThrowAsync();
+
+        const classContext = new SlashCommandContext(TestData.getUser(), new Room(TestData.getRoom(), this.mockManager), []);
+        await Expect(async () => await ascm.getPreviews('it-exists', classContext)).not.toThrowAsync();
 
         // set it up for no "no app failure"
         const failedItems = new Map<string, AppSlashCommand>();
@@ -404,6 +414,9 @@ export class AppSlashCommandManagerTestFixture {
         await Expect(async () => await ascm.executePreview('command', previewItem, context)).not.toThrowAsync();
         await Expect(async () => await ascm.executePreview('not-registered', previewItem, context)).not.toThrowAsync();
         await Expect(async () => await ascm.executePreview('disabled-command', previewItem, context)).not.toThrowAsync();
+
+        const classContext = new SlashCommandContext(TestData.getUser(), new Room(TestData.getRoom(), this.mockManager), []);
+        await Expect(async () => await ascm.executePreview('it-exists', previewItem, classContext)).not.toThrowAsync();
 
         // set it up for no "no app failure"
         const failedItems = new Map<string, AppSlashCommand>();

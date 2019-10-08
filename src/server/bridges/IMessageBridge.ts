@@ -1,6 +1,6 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users/IUser';
+import { IMessage } from '../../definition/messages';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users/IUser';
 
 export interface IMessageBridge {
     create(message: IMessage, appId: string): Promise<string>;

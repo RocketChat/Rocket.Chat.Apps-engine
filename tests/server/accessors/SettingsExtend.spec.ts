@@ -1,5 +1,5 @@
-import { ISetting, SettingType } from '@rocket.chat/apps-ts-definition/settings';
 import { AsyncTest, Expect, Test } from 'alsatian';
+import { ISetting, SettingType } from '../../../src/definition/settings';
 
 import { SettingsExtend } from '../../../src/server/accessors';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';

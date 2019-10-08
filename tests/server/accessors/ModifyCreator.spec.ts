@@ -1,6 +1,6 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
-import { IRoom, RoomType } from '@rocket.chat/apps-ts-definition/rooms';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
+import { IRoom, RoomType } from '../../../src/definition/rooms';
 
 import { ModifyCreator } from '../../../src/server/accessors';
 import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
@@ -17,7 +17,7 @@ export class ModifyCreatorTestFixture {
         this.mockAppId = 'testing-app';
 
         this.mockRoomBridge = {
-            create(room: IRoom, appId: string): Promise<string> {
+            create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
                 return Promise.resolve('roomId');
             },
         } as IRoomBridge;
@@ -78,6 +78,10 @@ export class ModifyCreatorTestFixture {
 
         const room = {} as IRoom;
         const roomBd = mc.startRoom(room);
+        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
+        roomBd.setType(RoomType.CHANNEL);
+        Expect(room.type).toBe(RoomType.CHANNEL);
+
         await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
         roomBd.setCreator(TestData.getUser());
         Expect(room.creator).toBeDefined();
@@ -90,13 +94,9 @@ export class ModifyCreatorTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
-        roomBd.setType(RoomType.CHANNEL);
-        Expect(room.type).toBe(RoomType.CHANNEL);
-
         const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
         Expect(await mc.finish(roomBd)).toBe('roomId');
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, this.mockAppId);
+        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();
     }
 }

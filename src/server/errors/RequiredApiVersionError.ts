@@ -1,5 +1,5 @@
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
 import * as semver from 'semver';
+import { IAppInfo } from '../../definition/metadata';
 
 export class RequiredApiVersionError implements Error {
     public name: string = 'RequiredApiVersion';

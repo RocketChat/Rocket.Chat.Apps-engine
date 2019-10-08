@@ -1,5 +1,5 @@
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { IUser } from '../../../src/definition/users';
 
 import { UserRead } from '../../../src/server/accessors';
 import { IUserBridge } from '../../../src/server/bridges';

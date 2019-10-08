@@ -1,5 +1,5 @@
-import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { Persistence } from '../../../src/server/accessors';
 import { IPersistenceBridge } from '../../../src/server/bridges';
@@ -32,6 +32,9 @@ export class PersistenceAccessorTestFixture {
             removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
                 return Promise.resolve([theData]);
             },
+            updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
+                return Promise.resolve('id4');
+            },
         } as IPersistenceBridge;
         this.mockAssoc = new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'fake-id');
     }
@@ -45,6 +48,7 @@ export class PersistenceAccessorTestFixture {
         const sp3 = SpyOn(this.mockPersisBridge, 'update');
         const sp4 = SpyOn(this.mockPersisBridge, 'remove');
         const sp5 = SpyOn(this.mockPersisBridge, 'removeByAssociations');
+        const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociations');
 
         const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
 
@@ -61,10 +65,15 @@ export class PersistenceAccessorTestFixture {
         Expect(await ps.removeByAssociations([this.mockAssoc])).toBeDefined();
         Expect(this.mockPersisBridge.removeByAssociations).toHaveBeenCalled().exactly(2);
 
+        Expect(await ps.updateByAssociation(this.mockAssoc, this.data)).toBeDefined();
+        Expect(await ps.updateByAssociations([this.mockAssoc], this.data)).toBeDefined();
+        Expect(this.mockPersisBridge.updateByAssociations).toHaveBeenCalled().exactly(2);
+
         sp1.restore();
         sp2.restore();
         sp3.restore();
         sp4.restore();
         sp5.restore();
+        sp6.restore();
     }
 }

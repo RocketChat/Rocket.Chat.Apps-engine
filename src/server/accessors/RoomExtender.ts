@@ -1,15 +1,17 @@
-import { IRoomExtender } from '@rocket.chat/apps-ts-definition/accessors';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-ts-definition/metadata';
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
+import { IRoomExtender } from '../../definition/accessors';
+import { RocketChatAssociationModel } from '../../definition/metadata';
+import { IRoom } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 import { Utilities } from '../misc/Utilities';
 
 export class RoomExtender implements IRoomExtender {
     public kind: RocketChatAssociationModel.ROOM;
+    private members: Array<IUser>;
 
     constructor(private room: IRoom) {
         this.kind = RocketChatAssociationModel.ROOM;
+        this.members = new Array<IUser>();
     }
 
     public addCustomField(key: string, value: any): IRoomExtender {
@@ -27,17 +29,21 @@ export class RoomExtender implements IRoomExtender {
     }
 
     public addMember(user: IUser): IRoomExtender {
-        if (!Array.isArray(this.room.usernames)) {
-            this.room.usernames = new Array<string>();
-        }
-
-        if (this.room.usernames.includes(user.username)) {
+        if (this.members.find((u) => u.username === user.username)) {
             throw new Error('The user is already in the room.');
         }
 
-        this.room.usernames.push(user.username);
+        this.members.push(user);
 
         return this;
+    }
+
+    public getMembersBeingAdded(): Array<IUser> {
+        return this.members;
+    }
+
+    public getUsernamesOfMembersBeingAdded(): Array<string> {
+        return this.members.map((u) => u.username);
     }
 
     public getRoom(): IRoom {

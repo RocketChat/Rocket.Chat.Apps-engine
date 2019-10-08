@@ -4,29 +4,37 @@ import {
     IAppDetailChangesBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
+    IInternalBridge,
     IListenerBridge,
+    ILivechatBridge,
     IMessageBridge,
     IPersistenceBridge,
     IRoomBridge,
     IServerSettingBridge,
     ISubscriptionBridge,
+    IUploadBridge,
     IUserBridge,
 } from '../../../src/server/bridges';
 import { TestsActivationBridge } from './activationBridge';
+import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
+import { TestsInternalBridge } from './internalBridge';
+import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsSubscriptionBridge } from './subscriptionBridge';
+import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
 
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
     private readonly cmdBridge: TestsCommandBridge;
+    private readonly apiBridge: TestsApiBridge;
     private readonly setsBridge: TestsServerSettingBridge;
     private readonly envBridge: TestsEnvironmentalVariableBridge;
     private readonly rlActBridge: TestsActivationBridge;
@@ -34,13 +42,17 @@ export class TestsAppBridges extends AppBridges {
     private readonly persisBridge: TestsPersisBridge;
     private readonly roomBridge: TestsRoomBridge;
     private readonly subscriptionBridge: TestsSubscriptionBridge;
+    private readonly internalBridge: TestsInternalBridge;
     private readonly userBridge: TestsUserBridge;
     private readonly httpBridge: TestsHttpBridge;
+    private readonly livechatBridge: TestLivechatBridge;
+    private readonly uploadBridge: TestUploadBridge;
 
     constructor() {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
         this.cmdBridge = new TestsCommandBridge();
+        this.apiBridge = new TestsApiBridge();
         this.setsBridge = new TestsServerSettingBridge();
         this.envBridge = new TestsEnvironmentalVariableBridge();
         this.rlActBridge = new TestsActivationBridge();
@@ -48,12 +60,19 @@ export class TestsAppBridges extends AppBridges {
         this.persisBridge = new TestsPersisBridge();
         this.roomBridge = new TestsRoomBridge();
         this.subscriptionBridge = new TestsSubscriptionBridge();
+        this.internalBridge = new TestsInternalBridge();
         this.userBridge = new TestsUserBridge();
         this.httpBridge = new TestsHttpBridge();
+        this.livechatBridge = new TestLivechatBridge();
+        this.uploadBridge = new TestUploadBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
         return this.cmdBridge;
+    }
+
+    public getApiBridge(): TestsApiBridge {
+        return this.apiBridge;
     }
 
     public getServerSettingBridge(): IServerSettingBridge {
@@ -96,7 +115,19 @@ export class TestsAppBridges extends AppBridges {
         return this.subscriptionBridge;
     }
 
+    public getInternalBridge(): IInternalBridge {
+        return this.internalBridge;
+    }
+
     public getUserBridge(): IUserBridge {
         return this.userBridge;
+    }
+
+    public getLivechatBridge(): ILivechatBridge {
+        return this.livechatBridge;
+    }
+
+    public getUploadBridge(): IUploadBridge {
+        return this.uploadBridge;
     }
 }

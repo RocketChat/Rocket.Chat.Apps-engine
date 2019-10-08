@@ -1,5 +1,5 @@
-import { IMessage } from '@rocket.chat/apps-ts-definition/messages';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { IMessage } from '../../../src/definition/messages';
 
 import { MessageRead } from '../../../src/server/accessors';
 import { IMessageBridge } from '../../../src/server/bridges';

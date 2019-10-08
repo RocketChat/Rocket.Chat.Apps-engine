@@ -1,5 +1,5 @@
-import { ISlashCommand } from '@rocket.chat/apps-ts-definition/slashcommands';
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
+import { ISlashCommand } from '../../../src/definition/slashcommands';
 
 import { SlashCommandsModify } from '../../../src/server/accessors';
 import { AppSlashCommandManager } from '../../../src/server/managers';

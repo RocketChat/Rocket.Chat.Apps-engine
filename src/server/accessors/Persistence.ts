@@ -1,5 +1,5 @@
-import { IPersistence } from '@rocket.chat/apps-ts-definition/accessors';
-import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
+import { IPersistence } from '../../definition/accessors';
+import { RocketChatAssociationRecord } from '../../definition/metadata';
 
 import { IPersistenceBridge } from '../bridges/IPersistenceBridge';
 
@@ -20,6 +20,14 @@ export class Persistence implements IPersistence {
 
     public update(id: string, data: object, upsert = false): Promise<string> {
         return this.persistBridge.update(id, data, upsert, this.appId);
+    }
+
+    public updateByAssociation(association: RocketChatAssociationRecord, data: object, upsert = false): Promise<string> {
+        return this.persistBridge.updateByAssociations(new Array(association), data, upsert, this.appId);
+    }
+
+    public updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert = false): Promise<string> {
+        return this.persistBridge.updateByAssociations(associations, data, upsert, this.appId);
     }
 
     public remove(id: string): Promise<object> {

@@ -14,6 +14,7 @@ export class AppCompilerTestFixture {
             target: ts.ScriptTarget.ES2017,
             module: ts.ModuleKind.CommonJS,
             moduleResolution: ts.ModuleResolutionKind.NodeJs,
+            types: ['node'],
             declaration: false,
             noImplicitAny: false,
             removeComments: true,
@@ -86,6 +87,33 @@ export class AppCompilerTestFixture {
         Expect((compiler as any).isValidFile(invalidNameFile)).toBe(false);
         Expect((compiler as any).isValidFile(invalidContentFile)).toBe(false);
         Expect((compiler as any).isValidFile(validFile)).toBe(true);
+    }
+
+    @Test()
+    public resolvePath() {
+        const compiler = new AppCompiler();
+
+        const cwd = '/rc/appengine/app/';
+
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './commands/command', cwd)).toBe('commands/command.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './commands/index', cwd)).toBe('commands/index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './utils', cwd)).toBe('utils.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './command', cwd)).toBe('commands/command.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './index', cwd)).toBe('commands/index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../utils', cwd)).toBe('utils.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', '../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', '.././index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/index.ts', './../index', cwd)).toBe('index.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../../index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../.././index', cwd)).toBe('index.ts');
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', './../../index', cwd)).toBe('index.ts');
+
+        Expect(compiler.resolvePath('/rc/appengine/app/commands/index.ts', '../commands/command', cwd)).toBe('commands/command.ts');
     }
 
     @Test()

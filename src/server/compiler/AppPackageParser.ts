@@ -3,21 +3,21 @@ import { AppCompiler } from './AppCompiler';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata/IAppInfo';
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
+import { IAppInfo } from '../../definition/metadata/IAppInfo';
 
 export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
     public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
-    private appsTsDefVer: string;
+    private appsEngineVersion: string;
 
     constructor() {
-        this.appsTsDefVer = this.getTsDefVersion();
+        this.appsEngineVersion = this.getEngineVersion();
     }
 
     public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
@@ -42,8 +42,8 @@ export class AppPackageParser {
             throw new Error('Invalid App package. No "app.json" file.');
         }
 
-        if (!semver.satisfies(this.appsTsDefVer, info.requiredApiVersion)) {
-            throw new RequiredApiVersionError(info, this.appsTsDefVer);
+        if (!semver.satisfies(this.appsEngineVersion, info.requiredApiVersion)) {
+            throw new RequiredApiVersionError(info, this.appsEngineVersion);
         }
 
         // Load all of the TypeScript only files
@@ -145,19 +145,20 @@ export class AppPackageParser {
         return `data:image/${ ext.replace('.', '') };base64,${ base64 }`;
     }
 
-    private getTsDefVersion(): string {
-        const devLocation = 'node_modules/@rocket.chat/apps-ts-definition/package.json';
-        // tslint:disable-next-line
-        const prodLocation = __dirname.split('@rocket.chat/apps-engine')[0] + '@rocket.chat/apps-ts-definition/package.json';
+    private getEngineVersion(): string {
+        const devLocation = path.join(__dirname, '../../../package.json');
+        const prodLocation = path.join(__dirname, '../../package.json');
+
+        let info: { version: string };
 
         if (fs.existsSync(devLocation)) {
-            const info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
-            return info.version as string;
+            info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
         } else if (fs.existsSync(prodLocation)) {
-            const info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
-            return info.version as string;
+            info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
         } else {
             throw new Error('Could not find the Apps TypeScript Definition Package Version!');
         }
+
+        return info.version.replace(/^[^0-9]/, '').split('-')[0];
     }
 }

@@ -1,4 +1,4 @@
-import { RocketChatAssociationRecord } from '@rocket.chat/apps-ts-definition/metadata';
+import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { IPersistenceBridge } from '../../../src/server/bridges';
 
@@ -33,5 +33,9 @@ export class TestsPersisBridge implements IPersistenceBridge {
 
     public update(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
+    }
+
+    public updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
+        throw new Error('Method not implemented');
     }
 }

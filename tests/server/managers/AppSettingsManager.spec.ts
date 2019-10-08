@@ -1,12 +1,12 @@
 // tslint:disable:max-line-length
 
-import { AppMethod } from '@rocket.chat/apps-ts-definition/metadata';
 import { AsyncTest, Expect, SetupFixture, SpyOn, Test } from 'alsatian';
+import { AppMethod } from '../../../src/definition/metadata';
 import { TestData } from '../../test-data/utilities';
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppSettingsManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppSettingsManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppStorage, IAppStorageItem } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -66,6 +66,9 @@ export class AppSettingsManagerTestFixture {
             },
             getCommandManager(): AppSlashCommandManager {
                 return {} as AppSlashCommandManager;
+            },
+            getApiManager(): AppApiManager {
+                return {} as AppApiManager;
             },
         } as AppManager;
 

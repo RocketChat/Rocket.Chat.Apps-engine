@@ -1,6 +1,6 @@
-import { IRoom } from '@rocket.chat/apps-ts-definition/rooms';
-import { IUser } from '@rocket.chat/apps-ts-definition/users';
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
+import { IRoom } from '../../../src/definition/rooms';
+import { IUser } from '../../../src/definition/users';
 
 import { RoomRead } from '../../../src/server/accessors';
 import { IRoomBridge } from '../../../src/server/bridges';
@@ -31,6 +31,12 @@ export class RoomReadAccessorTestFixture {
             getCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
+            getDirectByUsernames(usernames, appId): Promise<IRoom> {
+                return Promise.resolve(theRoom);
+            },
+            getMembers(name, appId): Promise<Array<IUser>> {
+                return Promise.resolve([theUser]);
+            },
         } as IRoomBridge;
     }
 
@@ -48,6 +54,8 @@ export class RoomReadAccessorTestFixture {
         Expect(await rr.getCreatorUserById('testing')).toBe(this.user);
         Expect(await rr.getCreatorUserByName('testing')).toBeDefined();
         Expect(await rr.getCreatorUserByName('testing')).toBe(this.user);
+        Expect(await rr.getDirectByUsernames([this.user.username])).toBeDefined();
+        Expect(await rr.getDirectByUsernames([this.user.username])).toBe(this.room);
     }
 
     @AsyncTest()
@@ -56,6 +64,9 @@ export class RoomReadAccessorTestFixture {
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
         await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
-        await Expect(async () => await rr.getMembers('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+
+        Expect(await rr.getMembers('testing')).toBeDefined();
+        Expect(await rr.getMembers('testing') as Array<IUser>).not.toBeEmpty();
+        Expect((await rr.getMembers('testing'))[0]).toBe(this.user);
     }
 }

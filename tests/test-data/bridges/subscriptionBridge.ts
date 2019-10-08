@@ -1,5 +1,4 @@
-import { ISubscription } from '@rocket.chat/apps-ts-definition/subscriptions';
-
+import { ISubscription } from '../../../definition/subscriptions';
 import { ISubscriptionBridge } from '../../../src/server/bridges';
 
 export class TestsSubscriptionBridge implements ISubscriptionBridge {

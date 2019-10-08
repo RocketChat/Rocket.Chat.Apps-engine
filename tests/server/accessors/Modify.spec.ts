@@ -22,7 +22,7 @@ export class ModifyAccessorTestFixture {
         const md = new Modify(this.mockAppBridges, 'testing');
         Expect(md.getCreator()).toBeDefined();
         Expect(md.getExtender()).toBeDefined();
-        Expect(md.getNotifer()).toBeDefined();
+        Expect(md.getNotifier()).toBeDefined();
         Expect(md.getUpdater()).toBeDefined();
     }
 }

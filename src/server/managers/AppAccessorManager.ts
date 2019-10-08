@@ -4,6 +4,7 @@ import {
     EnvironmentRead,
     Http,
     HttpExtend,
+    LivechatRead,
     MessageRead,
     Modify,
     Notifier,
@@ -17,8 +18,10 @@ import {
     SlashCommandsExtend,
     SlashCommandsModify,
     SubscriptionRead,
+    UploadRead,
     UserRead,
 } from '../accessors';
+import { ApiExtend } from '../accessors/ApiExtend';
 import { ConfigurationModify } from '../accessors/ConfigurationModify';
 import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { AppManager } from '../AppManager';
@@ -33,7 +36,7 @@ import {
     IModify,
     IPersistence,
     IRead,
-} from '@rocket.chat/apps-ts-definition/accessors';
+} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;
@@ -81,9 +84,10 @@ export class AppAccessorManager {
 
             const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
+            const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis));
         }
 
         return this.configExtenders.get(appId);
@@ -127,7 +131,10 @@ export class AppAccessorManager {
             const subscr = new SubscriptionRead(this.bridges.getSubscriptionBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
             const noti = new Notifier(this.bridges.getMessageBridge(), appId);
-            this.readers.set(appId, new Reader(env, msg, persist, room, subscr, user, noti));
+            const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
+            const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
+
+            this.readers.set(appId, new Reader(env, msg, persist, room, subscr, user, noti, livechat, upload));
         }
 
         return this.readers.get(appId);

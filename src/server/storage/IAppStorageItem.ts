@@ -1,6 +1,7 @@
-import { AppStatus } from '@rocket.chat/apps-ts-definition/AppStatus';
-import { IAppInfo } from '@rocket.chat/apps-ts-definition/metadata';
-import { ISetting } from '@rocket.chat/apps-ts-definition/settings';
+import { AppStatus } from '../../definition/AppStatus';
+import { IAppInfo } from '../../definition/metadata';
+import { ISetting } from '../../definition/settings';
+import { IMarketplaceInfo } from '../marketplace';
 
 export interface IAppStorageItem {
     _id?: string;
@@ -14,4 +15,5 @@ export interface IAppStorageItem {
     languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
     implemented: { [int: string]: boolean };
+    marketplaceInfo?: IMarketplaceInfo;
 }
