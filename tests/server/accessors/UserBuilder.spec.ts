@@ -15,9 +15,9 @@ export class UserBuilderAccessorTestFixture {
     public settingOnUserBuilder() {
         const ubOnce = new UserBuilder();
         Expect(ubOnce.setData({ name: 'Test User', email: 'testuser@gmail.com', username: 'testuser'  } as IUserCreator)).toBe(ubOnce);
-        Expect((ubOnce as any).room.displayName).toBe('Test User');
-        Expect((ubOnce as any).room.username).toBe('testuser');
-        Expect((ubOnce as any).room.email).toBe('testuser@gmail.com');
+        Expect((ubOnce as any).user.name).toBe('Test User');
+        Expect((ubOnce as any).user.username).toBe('testuser');
+        Expect((ubOnce as any).user.email).toBe('testuser@gmail.com');
 
         const user: IUserCreator = {} as IUserCreator;
         const ub = new UserBuilder(user);
@@ -78,6 +78,6 @@ export class UserBuilderAccessorTestFixture {
         Expect(user.sendWelcomeEmail).toEqual(false);
         Expect(ub.getSendWelcomeEmail()).toEqual(false);
 
-        Expect(ub.getUser()).toBe(ub);
+        Expect(ub.getUser()).toBe(user);
     }
 }
