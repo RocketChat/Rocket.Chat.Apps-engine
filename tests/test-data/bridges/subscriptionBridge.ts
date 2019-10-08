@@ -1,4 +1,4 @@
-import { ISubscription } from '../../../definition/subscriptions';
+import { ISubscription } from '../../../src/definition/subscriptions';
 import { ISubscriptionBridge } from '../../../src/server/bridges';
 
 export class TestsSubscriptionBridge implements ISubscriptionBridge {
