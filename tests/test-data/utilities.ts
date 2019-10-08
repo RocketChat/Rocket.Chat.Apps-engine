@@ -5,7 +5,7 @@ import { IMessage } from '../../src/definition/messages';
 import { IRoom, RoomType } from '../../src/definition/rooms';
 import { ISetting, SettingType } from '../../src/definition/settings';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
-import { IUser, UserStatusConnection, UserType, IUserCreator } from '../../src/definition/users';
+import { IUser, IUserCreator, UserStatusConnection, UserType } from '../../src/definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './logStorage';

@@ -110,9 +110,6 @@ export class UserBuilder implements IUserBuilder {
         if (!this.user.name) {
             throw new Error('The "name" property is required.');
         }
-        if (!this.user.roles) {
-            throw new Error('The "roles" property is required.');
-        }
 
         return this.user;
     }
