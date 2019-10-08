@@ -41,7 +41,7 @@ import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
 import { IUploadRead } from './IUploadRead';
-import { IUserBuilder } from './IUserCreator';
+import { IUserBuilder } from './IUserBuilder';
 import { IUserRead } from './IUserRead';
 
 export {

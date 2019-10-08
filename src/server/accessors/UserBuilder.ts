@@ -1,18 +1,18 @@
 import { IUserBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IUserGenerate } from '../../definition/users';
+import { IUserCreator } from '../../definition/users';
 
 export class UserBuilder implements IUserBuilder {
     public kind: RocketChatAssociationModel.USER;
 
-    private user: IUserGenerate;
+    private user: IUserCreator;
 
-    constructor(user?: IUserGenerate) {
+    constructor(user?: IUserCreator) {
         this.kind = RocketChatAssociationModel.USER;
-        this.user = user ? user : ({} as IUserGenerate);
+        this.user = user ? user : ({} as IUserCreator);
     }
 
-    public setData(data: IUserGenerate): IUserBuilder {
+    public setData(data: IUserCreator): IUserBuilder {
         delete data.id;
         this.user = data;
 
@@ -100,7 +100,7 @@ export class UserBuilder implements IUserBuilder {
         return this.user.sendWelcomeEmail;
     }
 
-    public getUser(): IUserGenerate {
+    public getUser(): IUserCreator {
         if (!this.user.username) {
             throw new Error('The "username" property is required.');
         }

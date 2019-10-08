@@ -1,4 +1,4 @@
-export interface IUserGenerate {
+export interface IUserCreator {
     id?: string;
     email: string;
     name: string;
