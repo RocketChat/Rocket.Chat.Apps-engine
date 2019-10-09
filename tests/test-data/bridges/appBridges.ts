@@ -10,8 +10,8 @@ import {
     IMessageBridge,
     IPersistenceBridge,
     IRoomBridge,
+    IRoomSubscriptionBridge,
     IServerSettingBridge,
-    ISubscriptionBridge,
     IUploadBridge,
     IUserBridge,
 } from '../../../src/server/bridges';
@@ -111,7 +111,7 @@ export class TestsAppBridges extends AppBridges {
         return this.roomBridge;
     }
 
-    public getSubscriptionBridge(): ISubscriptionBridge {
+    public getRoomSubscriptionBridge(): IRoomSubscriptionBridge {
         return this.subscriptionBridge;
     }
 

@@ -1,1 +1,1 @@
-export { ISubscription } from './ISubscription';
+export { IRoomSubscription } from './IRoomSubscription';

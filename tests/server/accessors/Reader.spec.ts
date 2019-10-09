@@ -1,5 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, ISubscriptionRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
+import { IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IRoomSubscriptionRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
 
 import { Reader } from '../../../src/server/accessors';
 
@@ -8,7 +8,7 @@ export class ReaderAccessorTestFixture {
     private msg: IMessageRead;
     private pr: IPersistenceRead;
     private rm: IRoomRead;
-    private sb: ISubscriptionRead;
+    private sb: IRoomSubscriptionRead;
     private ur: IUserRead;
     private ni: INotifier;
     private livechat: ILivechatRead;
@@ -20,7 +20,7 @@ export class ReaderAccessorTestFixture {
         this.msg = {} as IMessageRead;
         this.pr = {} as IPersistenceRead;
         this.rm = {} as IRoomRead;
-        this.sb = {} as ISubscriptionRead;
+        this.sb = {} as IRoomSubscriptionRead;
         this.ur = {} as IUserRead;
         this.ni = {} as INotifier;
         this.livechat = {} as ILivechatRead;
@@ -37,7 +37,7 @@ export class ReaderAccessorTestFixture {
         Expect(rd.getNotifier()).toBeDefined();
         Expect(rd.getPersistenceReader()).toBeDefined();
         Expect(rd.getRoomReader()).toBeDefined();
-        Expect(rd.getSubscriptionReader()).toBeDefined();
+        Expect(rd.getRoomSubscriptionReader()).toBeDefined();
         Expect(rd.getUserReader()).toBeDefined();
         Expect(rd.getLivechatReader()).toBeDefined();
         Expect(rd.getUploadReader()).toBeDefined();

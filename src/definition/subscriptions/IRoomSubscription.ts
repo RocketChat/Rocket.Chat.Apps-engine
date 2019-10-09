@@ -1,7 +1,12 @@
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 
-export interface ISubscription {
+/**
+ * This interface represents a user's subscription to
+ * a room and includes information about that user's
+ * settings and information in relation to the room.
+ */
+export interface IRoomSubscription {
     /** The id of the subscription. */
     id: string;
     /** The room the subscription is for (kinda maps to `rid`). */

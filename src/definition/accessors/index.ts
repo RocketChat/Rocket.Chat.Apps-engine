@@ -34,13 +34,13 @@ import { IRead } from './IRead';
 import { IRoomBuilder } from './IRoomBuilder';
 import { IRoomExtender } from './IRoomExtender';
 import { IRoomRead } from './IRoomRead';
+import { IRoomSubscriptionRead } from './IRoomSubscriptionRead';
 import { IServerSettingRead } from './IServerSettingRead';
 import { IServerSettingsModify } from './IServerSettingsModify';
 import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
-import { ISubscriptionRead } from './ISubscriptionRead';
 import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
@@ -77,13 +77,13 @@ export {
     IRoomBuilder,
     IRoomExtender,
     IRoomRead,
+    IRoomSubscriptionRead,
     IServerSettingRead,
     IServerSettingsModify,
     ISettingRead,
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
-    ISubscriptionRead,
     IUploadRead,
     IUserRead,
     LogMessageSeverity,

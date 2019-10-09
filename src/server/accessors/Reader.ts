@@ -6,7 +6,7 @@ import {
     IPersistenceRead,
     IRead,
     IRoomRead,
-    ISubscriptionRead,
+    IRoomSubscriptionRead,
     IUploadRead,
     IUserRead,
 } from '../../definition/accessors';
@@ -17,7 +17,7 @@ export class Reader implements IRead {
         private message: IMessageRead,
         private persist: IPersistenceRead,
         private room: IRoomRead,
-        private subscription: ISubscriptionRead,
+        private roomSubscription: IRoomSubscriptionRead,
         private user: IUserRead,
         private noti: INotifier,
         private livechat: ILivechatRead,
@@ -40,8 +40,8 @@ export class Reader implements IRead {
         return this.room;
     }
 
-    public getSubscriptionReader(): ISubscriptionRead {
-        return this.subscription;
+    public getRoomSubscriptionReader(): IRoomSubscriptionRead {
+        return this.roomSubscription;
     }
 
     public getUserReader(): IUserRead {

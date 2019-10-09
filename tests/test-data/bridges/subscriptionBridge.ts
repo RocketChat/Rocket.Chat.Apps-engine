@@ -1,8 +1,12 @@
-import { ISubscription } from '../../../src/definition/subscriptions';
-import { ISubscriptionBridge } from '../../../src/server/bridges';
+import { IRoomSubscription } from '../../../src/definition/subscriptions';
+import { IRoomSubscriptionBridge } from '../../../src/server/bridges';
 
-export class TestsSubscriptionBridge implements ISubscriptionBridge {
-    public getByRoomId(roomId: string, appId: string): Promise<IterableIterator<ISubscription>> {
+export class TestsSubscriptionBridge implements IRoomSubscriptionBridge {
+    public getByRoomId(roomId: string, appId: string): Promise<IterableIterator<IRoomSubscription>> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getByUserId(userId: string, appId: string): Promise<IterableIterator<IRoomSubscription>> {
         throw new Error('Method not implemented.');
     }
 }
