@@ -11,7 +11,7 @@ export interface IRoomSubscriptionRead {
      * @param roomId the id of the room
      * @returns an iterator of subscriptions
      */
-    getByRoomId(roomId: string): Promise<IterableIterator<IRoomSubscription>>;
+    getByRoomId(roomId: string): Promise<AsyncIterableIterator<IRoomSubscription>>;
 
     /**
      * Gets a list of all the subscriptions for a user by their id.
@@ -19,5 +19,5 @@ export interface IRoomSubscriptionRead {
      * @param userId the id of the user
      * @returns an iterator of subscriptions for the user
      */
-    getByUserId(userId: string): Promise<IterableIterator<IRoomSubscription>>;
+    getByUserId(userId: string): Promise<AsyncIterableIterator<IRoomSubscription>>;
 }

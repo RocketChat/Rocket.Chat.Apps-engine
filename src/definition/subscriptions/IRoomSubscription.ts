@@ -7,7 +7,7 @@ import { IUser } from '../users';
  * settings and information in relation to the room.
  */
 export interface IRoomSubscription {
-    /** The id of the subscription. */
+    /** The id of the subscription (maps to `_id`). */
     id: string;
     /** The room the subscription is for (kinda maps to `rid`). */
     room: IRoom;

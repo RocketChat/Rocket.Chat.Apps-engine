@@ -6,11 +6,11 @@ import { IRoomSubscriptionBridge } from '../bridges';
 export class RoomSubscriptionRead implements IRoomSubscriptionRead {
     constructor(private subscriptionBridge: IRoomSubscriptionBridge, private appId: string) { }
 
-    public getByRoomId(roomId: string): Promise<IterableIterator<IRoomSubscription>> {
+    public getByRoomId(roomId: string): Promise<AsyncIterableIterator<IRoomSubscription>> {
         return this.subscriptionBridge.getByRoomId(roomId, this.appId);
     }
 
-    public getByUserId(userId: string): Promise<IterableIterator<IRoomSubscription>> {
+    public getByUserId(userId: string): Promise<AsyncIterableIterator<IRoomSubscription>> {
         return this.subscriptionBridge.getByUserId(userId, this.appId);
     }
 }
