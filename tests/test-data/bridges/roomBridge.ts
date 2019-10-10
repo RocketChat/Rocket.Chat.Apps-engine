@@ -1,4 +1,4 @@
-import { IMessage } from '../../../definition/messages';
+import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
