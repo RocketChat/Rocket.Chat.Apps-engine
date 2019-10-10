@@ -1,3 +1,4 @@
+import { IMessage } from '../../../definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
@@ -21,6 +22,10 @@ export class TestsRoomBridge implements IRoomBridge {
     }
 
     public getCreatorByName(roomName: string, appId: string): Promise<IUser> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getMessages(roomId: string): Promise<IterableIterator<IMessage>> {
         throw new Error('Method not implemented.');
     }
 

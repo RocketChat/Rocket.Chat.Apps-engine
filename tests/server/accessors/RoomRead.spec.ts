@@ -63,7 +63,6 @@ export class RoomReadAccessorTestFixture {
         Expect(() => new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app')).not.toThrow();
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
-        await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
 
         Expect(await rr.getMembers('testing')).toBeDefined();
         Expect(await rr.getMembers('testing') as Array<IUser>).not.toBeEmpty();
