@@ -20,6 +20,16 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
+    public setThreadId(threadId: string): IMessageBuilder {
+        this.msg.threadId = threadId;
+
+        return this;
+    }
+
+    public getThreadId(): string {
+        return this.msg.threadId;
+    }
+
     public setRoom(room: IRoom): IMessageBuilder {
         this.msg.room = room;
         return this;
