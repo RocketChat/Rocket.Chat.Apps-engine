@@ -1,5 +1,6 @@
 import { ACTION_ID_LENGTH } from './constants';
-import { IClientRoomInfo, IClientUserInfo } from './interfaces';
+import { IClientRoomInfo, IClientUserInfo } from './definition';
+import { EClientEmbeddedSDKActions } from './definition/EClientEmbeddedSDKActions';
 import { randomString } from './utils';
 
 /**
@@ -19,7 +20,7 @@ export class AppClientEmbeddedSDK {
      * @return the information of the current user.
      */
     public getUserInfo(): Promise<IClientUserInfo> {
-        return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
+        return this.call(EClientEmbeddedSDKActions.GET_USER_INFO);
     }
     /**
      * Get the current room's information.
@@ -27,7 +28,7 @@ export class AppClientEmbeddedSDK {
      * @return the information of the current room.
      */
     public getRoomInfo(): Promise<IClientRoomInfo> {
-        return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
+        return this.call(EClientEmbeddedSDKActions.GET_ROOM_INFO);
     }
 
     /**
@@ -61,9 +62,4 @@ export class AppClientEmbeddedSDK {
             this.callbacks.set(id, resolve);
         });
     }
-}
-
-export enum AppEmbeddedSDKActions {
-    GET_USER_INFO = 'getUserInfo',
-    GET_ROOM_INFO = 'getRoomInfo',
 }
