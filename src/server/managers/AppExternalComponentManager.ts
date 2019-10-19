@@ -85,7 +85,9 @@ export class AppExternalComponentManager {
         }
         const externalComponents = this.appTouchedExternalComponents.get(appId);
 
-        this.registeredExternalComponents.set(appId, externalComponents);
+        if (externalComponents.size > 0) {
+            this.registeredExternalComponents.set(appId, externalComponents);
+        }
     }
     /**
      * Remove all external components of an app from the
