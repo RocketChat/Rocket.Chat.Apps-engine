@@ -20,6 +20,23 @@ export interface IMessageBuilder {
     setData(message: IMessage): IMessageBuilder;
 
     /**
+     * Sets the thread to which this message belongs, if any.
+     *
+     * @param threadId The id of the thread
+     */
+    setThreadId(threadId: string): IMessageBuilder;
+
+    /**
+     * Retrieves the threadId to which this message belongs,
+     * if any.
+     *
+     * If you would like to retrieve the actual message that
+     * the thread originated from, you can use the
+     * `IMessageRead.getById()` method
+     */
+    getThreadId(): string;
+
+    /**
      * Sets the room where this message should be sent to.
      *
      * @param room the room where to send
