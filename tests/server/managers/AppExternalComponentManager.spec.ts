@@ -86,6 +86,17 @@ export class AppExternalComponentManagerTestFixture {
     }
 
     @Test()
+    public verifyGetProvidedComponents() {
+        const aecm = new AppExternalComponentManager();
+        const component1 = this.mockExternalComponent1;
+        const component2 = this.mockExternalComponent2;
+
+        this.register(aecm, component1);
+        this.register(aecm, component2);
+        Expect(aecm.getProvidedComponents().length).toBe(2);
+    }
+
+    @Test()
     public verifyAddExternalComponent() {
         const aecm1 = new AppExternalComponentManager();
         const component1 = this.mockExternalComponent1;

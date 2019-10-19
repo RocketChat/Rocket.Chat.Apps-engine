@@ -54,6 +54,21 @@ export class AppExternalComponentManager {
         return null;
     }
     /**
+     * Get an array of external components which are enabled and ready for usage.
+     */
+    public getProvidedComponents(): Array<IExternalComponent> {
+        const registeredExternalComponents = this.getRegisteredExternalComponents();
+        const providedComponents: Array<IExternalComponent> = [];
+
+        registeredExternalComponents.forEach((appExternalComponents) => {
+            Array.from(appExternalComponents.values()).forEach((externalComponent) => {
+                providedComponents.push(externalComponent);
+            });
+        });
+
+        return providedComponents;
+    }
+    /**
      * Add an external component to the appTouchedExternalComponents.
      * If you call this method twice and the component
      * has the same name as before, the first one will be
