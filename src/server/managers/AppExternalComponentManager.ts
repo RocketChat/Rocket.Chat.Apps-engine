@@ -1,5 +1,4 @@
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ExternalComponentNotMatchWithAppError } from '../errors';
 
 /**
  * The external component manager for the apps.
@@ -61,12 +60,10 @@ export class AppExternalComponentManager {
      * overwritten as the names provided **must** be unique.
      *
      * @param appId the id of the app
-     * @param externalComponent the external component need to be added
+     * @param externalComponent the external component about to be added
      */
     public addExternalComponent(appId: string, externalComponent: IExternalComponent): void {
-        if (externalComponent.appId !== appId) {
-            throw new ExternalComponentNotMatchWithAppError();
-        }
+        externalComponent.appId = appId;
 
         if (!this.appTouchedExternalComponents.get(appId)) {
             this.appTouchedExternalComponents.set(appId, new Map(Object.entries({ [externalComponent.name]: externalComponent})));

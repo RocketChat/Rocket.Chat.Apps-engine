@@ -1,6 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 import { ExternalComponentLocation, IExternalComponent } from '../../../src/definition/externalComponent/IExternalComponent';
-import { ExternalComponentNotMatchWithAppError } from '../../../src/server/errors';
 import { AppExternalComponentManager } from '../../../src/server/managers';
 
 export class AppExternalComponentManagerTestFixture {
@@ -91,11 +90,6 @@ export class AppExternalComponentManagerTestFixture {
         const aecm1 = new AppExternalComponentManager();
         const component1 = this.mockExternalComponent1;
         const component3 = this.mockExternalComponent3;
-
-        Expect(() => aecm1.addExternalComponent('', this.mockExternalComponent1)).toThrowError(
-            ExternalComponentNotMatchWithAppError,
-            'The external component\'s appId does not match with the current app.',
-        );
 
         aecm1.addExternalComponent(component1.appId, component1);
         Expect(aecm1.getAppTouchedExternalComponents().size).toBe(1);
