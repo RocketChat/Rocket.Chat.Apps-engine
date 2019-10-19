@@ -91,6 +91,7 @@ export class AppExternalComponentManagerTestFixture {
         const component1 = this.mockExternalComponent1;
         const component2 = this.mockExternalComponent2;
 
+        Expect(Array.isArray(aecm.getProvidedComponents())).toBe(true);
         this.register(aecm, component1);
         this.register(aecm, component2);
         Expect(aecm.getProvidedComponents().length).toBe(2);
