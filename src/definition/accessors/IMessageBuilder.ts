@@ -27,8 +27,12 @@ export interface IMessageBuilder {
     setThreadId(threadId: string): IMessageBuilder;
 
     /**
-     * Retrieves the thread to which this message belongs,
+     * Retrieves the threadId to which this message belongs,
      * if any.
+     *
+     * If you would like to retrieve the actual message that
+     * the thread originated from, you can use the
+     * `IMessageRead.getById()` method
      */
     getThreadId(): string;
 
