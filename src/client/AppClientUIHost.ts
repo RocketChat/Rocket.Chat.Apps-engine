@@ -1,5 +1,5 @@
 import {
-    EClientEmbeddedSDKActions,
+    ClientEmbeddedSDKActions,
     IClientEmbeddedSDKResonse,
     IClientRoomInfo,
     IClientUserInfo,
@@ -29,9 +29,9 @@ export abstract class AppClientUIHost {
             const { rcEmbeddedSDK: { action, id } } = data;
 
             switch (action) {
-                case EClientEmbeddedSDKActions.GET_USER_INFO:
+                case ClientEmbeddedSDKActions.GET_USER_INFO:
                     this.handleAction(action, id, await this.getClientUserInfo());
-                case EClientEmbeddedSDKActions.GET_ROOM_INFO:
+                case ClientEmbeddedSDKActions.GET_ROOM_INFO:
                     this.handleAction(action, id, await this.getClientRoomInfo());
             }
         });
@@ -51,7 +51,7 @@ export abstract class AppClientUIHost {
      * @param data The data that will return to the caller
      */
     private async handleAction(
-        action: EClientEmbeddedSDKActions,
+        action: ClientEmbeddedSDKActions,
         id: string, data: IClientUserInfo | IClientRoomInfo,
     ): Promise<void> {
         if ((this.emitter instanceof MessagePort) || (this.emitter instanceof ServiceWorker)) {
