@@ -1,4 +1,4 @@
-import { IClientRoomInfo, IClientUserInfo } from '../../client/interfaces';
+import { IClientRoomInfo, IClientUserInfo } from '../../client/definition';
 
 /**
  * The state of an external component, which contains the
