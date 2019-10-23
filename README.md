@@ -10,6 +10,42 @@ The engine which manages and controls everything....more details coming soon.
 - Will we support es6? Since we currently check `extends` keyword and can check `implements` via determing what methods exist
 - Using https://www.npmjs.com/package/jsonc-parser for the json parsing?
 
+## Development environment with Rocket.Chat
+When developing new functionalities, you need to integrate the local version of the Apps-Engine with your local version of Rocket.Chat.
+
+First of all, make sure you've compiled the changes you've made to the Apps-Engine, since that is what Rocket.Chat will execute:
+```sh
+npm run compile
+```
+
+Now, you need to setup a local Rocket.Chat server, [so head to the project's README for instructions on getting started](https://github.com/RocketChat/Rocket.Chat#development) (if you haven't already). Make sure to actually clone the repo, since you will probably need to add some code to it in order to make your new functionality work.
+
+After that, `cd` into Rocket.Chat folder and run:
+```sh
+meteor npm install PATH_TO_APPS_ENGINE
+```
+
+Where `PATH_TO_APPS_ENGINE` is the path to the Apps-Engine repo you've cloned.
+
+That's it! Now when you start Rocket.Chat with the `meteor` command, it will use your local Apps-Engine instead of the one on NPM :)
+
+Whenever you make changes to the engine, run `npm run compile` again - meteor will take care of restarting the server due to the changes.
+
+**Note:** Sometimes, when you update the Apps-Engine code and compile it while Rocket.Chat is running, you might run on errors similar to these:
+
+```
+Unable to resolve some modules:
+
+  "@rocket.chat/apps-engine/definition/AppStatus" in
+/Users/dev/rocket.chat/Rocket.Chat/app/apps/client/admin/helpers.js (web.browser)
+
+If you notice problems related to these missing modules, consider running:
+
+  meteor npm install --save @rocket.chat/apps-engine
+```
+
+Simply restart the meteor process and it should be fixed.
+
 ## Implementer Needs to Implement:
 - `src/server/storage/AppStorage`
 - `src/server/storage/AppLogStorage`

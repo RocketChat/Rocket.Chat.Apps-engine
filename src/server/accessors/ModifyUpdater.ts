@@ -1,13 +1,23 @@
-import { IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
+import { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
+import { RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
 import { AppBridges } from '../bridges';
+import { LivechatUpdater } from './LivechatUpdater';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 
 export class ModifyUpdater implements IModifyUpdater {
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
+    private livechatUpdater: ILivechatUpdater;
+
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+        this.livechatUpdater = new LivechatUpdater(this.bridges, this.appId);
+    }
+
+    public getLivechatUpdater(): ILivechatUpdater {
+        return this.livechatUpdater;
+    }
 
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
         const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
@@ -53,20 +63,22 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid room, can not update a room without an id.');
         }
 
-        if (!result.creator || !result.creator.id) {
-            throw new Error('Invalid creator assigned to the room.');
+        if (!result.type) {
+            throw new Error('Invalid type assigned to the room.');
         }
 
-        if (!result.slugifiedName || !result.slugifiedName.trim()) {
-            throw new Error('Invalid slugifiedName assigned to the room.');
+        if (result.type !== RoomType.LIVE_CHAT) {
+            if (!result.creator || !result.creator.id) {
+                throw new Error('Invalid creator assigned to the room.');
+            }
+
+            if (!result.slugifiedName || !result.slugifiedName.trim()) {
+                throw new Error('Invalid slugifiedName assigned to the room.');
+            }
         }
 
         if (!result.displayName || !result.displayName.trim()) {
             throw new Error('Invalid displayName assigned to the room.');
-        }
-
-        if (!result.type) {
-            throw new Error('Invalid type assigned to the room.');
         }
 
         return this.bridges.getRoomBridge().update(result, builder.getMembersToBeAddedUsernames(), this.appId);

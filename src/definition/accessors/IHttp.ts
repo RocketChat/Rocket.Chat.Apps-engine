@@ -37,6 +37,20 @@ export interface IHttpRequest {
         [key: string]: string,
     };
     timeout?: number;
+    /**
+     * if `true`, requires SSL certificates be valid.
+     *
+     * Defaul: `true`;
+     */
+    strictSSL?: boolean;
+    /**
+     * If `true`, the server certificate is verified against the list of supplied CAs.
+     *
+     * Default: `true`.
+     *
+     * https://nodejs.org/api/tls.html#tls_tls_connect_options_callback
+     */
+    rejectUnauthorized?: boolean;
 }
 
 export interface IHttpResponse {
