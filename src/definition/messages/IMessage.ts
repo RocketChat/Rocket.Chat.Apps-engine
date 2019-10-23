@@ -6,6 +6,7 @@ import { IMessageReactions } from './IMessageReaction';
 
 export interface IMessage {
     id?: string;
+    threadId?: string;
     room: IRoom;
     sender: IUser;
     text?: string;

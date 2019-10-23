@@ -1,9 +1,8 @@
-import { ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
-import { ILivechatCreator } from '../../definition/accessors/IModify';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';

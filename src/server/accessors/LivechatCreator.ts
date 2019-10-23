@@ -1,4 +1,4 @@
-import { ILivechatCreator } from '../../definition/accessors/IModify';
+import { ILivechatCreator } from '../../definition/accessors';
 
 import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { IVisitor } from '../../definition/livechat/IVisitor';
