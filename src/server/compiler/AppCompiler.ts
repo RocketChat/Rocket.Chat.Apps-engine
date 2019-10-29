@@ -33,6 +33,7 @@ export class AppCompiler {
             noImplicitReturns: true,
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
+            types: ['node'],
             // Set this to true if you would like to see the module resolution process
             traceResolution: false,
         };

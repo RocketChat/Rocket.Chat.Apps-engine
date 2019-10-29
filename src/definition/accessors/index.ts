@@ -15,23 +15,25 @@ import {
     IHttpResponse,
     RequestMethod,
 } from './IHttp';
+import { ILivechatCreator } from './ILivechatCreator';
+import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
+import { ILivechatRead } from './ILivechatRead';
+import { ILivechatUpdater } from './ILivechatUpdater';
 import { ILogEntry, LogMessageSeverity } from './ILogEntry';
 import { ILogger } from './ILogger';
+import { IMessageBuilder } from './IMessageBuilder';
+import { IMessageExtender } from './IMessageExtender';
 import { IMessageRead } from './IMessageRead';
-import {
-    IMessageBuilder,
-    IMessageExtender,
-    IModify,
-    IModifyCreator,
-    IModifyExtender,
-    IModifyUpdater,
-    INotifier,
-    IRoomBuilder,
-    IRoomExtender,
-} from './IModify';
+import { IModify } from './IModify';
+import { IModifyCreator } from './IModifyCreator';
+import { IModifyExtender } from './IModifyExtender';
+import { IModifyUpdater } from './IModifyUpdater';
+import { INotifier } from './INotifier';
 import { IPersistence } from './IPersistence';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRead } from './IRead';
+import { IRoomBuilder } from './IRoomBuilder';
+import { IRoomExtender } from './IRoomExtender';
 import { IRoomRead } from './IRoomRead';
 import { IServerSettingRead } from './IServerSettingRead';
 import { IServerSettingsModify } from './IServerSettingsModify';
@@ -39,6 +41,7 @@ import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
+import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
 export {
@@ -55,6 +58,10 @@ export {
     IHttpPreResponseHandler,
     IHttpRequest,
     IHttpResponse,
+    ILivechatCreator,
+    ILivechatMessageBuilder,
+    ILivechatRead,
+    ILivechatUpdater,
     ILogEntry,
     ILogger,
     IMessageBuilder,
@@ -77,6 +84,7 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUploadRead,
     IUserRead,
     LogMessageSeverity,
     RequestMethod,

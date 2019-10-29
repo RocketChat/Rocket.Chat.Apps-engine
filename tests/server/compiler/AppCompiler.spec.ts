@@ -14,6 +14,7 @@ export class AppCompilerTestFixture {
             target: ts.ScriptTarget.ES2017,
             module: ts.ModuleKind.CommonJS,
             moduleResolution: ts.ModuleResolutionKind.NodeJs,
+            types: ['node'],
             declaration: false,
             noImplicitAny: false,
             removeComments: true,

@@ -78,13 +78,13 @@ export class ModifyCreatorTestFixture {
 
         const room = {} as IRoom;
         const roomBd = mc.startRoom(room);
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
-        roomBd.setCreator(TestData.getUser());
-        Expect(room.creator).toBeDefined();
-
         await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
         roomBd.setType(RoomType.CHANNEL);
         Expect(room.type).toBe(RoomType.CHANNEL);
+
+        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
+        roomBd.setCreator(TestData.getUser());
+        Expect(room.creator).toBeDefined();
 
         await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
         roomBd.setSlugifiedName('testing-room');

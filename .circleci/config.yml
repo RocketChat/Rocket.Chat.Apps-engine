@@ -123,13 +123,22 @@ workflows:
       - test:
           requires:
             - checkout
+          filters:
+            tags:
+              only: /^v.*/
       - lint:
           requires:
             - checkout
+          filters:
+            tags:
+              only: /^v.*/
       - build:
           requires:
             - lint
             - test
+          filters:
+            tags:
+              only: /^v.*/
       - codecov:
           requires:
             - build
@@ -139,7 +148,7 @@ workflows:
           filters:
               branches:
                 only:
-                    - alpha
-                    - beta
+                  - alpha
+                  - beta
               tags:
                 only: /^v.*/

@@ -4,6 +4,7 @@ import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { IMessageFile } from './IMessageFile';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageSent } from './IPostMessageSent';
@@ -26,6 +27,7 @@ export {
     IMessageAttachmentTitle,
     IMessageAttachmentField,
     IMessageAction,
+    IMessageFile,
     IMessageReactions,
     IMessageReaction,
     IPostMessageDeleted,

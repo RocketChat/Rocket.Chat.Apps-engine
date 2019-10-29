@@ -393,7 +393,7 @@ export class AppSlashCommandManager {
             room = new Room(context.getRoom(), this.manager);
         }
 
-        return new SlashCommandContext(context.getSender(), room, context.getArguments());
+        return new SlashCommandContext(context.getSender(), room, context.getArguments(), context.getThreadId());
     }
 
     /**
