@@ -244,7 +244,7 @@ export class AppManager {
             if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
-                this.externalComponentManager.unregisterComponent(rl.getID());
+                this.externalComponentManager.unregisterExternalComponents(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
                 continue;
@@ -360,7 +360,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(rl.getID());
-        this.externalComponentManager.unregisterComponent(rl.getID());
+        this.externalComponentManager.unregisterExternalComponents(rl.getID());
         this.apiManager.unregisterApis(rl.getID());
         this.accessorManager.purifyApp(rl.getID());
 
@@ -441,7 +441,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
-        this.externalComponentManager.purgeComponent(app.getID());
+        this.externalComponentManager.purgeExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
@@ -596,7 +596,7 @@ export class AppManager {
                 }
 
                 this.commandManager.unregisterCommands(app.getID());
-                this.externalComponentManager.unregisterComponent(app.getID());
+                this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
@@ -689,7 +689,7 @@ export class AppManager {
 
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
-            this.externalComponentManager.unregisterComponent(storageItem.id);
+            this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
@@ -758,15 +758,13 @@ export class AppManager {
         }
 
         if (enable) {
-            const externalComponent = this.externalComponentManager.getExternalComponent(app.getID());
-
             this.commandManager.registerCommands(app.getID());
-            this.externalComponentManager.registerComponent(app.getID(), externalComponent, true);
+            this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
-            this.externalComponentManager.unregisterComponent(app.getID());
+            this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
         }
 
