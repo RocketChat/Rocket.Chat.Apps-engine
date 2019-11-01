@@ -44,8 +44,6 @@ export enum AppMethod {
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
     // External Component handlers
-    CHECKPOSTEXTERNALCOMPONENTOPENED = 'checkPostExternalComponentOpened',
     EXECUTEPOSTEXTERNALCOMPONENTOPENED = 'executePostExternalComponentOpened',
-    CHECKPOSTEXTERNALCOMPONENTCLOSED = 'checkPostExternalComponentClosed',
     EXECUTEPOSTEXTERNALCOMPONENTCLOSED = 'executePostExternalComponentClosed',
 }

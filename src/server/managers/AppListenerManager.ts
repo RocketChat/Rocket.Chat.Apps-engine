@@ -594,16 +594,7 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTEXTERNALCOMPONENTOPENED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTEXTERNALCOMPONENTOPENED,
-                    cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
-            }
-
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
                 await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
                     cfExternalComponent,
                     this.am.getReader(appId),
@@ -620,16 +611,7 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTEXTERNALCOMPONENTCLOSED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTEXTERNALCOMPONENTCLOSED,
-                    cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
-            }
-
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
                 await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
                     cfExternalComponent,
                     this.am.getReader(appId),
