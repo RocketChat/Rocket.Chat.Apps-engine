@@ -1,7 +1,7 @@
 import {
-    ClientEmbeddedSDKActions,
-    IClientEmbeddedSDKResonse,
+    ClientSDKActions,
     IClientRoomInfo,
+    IClientSDKResonse,
     IClientUserInfo,
 } from './definition';
 
@@ -23,15 +23,15 @@ export abstract class AppClientUIHost {
         window.addEventListener('message', async ({ data, source }) => {
             this.emitter = source;
 
-            if (!data.hasOwnProperty('rcEmbeddedSDK')) {
+            if (!data.hasOwnProperty('rcSDK')) {
                 return;
             }
-            const { rcEmbeddedSDK: { action, id } } = data;
+            const { rcSDK: { action, id } } = data;
 
             switch (action) {
-                case ClientEmbeddedSDKActions.GET_USER_INFO:
+                case ClientSDKActions.GET_USER_INFO:
                     this.handleAction(action, id, await this.getClientUserInfo());
-                case ClientEmbeddedSDKActions.GET_ROOM_INFO:
+                case ClientSDKActions.GET_ROOM_INFO:
                     this.handleAction(action, id, await this.getClientRoomInfo());
             }
         });
@@ -51,7 +51,7 @@ export abstract class AppClientUIHost {
      * @param data The data that will return to the caller
      */
     private async handleAction(
-        action: ClientEmbeddedSDKActions,
+        action: ClientSDKActions,
         id: string, data: IClientUserInfo | IClientRoomInfo,
     ): Promise<void> {
         if ((this.emitter instanceof MessagePort) || (this.emitter instanceof ServiceWorker)) {
@@ -59,11 +59,11 @@ export abstract class AppClientUIHost {
         }
 
         this.emitter.postMessage({
-            rcEmbeddedSDK: {
+            rcSDK: {
                 id,
                 action,
                 payload: data,
-            } as IClientEmbeddedSDKResonse,
+            } as IClientSDKResonse,
         }, '*');
     }
 }

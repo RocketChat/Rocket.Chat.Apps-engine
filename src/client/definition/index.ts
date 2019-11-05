@@ -1,4 +1,4 @@
-export * from './ClientEmbeddedSDKActions';
+export * from './ClientSDKActions';
 export * from './IClientUserInfo';
 export * from './IClientRoomInfo';
-export * from './IClientEmbeddedSDKResponse';
+export * from './IClientSDKResponse';
