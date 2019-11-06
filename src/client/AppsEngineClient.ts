@@ -6,7 +6,7 @@ import { randomString } from './utils';
 /**
  * Represents the SDK provided to the external component.
  */
-export class AppClientSDK {
+export class AppsEngineClient {
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
