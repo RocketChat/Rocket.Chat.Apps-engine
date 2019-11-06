@@ -120,6 +120,9 @@ workflows:
   build:
     jobs:
       - checkout
+        filters:
+          tags:
+            only: /^v.*/
       - test:
           requires:
             - checkout
