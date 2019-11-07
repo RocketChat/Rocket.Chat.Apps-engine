@@ -2,6 +2,7 @@ import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
+import { BlockBuilder } from './blocks';
 
 /**
  * Interface for building out a message.
@@ -193,4 +194,12 @@ export interface IMessageBuilder {
      * *Note:* This will error out if the Room has not been defined.
      */
     getMessage(): IMessage;
+
+    /**
+     * Gets an instance of a BlockBuilder.
+     *
+     * This enables the creation of rich messages via
+     * the blocks format
+     */
+    getBlockBuilder(): BlockBuilder;
 }

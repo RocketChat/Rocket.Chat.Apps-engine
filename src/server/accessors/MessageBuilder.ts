@@ -3,6 +3,7 @@ import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
+import { BlockBuilder } from '../../definition/accessors/blocks';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
@@ -162,5 +163,9 @@ export class MessageBuilder implements IMessageBuilder {
         }
 
         return this.msg;
+    }
+
+    public getBlockBuilder() {
+        return new BlockBuilder();
     }
 }
