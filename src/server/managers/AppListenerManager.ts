@@ -4,6 +4,7 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
+import { IBlockitAction } from '../../definition/blockit';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -52,7 +53,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IBlockitAction): Promise<void | boolean | IMessage | IRoom | IUser> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -93,6 +94,8 @@ export class AppListenerManager {
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
                 return;
+            case AppInterface.IBlockitActionHandler:
+                return this.executeBlockitAction(data as IBlockitAction);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -574,6 +577,26 @@ export class AppListenerManager {
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executeBlockitAction(data: IBlockitAction): Promise<void> {
+        console.log('executeBlockitAction ->', data);
+        for (const appId of this.listeners.get(AppInterface.IBlockitActionHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            console.log('appId ->', appId);
+
+            if (app.hasMethod(AppMethod.BLOCKIT_ACTION)) {
+                console.log('hasMethod');
+                await app.call(AppMethod.BLOCKIT_ACTION,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
                 );
             }
         }
