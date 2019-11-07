@@ -1,42 +1,37 @@
-import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { ISetting } from '../../../src/definition/settings';
 
 import { ServerSettingRead } from '../../../src/server/accessors';
 import { IServerSettingBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class ServerSettingReadAccessorTestFixture {
-    private setting: ISetting;
-    private mockServerSettingBridge: IServerSettingBridge;
+let setting: ISetting;
+let mockServerSettingBridge: IServerSettingBridge;
 
-    @SetupFixture
-    public setupFixture() {
-        this.setting = TestData.getSetting('testing');
+beforeAll(() =>  {
+    setting = TestData.getSetting('testing');
 
-        const theSetting = this.setting;
-        this.mockServerSettingBridge = {
-            getOneById(id: string, appId: string): Promise<ISetting> {
-                return Promise.resolve(id === 'testing' ? theSetting : undefined);
-            },
-            isReadableById(id: string, appId: string): Promise<boolean> {
-                return Promise.resolve(true);
-            },
-        } as IServerSettingBridge;
-    }
+    const theSetting = setting;
+    mockServerSettingBridge = {
+        getOneById(id: string, appId: string): Promise<ISetting> {
+            return Promise.resolve(id === 'testing' ? theSetting : undefined);
+        },
+        isReadableById(id: string, appId: string): Promise<boolean> {
+            return Promise.resolve(true);
+        },
+    } as IServerSettingBridge;
+});
 
-    @AsyncTest()
-    public async expectDataFromRoomRead() {
-        Expect(() => new ServerSettingRead(this.mockServerSettingBridge, 'testing-app')).not.toThrow();
+test('expectDataFromRoomRead', async () => {
+    expect(() => new ServerSettingRead(mockServerSettingBridge, 'testing-app')).not.toThrow();
 
-        const ssr = new ServerSettingRead(this.mockServerSettingBridge, 'testing-app');
+    const ssr = new ServerSettingRead(mockServerSettingBridge, 'testing-app');
 
-        Expect(await ssr.getOneById('testing')).toBeDefined();
-        Expect(await ssr.getOneById('testing')).toEqual(this.setting);
-        Expect(await ssr.getValueById('testing')).toEqual(this.setting.packageValue);
-        this.setting.value = 'theValue';
-        Expect(await ssr.getValueById('testing')).toBe('theValue');
-        await Expect(async () => ssr.getValueById('fake')).toThrowErrorAsync(Error, 'No Server Setting found, or it is unaccessible, by the id of "fake".');
-        await Expect(async () => await ssr.getAll()).toThrowErrorAsync(Error, 'Method not implemented.');
-        Expect(await ssr.isReadableById('testing')).toBe(true);
-    }
-}
+    expect(await ssr.getOneById('testing')).toBeDefined();
+    expect(await ssr.getOneById('testing')).toEqual(setting);
+    expect(await ssr.getValueById('testing')).toEqual(setting.packageValue);
+    setting.value = 'theValue';
+    expect(await ssr.getValueById('testing')).toBe('theValue');
+    await expect(ssr.getValueById('fake')).rejects.toThrowError( 'No Server Setting found, or it is unaccessible, by the id of "fake".');
+    await expect(() => ssr.getAll()).toThrowError( 'Method not implemented.');
+    expect(await ssr.isReadableById('testing')).toBe(true);
+});

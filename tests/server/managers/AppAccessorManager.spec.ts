@@ -1,141 +1,126 @@
-import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
-
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppAccessorManager, AppApiManager, AppSlashCommandManager  } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
-export class AppAccessorManagerTestFixture {
-    private bridges: AppBridges;
-    private manager: AppManager;
-    private spies: Array<RestorableFunctionSpy>;
+let bridges: AppBridges;
+let manager: AppManager;
+let spies: Array<jest.SpyInstance>;
 
-    @SetupFixture
-    public setupFixture() {
-        this.bridges = new TestsAppBridges();
+beforeAll(() =>  {
+    bridges = new TestsAppBridges();
 
-        const brds = this.bridges;
-        this.manager = {
-            getBridges() {
-                return brds;
-            },
-            getCommandManager() {
-                return {} as AppSlashCommandManager;
-            },
-            getApiManager() {
-                return {} as AppApiManager;
-            },
-            getOneById(appId: string): ProxiedApp {
-                return appId === 'testing' ? {} as ProxiedApp : undefined;
-            },
-        } as AppManager;
-    }
+    const brds = bridges;
+    manager = {
+        getBridges() {
+            return brds;
+        },
+        getCommandManager() {
+            return {} as AppSlashCommandManager;
+        },
+        getApiManager() {
+            return {} as AppApiManager;
+        },
+        getOneById(appId: string): ProxiedApp {
+            return appId === 'testing' ? {} as ProxiedApp : undefined;
+        },
+    } as AppManager;
+});
 
-    @Setup
-    public setup() {
-        this.spies = new Array<RestorableFunctionSpy>();
-        this.spies.push(SpyOn(this.bridges, 'getServerSettingBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getEnvironmentalVariableBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getMessageBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getPersistenceBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getRoomBridge'));
-        this.spies.push(SpyOn(this.bridges, 'getUserBridge'));
-        this.spies.push(SpyOn(this.manager, 'getBridges'));
-        this.spies.push(SpyOn(this.manager, 'getCommandManager'));
-        this.spies.push(SpyOn(this.manager, 'getApiManager'));
-    }
+beforeEach(() => {
+    spies = new Array<jest.SpyInstance>();
+    spies.push(jest.spyOn(bridges, 'getServerSettingBridge'));
+    spies.push(jest.spyOn(bridges, 'getEnvironmentalVariableBridge'));
+    spies.push(jest.spyOn(bridges, 'getMessageBridge'));
+    spies.push(jest.spyOn(bridges, 'getPersistenceBridge'));
+    spies.push(jest.spyOn(bridges, 'getRoomBridge'));
+    spies.push(jest.spyOn(bridges, 'getUserBridge'));
+    spies.push(jest.spyOn(manager, 'getBridges'));
+    spies.push(jest.spyOn(manager, 'getCommandManager'));
+    spies.push(jest.spyOn(manager, 'getApiManager'));
+});
 
-    @Teardown
-    public teardown() {
-        this.spies.forEach((s) => s.restore());
-    }
+afterEach(() => {
+    spies.forEach((s) => s.mockClear());
+});
 
-    @Test()
-    public basicAppAccessorManager() {
-        Expect(() => new AppAccessorManager(this.manager)).not.toThrow();
-        Expect(() => new AppAccessorManager(this.manager).purifyApp('testing')).not.toThrow();
-    }
+test('basicAppAccessorManager', () => {
+    expect(() => new AppAccessorManager(manager)).not.toThrow();
+    expect(() => new AppAccessorManager(manager).purifyApp('testing')).not.toThrow();
+});
 
-    @Test()
-    public configurationExtend() {
-        const acm = new AppAccessorManager(this.manager);
+test('configurationExtend', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getConfigurationExtend('testing')).toBeDefined();
-        Expect(() => acm.getConfigurationExtend('fake')).toThrowError(Error, 'No App found by the provided id: fake');
-        Expect(acm.getConfigurationExtend('testing')).toBeDefined();
+    expect(acm.getConfigurationExtend('testing')).toBeDefined();
+    expect(() => acm.getConfigurationExtend('fake')).toThrowError('No App found by the provided id: fake');
+    expect(acm.getConfigurationExtend('testing')).toBeDefined();
 
-        Expect(this.manager.getCommandManager).toHaveBeenCalled().exactly(1);
-        Expect(this.manager.getApiManager).toHaveBeenCalled().exactly(1);
-    }
+    expect(manager.getCommandManager).toHaveBeenCalledTimes(1);
+    expect(manager.getApiManager).toHaveBeenCalledTimes(1);
+});
 
-    @Test()
-    public environmentRead() {
-        const acm = new AppAccessorManager(this.manager);
+test('environmentRead', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getEnvironmentRead('testing')).toBeDefined();
-        Expect(() => acm.getEnvironmentRead('fake')).toThrowError(Error, 'No App found by the provided id: fake');
-        Expect(acm.getEnvironmentRead('testing')).toBeDefined();
+    expect(acm.getEnvironmentRead('testing')).toBeDefined();
+    expect(() => acm.getEnvironmentRead('fake')).toThrowError('No App found by the provided id: fake');
+    expect(acm.getEnvironmentRead('testing')).toBeDefined();
 
-        Expect(this.bridges.getServerSettingBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getEnvironmentalVariableBridge).toHaveBeenCalled().exactly(1);
-    }
+    expect(bridges.getServerSettingBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getEnvironmentalVariableBridge).toHaveBeenCalledTimes(1);
+});
 
-    @Test()
-    public configurationModify() {
-        const acm = new AppAccessorManager(this.manager);
+test('configurationModify', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getConfigurationModify('testing')).toBeDefined();
-        Expect(acm.getConfigurationModify('testing')).toBeDefined();
+    expect(acm.getConfigurationModify('testing')).toBeDefined();
+    expect(acm.getConfigurationModify('testing')).toBeDefined();
 
-        Expect(this.bridges.getServerSettingBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.manager.getCommandManager).toHaveBeenCalled().exactly(1);
-    }
+    expect(bridges.getServerSettingBridge).toHaveBeenCalledTimes(1);
+    expect(manager.getCommandManager).toHaveBeenCalledTimes(1);
+});
 
-    @Test()
-    public reader() {
-        const acm = new AppAccessorManager(this.manager);
+test('reader', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getReader('testing')).toBeDefined();
-        Expect(acm.getReader('testing')).toBeDefined();
+    expect(acm.getReader('testing')).toBeDefined();
+    expect(acm.getReader('testing')).toBeDefined();
 
-        Expect(this.bridges.getServerSettingBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getEnvironmentalVariableBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getPersistenceBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getRoomBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getUserBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getMessageBridge).toHaveBeenCalled().exactly(2);
-    }
+    expect(bridges.getServerSettingBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getEnvironmentalVariableBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getPersistenceBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getRoomBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getUserBridge).toHaveBeenCalledTimes(1);
+    expect(bridges.getMessageBridge).toHaveBeenCalledTimes(2);
+});
 
-    @Test()
-    public modifier() {
-        const acm = new AppAccessorManager(this.manager);
+test('modifier', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getModifier('testing')).toBeDefined();
-        Expect(acm.getModifier('testing')).toBeDefined();
+    expect(acm.getModifier('testing')).toBeDefined();
+    expect(acm.getModifier('testing')).toBeDefined();
 
-        Expect(this.manager.getBridges).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getMessageBridge).toHaveBeenCalled().exactly(1);
-    }
+    expect(manager.getBridges).toHaveBeenCalledTimes(1);
+    expect(bridges.getMessageBridge).toHaveBeenCalledTimes(1);
+});
 
-    @Test()
-    public persistence() {
-        const acm = new AppAccessorManager(this.manager);
+test('persistence', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getPersistence('testing')).toBeDefined();
-        Expect(acm.getPersistence('testing')).toBeDefined();
+    expect(acm.getPersistence('testing')).toBeDefined();
+    expect(acm.getPersistence('testing')).toBeDefined();
 
-        Expect(this.bridges.getPersistenceBridge).toHaveBeenCalled().exactly(1);
-    }
+    expect(bridges.getPersistenceBridge).toHaveBeenCalledTimes(1);
+});
 
-    @Test()
-    public http() {
-        const acm = new AppAccessorManager(this.manager);
+test('http', () => {
+    const acm = new AppAccessorManager(manager);
 
-        Expect(acm.getHttp('testing')).toBeDefined();
-        Expect(acm.getHttp('testing')).toBeDefined();
+    expect(acm.getHttp('testing')).toBeDefined();
+    expect(acm.getHttp('testing')).toBeDefined();
 
-        (acm as any).https.delete('testing');
-        Expect(acm.getHttp('testing')).toBeDefined();
-    }
-}
+    (acm as any).https.delete('testing');
+    expect(acm.getHttp('testing')).toBeDefined();
+});

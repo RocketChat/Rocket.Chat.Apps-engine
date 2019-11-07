@@ -1,39 +1,34 @@
-import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { TestData } from '../../test-data/utilities';
 
 import { SettingRead } from '../../../src/server/accessors';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { IAppStorageItem } from '../../../src/server/storage';
 
-export class SettingReadAccessorTestFixture {
-    private mockStorageItem: IAppStorageItem;
-    private mockProxiedApp: ProxiedApp;
+let mockStorageItem: IAppStorageItem;
+let mockProxiedApp: ProxiedApp;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockStorageItem = {
-            settings: { },
-        } as IAppStorageItem;
-        this.mockStorageItem.settings.testing = TestData.getSetting('testing');
+beforeAll(() =>  {
+    mockStorageItem = {
+        settings: { },
+    } as IAppStorageItem;
+    mockStorageItem.settings.testing = TestData.getSetting('testing');
 
-        const si = this.mockStorageItem;
-        this.mockProxiedApp = {
-            getStorageItem(): IAppStorageItem {
-                return si;
-            },
-        } as ProxiedApp;
-    }
+    const si = mockStorageItem;
+    mockProxiedApp = {
+        getStorageItem(): IAppStorageItem {
+            return si;
+        },
+    } as ProxiedApp;
+});
 
-    @AsyncTest()
-    public async appSettingRead() {
-        Expect(() => new SettingRead({} as ProxiedApp)).not.toThrow();
+test('appSettingRead', async () => {
+    expect(() => new SettingRead({} as ProxiedApp)).not.toThrow();
 
-        const sr = new SettingRead(this.mockProxiedApp);
-        Expect(await sr.getById('testing')).toBeDefined();
-        Expect(await sr.getById('testing')).toEqual(TestData.getSetting('testing'));
-        Expect(await sr.getValueById('testing')).toBe('The packageValue');
-        this.mockStorageItem.settings.testing.value = 'my value';
-        Expect(await sr.getValueById('testing')).toBe('my value');
-        await Expect(async () => await sr.getValueById('superfake')).toThrowErrorAsync(Error, 'Setting "superfake" does not exist.');
-    }
-}
+    const sr = new SettingRead(mockProxiedApp);
+    expect(await sr.getById('testing')).toBeDefined();
+    expect(await sr.getById('testing')).toEqual(TestData.getSetting('testing'));
+    expect(await sr.getValueById('testing')).toBe('The packageValue');
+    mockStorageItem.settings.testing.value = 'my value';
+    expect(await sr.getValueById('testing')).toBe('my value');
+    await expect(sr.getValueById('superfake')).rejects.toThrowError( 'Setting "superfake" does not exist.');
+});

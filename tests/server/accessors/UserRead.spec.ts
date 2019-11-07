@@ -1,39 +1,34 @@
-import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { IUser } from '../../../src/definition/users';
 
 import { UserRead } from '../../../src/server/accessors';
 import { IUserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class UserReadAccessorTestFixture {
-    private user: IUser;
-    private mockUserBridge: IUserBridge;
+let user: IUser;
+let mockUserBridge: IUserBridge;
 
-    @SetupFixture
-    public setupFixture() {
-        this.user = TestData.getUser();
+beforeAll(() =>  {
+    user = TestData.getUser();
 
-        const theUser = this.user;
-        this.mockUserBridge = {
-            getById(id, appId): Promise<IUser> {
-                return Promise.resolve(theUser);
-            },
-            getByUsername(id, appId): Promise<IUser> {
-                return Promise.resolve(theUser);
-            },
-        } as IUserBridge;
-    }
+    const theUser = user;
+    mockUserBridge = {
+        getById(id, appId): Promise<IUser> {
+            return Promise.resolve(theUser);
+        },
+        getByUsername(id, appId): Promise<IUser> {
+            return Promise.resolve(theUser);
+        },
+    } as IUserBridge;
+});
 
-    @AsyncTest()
-    public async expectDataFromMessageRead() {
-        Expect(() => new UserRead(this.mockUserBridge, 'testing-app')).not.toThrow();
+test('expectDataFromMessageRead', async () => {
+    expect(() => new UserRead(mockUserBridge, 'testing-app')).not.toThrow();
 
-        const ur = new UserRead(this.mockUserBridge, 'testing-app');
+    const ur = new UserRead(mockUserBridge, 'testing-app');
 
-        Expect(await ur.getById('fake')).toBeDefined();
-        Expect(await ur.getById('fake')).toEqual(this.user);
+    expect(await ur.getById('fake')).toBeDefined();
+    expect(await ur.getById('fake')).toEqual(user);
 
-        Expect(await ur.getByUsername('username')).toBeDefined();
-        Expect(await ur.getByUsername('username')).toEqual(this.user);
-    }
-}
+    expect(await ur.getByUsername('username')).toBeDefined();
+    expect(await ur.getByUsername('username')).toEqual(user);
+});

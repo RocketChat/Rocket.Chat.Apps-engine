@@ -11,9 +11,9 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
-        "types": ["node"],
+        "types": ["node", "jest", "jest-extended/types"],
         "lib": ["es2017", "dom"],
-        "outDir": "."
+        "outDir": ".",
     },
     "exclude": [
         "node_modules",
@@ -24,7 +24,7 @@
     ],
     "include": [
         "src",
-        "tests"
+        "tests",
     ],
     "atom": {
         "rewriteTsconfig": false

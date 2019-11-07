@@ -1,4 +1,3 @@
-import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom, RoomType } from '../../../src/definition/rooms';
 
@@ -6,97 +5,91 @@ import { ModifyCreator } from '../../../src/server/accessors';
 import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class ModifyCreatorTestFixture {
-    private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
-    private mockMessageBridge: IMessageBridge;
-    private mockAppBridge: AppBridges;
+let mockAppId: string;
+let mockRoomBridge: IRoomBridge;
+let mockMessageBridge: IMessageBridge;
+let mockAppBridge: AppBridges;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockAppId = 'testing-app';
+beforeAll(() =>  {
+    mockAppId = 'testing-app';
 
-        this.mockRoomBridge = {
-            create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
-                return Promise.resolve('roomId');
-            },
-        } as IRoomBridge;
+    mockRoomBridge = {
+        create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
+            return Promise.resolve('roomId');
+        },
+    } as IRoomBridge;
 
-        this.mockMessageBridge = {
-            create(msg: IMessage, appId: string): Promise<string> {
-                return Promise.resolve('msgId');
-            },
-        } as IMessageBridge;
+    mockMessageBridge = {
+        create(msg: IMessage, appId: string): Promise<string> {
+            return Promise.resolve('msgId');
+        },
+    } as IMessageBridge;
 
-        const rmBridge = this.mockRoomBridge;
-        const msgBridge = this.mockMessageBridge;
-        this.mockAppBridge = {
-            getMessageBridge() {
-                return msgBridge;
-            },
-            getRoomBridge() {
-                return rmBridge;
-            },
-        } as AppBridges;
-    }
+    const rmBridge = mockRoomBridge;
+    const msgBridge = mockMessageBridge;
+    mockAppBridge = {
+        getMessageBridge() {
+            return msgBridge;
+        },
+        getRoomBridge() {
+            return rmBridge;
+        },
+    } as AppBridges;
+});
 
-    @AsyncTest()
-    public async basicModifyCreator() {
-        Expect(() => new ModifyCreator(this.mockAppBridge, this.mockAppId)).not.toThrow();
+test('basicModifyCreator', async () => {
+    expect(() => new ModifyCreator(mockAppBridge, mockAppId)).not.toThrow();
 
-        const mc = new ModifyCreator(this.mockAppBridge, this.mockAppId);
-        Expect(mc.startMessage()).toBeDefined();
-        Expect(mc.startMessage({ id: 'value' } as IMessage)).toBeDefined();
-        Expect(mc.startRoom()).toBeDefined();
-        Expect(mc.startRoom({ id: 'value' } as IRoom)).toBeDefined();
+    const mc = new ModifyCreator(mockAppBridge, mockAppId);
+    expect(mc.startMessage()).toBeDefined();
+    expect(mc.startMessage({ id: 'value' } as IMessage)).toBeDefined();
+    expect(mc.startRoom()).toBeDefined();
+    expect(mc.startRoom({ id: 'value' } as IRoom)).toBeDefined();
 
-        await Expect(async () => await mc.finish({} as any)).toThrowErrorAsync(Error, 'Invalid builder passed to the ModifyCreator.finish function.');
-    }
+    await expect(() => mc.finish({} as any)).toThrowError('Invalid builder passed to the ModifyCreator.finish function.');
+});
 
-    @AsyncTest()
-    public async msgModifyCreator() {
-        const mc = new ModifyCreator(this.mockAppBridge, this.mockAppId);
+test('msgModifyCreator', async () => {
+    const mc = new ModifyCreator(mockAppBridge, mockAppId);
 
-        const msg = {} as IMessage;
-        const msgBd = mc.startMessage(msg);
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
-        msgBd.setRoom(TestData.getRoom());
-        Expect(msg.room).toBeDefined();
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
-        msgBd.setSender(TestData.getUser());
-        Expect(msg.sender).toBeDefined();
+    const msg = {} as IMessage;
+    const msgBd = mc.startMessage(msg);
+    await expect(() => mc.finish(msgBd)).toThrowError( 'The "room" property is required.');
+    msgBd.setRoom(TestData.getRoom());
+    expect(msg.room).toBeDefined();
+    await expect(() => mc.finish(msgBd)).toThrowError( 'Invalid sender assigned to the message.');
+    msgBd.setSender(TestData.getUser());
+    expect(msg.sender).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'create');
-        Expect(await mc.finish(msgBd)).toBe('msgId');
-        Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
-        msgBriSpy.restore();
-    }
+    const msgBriSpy = jest.spyOn(mockMessageBridge, 'create');
+    expect(await mc.finish(msgBd)).toBe('msgId');
+    expect(msgBriSpy).toHaveBeenCalledWith(msg, mockAppId);
+    msgBriSpy.mockClear();
+});
 
-    @AsyncTest()
-    public async roomModifyCreator() {
-        const mc = new ModifyCreator(this.mockAppBridge, this.mockAppId);
+test('roomModifyCreator', async () => {
+    const mc = new ModifyCreator(mockAppBridge, mockAppId);
 
-        const room = {} as IRoom;
-        const roomBd = mc.startRoom(room);
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
-        roomBd.setType(RoomType.CHANNEL);
-        Expect(room.type).toBe(RoomType.CHANNEL);
+    const room = {} as IRoom;
+    const roomBd = mc.startRoom(room);
+    await expect(() => mc.finish(roomBd)).toThrowError('Invalid type assigned to the room.');
+    roomBd.setType(RoomType.CHANNEL);
+    expect(room.type).toBe(RoomType.CHANNEL);
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
-        roomBd.setCreator(TestData.getUser());
-        Expect(room.creator).toBeDefined();
+    await expect(() => mc.finish(roomBd)).toThrowError('Invalid creator assigned to the room.');
+    roomBd.setCreator(TestData.getUser());
+    expect(room.creator).toBeDefined();
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
-        roomBd.setSlugifiedName('testing-room');
-        Expect(room.slugifiedName).toBe('testing-room');
+    await expect(() => mc.finish(roomBd)).toThrowError('Invalid slugifiedName assigned to the room.');
+    roomBd.setSlugifiedName('testing-room');
+    expect(room.slugifiedName).toBe('testing-room');
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
-        roomBd.setDisplayName('Display Name');
-        Expect(room.displayName).toBe('Display Name');
+    await expect(() => mc.finish(roomBd)).toThrowError('Invalid displayName assigned to the room.');
+    roomBd.setDisplayName('Display Name');
+    expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
-        Expect(await mc.finish(roomBd)).toBe('roomId');
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
-        roomBriSpy.restore();
-    }
-}
+    const roomBriSpy = jest.spyOn(mockRoomBridge, 'create');
+    expect(await mc.finish(roomBd)).toBe('roomId');
+    expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), mockAppId);
+    roomBriSpy.mockClear();
+});

@@ -1,108 +1,105 @@
-import { Expect, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
 
-export class MessageBuilderAccessorTestFixture {
-    @Test()
-    public basicMessageBuilder() {
-        Expect(() => new MessageBuilder()).not.toThrow();
-        Expect(() => new MessageBuilder(TestData.getMessage())).not.toThrow();
-    }
+test('basicMessageBuilder', () => {
+    expect(() => new MessageBuilder()).not.toThrow();
+    expect(() => new MessageBuilder(TestData.getMessage())).not.toThrow();
+});
 
-    @Test()
-    public settingOnMessageBuilder() {
-        const mbOnce = new MessageBuilder();
+test('settingOnMessageBuilder', () => {
+    const mbOnce = new MessageBuilder();
 
-        // setData just replaces the passed in object, so let's treat it differently
-        Expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
-        Expect((mbOnce as any).msg.text).toBe('hello');
+    // setData just replaces the passed in object, so let's treat it differently
+    expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
+    expect((mbOnce as any).msg.text).toBe('hello');
 
-        const msg: IMessage = {} as IMessage;
-        const mb = new MessageBuilder(msg);
+    const msg: IMessage = {} as IMessage;
+    const mb = new MessageBuilder(msg);
 
-        Expect(mb.setThreadId('a random thread id')).toBe(mb);
-        Expect(msg.threadId).toBe('a random thread id');
-        Expect(mb.getThreadId()).toBe('a random thread id');
+    expect(mb.setThreadId('a random thread id')).toBe(mb);
+    expect(msg.threadId).toBe('a random thread id');
+    expect(mb.getThreadId()).toBe('a random thread id');
 
-        Expect(mb.setRoom(TestData.getRoom())).toBe(mb);
-        Expect(msg.room).toEqual(TestData.getRoom());
-        Expect(mb.getRoom()).toEqual(TestData.getRoom());
+    const room = TestData.getRoom();
+    expect(mb.setRoom(room)).toBe(mb);
+    expect(msg.room).toEqual(room);
+    expect(mb.getRoom()).toEqual(room);
 
-        Expect(mb.setSender(TestData.getUser())).toBe(mb);
-        Expect(msg.sender).toEqual(TestData.getUser());
-        Expect(mb.getSender()).toEqual(TestData.getUser());
+    const user = TestData.getUser();
+    expect(mb.setSender(user)).toBe(mb);
+    expect(msg.sender).toEqual(user);
+    expect(mb.getSender()).toEqual(user);
 
-        Expect(mb.setText('testing, yo!')).toBe(mb);
-        Expect(msg.text).toEqual('testing, yo!');
-        Expect(mb.getText()).toEqual('testing, yo!');
+    expect(mb.setText('testing, yo!')).toBe(mb);
+    expect(msg.text).toEqual('testing, yo!');
+    expect(mb.getText()).toEqual('testing, yo!');
 
-        Expect(mb.setEmojiAvatar(':ghost:')).toBe(mb);
-        Expect(msg.emoji).toEqual(':ghost:');
-        Expect(mb.getEmojiAvatar()).toEqual(':ghost:');
+    expect(mb.setEmojiAvatar(':ghost:')).toBe(mb);
+    expect(msg.emoji).toEqual(':ghost:');
+    expect(mb.getEmojiAvatar()).toEqual(':ghost:');
 
-        Expect(mb.setAvatarUrl('https://rocket.chat/')).toBe(mb);
-        Expect(msg.avatarUrl).toEqual('https://rocket.chat/');
-        Expect(mb.getAvatarUrl()).toEqual('https://rocket.chat/');
+    expect(mb.setAvatarUrl('https://rocket.chat/')).toBe(mb);
+    expect(msg.avatarUrl).toEqual('https://rocket.chat/');
+    expect(mb.getAvatarUrl()).toEqual('https://rocket.chat/');
 
-        Expect(mb.setUsernameAlias('Some Bot')).toBe(mb);
-        Expect(msg.alias).toEqual('Some Bot');
-        Expect(mb.getUsernameAlias()).toEqual('Some Bot');
+    expect(mb.setUsernameAlias('Some Bot')).toBe(mb);
+    expect(msg.alias).toEqual('Some Bot');
+    expect(mb.getUsernameAlias()).toEqual('Some Bot');
 
-        Expect(msg.attachments).not.toBeDefined();
-        Expect(mb.getAttachments()).not.toBeDefined();
-        Expect(mb.addAttachment({ color: '#0ff' })).toBe(mb);
-        Expect(msg.attachments).toBeDefined();
-        Expect(mb.getAttachments()).toBeDefined();
-        Expect(msg.attachments).not.toBeEmpty();
-        Expect(mb.getAttachments()).not.toBeEmpty();
+    expect(msg.attachments).not.toBeDefined();
+    expect(mb.getAttachments()).not.toBeDefined();
+    expect(mb.addAttachment({ color: '#0ff' })).toBe(mb);
+    expect(msg.attachments).toBeDefined();
+    expect(mb.getAttachments()).toBeDefined();
+    expect(msg.attachments).not.toBeEmpty();
+    expect(mb.getAttachments()).not.toBeEmpty();
 
-        Expect(msg.attachments[0].color).toEqual('#0ff');
-        Expect(mb.getAttachments()[0].color).toEqual('#0ff');
+    expect(msg.attachments[0].color).toEqual('#0ff');
+    expect(mb.getAttachments()[0].color).toEqual('#0ff');
 
-        Expect(mb.setAttachments([])).toBe(mb);
-        Expect(msg.attachments).toBeEmpty();
-        Expect(mb.getAttachments()).toBeEmpty();
+    expect(mb.setAttachments([])).toBe(mb);
+    expect(msg.attachments).toBeEmpty();
+    expect(mb.getAttachments()).toBeEmpty();
 
-        delete msg.attachments;
-        Expect(() => mb.replaceAttachment(1, {})).toThrowError(Error, 'No attachment found at the index of "1" to replace.');
-        Expect(mb.addAttachment({})).toBe(mb);
-        Expect(mb.replaceAttachment(0, { color: '#f0f'})).toBe(mb);
-        Expect(msg.attachments[0].color).toEqual('#f0f');
-        Expect(mb.getAttachments()[0].color).toEqual('#f0f');
+    delete msg.attachments;
+    expect(() => mb.replaceAttachment(1, {})).toThrowError('No attachment found at the index of "1" to replace.');
+    expect(mb.addAttachment({})).toBe(mb);
+    expect(mb.replaceAttachment(0, { color: '#f0f'})).toBe(mb);
+    expect(msg.attachments[0].color).toEqual('#f0f');
+    expect(mb.getAttachments()[0].color).toEqual('#f0f');
 
-        Expect(mb.removeAttachment(0)).toBe(mb);
-        Expect(msg.attachments).toBeEmpty();
-        Expect(mb.getAttachments()).toBeEmpty();
+    expect(mb.removeAttachment(0)).toBe(mb);
+    expect(msg.attachments).toBeEmpty();
+    expect(mb.getAttachments()).toBeEmpty();
 
-        delete msg.attachments;
-        Expect(() => mb.removeAttachment(4)).toThrowError(Error, 'No attachment found at the index of "4" to remove.');
+    delete msg.attachments;
+    expect(() => mb.removeAttachment(4)).toThrowError('No attachment found at the index of "4" to remove.');
 
-        Expect(mb.setEditor(TestData.getUser('msg-editor-id'))).toBe(mb);
-        Expect(msg.editor).toBeDefined();
-        Expect(mb.getEditor()).toBeDefined();
-        Expect(msg.editor.id).toEqual('msg-editor-id');
-        Expect(mb.getEditor().id).toEqual('msg-editor-id');
+    expect(mb.setEditor(TestData.getUser('msg-editor-id'))).toBe(mb);
+    expect(msg.editor).toBeDefined();
+    expect(mb.getEditor()).toBeDefined();
+    expect(msg.editor.id).toEqual('msg-editor-id');
+    expect(mb.getEditor().id).toEqual('msg-editor-id');
 
-        Expect(mb.getMessage()).toBe(msg);
-        delete msg.room;
-        Expect(() => mb.getMessage()).toThrowError(Error, 'The "room" property is required.');
+    expect(mb.getMessage()).toBe(msg);
+    delete msg.room;
+    expect(() => mb.getMessage()).toThrowError('The "room" property is required.');
 
-        Expect(mb.setGroupable(true)).toBe(mb);
-        Expect(msg.groupable).toEqual(true);
-        Expect(mb.getGroupable()).toEqual(true);
+    expect(mb.setGroupable(true)).toBe(mb);
+    expect(msg.groupable).toEqual(true);
+    expect(mb.getGroupable()).toEqual(true);
 
-        Expect(mb.setGroupable(false)).toBe(mb);
-        Expect(msg.groupable).toEqual(false);
-        Expect(mb.getGroupable()).toEqual(false);
+    expect(mb.setGroupable(false)).toBe(mb);
+    expect(msg.groupable).toEqual(false);
+    expect(mb.getGroupable()).toEqual(false);
 
-        Expect(mb.setParseUrls(true)).toBe(mb);
-        Expect(msg.parseUrls).toEqual(true);
-        Expect(mb.getParseUrls()).toEqual(true);
+    expect(mb.setParseUrls(true)).toBe(mb);
+    expect(msg.parseUrls).toEqual(true);
+    expect(mb.getParseUrls()).toEqual(true);
 
-        Expect(mb.setParseUrls(false)).toBe(mb);
-        Expect(msg.parseUrls).toEqual(false);
-        Expect(mb.getParseUrls()).toEqual(false);
-    }
-}
+    expect(mb.setParseUrls(false)).toBe(mb);
+    expect(msg.parseUrls).toEqual(false);
+    expect(mb.getParseUrls()).toEqual(false);
+});

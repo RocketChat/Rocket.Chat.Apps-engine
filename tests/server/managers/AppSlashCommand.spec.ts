@@ -1,36 +1,32 @@
-import { Expect, SetupFixture, Test } from 'alsatian';
+
 import { AppMethod } from '../../../src/definition/metadata';
 import { ISlashCommand } from '../../../src/definition/slashcommands';
 
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 
-export class AppSlashCommandRegistrationTestFixture {
-    private mockApp: ProxiedApp;
+let mockApp: ProxiedApp;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockApp = {
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
-        } as ProxiedApp;
-    }
+beforeAll(() =>  {
+    mockApp = {
+        hasMethod(method: AppMethod): boolean {
+            return true;
+        },
+    } as ProxiedApp;
+});
 
-    @Test()
-    public ensureAppSlashCommand() {
-        Expect(() => new AppSlashCommand(this.mockApp, {} as ISlashCommand)).not.toThrow();
+test('ensureAppSlashCommand', () => {
+    expect(() => new AppSlashCommand(mockApp, {} as ISlashCommand)).not.toThrow();
 
-        const ascr = new AppSlashCommand(this.mockApp, {} as ISlashCommand);
-        Expect(ascr.isRegistered).toBe(false);
-        Expect(ascr.isEnabled).toBe(false);
-        Expect(ascr.isDisabled).toBe(false);
+    const ascr = new AppSlashCommand(mockApp, {} as ISlashCommand);
+    expect(ascr.isRegistered).toBe(false);
+    expect(ascr.isEnabled).toBe(false);
+    expect(ascr.isDisabled).toBe(false);
 
-        ascr.hasBeenRegistered();
-        Expect(ascr.isDisabled).toBe(false);
-        Expect(ascr.isEnabled).toBe(true);
-        Expect(ascr.isRegistered).toBe(true);
+    ascr.hasBeenRegistered();
+    expect(ascr.isDisabled).toBe(false);
+    expect(ascr.isEnabled).toBe(true);
+    expect(ascr.isRegistered).toBe(true);
 
-        Expect(ascr.canBeRan(AppMethod._COMMAND_EXECUTOR)).toBe(true);
-    }
-}
+    expect(ascr.canBeRan(AppMethod._COMMAND_EXECUTOR)).toBe(true);
+});

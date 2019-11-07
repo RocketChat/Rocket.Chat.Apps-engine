@@ -1,56 +1,50 @@
-import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 
 import { MessageRead } from '../../../src/server/accessors';
 import { IMessageBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class MessageReadAccessorTestFixture {
-    private msg: IMessage;
-    private mockMsgBridgeWithMsg: IMessageBridge;
-    private mockMsgBridgeNoMsg: IMessageBridge;
+let msg: IMessage;
+let mockMsgBridgeWithMsg: IMessageBridge;
+let mockMsgBridgeNoMsg: IMessageBridge;
 
-    @SetupFixture
-    public setupFixture() {
-        this.msg = TestData.getMessage();
+beforeAll(() =>  {
+    msg = TestData.getMessage();
 
-        const theMsg = this.msg;
-        this.mockMsgBridgeWithMsg = {
-            getById(id, appId): Promise<IMessage> {
-                return Promise.resolve(theMsg);
-            },
-        } as IMessageBridge;
+    const theMsg = msg;
+    mockMsgBridgeWithMsg = {
+        getById(id, appId): Promise<IMessage> {
+            return Promise.resolve(theMsg);
+        },
+    } as IMessageBridge;
 
-        this.mockMsgBridgeNoMsg = {
-            getById(id, appId): Promise<IMessage> {
-                return Promise.resolve(undefined);
-            },
-        } as IMessageBridge;
-    }
+    mockMsgBridgeNoMsg = {
+        getById(id, appId): Promise<IMessage> {
+            return Promise.resolve(undefined);
+        },
+    } as IMessageBridge;
+});
 
-    @AsyncTest()
-    public async expectDataFromMessageRead() {
-        Expect(() => new MessageRead(this.mockMsgBridgeWithMsg, 'testing-app')).not.toThrow();
+test('expectDataFromMessageRead', async () => {
+    expect(() => new MessageRead(mockMsgBridgeWithMsg, 'testing-app')).not.toThrow();
 
-        const mr = new MessageRead(this.mockMsgBridgeWithMsg, 'testing-app');
+    const mr = new MessageRead(mockMsgBridgeWithMsg, 'testing-app');
 
-        Expect(await mr.getById('fake')).toBeDefined();
-        Expect(await mr.getById('fake')).toEqual(this.msg);
+    expect(await mr.getById('fake')).toBeDefined();
+    expect(await mr.getById('fake')).toEqual(msg);
 
-        Expect(await mr.getSenderUser('fake')).toBeDefined();
-        Expect(await mr.getSenderUser('fake')).toEqual(this.msg.sender);
+    expect(await mr.getSenderUser('fake')).toBeDefined();
+    expect(await mr.getSenderUser('fake')).toEqual(msg.sender);
 
-        Expect(await mr.getRoom('fake')).toBeDefined();
-        Expect(await mr.getRoom('fake')).toEqual(this.msg.room);
-    }
+    expect(await mr.getRoom('fake')).toBeDefined();
+    expect(await mr.getRoom('fake')).toEqual(msg.room);
+});
 
-    @AsyncTest()
-    public async doNotExpectDataFromMessageRead() {
-        Expect(() => new MessageRead(this.mockMsgBridgeNoMsg, 'testing')).not.toThrow();
+test('doNotexpectDataFromMessageRead', async () => {
+    expect(() => new MessageRead(mockMsgBridgeNoMsg, 'testing')).not.toThrow();
 
-        const nomr = new MessageRead(this.mockMsgBridgeNoMsg, 'testing');
-        Expect(await nomr.getById('fake')).not.toBeDefined();
-        Expect(await nomr.getSenderUser('fake')).not.toBeDefined();
-        Expect(await nomr.getRoom('fake')).not.toBeDefined();
-    }
-}
+    const nomr = new MessageRead(mockMsgBridgeNoMsg, 'testing');
+    expect(await nomr.getById('fake')).not.toBeDefined();
+    expect(await nomr.getSenderUser('fake')).not.toBeDefined();
+    expect(await nomr.getRoom('fake')).not.toBeDefined();
+});

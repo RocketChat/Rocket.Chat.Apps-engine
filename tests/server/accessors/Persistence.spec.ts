@@ -1,79 +1,73 @@
-import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { Persistence } from '../../../src/server/accessors';
 import { IPersistenceBridge } from '../../../src/server/bridges';
 
-export class PersistenceAccessorTestFixture {
-    private mockAppId: string;
-    private mockPersisBridge: IPersistenceBridge;
-    private mockAssoc: RocketChatAssociationRecord;
-    private data: object;
+let mockAppId: string;
+let mockPersisBridge: IPersistenceBridge;
+let mockAssoc: RocketChatAssociationRecord;
+const data: object = null;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockAppId = 'testing-app';
-        this.data = { hello: 'world' };
+beforeAll(() =>  {
+    mockAppId = 'testing-app';
 
-        const theData = this.data;
-        this.mockPersisBridge = {
-            create(data: any, appId: string): Promise<string> {
-                return Promise.resolve('id');
-            },
-            createWithAssociations(data: any, assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
-                return Promise.resolve('id2');
-            },
-            update(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
-                return Promise.resolve('id3');
-            },
-            remove(id: string, appId: string): Promise<object> {
-                return Promise.resolve(theData);
-            },
-            removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
-                return Promise.resolve([theData]);
-            },
-            updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
-                return Promise.resolve('id4');
-            },
-        } as IPersistenceBridge;
-        this.mockAssoc = new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'fake-id');
-    }
+    const theData = data;
+    mockPersisBridge = {
+        create(dat: any, appId: string): Promise<string> {
+            return Promise.resolve('id');
+        },
+        createWithAssociations(dat: any, assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
+            return Promise.resolve('id2');
+        },
+        update(id: string, dat: object, upsert: boolean, appId: string): Promise<string> {
+            return Promise.resolve('id3');
+        },
+        remove(id: string, appId: string): Promise<object> {
+            return Promise.resolve(theData);
+        },
+        removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+            return Promise.resolve([theData]);
+        },
+        updateByAssociations(associations: Array<RocketChatAssociationRecord>, dat: object, upsert: boolean, appId: string): Promise<string> {
+            return Promise.resolve('id4');
+        },
+    } as IPersistenceBridge;
+    mockAssoc = new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'fake-id');
+});
 
-    @AsyncTest()
-    public async usePersistenceAccessor() {
-        Expect(() => new Persistence(this.mockPersisBridge, this.mockAppId)).not.toThrow();
+test('usePersistenceAccessor', async () => {
+    expect(() => new Persistence(mockPersisBridge, mockAppId)).not.toThrow();
 
-        const sp1 = SpyOn(this.mockPersisBridge, 'create');
-        const sp2 = SpyOn(this.mockPersisBridge, 'createWithAssociations');
-        const sp3 = SpyOn(this.mockPersisBridge, 'update');
-        const sp4 = SpyOn(this.mockPersisBridge, 'remove');
-        const sp5 = SpyOn(this.mockPersisBridge, 'removeByAssociations');
-        const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociations');
+    const sp1 = jest.spyOn(mockPersisBridge, 'create');
+    const sp2 = jest.spyOn(mockPersisBridge, 'createWithAssociations');
+    const sp3 = jest.spyOn(mockPersisBridge, 'update');
+    const sp4 = jest.spyOn(mockPersisBridge, 'remove');
+    const sp5 = jest.spyOn(mockPersisBridge, 'removeByAssociations');
+    const sp6 = jest.spyOn(mockPersisBridge, 'updateByAssociations');
 
-        const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
+    const ps = new Persistence(mockPersisBridge, mockAppId);
 
-        Expect(await ps.create(this.data)).toBe('id');
-        Expect(this.mockPersisBridge.create).toHaveBeenCalledWith(this.data, this.mockAppId);
-        Expect(await ps.createWithAssociation(this.data, this.mockAssoc)).toBe('id2');
-        Expect(await ps.createWithAssociations(this.data, [this.mockAssoc])).toBe('id2');
-        Expect(this.mockPersisBridge.createWithAssociations).toHaveBeenCalled().exactly(2);
-        Expect(await ps.update('id', this.data)).toBe('id3');
-        Expect(this.mockPersisBridge.update).toHaveBeenCalledWith('id', this.data, false, this.mockAppId);
-        Expect(await ps.remove('id')).toEqual(this.data);
-        Expect(this.mockPersisBridge.remove).toHaveBeenCalledWith('id', this.mockAppId);
-        Expect(await ps.removeByAssociation(this.mockAssoc)).toBeDefined();
-        Expect(await ps.removeByAssociations([this.mockAssoc])).toBeDefined();
-        Expect(this.mockPersisBridge.removeByAssociations).toHaveBeenCalled().exactly(2);
+    expect(await ps.create(data)).toBe('id');
+    expect(mockPersisBridge.create).toHaveBeenCalledWith(data, mockAppId);
+    expect(await ps.createWithAssociation(data, mockAssoc)).toBe('id2');
+    expect(await ps.createWithAssociations(data, [mockAssoc])).toBe('id2');
+    expect(mockPersisBridge.createWithAssociations).toHaveBeenCalledTimes(2);
+    expect(await ps.update('id', data)).toBe('id3');
+    expect(mockPersisBridge.update).toHaveBeenCalledWith('id', data, false, mockAppId);
+    expect(await ps.remove('id')).toEqual(data);
+    expect(mockPersisBridge.remove).toHaveBeenCalledWith('id', mockAppId);
+    expect(await ps.removeByAssociation(mockAssoc)).toBeDefined();
+    expect(await ps.removeByAssociations([mockAssoc])).toBeDefined();
+    expect(mockPersisBridge.removeByAssociations).toHaveBeenCalledTimes(2);
 
-        Expect(await ps.updateByAssociation(this.mockAssoc, this.data)).toBeDefined();
-        Expect(await ps.updateByAssociations([this.mockAssoc], this.data)).toBeDefined();
-        Expect(this.mockPersisBridge.updateByAssociations).toHaveBeenCalled().exactly(2);
+    expect(await ps.updateByAssociation(mockAssoc, data)).toBeDefined();
+    expect(await ps.updateByAssociations([mockAssoc], data)).toBeDefined();
+    expect(mockPersisBridge.updateByAssociations).toHaveBeenCalledTimes(2);
 
-        sp1.restore();
-        sp2.restore();
-        sp3.restore();
-        sp4.restore();
-        sp5.restore();
-        sp6.restore();
-    }
-}
+    sp1.mockClear();
+    sp2.mockClear();
+    sp3.mockClear();
+    sp4.mockClear();
+    sp5.mockClear();
+    sp6.mockClear();
+});

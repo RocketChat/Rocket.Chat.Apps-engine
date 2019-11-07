@@ -75,6 +75,7 @@
     "gulp-typescript": "^4.0.2",
     "http-server": "^0.11.1",
     "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
     "merge2": "^1.2.1",
     "nedb": "^1.8.0",
     "nyc": "^11.9.0",

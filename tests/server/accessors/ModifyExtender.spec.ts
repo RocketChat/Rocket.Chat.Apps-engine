@@ -1,4 +1,3 @@
-import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 
@@ -6,66 +5,62 @@ import { ModifyExtender } from '../../../src/server/accessors';
 import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class ModifyExtenderTestFixture {
-    private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
-    private mockMessageBridge: IMessageBridge;
-    private mockAppBridge: AppBridges;
+let mockAppId: string;
+let mockRoomBridge: IRoomBridge;
+let mockMessageBridge: IMessageBridge;
+let mockAppBridge: AppBridges;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockAppId = 'testing-app';
+beforeAll(() =>  {
+    mockAppId = 'testing-app';
 
-        this.mockRoomBridge = {
-            getById(roomId: string, appId: string): Promise<IRoom> {
-                return Promise.resolve(TestData.getRoom());
-            },
-            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-        } as IRoomBridge;
+    mockRoomBridge = {
+        getById(roomId: string, appId: string): Promise<IRoom> {
+            return Promise.resolve(TestData.getRoom());
+        },
+        update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
+            return Promise.resolve();
+        },
+    } as IRoomBridge;
 
-        this.mockMessageBridge = {
-            getById(msgId: string, appId: string): Promise<IMessage> {
-                return Promise.resolve(TestData.getMessage());
-            },
-            update(msg: IMessage, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-        } as IMessageBridge;
+    mockMessageBridge = {
+        getById(msgId: string, appId: string): Promise<IMessage> {
+            return Promise.resolve(TestData.getMessage());
+        },
+        update(msg: IMessage, appId: string): Promise<void> {
+            return Promise.resolve();
+        },
+    } as IMessageBridge;
 
-        const rmBridge = this.mockRoomBridge;
-        const msgBridge = this.mockMessageBridge;
-        this.mockAppBridge = {
-            getMessageBridge() {
-                return msgBridge;
-            },
-            getRoomBridge() {
-                return rmBridge;
-            },
-        } as AppBridges;
-    }
+    const rmBridge = mockRoomBridge;
+    const msgBridge = mockMessageBridge;
+    mockAppBridge = {
+        getMessageBridge() {
+            return msgBridge;
+        },
+        getRoomBridge() {
+            return rmBridge;
+        },
+    } as AppBridges;
+});
 
-    @AsyncTest()
-    public async useModifyExtender() {
-        Expect(() => new ModifyExtender(this.mockAppBridge, this.mockAppId)).not.toThrow();
+test('useModifyExtender', async () => {
+    expect(() => new ModifyExtender(mockAppBridge, mockAppId)).not.toThrow();
 
-        const me = new ModifyExtender(this.mockAppBridge, this.mockAppId);
+    const me = new ModifyExtender(mockAppBridge, mockAppId);
 
-        SpyOn(this.mockRoomBridge, 'getById');
-        SpyOn(this.mockRoomBridge, 'update');
-        SpyOn(this.mockMessageBridge, 'getById');
-        SpyOn(this.mockMessageBridge, 'update');
+    jest.spyOn(mockRoomBridge, 'getById');
+    jest.spyOn(mockRoomBridge, 'update');
+    jest.spyOn(mockMessageBridge, 'getById');
+    jest.spyOn(mockMessageBridge, 'update');
 
-        Expect(await me.extendRoom('roomId', TestData.getUser())).toBeDefined();
-        Expect(this.mockRoomBridge.getById).toHaveBeenCalledWith('roomId', this.mockAppId);
-        Expect(await me.extendMessage('msgId', TestData.getUser())).toBeDefined();
-        Expect(this.mockMessageBridge.getById).toHaveBeenCalledWith('msgId', this.mockAppId);
+    expect(await me.extendRoom('roomId', TestData.getUser())).toBeDefined();
+    expect(mockRoomBridge.getById).toHaveBeenCalledWith('roomId', mockAppId);
+    expect(await me.extendMessage('msgId', TestData.getUser())).toBeDefined();
+    expect(mockMessageBridge.getById).toHaveBeenCalledWith('msgId', mockAppId);
 
-        await Expect(async () => await me.finish({} as any)).toThrowErrorAsync(Error, 'Invalid extender passed to the ModifyExtender.finish function.');
-        Expect(await me.finish(await me.extendRoom('roomId', TestData.getUser()))).not.toBeDefined();
-        Expect(this.mockRoomBridge.update).toHaveBeenCalled();
-        Expect(await me.finish(await me.extendMessage('msgId', TestData.getUser()))).not.toBeDefined();
-        Expect(this.mockMessageBridge.update).toHaveBeenCalled();
-    }
-}
+    await expect(() => me.finish({} as any)).toThrowError( 'Invalid extender passed to the ModifyExtender.finish function.');
+    expect(await me.finish(await me.extendRoom('roomId', TestData.getUser()))).not.toBeDefined();
+    expect(mockRoomBridge.update).toHaveBeenCalled();
+    expect(await me.finish(await me.extendMessage('msgId', TestData.getUser()))).not.toBeDefined();
+    expect(mockMessageBridge.update).toHaveBeenCalled();
+});

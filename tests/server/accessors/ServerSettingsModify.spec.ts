@@ -1,51 +1,46 @@
-import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { ISetting } from '../../../src/definition/settings';
 
 import { ServerSettingsModify } from '../../../src/server/accessors';
 import { IServerSettingBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
-export class ServerSettingsModifyTestFixture {
-    private setting: ISetting;
-    private mockAppId: string;
-    private mockServerSettingBridge: IServerSettingBridge;
+let setting: ISetting;
+let mockAppId: string;
+let mockServerSettingBridge: IServerSettingBridge;
 
-    @SetupFixture
-    public setupFixture() {
-        this.setting = TestData.getSetting();
-        this.mockAppId = 'testing-app';
-        this.mockServerSettingBridge = {
-            hideGroup(name: string, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-            hideSetting(id: string, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-            updateOne(setting: ISetting, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-        } as IServerSettingBridge;
-    }
+beforeAll(() =>  {
+    setting = TestData.getSetting();
+    mockAppId = 'testing-app';
+    mockServerSettingBridge = {
+        hideGroup(name: string, appId: string): Promise<void> {
+            return Promise.resolve();
+        },
+        hideSetting(id: string, appId: string): Promise<void> {
+            return Promise.resolve();
+        },
+        updateOne(settin: ISetting, appId: string): Promise<void> {
+            return Promise.resolve();
+        },
+    } as IServerSettingBridge;
+});
 
-    @AsyncTest()
-    public async useServerSettingsModify() {
-        Expect(() => new ServerSettingsModify(this.mockServerSettingBridge, this.mockAppId)).not.toThrow();
+test('useServerSettingsModify', async () => {
+    expect(() => new ServerSettingsModify(mockServerSettingBridge, mockAppId)).not.toThrow();
 
-        const sp1 = SpyOn(this.mockServerSettingBridge, 'hideGroup');
-        const sp2 = SpyOn(this.mockServerSettingBridge, 'hideSetting');
-        const sp3 = SpyOn(this.mockServerSettingBridge, 'updateOne');
+    const sp1 = jest.spyOn(mockServerSettingBridge, 'hideGroup');
+    const sp2 = jest.spyOn(mockServerSettingBridge, 'hideSetting');
+    const sp3 = jest.spyOn(mockServerSettingBridge, 'updateOne');
 
-        const ssm = new ServerSettingsModify(this.mockServerSettingBridge, this.mockAppId);
+    const ssm = new ServerSettingsModify(mockServerSettingBridge, mockAppId);
 
-        Expect(await ssm.hideGroup('api')).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.hideGroup).toHaveBeenCalledWith('api', this.mockAppId);
-        Expect(await ssm.hideSetting('api')).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.hideSetting).toHaveBeenCalledWith('api', this.mockAppId);
-        Expect(await ssm.modifySetting(this.setting)).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.updateOne).toHaveBeenCalledWith(this.setting, this.mockAppId);
+    expect(await ssm.hideGroup('api')).not.toBeDefined();
+    expect(mockServerSettingBridge.hideGroup).toHaveBeenCalledWith('api', mockAppId);
+    expect(await ssm.hideSetting('api')).not.toBeDefined();
+    expect(mockServerSettingBridge.hideSetting).toHaveBeenCalledWith('api', mockAppId);
+    expect(await ssm.modifySetting(setting)).not.toBeDefined();
+    expect(mockServerSettingBridge.updateOne).toHaveBeenCalledWith(setting, mockAppId);
 
-        sp1.restore();
-        sp2.restore();
-        sp3.restore();
-    }
-}
+    sp1.mockClear();
+    sp2.mockClear();
+    sp3.mockClear();
+});

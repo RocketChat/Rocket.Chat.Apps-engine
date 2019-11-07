@@ -1,34 +1,29 @@
-import { Expect, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageExtender } from '../../../src/server/accessors';
 
-export class MessageExtenderAccessorTestFixture {
-    @Test()
-    public basicMessageExtender() {
-        Expect(() => new MessageExtender({} as IMessage)).not.toThrow();
-        Expect(() => new MessageExtender(TestData.getMessage())).not.toThrow();
-    }
+test('basicMessageExtender', () => {
+    expect(() => new MessageExtender({} as IMessage)).not.toThrow();
+    expect(() => new MessageExtender(TestData.getMessage())).not.toThrow();
+});
 
-    @Test()
-    public usingMessageExtender() {
-        const msg: IMessage = {} as IMessage;
-        const me = new MessageExtender(msg);
+test('usingMessageExtender', () => {
+    const msg: IMessage = {} as IMessage;
+    const me = new MessageExtender(msg);
 
-        Expect(msg.attachments).toBeDefined();
-        Expect(msg.attachments).toBeEmpty();
-        Expect(me.addCustomField('thing', 'value')).toBe(me);
-        Expect(msg.customFields).toBeDefined();
-        Expect(msg.customFields.thing).toBe('value');
-        Expect(() => me.addCustomField('thing', 'second')).toThrowError(Error, 'The message already contains a custom field by the key: thing');
+    expect(msg.attachments).toBeDefined();
+    expect(msg.attachments).toBeEmpty();
+    expect(me.addCustomField('thing', 'value')).toBe(me);
+    expect(msg.customFields).toBeDefined();
+    expect(msg.customFields.thing).toBe('value');
+    expect(() => me.addCustomField('thing', 'second')).toThrowError('The message already contains a custom field by the key: thing');
 
-        Expect(me.addAttachment({})).toBe(me);
-        Expect(msg.attachments.length).toBe(1);
-        Expect(me.addAttachments([{ collapsed: true }, { color: '#f00' }])).toBe(me);
-        Expect(msg.attachments.length).toBe(3);
+    expect(me.addAttachment({})).toBe(me);
+    expect(msg.attachments.length).toBe(1);
+    expect(me.addAttachments([{ collapsed: true }, { color: '#f00' }])).toBe(me);
+    expect(msg.attachments.length).toBe(3);
 
-        Expect(me.getMessage()).not.toBe(msg);
-        Expect(me.getMessage()).toEqual(msg);
-    }
-}
+    expect(me.getMessage()).not.toBe(msg);
+    expect(me.getMessage()).toEqual(msg);
+});

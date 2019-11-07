@@ -1,51 +1,46 @@
-import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { ISlashCommand } from '../../../src/definition/slashcommands';
 
 import { SlashCommandsModify } from '../../../src/server/accessors';
 import { AppSlashCommandManager } from '../../../src/server/managers';
 import { TestData } from '../../test-data/utilities';
 
-export class SlashCommandsModifyTestFixture {
-    private cmd: ISlashCommand;
-    private mockAppId: string;
-    private mockCmdManager: AppSlashCommandManager;
+let cmd: ISlashCommand;
+let mockAppId: string;
+let mockCmdManager: AppSlashCommandManager;
 
-    @SetupFixture
-    public setupFixture() {
-        this.cmd = TestData.getSlashCommand();
-        this.mockAppId = 'testing-app';
-        this.mockCmdManager = {
-            modifyCommand(appId: string, command: ISlashCommand): void {
-                return;
-            },
-            disableCommand(appId: string, command: string): void {
-                return;
-            },
-            enableCommand(appId: string, command: string): void {
-                return;
-            },
-        } as AppSlashCommandManager;
-    }
+beforeAll(() =>  {
+    cmd = TestData.getSlashCommand();
+    mockAppId = 'testing-app';
+    mockCmdManager = {
+        modifyCommand(appId: string, command: ISlashCommand): void {
+            return;
+        },
+        disableCommand(appId: string, command: string): void {
+            return;
+        },
+        enableCommand(appId: string, command: string): void {
+            return;
+        },
+    } as AppSlashCommandManager;
+});
 
-    @AsyncTest()
-    public async useSlashCommandsModify() {
-        Expect(() => new SlashCommandsModify(this.mockCmdManager, this.mockAppId)).not.toThrow();
+test('useSlashCommandsModify', async () => {
+    expect(() => new SlashCommandsModify(mockCmdManager, mockAppId)).not.toThrow();
 
-        const sp1 = SpyOn(this.mockCmdManager, 'modifyCommand');
-        const sp2 = SpyOn(this.mockCmdManager, 'disableCommand');
-        const sp3 = SpyOn(this.mockCmdManager, 'enableCommand');
+    const sp1 = jest.spyOn(mockCmdManager, 'modifyCommand');
+    const sp2 = jest.spyOn(mockCmdManager, 'disableCommand');
+    const sp3 = jest.spyOn(mockCmdManager, 'enableCommand');
 
-        const scm = new SlashCommandsModify(this.mockCmdManager, this.mockAppId);
+    const scm = new SlashCommandsModify(mockCmdManager, mockAppId);
 
-        Expect(await scm.modifySlashCommand(this.cmd)).not.toBeDefined();
-        Expect(this.mockCmdManager.modifyCommand).toHaveBeenCalledWith(this.mockAppId, this.cmd);
-        Expect(await scm.disableSlashCommand('testing-cmd')).not.toBeDefined();
-        Expect(this.mockCmdManager.disableCommand).toHaveBeenCalledWith(this.mockAppId, 'testing-cmd');
-        Expect(await scm.enableSlashCommand('testing-cmd')).not.toBeDefined();
-        Expect(this.mockCmdManager.enableCommand).toHaveBeenCalledWith(this.mockAppId, 'testing-cmd');
+    expect(await scm.modifySlashCommand(cmd)).not.toBeDefined();
+    expect(mockCmdManager.modifyCommand).toHaveBeenCalledWith(mockAppId, cmd);
+    expect(await scm.disableSlashCommand('testing-cmd')).not.toBeDefined();
+    expect(mockCmdManager.disableCommand).toHaveBeenCalledWith(mockAppId, 'testing-cmd');
+    expect(await scm.enableSlashCommand('testing-cmd')).not.toBeDefined();
+    expect(mockCmdManager.enableCommand).toHaveBeenCalledWith(mockAppId, 'testing-cmd');
 
-        sp1.restore();
-        sp2.restore();
-        sp3.restore();
-    }
-}
+    sp1.mockClear();
+    sp2.mockClear();
+    sp3.mockClear();
+});

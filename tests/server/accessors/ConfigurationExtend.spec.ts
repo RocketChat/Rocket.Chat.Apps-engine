@@ -1,29 +1,24 @@
-import { Expect, SetupFixture, Test } from 'alsatian';
 import { IApiExtend, IHttpExtend, ISettingsExtend, ISlashCommandsExtend } from '../../../src/definition/accessors';
 
 import { ConfigurationExtend } from '../../../src/server/accessors';
 
-export class ConfigurationExtendTestFixture {
-    private he: IHttpExtend;
-    private se: ISettingsExtend;
-    private sce: ISlashCommandsExtend;
-    private api: IApiExtend;
+let he: IHttpExtend;
+let se: ISettingsExtend;
+let sce: ISlashCommandsExtend;
+let api: IApiExtend;
 
-    @SetupFixture
-    public setupFixture() {
-        this.he = {} as IHttpExtend;
-        this.se = {} as ISettingsExtend;
-        this.sce = {} as ISlashCommandsExtend;
-        this.api = {} as IApiExtend;
-    }
+beforeAll(() => {
+    he = {} as IHttpExtend;
+    se = {} as ISettingsExtend;
+    sce = {} as ISlashCommandsExtend;
+    api = {} as IApiExtend;
+});
 
-    @Test()
-    public useConfigurationExtend() {
-        Expect(() => new ConfigurationExtend(this.he, this.se, this.sce, this.api)).not.toThrow();
+test('useConfigurationExtend', () => {
+        expect(() => new ConfigurationExtend(he, se, sce, api)).not.toThrow();
 
-        const se = new ConfigurationExtend(this.he, this.se, this.sce, this.api);
-        Expect(se.http).toBeDefined();
-        Expect(se.settings).toBeDefined();
-        Expect(se.slashCommands).toBeDefined();
-    }
-}
+        const ce = new ConfigurationExtend(he, se, sce, api);
+        expect(ce.http).toBeDefined();
+        expect(ce.settings).toBeDefined();
+        expect(ce.slashCommands).toBeDefined();
+});
