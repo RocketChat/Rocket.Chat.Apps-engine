@@ -1,14 +1,9 @@
 module.exports = {
     roots: ['<rootDir>/tests/server'],
+    coverageDirectory: 'coverage',
     transform: {
-        '^.+\\.tsx?$': 'ts-jest',
+        '^.+\\.ts?$': 'ts-jest',
     },
-    testRegex: '(/.*|(\\.|/)(test|spec))\\.ts?$',
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    setupFilesAfterEnv: ['jest-extended'],
-    globals: {
-        'ts-jest': {
-            tsConfig: 'tsconfig.json'
-        }
-    },
+    moduleFileExtensions: ['ts', 'js', 'json', 'node'],
+    setupFilesAfterEnv: ['jest-extended']
 };

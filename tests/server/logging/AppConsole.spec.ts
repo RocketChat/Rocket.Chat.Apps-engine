@@ -57,6 +57,7 @@ test('basicConsoleMethods', () => {
     expect(logger.getEndTime()).toBeDefined();
     expect(logger.getTotalTime()).toBeGreaterThan(1);
 
+    // TODO (Shiqi.Mei)
     // const getFuncSpy = jest.spyOn<any, any>(logger, 'getFunc');
     // expect(getFuncSpy.call([{} as stackTrace.StackFrame])).toBe('anonymous');
     // const mockFrames = new Array<stackTrace.StackFrame>();

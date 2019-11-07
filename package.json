@@ -7,13 +7,13 @@
   "scripts": {
     "start": "gulp",
     "lint": "tslint --project tsconfig.json",
-    "test": "jest",
+    "unit-tests": "jest",
     "fix-lint": "tslint --project tsconfig.json --fix",
     "compile": "gulp compile",
     "go-publish": "gulp publish",
     "go-publish-beta": "gulp publish-beta",
     "go-publish-alpha": "gulp publish-alpha",
-    "test-and-coverage": "nyc npm run unit-tests && nyc report",
+    "test-and-coverage": "nyc npx jest --coverage && nyc report",
     "view-coverage": "npm run test-and-coverage && http-server coverage -p 9082 -c-1",
     "submit-codecov": "codecov --file=coverage/coverage-final.json",
     "gen-doc": "typedoc --mode file --excludePrivate --target ES6 --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
