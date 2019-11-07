@@ -182,7 +182,7 @@ export class AppListenerManager {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTMODIFY)) {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
                     cfMsg,
-                    new MessageBuilder(msg),
+                    new MessageBuilder(msg, appId),
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
@@ -362,7 +362,7 @@ export class AppListenerManager {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY)) {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
                     cfMsg,
-                    new MessageBuilder(msg),
+                    new MessageBuilder(msg, appId),
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),

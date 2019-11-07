@@ -1,5 +1,5 @@
 import { IMessageBuilder } from '../../definition/accessors';
-import { BlockBuilder } from '../../definition/blocks';
+import { BlockBuilder, IBlock } from '../../definition/blocks';
 import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -9,7 +9,7 @@ export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
     private msg: IMessage;
 
-    constructor(message?: IMessage) {
+    constructor(message?: IMessage, private readonly appId?: string) {
         this.kind = RocketChatAssociationModel.MESSAGE;
         this.msg = message ? message : ({} as IMessage);
     }
@@ -166,6 +166,30 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public getBlockBuilder() {
-        return new BlockBuilder();
+        return new BlockBuilder(this.appId);
+    }
+
+    public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
+        if (blocks instanceof BlockBuilder) {
+            [].concat(this.msg.blocks, blocks.getBlocks());
+        } else {
+            [].concat(this.msg.blocks, blocks);
+        }
+
+        return this;
+    }
+
+    public setBlocks(blocks: BlockBuilder | Array<IBlock>) {
+        if (blocks instanceof BlockBuilder) {
+            this.msg.blocks = blocks.getBlocks();
+        } else {
+            this.msg.blocks = blocks;
+        }
+
+        return this;
+    }
+
+    public getBlocks() {
+        return this.msg.blocks;
     }
 }

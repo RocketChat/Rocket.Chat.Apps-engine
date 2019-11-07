@@ -4,7 +4,7 @@ import { BlockType, IBlock, IImageBlock, ISectionBlock } from './Blocks';
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
 
-    constructor() {
+    constructor(private readonly appId: string) {
         this.blocks = [];
     }
 
@@ -34,6 +34,8 @@ export class BlockBuilder {
         if (!block.blockId) {
             block.blockId = this.generateBlockId();
         }
+
+        block.appId = this.appId;
 
         this.blocks.push(block);
     }

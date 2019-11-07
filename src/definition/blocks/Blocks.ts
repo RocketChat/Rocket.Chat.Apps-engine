@@ -10,6 +10,7 @@ export enum BlockType {
 
 export interface IBlock {
     type: BlockType;
+    appId?: string;
     blockId?: string;
 }
 

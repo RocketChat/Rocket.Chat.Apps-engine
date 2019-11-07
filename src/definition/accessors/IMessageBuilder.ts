@@ -1,8 +1,8 @@
+import { BlockBuilder, IBlock } from '../blocks';
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
-import { BlockBuilder } from './blocks';
 
 /**
  * Interface for building out a message.
@@ -202,4 +202,22 @@ export interface IMessageBuilder {
      * the blocks format
      */
     getBlockBuilder(): BlockBuilder;
+
+    /**
+     * Adds a block collection to the message's
+     * own collection
+     */
+    addBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Sets the block collection of the message
+     *
+     * @param blocks
+     */
+    setBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Gets the block collection of the message
+     */
+    getBlocks(): Array<IBlock>;
 }

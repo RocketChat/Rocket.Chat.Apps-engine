@@ -18,6 +18,6 @@ export class Notifier implements INotifier {
     }
 
     public getMessageBuilder(): IMessageBuilder {
-        return new MessageBuilder();
+        return new MessageBuilder(undefined, this.appId);
     }
 }

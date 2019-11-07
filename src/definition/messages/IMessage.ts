@@ -24,6 +24,5 @@ export interface IMessage {
     groupable?: boolean;
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
-    appId?: string;
     blocks?: Array<IBlock>;
 }
