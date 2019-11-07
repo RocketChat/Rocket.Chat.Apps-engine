@@ -1,4 +1,4 @@
-// import * as stackTrace from 'stack-trace';
+import * as stackTrace from 'stack-trace';
 import { ILogEntry, LogMessageSeverity } from '../../../src/definition/accessors';
 import { AppMethod } from '../../../src/definition/metadata';
 
@@ -57,20 +57,21 @@ test('basicConsoleMethods', () => {
     expect(logger.getEndTime()).toBeDefined();
     expect(logger.getTotalTime()).toBeGreaterThan(1);
 
-    // TODO (Shiqi.Mei)
-    // const getFuncSpy = jest.spyOn<any, any>(logger, 'getFunc');
-    // expect(getFuncSpy.call([{} as stackTrace.StackFrame])).toBe('anonymous');
-    // const mockFrames = new Array<stackTrace.StackFrame>();
-    // mockFrames.push({} as stackTrace.StackFrame);
-    // mockFrames.push({
-    //     getMethodName() {
-    //         return 'testing';
-    //     },
-    //     getFunctionName() {
-    //         return null;
-    //     },
-    // } as stackTrace.StackFrame);
-    // expect(getFuncSpy.call(mockFrames)).toBe('testing');
+    const getFuncSpy = jest.spyOn<any, string>(logger, 'getFunc');
+    const { getFunc } = logger as any;
+    expect(getFunc([{} as stackTrace.StackFrame])).toBe('anonymous');
+    const mockFrames = new Array<stackTrace.StackFrame>();
+    mockFrames.push({} as stackTrace.StackFrame);
+    mockFrames.push({
+        getMethodName() {
+            return 'testing';
+        },
+        getFunctionName() {
+            return null;
+        },
+    } as stackTrace.StackFrame);
+    expect(getFunc(mockFrames)).toBe('testing');
+    expect(getFuncSpy).toHaveBeenCalledTimes(2);
 
     expect(AppConsole.toStorageEntry('testing-app', logger)).toBeDefined(); // TODO: better test this
 });
