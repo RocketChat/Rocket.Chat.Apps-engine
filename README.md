@@ -52,9 +52,7 @@ Simply restart the meteor process and it should be fixed.
 - `src/server/bridges/*`
 
 ## Testing Framework:
-Makes great usage of TypeScript and decorators: https://github.com/alsatian-test/alsatian/wiki
-* To run the tests do: `npm run test`
-* To generate the coverage information: `npm run check-coverage`
+* To run the tests do: `npm run unit-tests`
 * To view the coverage: `npm run view-coverage`
 
 # Rocket.Chat Apps TypeScript Definitions
