@@ -1,9 +1,9 @@
 import { IMessageBuilder } from '../../definition/accessors';
+import { BlockBuilder } from '../../definition/blocks';
 import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
-import { BlockBuilder } from '../../definition/accessors/blocks';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;

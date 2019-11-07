@@ -1,7 +1,6 @@
-import { 
+import {
     IConfirmationObject,
-    IPlainTextObject, 
-    ITextObject,
+    IPlainTextObject,
 } from './Objects';
 
 export enum BlockElementType {

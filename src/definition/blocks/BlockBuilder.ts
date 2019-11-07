@@ -1,5 +1,5 @@
 import * as uuid from 'uuid/v4';
-import { IBlock, ISectionBlock, IImageBlock, BlockType } from './Blocks';
+import { BlockType, IBlock, IImageBlock, ISectionBlock } from './Blocks';
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;

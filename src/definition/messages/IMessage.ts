@@ -1,3 +1,4 @@
+import { IBlock } from '../blocks';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
@@ -23,4 +24,6 @@ export interface IMessage {
     groupable?: boolean;
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
+    appId?: string;
+    blocks?: Array<IBlock>;
 }
