@@ -1,5 +1,7 @@
 import * as uuid from 'uuid/v4';
-import { BlockType, IActionBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
+import { Omit } from '../../lib/utils';
+import { BlockType, IActionsBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
+import { BlockElementType, IButtonElement, IInteractiveElement, IImageElement } from './Elements';
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
@@ -8,14 +10,14 @@ export class BlockBuilder {
         this.blocks = [];
     }
 
-    public addSectionBlock(block: ISectionBlock): BlockBuilder {
-        this.addBlock(block);
+    public addSectionBlock(block: Omit<ISectionBlock, 'type'>): BlockBuilder {
+        this.addBlock({ type: BlockType.SECTION, ...block } as ISectionBlock);
 
         return this;
     }
 
-    public addImageBlock(block: IImageBlock): BlockBuilder {
-        this.addBlock(block);
+    public addImageBlock(block: Omit<IImageBlock, 'type'>): BlockBuilder {
+        this.addBlock({ type: BlockType.IMAGE, ...block } as IImageBlock);
 
         return this;
     }
@@ -26,8 +28,8 @@ export class BlockBuilder {
         return this;
     }
 
-    public addActionsBlock(block: IActionBlock): BlockBuilder {
-        this.addBlock(block);
+    public addActionsBlock(block: Omit<IActionsBlock, 'type'>): BlockBuilder {
+        this.addBlock({ type: BlockType.ACTIONS, ...block } as IActionsBlock);
 
         return this;
     }
@@ -36,12 +38,27 @@ export class BlockBuilder {
         return this.blocks;
     }
 
-    // public newButtonElement(info: Exclude<IButtonElement, 'type'>): IButtonElement {
-    //     return {
-    //         type: BlockElementType.BUTTON,
-    //         ...info,
-    //     };
-    // }
+    public newButtonElement(info: Omit<IButtonElement, 'type' | 'actionId'>): IButtonElement {
+        return this.newInteractiveElement({
+            type: BlockElementType.BUTTON,
+            ...info,
+        } as IButtonElement);
+    }
+
+    public newImageElement(info: Omit<IImageElement, 'type'>): IImageElement {
+        return {
+            type: BlockElementType.IMAGE,
+            ...info,
+       } as IImageElement;
+    }
+
+    private newInteractiveElement<T extends IInteractiveElement>(block: T): T {
+        if (!block.actionId) {
+            block.actionId = this.generateActionId();
+        }
+
+        return block;
+    }
 
     private addBlock(block: IBlock): void {
         if (!block.blockId) {
@@ -54,6 +71,10 @@ export class BlockBuilder {
     }
 
     private generateBlockId(): string {
+        return uuid();
+    }
+
+    private generateActionId(): string {
         return uuid();
     }
 }

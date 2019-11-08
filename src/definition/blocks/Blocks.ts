@@ -32,7 +32,7 @@ export interface IDividerBlock extends IBlock {
     type: BlockType.DIVIDER;
 }
 
-export interface IActionBlock extends IBlock {
+export interface IActionsBlock extends IBlock {
     type: BlockType.ACTIONS;
     elements: Array<IBlockElement>;
 }
