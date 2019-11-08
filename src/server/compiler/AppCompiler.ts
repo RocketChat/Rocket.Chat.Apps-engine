@@ -1,7 +1,7 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as ts from 'typescript';
-import * as vm from 'vm';
+import fs from 'fs';
+import path from 'path';
+import ts from 'typescript';
+import vm from 'vm';
 
 import { App } from '../../definition/App';
 import { AppMethod, IAppInfo } from '../../definition/metadata';

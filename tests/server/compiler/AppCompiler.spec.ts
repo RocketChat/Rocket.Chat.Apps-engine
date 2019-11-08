@@ -1,6 +1,6 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as ts from 'typescript';
+import fs from 'fs';
+import path from 'path';
+import ts from 'typescript';
 
 import { AppCompiler, ICompilerFile } from '../../../src/server/compiler';
 

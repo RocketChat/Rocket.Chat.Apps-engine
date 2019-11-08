@@ -1,4 +1,4 @@
-import cloneDeep = require('lodash.clonedeep');
+import cloneDeep from 'lodash.clonedeep';
 import * as path from 'path';
 import * as vm from 'vm';
 

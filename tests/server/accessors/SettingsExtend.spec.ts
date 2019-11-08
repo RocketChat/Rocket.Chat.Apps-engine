@@ -44,5 +44,5 @@ test('provideSettingToSettingsExtend', async (): Promise<void> => {
     await expect(() => se.provideSetting(settingModified)).not.toThrowError();
     expect(mockedStorageItem.settings.testing).toBeDefined();
     expect(mockedStorageItem.settings.testing.value).not.toBeDefined();
-    expect(mockedStorageItem.settings.testing.i18nLabel).toBe('Testing_Settings');
+    expect(mockedStorageItem.settings.testing.i18nLabel).toBe('Testing_Thing');
 });

@@ -56,6 +56,12 @@
   },
   "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.6.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-typescript": "^7.7.2",
     "@types/adm-zip": "^0.4.31",
     "@types/jest": "^24.0.21",
     "@types/lodash.clonedeep": "^4.5.3",
@@ -64,6 +70,7 @@
     "@types/semver": "^5.5.0",
     "@types/stack-trace": "0.0.29",
     "@types/uuid": "^3.4.3",
+    "babel-jest": "^24.9.0",
     "codecov": "^3.0.1",
     "del": "^3.0.0",
     "eslint": "^4.19.1",
@@ -80,7 +87,6 @@
     "nedb": "^1.8.0",
     "nyc": "^11.9.0",
     "pre-commit": "^1.2.2",
-    "ts-jest": "^24.1.0",
     "ts-node": "^6.2.0",
     "tslint": "^5.11.0",
     "typedoc": "^0.11.1"

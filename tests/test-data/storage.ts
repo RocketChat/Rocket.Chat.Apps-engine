@@ -1,4 +1,4 @@
-import * as Datastore from 'nedb';
+import Datastore from 'nedb';
 import { AppStorage, IAppStorageItem } from '../../src/server/storage';
 
 export class TestsAppStorage extends AppStorage {
