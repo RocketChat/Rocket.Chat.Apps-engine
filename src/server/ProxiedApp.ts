@@ -1,4 +1,4 @@
-import * as vm from 'vm';
+import vm from 'vm';
 
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';

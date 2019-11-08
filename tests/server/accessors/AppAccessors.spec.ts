@@ -1,4 +1,4 @@
-import * as vm from 'vm';
+import vm from 'vm';
 
 import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';

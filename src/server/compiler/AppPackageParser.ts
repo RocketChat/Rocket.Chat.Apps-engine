@@ -3,11 +3,11 @@ import { AppCompiler } from './AppCompiler';
 import { ICompilerFile } from './ICompilerFile';
 import { IParseZipResult } from './IParseZipResult';
 
-import * as AdmZip from 'adm-zip';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as semver from 'semver';
-import * as uuidv4 from 'uuid/v4';
+import AdmZip from 'adm-zip';
+import fs from 'fs';
+import path from 'path';
+import semver from 'semver';
+import uuidv4 from 'uuid/v4';
 import { IAppInfo } from '../../definition/metadata/IAppInfo';
 
 export class AppPackageParser {

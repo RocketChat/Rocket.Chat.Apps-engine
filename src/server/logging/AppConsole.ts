@@ -1,4 +1,4 @@
-import * as stackTrace from 'stack-trace';
+import stackTrace from 'stack-trace';
 
 import { ILogEntry, ILogger, LogMessageSeverity } from '../../definition/accessors';
 import { AppMethod } from '../../definition/metadata';

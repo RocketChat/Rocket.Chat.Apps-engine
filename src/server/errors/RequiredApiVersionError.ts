@@ -1,4 +1,4 @@
-import * as semver from 'semver';
+import semver from 'semver';
 import { IAppInfo } from '../../definition/metadata';
 
 export class RequiredApiVersionError implements Error {

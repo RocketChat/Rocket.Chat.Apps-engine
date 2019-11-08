@@ -1,4 +1,4 @@
-import * as vm from 'vm';
+import vm from 'vm';
 
 import { RequestMethod } from '../../../src/definition/accessors';
 import { IApi, IApiRequest } from '../../../src/definition/api';
