@@ -26,7 +26,7 @@ export class BlockBuilder {
         return this;
     }
 
-    public addActionBlock(block: IActionBlock): BlockBuilder {
+    public addActionsBlock(block: IActionBlock): BlockBuilder {
         this.addBlock(block);
 
         return this;
