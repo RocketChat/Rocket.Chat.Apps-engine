@@ -5,6 +5,7 @@ import {
 
 export enum BlockElementType {
     BUTTON = 'button',
+    IMAGE = 'image',
 }
 
 export interface IBlockElement {
@@ -27,4 +28,10 @@ export interface IButtonElement extends IInteractiveElement {
     url?: string;
     style?: ButtonStyle;
     confirm?: IConfirmationObject;
+}
+
+export interface IImageElement extends IBlockElement {
+    type: BlockElementType.IMAGE;
+    imageUrl: string;
+    altText: string;
 }

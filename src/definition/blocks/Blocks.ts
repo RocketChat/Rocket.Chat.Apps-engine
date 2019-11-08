@@ -5,7 +5,7 @@ export enum BlockType {
     SECTION = 'section',
     DIVIDER = 'divider',
     IMAGE = 'image',
-
+    ACTIONS = 'actions',
 }
 
 export interface IBlock {
@@ -30,4 +30,9 @@ export interface IImageBlock extends IBlock {
 
 export interface IDividerBlock extends IBlock {
     type: BlockType.DIVIDER;
+}
+
+export interface IActionBlock extends IBlock {
+    type: BlockType.ACTIONS;
+    elements: Array<IBlockElement>;
 }

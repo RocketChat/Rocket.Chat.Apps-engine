@@ -1,5 +1,5 @@
 import * as uuid from 'uuid/v4';
-import { BlockType, IBlock, IImageBlock, ISectionBlock } from './Blocks';
+import { BlockType, IActionBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
@@ -26,9 +26,22 @@ export class BlockBuilder {
         return this;
     }
 
+    public addActionBlock(block: IActionBlock): BlockBuilder {
+        this.addBlock(block);
+
+        return this;
+    }
+
     public getBlocks() {
         return this.blocks;
     }
+
+    // public newButtonElement(info: Exclude<IButtonElement, 'type'>): IButtonElement {
+    //     return {
+    //         type: BlockElementType.BUTTON,
+    //         ...info,
+    //     };
+    // }
 
     private addBlock(block: IBlock): void {
         if (!block.blockId) {
