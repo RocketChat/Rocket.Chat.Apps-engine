@@ -2,7 +2,7 @@ import { IBlockElement } from './Elements';
 import { IPlainTextObject, ITextObject } from './Objects';
 
 export enum BlockType {
-    SECTION = 'selection',
+    SECTION = 'section',
     DIVIDER = 'divider',
     IMAGE = 'image',
 
