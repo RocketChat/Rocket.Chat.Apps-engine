@@ -19,6 +19,8 @@ whitelist: &whitelist
     - tsconfig.json
     - tslint.json
     - gulpfile.js
+    - jest.config.js
+    - babel.config.js
 
 jobs:
   checkout:
