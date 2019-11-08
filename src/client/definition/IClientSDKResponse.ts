@@ -1,9 +1,9 @@
 import { IClientRoomInfo, IClientUserInfo } from './index';
 
 /**
- * The response to the AppClientEmbeddedSDK's API call.
+ * The response to the AppClientSDK's API call.
  */
-export interface IClientEmbeddedSDKResonse {
+export interface IClientSDKResonse {
     /**
      * The name of the action
      */
