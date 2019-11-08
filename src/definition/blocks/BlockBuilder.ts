@@ -1,7 +1,7 @@
 import * as uuid from 'uuid/v4';
 import { Omit } from '../../lib/utils';
 import { BlockType, IActionsBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
-import { BlockElementType, IButtonElement, IInteractiveElement, IImageElement } from './Elements';
+import { BlockElementType, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
