@@ -4,11 +4,21 @@ import { AppMethod } from '../../../src/definition/metadata';
 
 import { AppConsole } from '../../../src/server/logging';
 
+let logger: AppConsole;
+let entries: Array<ILogEntry>;
+
+beforeEach(() => {
+    logger = new AppConsole(AppMethod._CONSTRUCTOR);
+    entries = (logger as any).entries;
+});
+
+afterEach(() => {
+    logger = null;
+    entries = null;
+});
+
 test('basicConsoleMethods', () => {
     expect(() => new AppConsole(AppMethod._CONSTRUCTOR)).not.toThrow();
-
-    const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-    const entries: Array<ILogEntry> = (logger as any).entries;
 
     expect(() => logger.debug('this is a debug')).not.toThrow();
     expect(entries.length).toBe(1);
@@ -41,6 +51,17 @@ test('basicConsoleMethods', () => {
     expect(entries[5].severity).toBe(LogMessageSeverity.SUCCESS);
     expect(entries[5].args[0]).toBe('this is a success');
 
+    const obj = { stack: '', message: '' };
+    expect(() => logger.debug(obj)).not.toThrow();
+    expect(entries.length).toBe(7);
+    expect(entries[6].severity).toBe(LogMessageSeverity.DEBUG);
+    expect(entries[6].args[0]).toBe(JSON.stringify(obj));
+
+    expect(() => logger.debug(undefined)).not.toThrow();
+    expect(entries.length).toBe(8);
+    expect(entries[7].severity).toBe(LogMessageSeverity.DEBUG);
+    expect(entries[7].args[0]).toBe(undefined);
+
     expect(() => {
         class Item {
             constructor() {
@@ -56,7 +77,9 @@ test('basicConsoleMethods', () => {
     expect(logger.getStartTime()).toBeDefined();
     expect(logger.getEndTime()).toBeDefined();
     expect(logger.getTotalTime()).toBeGreaterThan(1);
+});
 
+test('getFunc', () => {
     const getFuncSpy = jest.spyOn<any, string>(logger, 'getFunc');
     const { getFunc } = logger as any;
     expect(getFunc([{} as stackTrace.StackFrame])).toBe('anonymous');
@@ -72,6 +95,13 @@ test('basicConsoleMethods', () => {
     } as stackTrace.StackFrame);
     expect(getFunc(mockFrames)).toBe('testing');
     expect(getFuncSpy).toHaveBeenCalledTimes(2);
+});
 
-    expect(AppConsole.toStorageEntry('testing-app', logger)).toBeDefined(); // TODO: better test this
+test('toStorageEntry', () => {
+    const toStorageEntrySpy = jest.spyOn(AppConsole, 'toStorageEntry');
+
+    expect(AppConsole.toStorageEntry('testing-app', logger)).toBeDefined();
+    expect(Object.keys(toStorageEntrySpy.mock.results[0].value)).toEqual(
+        expect.arrayContaining(['appId', 'method', 'entries', 'startTime', 'endTime', 'totalTime', '_createdAt']),
+    );
 });
