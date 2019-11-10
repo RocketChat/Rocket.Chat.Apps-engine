@@ -54,5 +54,5 @@ test('createVisitor', () => {
 
 test('createToken', () => {
     expect(() => livechatCreator.createToken()).not.toThrow();
-    expect(livechatCreator.createToken().length).toBeGreaterThan(20);
+    expect(livechatCreator.createToken().length).toBeGreaterThanOrEqual(20);
 });
