@@ -1,5 +1,5 @@
 import { ACTION_ID_LENGTH } from './constants';
-import { IClientRoomInfo, IClientUserInfo } from './definition';
+import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
 import { ClientSDKActions } from './definition/ClientSDKActions';
 import { randomString } from './utils';
 
@@ -19,7 +19,7 @@ export class AppsEngineClient {
      *
      * @return the information of the current user.
      */
-    public getUserInfo(): Promise<IClientUserInfo> {
+    public getUserInfo(): Promise<IExternalComponentUserInfo> {
         return this.call(ClientSDKActions.GET_USER_INFO);
     }
     /**
@@ -27,7 +27,7 @@ export class AppsEngineClient {
      *
      * @return the information of the current room.
      */
-    public getRoomInfo(): Promise<IClientRoomInfo> {
+    public getRoomInfo(): Promise<IExternalComponentRoomInfo> {
         return this.call(ClientSDKActions.GET_ROOM_INFO);
     }
 

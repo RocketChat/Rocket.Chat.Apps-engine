@@ -1,8 +1,8 @@
 import {
     ClientSDKActions,
-    IClientRoomInfo,
-    IClientSDKResonse,
-    IClientUserInfo,
+    IClientSDKResponse,
+    IExternalComponentRoomInfo,
+    IExternalComponentUserInfo,
 } from './definition';
 
 /**
@@ -12,7 +12,8 @@ export abstract class AppClientUIHost {
     /**
      * The message emitter who calling the API.
      */
-    private emitter!: MessageEventSource;
+    private emitter!: Window;
+
     constructor() {
         this.initialize();
     }
@@ -39,21 +40,18 @@ export abstract class AppClientUIHost {
     /**
      * Get the current user's information.
      */
-    public abstract async getClientUserInfo(): Promise<IClientUserInfo>;
+    public abstract async getClientUserInfo(): Promise<IExternalComponentUserInfo>;
     /**
      * Get the opened room's information.
      */
-    public abstract async getClientRoomInfo(): Promise<IClientRoomInfo>;
+    public abstract async getClientRoomInfo(): Promise<IExternalComponentRoomInfo>;
     /**
      * Handle the action sent from the external component.
      * @param action the name of the action
      * @param id the unique id of the  API call
      * @param data The data that will return to the caller
      */
-    private async handleAction(
-        action: ClientSDKActions,
-        id: string, data: IClientUserInfo | IClientRoomInfo,
-    ): Promise<void> {
+    private async handleAction(action: ClientSDKActions, id: string, data: IExternalComponentUserInfo | IExternalComponentRoomInfo): Promise<void> {
         if ((this.emitter instanceof MessagePort) || (this.emitter instanceof ServiceWorker)) {
             return;
         }
@@ -63,7 +61,7 @@ export abstract class AppClientUIHost {
                 id,
                 action,
                 payload: data,
-            } as IClientSDKResonse,
+            } as IClientSDKResponse,
         }, '*');
     }
 }
