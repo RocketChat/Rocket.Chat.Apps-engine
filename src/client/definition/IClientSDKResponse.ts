@@ -1,9 +1,9 @@
-import { IClientRoomInfo, IClientUserInfo } from './index';
+import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './index';
 
 /**
  * The response to the AppClientSDK's API call.
  */
-export interface IClientSDKResonse {
+export interface IClientSDKResponse {
     /**
      * The name of the action
      */
@@ -15,5 +15,5 @@ export interface IClientSDKResonse {
     /**
      * The data that will return to the caller
      */
-    payload: IClientUserInfo | IClientRoomInfo;
+    payload: IExternalComponentUserInfo | IExternalComponentRoomInfo;
 }

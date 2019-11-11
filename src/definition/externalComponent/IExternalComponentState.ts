@@ -1,4 +1,4 @@
-import { IClientRoomInfo, IClientUserInfo } from '../../client/definition';
+import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from '../../client/definition';
 
 /**
  * The state of an external component, which contains the
@@ -8,9 +8,9 @@ export interface IExternalComponentState {
     /**
      * The user who opened this external component
      */
-    currentUser: IClientUserInfo;
+    currentUser: IExternalComponentUserInfo;
     /**
      * The room where the external component belongs to
      */
-    currentRoom: IClientRoomInfo;
+    currentRoom: IExternalComponentRoomInfo;
 }
