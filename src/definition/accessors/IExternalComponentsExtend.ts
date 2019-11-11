@@ -4,7 +4,7 @@ import { IExternalComponent } from '../externalComponent';
  * This accessor provides a method for registering external
  * components. This is provided during the initialization of your App.
  */
-export interface IExternalComponentExtend {
+export interface IExternalComponentsExtend {
     /**
      * Register an external component to the system.
      * If you call this method twice and the component

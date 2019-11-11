@@ -1,5 +1,5 @@
 import { IApiExtend } from './IApiExtend';
-import { IExternalComponentExtend } from './IExternalComponentsExtend';
+import { IExternalComponentsExtend } from './IExternalComponentsExtend';
 import { IHttpExtend } from './IHttp';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
@@ -19,5 +19,5 @@ export interface IConfigurationExtend {
     readonly slashCommands: ISlashCommandsExtend;
     readonly api: IApiExtend;
 
-    readonly externalComponent: IExternalComponentExtend;
+    readonly externalComponents: IExternalComponentsExtend;
 }

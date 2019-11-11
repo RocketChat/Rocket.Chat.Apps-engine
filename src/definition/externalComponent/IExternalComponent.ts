@@ -9,7 +9,7 @@ export interface IExternalComponent {
      */
     appId: string;
     /**
-     * Provides the name of the external component.
+     * Provides the name of the external component. This key must be unique.
      */
     name: string;
     /**
