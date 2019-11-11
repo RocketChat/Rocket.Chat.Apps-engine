@@ -7,10 +7,10 @@ export class AppClientManager {
     private apps: Array<IAppInfo>;
 
     constructor(
-        private readonly appClientUIHost: AppsEngineUIHost,
+        private readonly appsEngineUIHost: AppsEngineUIHost,
         private readonly communicator?: AppServerCommunicator,
     ) {
-        if (!(appClientUIHost instanceof AppsEngineUIHost)) {
+        if (!(appsEngineUIHost instanceof AppsEngineUIHost)) {
             throw new Error('The appClientUIHost must extend appClientUIHost');
         }
 
@@ -27,6 +27,6 @@ export class AppClientManager {
     }
 
     public async initialize(): Promise<void> {
-        this.appClientUIHost.initialize();
+        this.appsEngineUIHost.initialize();
     }
 }
