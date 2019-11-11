@@ -1,4 +1,4 @@
-import { ACTION_ID_LENGTH } from './constants';
+import { ACTION_ID_LENGTH, MESSAGE_ID } from './constants';
 import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
 import { AppsEngineUIMethods } from './definition/AppsEngineUIMethods';
 import { randomString } from './utils';
@@ -36,11 +36,11 @@ export class AppsEngineUIClient {
      */
     public init(): void {
         this.listener = ({ data }) => {
-            if (!data.hasOwnProperty('rcSDK')) {
+            if (!data.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
 
-            const { rcSDK: { id, payload } } = data;
+            const { [MESSAGE_ID]: { id, payload } } = data;
 
             if (this.callbacks.has(id)) {
                 const resolve = this.callbacks.get(id);
@@ -58,7 +58,7 @@ export class AppsEngineUIClient {
         return new Promise((resolve) => {
             const id = randomString(ACTION_ID_LENGTH);
 
-            window.parent.postMessage({ rcSDK: { action, payload, id } }, '*');
+            window.parent.postMessage({ [MESSAGE_ID]: { action, payload, id } }, '*');
             this.callbacks.set(id, resolve);
         });
     }
