@@ -1,5 +1,5 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser, IParseAppZipResult } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -369,6 +369,10 @@ export class AppManager {
         await this.storage.update(storageItem).catch();
 
         return true;
+    }
+
+    private async addApp(parsedResult: IParseAppZipResult) {
+
     }
 
     public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {

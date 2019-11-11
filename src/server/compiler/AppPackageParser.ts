@@ -1,7 +1,7 @@
 import { RequiredApiVersionError } from '../errors';
 import { AppCompiler } from './AppCompiler';
 import { ICompilerFile } from './ICompilerFile';
-import { IParseZipResult } from './IParseZipResult';
+import { IParseAppZipResult } from './IParseAppZipResult';
 
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
 import { IAppInfo } from '../../definition/metadata/IAppInfo';
+import { IParseBundleZipResult } from './IParseBundleZipResult';
 
 export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
@@ -20,9 +21,7 @@ export class AppPackageParser {
         this.appsEngineVersion = this.getEngineVersion();
     }
 
-    public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
-        const infoZip = zip.getEntry('app.json');
+    private packageApp(zipContents: AdmZip, compiler: AppCompiler): Promise<IParseAppZipResult> {
         let info: IAppInfo;
 
         if (infoZip && !infoZip.isDirectory) {
@@ -94,6 +93,11 @@ export class AppPackageParser {
             implemented: result.implemented,
             compilerErrors: result.compilerErrors,
         };
+    }
+
+    public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseAppZipResult | IParseBundleZipResult> {
+        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
+        const infoZip = zip.getEntry('app.json');
     }
 
     private getLanguageContent(zip: AdmZip): { [key: string]: object } {
