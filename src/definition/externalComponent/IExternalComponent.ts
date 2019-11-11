@@ -1,4 +1,5 @@
 import { IExternalComponentOptions } from './IExternalComponentOptions';
+import { IExternalComponentState } from './IExternalComponentState';
 /**
  * Represents an external component that is being provided.
  */
@@ -33,6 +34,14 @@ export interface IExternalComponent {
      * Provides options for the external component.
      */
     options?: IExternalComponentOptions;
+    /**
+     * Represents the current state of the external component.
+     * The value is *null* until the ExternalComponentOpened
+     * event is triggered. It doesn't make sense to get its value in
+     * PreExternalComponentOpenedPrevent, PreExternalComponentOpenedModify
+     * and PreExternalComponentOpenedExtend handlers.
+     */
+    state?: IExternalComponentState;
 }
 
 export enum ExternalComponentLocation {

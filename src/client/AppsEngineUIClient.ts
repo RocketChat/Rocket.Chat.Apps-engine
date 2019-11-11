@@ -1,11 +1,12 @@
-import { ACTION_ID_LENGTH } from './constants';
-import { IClientRoomInfo, IClientUserInfo } from './interfaces';
+import { ACTION_ID_LENGTH, MESSAGE_ID } from './constants';
+import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
+import { AppsEngineUIMethods } from './definition/AppsEngineUIMethods';
 import { randomString } from './utils';
 
 /**
  * Represents the SDK provided to the external component.
  */
-export class AppClientEmbeddedSDK {
+export class AppsEngineUIClient {
     private listener: (this: Window, ev: MessageEvent) => any;
     private callbacks: Map<string, (response: any) => any>;
 
@@ -18,28 +19,28 @@ export class AppClientEmbeddedSDK {
      *
      * @return the information of the current user.
      */
-    public getUserInfo(): Promise<IClientUserInfo> {
-        return this.call(AppEmbeddedSDKActions.GET_USER_INFO);
+    public getUserInfo(): Promise<IExternalComponentUserInfo> {
+        return this.call(AppsEngineUIMethods.GET_USER_INFO);
     }
     /**
      * Get the current room's information.
      *
      * @return the information of the current room.
      */
-    public getRoomInfo(): Promise<IClientRoomInfo> {
-        return this.call(AppEmbeddedSDKActions.GET_ROOM_INFO);
+    public getRoomInfo(): Promise<IExternalComponentRoomInfo> {
+        return this.call(AppsEngineUIMethods.GET_ROOM_INFO);
     }
 
     /**
-     * Initialize the app embedded SDK for communicating with Rocket.Chat
+     * Initialize the app  SDK for communicating with Rocket.Chat
      */
     public init(): void {
         this.listener = ({ data }) => {
-            if (!data.hasOwnProperty('rcEmbeddedSDK')) {
+            if (!data.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
 
-            const { rcEmbeddedSDK: { id, payload } } = data;
+            const { [MESSAGE_ID]: { id, payload } } = data;
 
             if (this.callbacks.has(id)) {
                 const resolve = this.callbacks.get(id);
@@ -57,13 +58,8 @@ export class AppClientEmbeddedSDK {
         return new Promise((resolve) => {
             const id = randomString(ACTION_ID_LENGTH);
 
-            window.parent.postMessage({ rcEmbeddedSDK: { action, payload, id } }, '*');
+            window.parent.postMessage({ [MESSAGE_ID]: { action, payload, id } }, '*');
             this.callbacks.set(id, resolve);
         });
     }
-}
-
-export enum AppEmbeddedSDKActions {
-    GET_USER_INFO = 'getUserInfo',
-    GET_ROOM_INFO = 'getRoomInfo',
 }

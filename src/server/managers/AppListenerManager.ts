@@ -4,6 +4,7 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
+import { IExternalComponent } from '../../definition/externalComponent';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -52,7 +53,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser| IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -92,6 +93,13 @@ export class AppListenerManager {
                 return this.executePreRoomDeletePrevent(data as IRoom);
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
+                return;
+            // External Components
+            case AppInterface.IPostExternalComponentOpened:
+                this.executePostExternalComponentOpened(data as IExternalComponent);
+                return;
+            case AppInterface.IPostExternalComponentClosed:
+                this.executePostExternalComponentClosed(data as IExternalComponent);
                 return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
@@ -571,6 +579,41 @@ export class AppListenerManager {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTROOMDELETED,
                     cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    // External Components
+    private async executePostExternalComponentOpened(data: IExternalComponent): Promise<void> {
+        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
+                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
+                    cfExternalComponent,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostExternalComponentClosed(data: IExternalComponent): Promise<void> {
+        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
+                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
+                    cfExternalComponent,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
