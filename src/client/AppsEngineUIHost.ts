@@ -1,3 +1,4 @@
+import { MESSAGE_ID } from './constants';
 import {
     AppsEngineUIMethods,
     IAppsEngineUIResponse,
@@ -5,18 +6,16 @@ import {
     IExternalComponentUserInfo,
 } from './definition';
 
-const MESSAGE_ID = 'rc-apps-engine-ui';
-
 type HandleActionData = IExternalComponentUserInfo | IExternalComponentRoomInfo;
 
 /**
- * Represents the host which handlers API calls from external components.
+ * Represents the host which handles API calls from external components.
  */
 export abstract class AppsEngineUIHost {
     /**
      * The message emitter who calling the API.
      */
-    private emitter!: Window;
+    private responseDestination!: Window;
 
     constructor() {
         this.initialize();
@@ -26,11 +25,11 @@ export abstract class AppsEngineUIHost {
      */
     public initialize() {
         window.addEventListener('message', async ({ data, source }) => {
-            this.emitter = source;
-
             if (!data.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
+
+            this.responseDestination = source;
 
             const { [MESSAGE_ID]: { action, id } } = data;
 
@@ -57,11 +56,11 @@ export abstract class AppsEngineUIHost {
      * @param data The data that will return to the caller
      */
     private async handleAction(action: AppsEngineUIMethods, id: string, data: HandleActionData): Promise<void> {
-        if ((this.emitter instanceof MessagePort) || (this.emitter instanceof ServiceWorker)) {
+        if ((this.responseDestination instanceof MessagePort) || (this.responseDestination instanceof ServiceWorker)) {
             return;
         }
 
-        this.emitter.postMessage({
+        this.responseDestination.postMessage({
             [MESSAGE_ID]: {
                 id,
                 action,
