@@ -3,7 +3,7 @@ import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './index'
 /**
  * The response to the AppClientSDK's API call.
  */
-export interface IClientSDKResponse {
+export interface IAppsEngineUIResponse {
     /**
      * The name of the action
      */

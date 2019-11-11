@@ -1,4 +1,4 @@
 export * from './ClientSDKActions';
 export * from './IExternalComponentUserInfo';
 export * from './IExternalComponentRoomInfo';
-export * from './IClientSDKResponse';
+export * from './IAppsEngineUIResponse';

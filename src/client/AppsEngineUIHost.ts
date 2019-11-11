@@ -5,6 +5,10 @@ import {
     IExternalComponentUserInfo,
 } from './definition';
 
+const MESSAGE_ID = 'rc-apps-engine-ui';
+
+type HandleActionData = IExternalComponentUserInfo | IExternalComponentRoomInfo;
+
 /**
  * Represents the host which handlers API calls from external components.
  */
@@ -24,11 +28,11 @@ export abstract class AppsEngineUIHost {
         window.addEventListener('message', async ({ data, source }) => {
             this.emitter = source;
 
-            if (!data.hasOwnProperty('rcSDK')) {
+            if (!data.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
 
-            const { rcSDK: { action, id } } = data;
+            const { [MESSAGE_ID]: { action, id } } = data;
 
             switch (action) {
                 case AppsEngineUIMethods.GET_USER_INFO:
@@ -52,13 +56,13 @@ export abstract class AppsEngineUIHost {
      * @param id the unique id of the  API call
      * @param data The data that will return to the caller
      */
-    private async handleAction(action: AppsEngineUIMethods, id: string, data: IExternalComponentUserInfo | IExternalComponentRoomInfo): Promise<void> {
+    private async handleAction(action: AppsEngineUIMethods, id: string, data: HandleActionData): Promise<void> {
         if ((this.emitter instanceof MessagePort) || (this.emitter instanceof ServiceWorker)) {
             return;
         }
 
         this.emitter.postMessage({
-            rcSDK: {
+            [MESSAGE_ID]: {
                 id,
                 action,
                 payload: data,

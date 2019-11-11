@@ -1,16 +1,16 @@
 import { IAppInfo } from '../definition/metadata';
 
-import { AppClientUIHost } from './AppClientUIHost';
+import { AppsEngineUIHost } from './AppsEngineUIHost';
 import { AppServerCommunicator } from './AppServerCommunicator';
 
 export class AppClientManager {
     private apps: Array<IAppInfo>;
 
     constructor(
-        private readonly appClientUIHost: AppClientUIHost,
+        private readonly appClientUIHost: AppsEngineUIHost,
         private readonly communicator?: AppServerCommunicator,
     ) {
-        if (!(appClientUIHost instanceof AppClientUIHost)) {
+        if (!(appClientUIHost instanceof AppsEngineUIHost)) {
             throw new Error('The appClientUIHost must extend appClientUIHost');
         }
 
