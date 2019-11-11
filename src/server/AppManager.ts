@@ -170,7 +170,9 @@ export class AppManager {
                 aff.setCompilerErrors(result.compilerErrors);
 
                 if (result.compilerErrors.length > 0) {
-                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors.`);
+                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
+
+                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
                 }
 
                 item.compiled = result.compiledFiles;
