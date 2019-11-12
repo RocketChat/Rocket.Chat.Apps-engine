@@ -1,5 +1,5 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppFabricationFulfillment, AppPackageParser, IParseAppZipResult } from './compiler';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser, IParseAppZipResult, IParseBundleZipResult, ZipContentType } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -155,14 +155,20 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const result = await this.getParser().parseZip(this.getCompiler(), item.zip);
+                const zipResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(item.zip, 'base64'));
+
+                if (zipResult.contentType !== ZipContentType.APP) {
+                    throw new Error('Invalid zip content provided');
+                }
+
+                const result = zipResult.parsed as IParseAppZipResult;
 
                 aff.setAppInfo(result.info);
                 aff.setImplementedInterfaces(result.implemented.getValues());
                 aff.setCompilerErrors(result.compilerErrors);
 
                 if (result.compilerErrors.length > 0) {
-                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
+                    const errors = result.compilerErrors.map(({ message }: { message: string }) => message).join('\n');
 
                     throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
                 }
@@ -371,31 +377,43 @@ export class AppManager {
         return true;
     }
 
-    private async addApp(parsedResult: IParseAppZipResult) {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<Array<AppFabricationFulfillment>> {
+        const parseResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(zipContentsBase64d, 'base64'));
 
+        if (parseResult.contentType === ZipContentType.APP) {
+            return [await this.addApp(parseResult.parsed as IParseAppZipResult, enable, marketplaceInfo)];
+        }
+
+        if (parseResult.contentType === ZipContentType.BUNDLE) {
+            return this.addBundle(parseResult.parsed as IParseBundleZipResult, enable);
+        }
     }
 
-    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    private addBundle(bundleParseResult: IParseBundleZipResult, enable: boolean): Promise<Array<AppFabricationFulfillment>> {
+        return Promise.all(bundleParseResult.apps.map(({ parseResult, license }) => this.addApp(parseResult, enable)));
+    }
+
+    private async addApp(parseResult: IParseAppZipResult, enable: boolean, marketplaceInfo?: IMarketplaceInfo) {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
-        aff.setAppInfo(result.info);
-        aff.setImplementedInterfaces(result.implemented.getValues());
-        aff.setCompilerErrors(result.compilerErrors);
+        aff.setAppInfo(parseResult.info);
+        aff.setCompilerErrors(parseResult.compilerErrors);
 
-        if (result.compilerErrors.length > 0) {
+        if (parseResult.compilerErrors.length > 0) {
             return aff;
         }
 
+        aff.setImplementedInterfaces(parseResult.implemented.getValues());
+
         const created = await this.storage.create({
-            id: result.info.id,
-            info: result.info,
+            id: parseResult.info.id,
+            info: parseResult.info,
             status: AppStatus.UNKNOWN,
-            zip: zipContentsBase64d,
-            compiled: result.compiledFiles,
-            languageContent: result.languageContent,
+            zip: parseResult.zipContentsBase64d,
+            compiled: parseResult.compiledFiles,
+            languageContent: parseResult.languageContent,
             settings: {},
-            implemented: result.implemented.getValues(),
+            implemented: parseResult.implemented.getValues(),
             marketplaceInfo,
         });
 
@@ -454,7 +472,13 @@ export class AppManager {
 
     public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
+        const zipResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(zipContentsBase64d, 'base64'));
+
+        if (zipResult.contentType !== ZipContentType.APP) {
+            throw new Error('Invalid zip content provided');
+        }
+
+        const result = zipResult.parsed as IParseAppZipResult;
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());

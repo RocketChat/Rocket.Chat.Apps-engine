@@ -1,8 +1,14 @@
-import { InstallZipType } from './InstallZipType';
 import { IParseAppZipResult } from './IParseAppZipResult';
 
+export interface IBundleZipAppEntry {
+    appId: string;
+    license: string;
+    parseResult?: IParseAppZipResult;
+    error?: string;
+}
+
 export interface IParseBundleZipResult {
-    type: InstallZipType.BUNDLE;
-    info: object;
-    apps: Array<IParseAppZipResult>;
+    version: number;
+    workspaceId: string;
+    apps: Array<IBundleZipAppEntry>;
 }
