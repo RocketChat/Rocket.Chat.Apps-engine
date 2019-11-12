@@ -15,6 +15,12 @@ if (testIndex > -1) {
     tsp.config.include.splice(testIndex, 1);
 }
 
+// Tasks for bundling AppsEngineUIClient SDK
+const bundle_sdk = shell.task([
+    `echo "window.AppsEngineUIClient = require('./AppsEngineUIClient').AppsEngineUIClient;" > client/glue.js`,
+    'cd client && npx browserify glue.js | npx uglifyjs > AppsEngineUIClient.min.js'
+]);
+
 function clean_generated() {
     return del(['./server', './client', './definition']);
 }
@@ -51,6 +57,8 @@ function watch() {
 
 const compile = gulp.series(clean_generated, lint_ts, compile_ts, update_ts_definition_version, ts_definition_module_files);
 
+gulp.task('bundle', bundle_sdk);
+
 gulp.task('clean', clean_generated);
 
 gulp.task('compile', compile);
@@ -61,7 +69,7 @@ gulp.task('pack', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
     'npm pack'
 ])));
 
-gulp.task('publish', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
+gulp.task('publish', gulp.series(clean_generated, lint_ts, compile_ts, bundle_sdk, shell.task([
     'npm publish --access public && npm pack'
 ], [
     'cd definition && npm publish --access public && npm pack'
