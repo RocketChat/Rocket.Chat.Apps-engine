@@ -1,7 +1,4 @@
-import {
-    IConfirmationObject,
-    IPlainTextObject,
-} from './Objects';
+import { IConfirmationObject, ITextObject } from './Objects';
 
 export enum BlockElementType {
     BUTTON = 'button',
@@ -24,7 +21,7 @@ export enum ButtonStyle {
 
 export interface IButtonElement extends IInteractiveElement {
     type: BlockElementType.BUTTON;
-    text: IPlainTextObject;
+    text: ITextObject;
     url?: string;
     style?: ButtonStyle;
     confirm?: IConfirmationObject;
