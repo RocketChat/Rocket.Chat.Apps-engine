@@ -6,16 +6,12 @@ export enum TextObjectType {
 export interface ITextObject {
     type: TextObjectType;
     text: string;
-}
-
-export interface IPlainTextObject extends ITextObject {
-    type: TextObjectType.PLAINTEXT;
     emoji?: boolean;
 }
 
 export interface IConfirmationObject {
-    title: IPlainTextObject;
+    title: ITextObject;
     text: ITextObject;
-    confirm: IPlainTextObject;
-    deny: IPlainTextObject;
+    confirm: ITextObject;
+    deny: ITextObject;
 }

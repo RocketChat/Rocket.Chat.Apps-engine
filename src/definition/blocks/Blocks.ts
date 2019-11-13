@@ -1,5 +1,5 @@
 import { IBlockElement } from './Elements';
-import { IPlainTextObject, ITextObject } from './Objects';
+import { ITextObject } from './Objects';
 
 export enum BlockType {
     SECTION = 'section',
@@ -24,7 +24,7 @@ export interface IImageBlock extends IBlock {
     type: BlockType.IMAGE;
     imageUrl: string;
     altText: string;
-    title?: IPlainTextObject;
+    title?: ITextObject;
     blockId?: string;
 }
 
