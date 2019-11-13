@@ -2,7 +2,18 @@ import * as uuid from 'uuid/v4';
 
 import { Omit } from '../../lib/utils';
 import { BlockType, IActionsBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
-import { BlockElementType, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
+import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
+
+type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
+type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
+    ? Exclude<T, 'type' | 'actionId'> | Partial<Pick<T, 'actionId'>> : Omit<T, 'type'>;
+
+type SectionBlockParam = BlockFunctionParameter<ISectionBlock>;
+type ImageBlockParam = BlockFunctionParameter<IImageBlock>;
+type ActionsBlockParam = BlockFunctionParameter<IActionsBlock>;
+
+type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
+type ImageElementParam = ElementFunctionParameter<IImageElement>;
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
@@ -11,13 +22,13 @@ export class BlockBuilder {
         this.blocks = [];
     }
 
-    public addSectionBlock(block: Omit<ISectionBlock, 'type'>): BlockBuilder {
+    public addSectionBlock(block: SectionBlockParam): BlockBuilder {
         this.addBlock({ type: BlockType.SECTION, ...block } as ISectionBlock);
 
         return this;
     }
 
-    public addImageBlock(block: Omit<IImageBlock, 'type'>): BlockBuilder {
+    public addImageBlock(block: ImageBlockParam): BlockBuilder {
         this.addBlock({ type: BlockType.IMAGE, ...block } as IImageBlock);
 
         return this;
@@ -29,7 +40,7 @@ export class BlockBuilder {
         return this;
     }
 
-    public addActionsBlock(block: Omit<IActionsBlock, 'type'>): BlockBuilder {
+    public addActionsBlock(block: ActionsBlockParam): BlockBuilder {
         this.addBlock({ type: BlockType.ACTIONS, ...block } as IActionsBlock);
 
         return this;
@@ -39,14 +50,14 @@ export class BlockBuilder {
         return this.blocks;
     }
 
-    public newButtonElement(info: Omit<IButtonElement, 'type' | 'actionId'>): IButtonElement {
+    public newButtonElement(info: ButtonElementParam): IButtonElement {
         return this.newInteractiveElement({
             type: BlockElementType.BUTTON,
             ...info,
         } as IButtonElement);
     }
 
-    public newImageElement(info: Omit<IImageElement, 'type'>): IImageElement {
+    public newImageElement(info: ImageElementParam): IImageElement {
         return {
             type: BlockElementType.IMAGE,
             ...info,
