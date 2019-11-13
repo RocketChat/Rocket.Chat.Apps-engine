@@ -9,7 +9,7 @@ export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
     private msg: IMessage;
 
-    constructor(message?: IMessage, private readonly appId?: string) {
+    constructor(message?: IMessage) {
         this.kind = RocketChatAssociationModel.MESSAGE;
         this.msg = message ? message : ({} as IMessage);
     }
@@ -163,10 +163,6 @@ export class MessageBuilder implements IMessageBuilder {
         }
 
         return this.msg;
-    }
-
-    public getBlockBuilder() {
-        return new BlockBuilder(this.appId);
     }
 
     public addBlocks(blocks: BlockBuilder | Array<IBlock>) {

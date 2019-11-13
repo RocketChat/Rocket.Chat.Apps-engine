@@ -196,14 +196,6 @@ export interface IMessageBuilder {
     getMessage(): IMessage;
 
     /**
-     * Gets an instance of a BlockBuilder.
-     *
-     * This enables the creation of rich messages via
-     * the blocks format
-     */
-    getBlockBuilder(): BlockBuilder;
-
-    /**
      * Adds a block collection to the message's
      * own collection
      */

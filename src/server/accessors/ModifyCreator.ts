@@ -3,6 +3,7 @@ import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
+import { BlockBuilder } from '../../definition/blocks';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';
@@ -21,12 +22,16 @@ export class ModifyCreator implements IModifyCreator {
         return this.livechatCreator;
     }
 
+    public getBlockBuilder(): BlockBuilder {
+        return new BlockBuilder(this.appId);
+    }
+
     public startMessage(data?: IMessage): IMessageBuilder {
         if (data) {
             delete data.id;
         }
 
-        return new MessageBuilder(data, this.appId);
+        return new MessageBuilder(data);
     }
 
     public startLivechatMessage(data?: ILivechatMessage): ILivechatMessageBuilder {
@@ -34,7 +39,7 @@ export class ModifyCreator implements IModifyCreator {
             delete data.id;
         }
 
-        return new LivechatMessageBuilder(data, this.appId);
+        return new LivechatMessageBuilder(data);
     }
 
     public startRoom(data?: IRoom): IRoomBuilder {

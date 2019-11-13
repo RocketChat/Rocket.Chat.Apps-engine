@@ -22,7 +22,7 @@ export class ModifyUpdater implements IModifyUpdater {
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
         const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
 
-        return new MessageBuilder(msg, this.appId);
+        return new MessageBuilder(msg);
     }
 
     public async room(roomId: string, updater: IUser): Promise<IRoomBuilder> {
