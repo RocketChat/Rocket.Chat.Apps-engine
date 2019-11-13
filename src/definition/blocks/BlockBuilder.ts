@@ -6,7 +6,7 @@ import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IIntera
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
-    ? Exclude<T, 'type' | 'actionId'> | Partial<Pick<T, 'actionId'>> : Omit<T, 'type'>;
+    ? Omit<T, 'type' | 'actionId'> | Partial<Pick<T, 'actionId'>> : Omit<T, 'type'>;
 
 type SectionBlockParam = BlockFunctionParameter<ISectionBlock>;
 type ImageBlockParam = BlockFunctionParameter<IImageBlock>;
