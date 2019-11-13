@@ -9,7 +9,6 @@ whitelist: &whitelist
     - .git/*
     - .nyc_output/*
     - coverage/*
-    - dist/*
     - client/*
     - server/*
     - definition/*
