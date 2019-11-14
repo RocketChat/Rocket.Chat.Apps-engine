@@ -1,14 +1,18 @@
-import { RequiredApiVersionError } from '../errors';
-import { AppCompiler } from './AppCompiler';
-import { ICompilerFile } from './ICompilerFile';
-import { IParseZipResult } from './IParseZipResult';
-
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
+
 import { IAppInfo } from '../../definition/metadata/IAppInfo';
+import { RequiredApiVersionError } from '../errors';
+import { AppCompiler } from './AppCompiler';
+import { IBundleManifest } from './IBundleManifest';
+import { ICompilerFile } from './ICompilerFile';
+import { ICompilerResult } from './ICompilerResult';
+import { IParseAppZipResult } from './IParseAppZipResult';
+import { IBundleZipAppEntry, IParseBundleZipResult } from './IParseBundleZipResult';
+import { IParseZipResult, ZipContentType } from './IParseZipResult';
 
 export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
@@ -20,12 +24,87 @@ export class AppPackageParser {
         this.appsEngineVersion = this.getEngineVersion();
     }
 
-    public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
+    public parseZip(compiler: AppCompiler, zipContents: Buffer): IParseZipResult {
+        const zip = new AdmZip(zipContents);
         const infoZip = zip.getEntry('app.json');
+        const bundleManifest = zip.getEntry('manifest.json');
+
+        if (infoZip) {
+            return {
+                contentType: ZipContentType.APP,
+                parsed: this.parseAppZip(compiler, zip, infoZip),
+            };
+        }
+
+        if (bundleManifest) {
+            return {
+                contentType: ZipContentType.BUNDLE,
+                parsed: this.parseBundleZip(compiler, zip, bundleManifest),
+            };
+        }
+
+        throw new Error('Invalid zip provided');
+    }
+
+    private parseBundleZip(compiler: AppCompiler, zip: AdmZip, bundleManifest: AdmZip.IZipEntry): IParseBundleZipResult {
+        let manifest: IBundleManifest;
+
+        if (!bundleManifest.isDirectory) {
+            try {
+                manifest = JSON.parse(bundleManifest.getData().toString()) as IBundleManifest;
+            } catch (error) {
+                throw new Error('Invalid bundle manifest file');
+            }
+        } else {
+            throw new Error('Invalid bundle manifest file');
+        }
+
+        const apps = manifest.apps.map(({ appId, license, filename }) => {
+            const newEntry = { appId, license };
+            const entry = zip.getEntry(filename);
+
+            if (!entry || entry.isDirectory) {
+                return {
+                    ...newEntry,
+                    error: `Couldn't find entry from the manifest: ${filename}`,
+                };
+            }
+
+            let parseResult: IParseZipResult;
+
+            try {
+                parseResult = this.parseZip(compiler, entry.getData());
+            } catch (error) {
+                return {
+                    ...newEntry,
+                    error: error.message,
+                };
+            }
+
+            if (parseResult.contentType !== ZipContentType.APP) {
+                return {
+                    ...newEntry,
+                    error: `Entry provided in manifest is not an App: ${filename}`,
+                };
+            }
+
+            return {
+                ...newEntry,
+                parseResult: parseResult.parsed,
+            } as IBundleZipAppEntry;
+        });
+
+        return {
+            version: manifest.version,
+            workspaceId: manifest.workspaceId,
+            apps,
+        };
+    }
+
+    private parseAppZip(compiler: AppCompiler, zip: AdmZip, infoZip: AdmZip.IZipEntry): IParseAppZipResult {
         let info: IAppInfo;
 
-        if (infoZip && !infoZip.isDirectory) {
+        if (!infoZip.isDirectory) {
             try {
                 info = JSON.parse(infoZip.getData().toString()) as IAppInfo;
 
@@ -72,8 +151,19 @@ export class AppPackageParser {
         const languageContent = this.getLanguageContent(zip);
 
         // Compile all the typescript files to javascript
-        const result = compiler.toJs(info, tsFiles);
-        tsFiles = result.files;
+        let result = {} as ICompilerResult;
+
+        try {
+            result = compiler.toJs(info, tsFiles);
+            tsFiles = result.files;
+        } catch (e) {
+            result.compilerErrors = [{
+                message: e.message,
+                file: '<unknown>',
+                line: -1,
+                character: -1,
+            }];
+        }
 
         const compiledFiles: { [s: string]: string } = {};
         Object.keys(tsFiles).forEach((name) => {
@@ -93,6 +183,7 @@ export class AppPackageParser {
             languageContent,
             implemented: result.implemented,
             compilerErrors: result.compilerErrors,
+            zipContentsBase64d: zip.toBuffer().toString('base64'),
         };
     }
 

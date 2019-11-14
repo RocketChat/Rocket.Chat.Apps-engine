@@ -9,7 +9,10 @@ whitelist: &whitelist
     - .git/*
     - .nyc_output/*
     - coverage/*
-    - dist/*
+    - client/*
+    - server/*
+    - definition/*
+    - lib/*
     - node_modules/*
     - src/*
     - tests/*
