@@ -277,7 +277,7 @@ export class AppCompiler {
                 character,
                 message: `${dia.file.fileName} (${line + 1},${character + 1}): ${msg}`,
             });
-        });
+       });
 
         Object.keys(result.files).forEach((key) => {
             const file: ICompilerFile = result.files[key];
