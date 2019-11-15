@@ -11,6 +11,7 @@
     "bundle": "gulp bundle",
     "compile": "gulp compile",
     "go-publish": "gulp publish",
+    "go-publish-beta": "gulp publish-beta",
     "go-publish-alpha": "gulp publish-alpha",
     "unit-tests": "ts-node ./tests/runner.ts",
     "test-and-coverage": "nyc npm run unit-tests && nyc report",
