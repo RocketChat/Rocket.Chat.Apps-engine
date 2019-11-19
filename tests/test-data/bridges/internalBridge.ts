@@ -9,4 +9,8 @@ export class TestsInternalBridge implements IInternalBridge {
     public getWorkspacePublicKey(): Promise<ISetting> {
         throw new Error('Method not implemented.');
     }
+
+    public isDevelopmentModeEnabled(): boolean {
+        throw new Error('Method not implemented.');
+    }
 }

@@ -314,7 +314,7 @@ export class AppCompiler {
         }
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
-        const logger = new AppConsole(AppMethod._CONSTRUCTOR);
+        const logger = new AppConsole(AppMethod._CONSTRUCTOR, manager);
         const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', vm.createContext({
             rcLogger: logger,
             info: storage.info,
