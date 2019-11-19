@@ -1,8 +1,12 @@
-import { AsyncTest, Expect } from 'alsatian';
+import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
 import { AppStatus } from '../../../src/definition/AppStatus';
-import { IAppInfo } from '../../../src/definition/metadata';
+import { AppMethod, IAppInfo } from '../../../src/definition/metadata';
+import { AppManager } from '../../../src/server/AppManager';
+import { AppBridges, IInternalBridge } from '../../../src/server/bridges';
+import { AppConsole } from '../../../src/server/logging';
 import { DisabledApp } from '../../../src/server/misc/DisabledApp';
+import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class DisabledAppTestFixture {
     private expectedInfo: IAppInfo = {
@@ -20,11 +24,41 @@ export class DisabledAppTestFixture {
         classFile: 'TestingApp.ts',
         iconFile: 'testing.jpg',
     };
+    private mockManager: AppManager;
+    private mockBridges: AppBridges;
+    private mockInternalBridge: IInternalBridge;
+
+    @SetupFixture
+    public setupFixture() {
+        this.mockBridges = new TestsAppBridges();
+
+        const bridges = this.mockBridges;
+
+        this.mockInternalBridge = {
+            isDevelopmentModeEnabled() {
+                return true;
+            },
+        } as IInternalBridge;
+
+        bridges.getInternalBridge = () => this.mockInternalBridge;
+
+        this.mockManager = {
+            getBridges() {
+                return bridges;
+            },
+        } as AppManager;
+    }
 
     @AsyncTest()
     public async createNewDisabledApp() {
-        Expect(() => DisabledApp.createNew(this.expectedInfo, AppStatus.COMPILER_ERROR_DISABLED)).not.toThrow();
-        const disabledApp = DisabledApp.createNew(this.expectedInfo, AppStatus.COMPILER_ERROR_DISABLED);
+        Expect(() => DisabledApp.createNew(
+            this.expectedInfo, AppStatus.COMPILER_ERROR_DISABLED,
+            new AppConsole(AppMethod._CONSTRUCTOR, this.mockManager)),
+        ).not.toThrow();
+        const disabledApp = DisabledApp.createNew(
+            this.expectedInfo, AppStatus.COMPILER_ERROR_DISABLED,
+            new AppConsole(AppMethod._CONSTRUCTOR, this.mockManager),
+        );
 
         Expect(disabledApp).toBeDefined();
         Expect(disabledApp.getLogger()).toBeDefined();

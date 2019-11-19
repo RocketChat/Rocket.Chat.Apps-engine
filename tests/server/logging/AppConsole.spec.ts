@@ -1,18 +1,47 @@
 // tslint:disable:max-classes-per-file
 
-import { Expect, SpyOn, Test } from 'alsatian';
+import { Expect, SetupFixture, SpyOn, Test } from 'alsatian';
 import * as stackTrace from 'stack-trace';
 import { ILogEntry, LogMessageSeverity } from '../../../src/definition/accessors';
 import { AppMethod } from '../../../src/definition/metadata';
+import { AppManager } from '../../../src/server/AppManager';
+import { AppBridges, IInternalBridge } from '../../../src/server/bridges';
 
 import { AppConsole } from '../../../src/server/logging';
+import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class AppConsoleTestFixture {
+
+    private mockManager: AppManager;
+    private mockBridges: AppBridges;
+    private mockInternalBridge: IInternalBridge;
+
+    @SetupFixture
+    public setupFixture() {
+        this.mockBridges = new TestsAppBridges();
+
+        const bridges = this.mockBridges;
+
+        this.mockInternalBridge = {
+            isDevelopmentModeEnabled() {
+                return true;
+            },
+        } as IInternalBridge;
+
+        bridges.getInternalBridge = () => this.mockInternalBridge;
+
+        this.mockManager = {
+            getBridges() {
+                return bridges;
+            },
+        } as AppManager;
+    }
+
     @Test()
     public basicConsoleMethods() {
-        Expect(() => new AppConsole(AppMethod._CONSTRUCTOR)).not.toThrow();
+        Expect(() => new AppConsole(AppMethod._CONSTRUCTOR, this.mockManager)).not.toThrow();
 
-        const logger = new AppConsole(AppMethod._CONSTRUCTOR);
+        const logger = new AppConsole(AppMethod._CONSTRUCTOR, this.mockManager);
         const entries: Array<ILogEntry> = (logger as any).entries;
 
         Expect(() => logger.debug('this is a debug')).not.toThrow();
