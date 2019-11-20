@@ -95,7 +95,7 @@ export class AppListenerManager {
                 this.executePostRoomDeleted(data as IRoom);
                 return;
             // Livechat
-            case AppInterface.ILivechatRoomClosedHander:
+            case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
                 return;
             default:
@@ -588,7 +588,7 @@ export class AppListenerManager {
     private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHander)) {
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
             const app = this.manager.getOneById(appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {

@@ -5,7 +5,7 @@ import { ILivechatRoom } from './ILivechatRoom';
 /**
  * Handler called after a livechat room is closed.
  */
-export interface ILivechatRoomClosedHander {
+export interface ILivechatRoomClosedHandler {
     /**
      * Method called *after* a livechat room is closed.
      *
