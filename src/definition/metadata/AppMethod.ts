@@ -44,5 +44,6 @@ export enum AppMethod {
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
     // Blockit handlers
-    BLOCKIT_ACTION = 'executeActionHandler',
+    BLOCKIT_BLOCK_ACTION = 'executeBlockActionHandler',
+    BLOCKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
 }

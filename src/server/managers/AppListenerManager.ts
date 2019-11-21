@@ -4,7 +4,7 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
-import { IBlockitAction, IBlockitResponse } from '../../definition/blockit';
+import { IBlockitAction, IBlockitBlockAction, IBlockitResponse, IBlockitViewSubmit } from '../../definition/blockit';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -583,15 +583,63 @@ export class AppListenerManager {
     }
 
     private async executeBlockitAction(data: IBlockitAction): Promise<IBlockitResponse> {
-        const { appId } = data;
+        const { appId, type } = data;
+
+        const method = ((blockitType: string) => {
+            switch (blockitType) {
+                case 'blockAction':
+                    return AppMethod.BLOCKIT_BLOCK_ACTION;
+                // case 'messageAction':
+                    // 	break;
+                case 'viewSubmit':
+                    return AppMethod.BLOCKIT_VIEW_SUBMIT;
+                case 'viewClosed':
+                    break;
+            }
+        })(type);
 
         const app = this.manager.getOneById(appId);
-        if (!app.hasMethod(AppMethod.BLOCKIT_ACTION)) {
+        if (!app.hasMethod(method)) {
             return;
         }
 
-        return app.call(AppMethod.BLOCKIT_ACTION,
-            data,
+        const actionData = ((blockitType: string, blockitData: IBlockitAction) => {
+            const {
+                actionId,
+                messageId,
+                triggerId,
+            } = blockitData;
+
+            switch (blockitType) {
+                case 'blockAction':
+                    const { value } = blockitData.payload as { value: string };
+
+                    return {
+                        appId,
+                        actionId,
+                        value,
+                        messageId,
+                        triggerId,
+                    } as IBlockitBlockAction;
+                // case 'messageAction':
+                    // 	break;
+                case 'viewSubmit':
+                    const { state } = blockitData.payload as { state: object };
+
+                    return {
+                        appId,
+                        actionId,
+                        state,
+                        messageId,
+                        triggerId,
+                    } as IBlockitViewSubmit;
+                case 'viewClosed':
+                    break;
+            }
+        })(type, data);
+
+        return app.call(method,
+            actionData,
             this.am.getReader(appId),
             this.am.getHttp(appId),
             this.am.getPersistence(appId),

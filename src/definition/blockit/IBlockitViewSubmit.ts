@@ -1,8 +1,7 @@
-export interface IBlockitAction {
+export interface IBlockitViewSubmit {
     appId: string;
     actionId: string;
-    type: string;
-    payload: object;
+    state: object;
     messageId?: string;
     triggerId?: string;
 }

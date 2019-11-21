@@ -1,8 +1,7 @@
-export interface IBlockitAction {
+export interface IBlockitBlockAction {
     appId: string;
     actionId: string;
-    type: string;
-    payload: object;
+    value?: string;
     messageId?: string;
     triggerId?: string;
 }

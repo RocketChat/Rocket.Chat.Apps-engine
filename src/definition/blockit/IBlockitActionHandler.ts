@@ -13,5 +13,5 @@ export interface IBlockitActionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.BLOCKIT_ACTION](data: IBlockitAction, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IBlockitResponse>;
+    [AppMethod.BLOCKIT_BLOCK_ACTION](data: IBlockitAction, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IBlockitResponse>;
 }
