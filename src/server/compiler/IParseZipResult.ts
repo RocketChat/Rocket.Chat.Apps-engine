@@ -1,12 +1,11 @@
-import { IParseAppZipResult } from './IParseAppZipResult';
-import { IParseBundleZipResult } from './IParseBundleZipResult';
-
-export enum ZipContentType {
-    APP = 'app',
-    BUNDLE = 'bundle',
-}
+import { IAppInfo } from '../../definition/metadata';
+import { AppImplements } from './AppImplements';
+import { ICompilerError } from './ICompilerError';
 
 export interface IParseZipResult {
-    contentType: ZipContentType;
-    parsed: IParseAppZipResult | IParseBundleZipResult;
+    info: IAppInfo;
+    compiledFiles: { [key: string]: string };
+    languageContent: { [key: string]: object };
+    implemented: AppImplements;
+    compilerErrors: Array<ICompilerError>;
 }
