@@ -53,7 +53,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
