@@ -9,7 +9,8 @@
     "max-line-length": [true, {
         "limit": 160,
         "ignore-pattern": "^import | *export .*? {"
-    }]
+    }],
+    "member-ordering": false
   },
   "jsRules": {
     "quotemark": [true, "single"]
