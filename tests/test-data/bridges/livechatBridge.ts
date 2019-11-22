@@ -1,4 +1,4 @@
-import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor, IDepartment } from '../../../src/definition/livechat';
+import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
 import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
