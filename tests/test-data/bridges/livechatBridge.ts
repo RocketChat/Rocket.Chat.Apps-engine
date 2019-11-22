@@ -1,8 +1,11 @@
-import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
+import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor, IDepartment } from '../../../src/definition/livechat';
 import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
 export class TestLivechatBridge implements ILivechatBridge {
+    public isOnline(): boolean {
+        throw new Error('Method not implemented');
+    }
     public createMessage(message: ILivechatMessage, appId: string): Promise<string> {
         throw new Error('Method not implemented');
     }
@@ -28,6 +31,10 @@ export class TestLivechatBridge implements ILivechatBridge {
         throw new Error('Method not implemented');
     }
     public findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {
+        throw new Error('Method not implemented');
+    }
+
+    public findDepartments(query: object, appId: string): Promise<Array<IDepartment>> {
         throw new Error('Method not implemented');
     }
 }
