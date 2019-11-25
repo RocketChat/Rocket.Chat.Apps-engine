@@ -592,7 +592,7 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
-                return;
+                continue;
             }
 
             return app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
