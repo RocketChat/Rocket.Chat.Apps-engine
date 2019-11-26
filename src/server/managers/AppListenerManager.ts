@@ -595,7 +595,7 @@ export class AppListenerManager {
                 continue;
             }
 
-            return app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
