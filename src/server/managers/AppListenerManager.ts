@@ -1,17 +1,17 @@
-import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
-import { AppManager } from '../AppManager';
-import { AppInterface } from '../compiler';
-import { ProxiedApp } from '../ProxiedApp';
-import { AppAccessorManager } from './AppAccessorManager';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
+import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
+import { AppManager } from '../AppManager';
+import { AppInterface } from '../compiler';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
+import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
+import { AppAccessorManager } from './AppAccessorManager';
 
 export class AppListenerManager {
     private am: AppAccessorManager;
