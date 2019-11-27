@@ -1,17 +1,17 @@
-import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
-import { AppManager } from '../AppManager';
-import { AppInterface } from '../compiler';
-import { ProxiedApp } from '../ProxiedApp';
-import { AppAccessorManager } from './AppAccessorManager';
-
 import { IExternalComponent } from '../../definition/externalComponent';
+import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
+import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
+import { AppManager } from '../AppManager';
+import { AppInterface } from '../compiler';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
+import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
+import { AppAccessorManager } from './AppAccessorManager';
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -53,7 +53,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser| IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -100,6 +100,9 @@ export class AppListenerManager {
                 return;
             case AppInterface.IPostExternalComponentClosed:
                 this.executePostExternalComponentClosed(data as IExternalComponent);
+            // Livechat
+            case AppInterface.ILivechatRoomClosedHandler:
+                this.executeLivechatRoomClosed(data as ILivechatRoom);
                 return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
@@ -619,6 +622,26 @@ export class AppListenerManager {
                     this.am.getPersistence(appId),
                 );
             }
+        }
+    }
+
+    // Livechat
+    private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
         }
     }
 }
