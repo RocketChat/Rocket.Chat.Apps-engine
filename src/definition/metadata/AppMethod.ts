@@ -43,4 +43,6 @@ export enum AppMethod {
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
+    // Livechat
+    EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
 }
