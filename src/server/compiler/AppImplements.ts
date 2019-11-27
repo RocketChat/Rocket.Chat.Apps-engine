@@ -22,6 +22,8 @@ export enum AppInterface {
     // External Components
     IPostExternalComponentOpened = 'IPostExternalComponentOpened',
     IPostExternalComponentClosed = 'IPostExternalComponentClosed',
+    // Livechat
+    ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
 }
 
 export class AppImplements {
