@@ -622,6 +622,8 @@ export class AppListenerManager {
                     this.am.getPersistence(appId),
                 );
             }
+        }
+    }
 
     // Livechat
     private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
