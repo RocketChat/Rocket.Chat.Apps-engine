@@ -35,7 +35,7 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.findVisitorByPhoneNumber(phoneNumber, this.appId);
     }
 
-    public getLivechatDepartmentsByIdOrName(value: string): Promise<Array<IDepartment>> {
-        return this.livechatBridge.findDepartmentsByIdOrName(value, this.appId);
+    public getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined> {
+        return this.livechatBridge.findDepartmentByIdOrName(value, this.appId);
     }
 }

@@ -14,5 +14,5 @@ export interface ILivechatRead {
     getLivechatVisitorById(id: string): Promise<IVisitor | undefined>;
     getLivechatVisitorByEmail(email: string): Promise<IVisitor | undefined>;
     getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined>;
-    getLivechatDepartmentsByIdOrName(value: string): Promise<Array<IDepartment>>;
+    getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined>;
 }
