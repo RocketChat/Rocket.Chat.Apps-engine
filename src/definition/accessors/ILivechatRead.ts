@@ -14,11 +14,5 @@ export interface ILivechatRead {
     getLivechatVisitorById(id: string): Promise<IVisitor | undefined>;
     getLivechatVisitorsByEmail(email: string): Promise<Array<IVisitor>>;
     getLivechatVisitorsByPhoneNumber(phoneNumber: string): Promise<Array<IVisitor>>;
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer the alternative methods to fetch departments.
-     */
-    getLivechatDepartments(query: object): Promise<Array<IDepartment>>;
-    getLivechatDepartmentsByIdOrName(query: string): Promise<Array<IDepartment>>;
+    getLivechatDepartmentsByIdOrName(value: string): Promise<Array<IDepartment>>;
 }

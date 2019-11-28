@@ -20,11 +20,5 @@ export interface ILivechatBridge {
     createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom>;
     closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;
     findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer other methods that fetch departments.
-     */
-    findDepartments(query: object, appId: string): Promise<Array<IDepartment>>;
-    findDepartmentsByIdOrName(query: string, appdId: string): Promise<Array<IDepartment>>;
+    findDepartmentsByIdOrName(value: string, appdId: string): Promise<Array<IDepartment>>;
 }

@@ -43,11 +43,7 @@ export class TestLivechatBridge implements ILivechatBridge {
     public findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {
         throw new Error('Method not implemented');
     }
-    public findDepartments(query: object, appId: string): Promise<Array<IDepartment>> {
-        console.warn('The method AppLivechatBridge.findDepartments is deprecated. Please consider using its alternatives');
-        throw new Error('Method not implemented');
-    }
-    public findDepartmentsByIdOrName(query: string, appId: string): Promise<Array<IDepartment>> {
+    public findDepartmentsByIdOrName(value: string, appId: string): Promise<Array<IDepartment>> {
         throw new Error('Method not implemented');
     }
 }

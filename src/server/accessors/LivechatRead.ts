@@ -35,16 +35,7 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.findVisitorsByPhoneNumber(phoneNumber, this.appId);
     }
 
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer the alternative methods to fetch departments.
-     */
-    public getLivechatDepartments(query: object): Promise<Array<IDepartment>> {
-        return this.livechatBridge.findDepartments(query, this.appId);
-    }
-
-    public getLivechatDepartmentsByIdOrName(query: string): Promise<Array<IDepartment>> {
-        return this.livechatBridge.findDepartmentsByIdOrName(query, this.appId);
+    public getLivechatDepartmentsByIdOrName(value: string): Promise<Array<IDepartment>> {
+        return this.livechatBridge.findDepartmentsByIdOrName(value, this.appId);
     }
 }
