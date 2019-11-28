@@ -27,12 +27,12 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.findVisitorById(id, this.appId);
     }
 
-    public getLivechatVisitorsByEmail(email: string): Promise<Array<IVisitor>> {
-        return this.livechatBridge.findVisitorsByEmail(email, this.appId);
+    public getLivechatVisitorByEmail(email: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByEmail(email, this.appId);
     }
 
-    public getLivechatVisitorsByPhoneNumber(phoneNumber: string): Promise<Array<IVisitor>> {
-        return this.livechatBridge.findVisitorsByPhoneNumber(phoneNumber, this.appId);
+    public getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByPhoneNumber(phoneNumber, this.appId);
     }
 
     public getLivechatDepartmentsByIdOrName(value: string): Promise<Array<IDepartment>> {

@@ -14,8 +14,8 @@ export interface ILivechatBridge {
      */
     findVisitors(query: object, appId: string): Promise<Array<IVisitor>>;
     findVisitorById(id: string, appId: string): Promise<IVisitor | undefined>;
-    findVisitorsByEmail(email: string, appId: string): Promise<Array<IVisitor>>;
-    findVisitorsByPhoneNumber(phoneNumber: string, appdId: string): Promise<Array<IVisitor>>;
+    findVisitorByEmail(email: string, appId: string): Promise<IVisitor | undefined>;
+    findVisitorByPhoneNumber(phoneNumber: string, appdId: string): Promise<IVisitor | undefined>;
     transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData, appId: string): Promise<boolean>;
     createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom>;
     closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;

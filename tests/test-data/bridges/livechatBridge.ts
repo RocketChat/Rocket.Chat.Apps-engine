@@ -28,10 +28,10 @@ export class TestLivechatBridge implements ILivechatBridge {
     public findVisitorById(id: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
-    public findVisitorsByEmail(email: string, appId: string): Promise<Array<IVisitor>> {
+    public findVisitorByEmail(email: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
-    public findVisitorsByPhoneNumber(phoneNumber: string, appId: string): Promise<Array<IVisitor>> {
+    public findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
     public createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
