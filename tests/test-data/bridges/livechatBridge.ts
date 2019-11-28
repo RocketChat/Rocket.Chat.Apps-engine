@@ -22,6 +22,16 @@ export class TestLivechatBridge implements ILivechatBridge {
         throw new Error('Method not implemented');
     }
     public findVisitors(query: object, appId: string): Promise<Array<IVisitor>> {
+        console.warn('The method AppLivechatBridge.findVisitors is deprecated. Please consider using its alternatives');
+        throw new Error('Method not implemented');
+    }
+    public findVisitorById(id: string, appId: string): Promise<IVisitor | undefined> {
+        throw new Error('Method not implemented');
+    }
+    public findVisitorsByEmail(email: string, appId: string): Promise<Array<IVisitor>> {
+        throw new Error('Method not implemented');
+    }
+    public findVisitorsByPhoneNumber(phoneNumber: string, appId: string): Promise<Array<IVisitor>> {
         throw new Error('Method not implemented');
     }
     public createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
@@ -33,8 +43,11 @@ export class TestLivechatBridge implements ILivechatBridge {
     public findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {
         throw new Error('Method not implemented');
     }
-
     public findDepartments(query: object, appId: string): Promise<Array<IDepartment>> {
+        console.warn('The method AppLivechatBridge.findDepartments is deprecated. Please consider using its alternatives');
+        throw new Error('Method not implemented');
+    }
+    public findDepartmentsByIdOrName(query: string, appId: string): Promise<Array<IDepartment>> {
         throw new Error('Method not implemented');
     }
 }
