@@ -13,6 +13,7 @@ export interface ILivechatRead {
     getLivechatVisitors(query: object): Promise<Array<IVisitor>>;
     getLivechatVisitorById(id: string): Promise<IVisitor | undefined>;
     getLivechatVisitorByEmail(email: string): Promise<IVisitor | undefined>;
+    getLivechatVisitorByToken(token: string): Promise<IVisitor | undefined>;
     getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined>;
     getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined>;
 }

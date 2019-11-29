@@ -31,6 +31,10 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.findVisitorByEmail(email, this.appId);
     }
 
+    public getLivechatVisitorByToken(token: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByToken(token, this.appId);
+    }
+
     public getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined> {
         return this.livechatBridge.findVisitorByPhoneNumber(phoneNumber, this.appId);
     }

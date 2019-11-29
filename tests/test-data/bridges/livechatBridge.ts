@@ -31,6 +31,9 @@ export class TestLivechatBridge implements ILivechatBridge {
     public findVisitorByEmail(email: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
+    public findVisitorByToken(token: string, appId: string): Promise<IVisitor | undefined> {
+        throw new Error('Method not implemented');
+    }
     public findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
