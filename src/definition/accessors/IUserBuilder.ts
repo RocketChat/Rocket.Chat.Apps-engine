@@ -1,5 +1,5 @@
 import { RocketChatAssociationModel } from '../metadata';
-import {IUserCreator} from '../users';
+import { IUserCreation } from '../users';
 
 /**
  * Interface for creating a user.
@@ -15,118 +15,118 @@ export interface IUserBuilder {
      *
      * @param user the user data to set
      */
-     setData(user: IUserCreator): IUserBuilder;
+    setData(user: IUserCreation): IUserBuilder;
 
-     /**
-      * Sets the email of the user
-      *
-      * @param email the email address of the user
-      */
-      setEmail(email: string): IUserBuilder;
+    /**
+     * Sets the email of the user
+     *
+     * @param email the email address of the user
+     */
+    setEmail(email: string): IUserBuilder;
 
-     /**
-      * Gets the email address of the user
-      */
-      getEmail(): string;
+    /**
+     * Gets the email address of the user
+     */
+    getEmail(): string;
 
-     /**
-      * Sets the display name of this user.
-      *
-      * @param name the display name of the user
-      */
-      setDisplayName(name: string): IUserBuilder;
+    /**
+     * Sets the display name of this user.
+     *
+     * @param name the display name of the user
+     */
+    setDisplayName(name: string): IUserBuilder;
 
-     /**
-      * Gets the display name of this user.
-      */
-      getDisplayName(): string;
+    /**
+     * Gets the display name of this user.
+     */
+    getDisplayName(): string;
 
-      /**
-       * Sets the username for the user
-       *
-       * @param  {string} username username of the user
-       */
-      setUsername(username: string): IUserBuilder;
+    /**
+     * Sets the username for the user
+     *
+     * @param username username of the user
+     */
+    setUsername(username: string): IUserBuilder;
 
-      /**
-       * Gets the username of this user
-       */
-      getUsername(): string;
+    /**
+     * Gets the username of this user
+     */
+    getUsername(): string;
 
-      /**
-       * Sets whether the user is active or not
-       *
-       * @param  {boolean} active active status of user
-       */
-      setActive(active: boolean): IUserBuilder;
+    /**
+     * Sets whether the user is active or not
+     *
+     * @param active active status of the user
+     */
+    setActive(active: boolean): IUserBuilder;
 
-      /**
-       * Gets whether the user is active or not
-       */
-      getActive(): boolean;
+    /**
+     * Gets whether the user is active or not
+     */
+    getActive(): boolean;
 
-      /**
-       * Sets the roles for this user
-       *
-       * @param  {Array<string>} roles roles for a user
-       */
-      setRoles(roles: Array<string>): IUserBuilder;
+    /**
+     * Sets the roles for this user
+     *
+     * @param roles roles for a user
+     */
+    setRoles(roles: Array<string>): IUserBuilder;
 
-      /**
-       * Gets the roles of this user
-       */
-      getRoles(): Array<string>;
+    /**
+     * Gets the roles of this user
+     */
+    getRoles(): Array<string>;
 
-      /**
-       * Sets whether the user is verified
-       *
-       * @param  {boolean} verified whether user is verified
-       */
-      setVerified(verified: boolean): IUserBuilder;
+    /**
+     * Sets whether the user is verified
+     *
+     * @param verified whether user is verified
+     */
+    setVerified(verified: boolean): IUserBuilder;
 
-      /**
-       * Gets whether the user is verified
-       */
-      getVerified(): boolean;
+    /**
+     * Gets whether this user is verified
+     */
+    getVerified(): boolean;
 
-      /**
-       * Sets whether user can join default channels
-       *
-       * @param  {boolean} join whether user can join default channels
-       */
-      setJoinDefaultChannels(join: boolean): IUserBuilder;
+    /**
+     * Sets whether user can join default channels
+     *
+     * @param join whether user can join default channels
+     */
+    setJoinDefaultChannels(join: boolean): IUserBuilder;
 
-      /**
-       * Gets whether user can join default channels
-       */
-      getJoinDefaultChannels(): boolean;
+    /**
+     * Gets whether this user can join default channels
+     */
+    getJoinDefaultChannels(): boolean;
 
-      /**
-       * Sets whether user should recieve welcome email
-       *
-       * @param  {boolean} sendEmail whether user recieve welcome email on succesfull registration
-       */
-      setSendWelcomeEmail(sendEmail: boolean): IUserBuilder;
+    /**
+     * Sets whether the user should recieve welcome email
+     *
+     * @param sendEmail whether user recieve welcome email on succesfull registration
+     */
+    setSendWelcomeEmail(sendEmail: boolean): IUserBuilder;
 
-      /**
-       * Gets whether user can revieve welcome email
-       */
-      getSendWelcomeEmail(): boolean;
+    /**
+     * Gets whether this user can revieve welcome email
+     */
+    getSendWelcomeEmail(): boolean;
 
-      /**
-       * Sets if the user require password change
-       *
-       * @param  {boolean} require whether the user should require password change on first login
-       */
-      setRequirePasswordchange(require: boolean): IUserBuilder;
+    /**
+     * Sets whether requiring the user to change the password
+     *
+     * @param require the user should be required to change the password on the first login
+     */
+    setRequirePasswordchange(require: boolean): IUserBuilder;
 
-      /**
-       * Gets whether user should require password change
-       */
-      getRequirePasswordchange(): boolean;
+    /**
+     * Gets whether requiring this user to change the password
+     */
+    getRequirePasswordchange(): boolean;
 
-      /**
-       * Gets the user
-       */
-      getUser(): IUserCreator;
-  }
+    /**
+     * Gets the user
+     */
+    getUser(): IUserCreation;
+}

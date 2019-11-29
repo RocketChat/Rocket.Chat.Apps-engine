@@ -1,7 +1,7 @@
 import { IUser } from './IUser';
-import { IUserCreator } from './IUserCreator';
+import { IUserCreation } from './IUserCreation';
 import { IUserEmail } from './IUserEmail';
 import { UserStatusConnection } from './UserStatusConnection';
 import { UserType } from './UserType';
 
-export { IUser, IUserEmail, UserStatusConnection, UserType, IUserCreator };
+export { IUser, IUserEmail, UserStatusConnection, UserType, IUserCreation };
