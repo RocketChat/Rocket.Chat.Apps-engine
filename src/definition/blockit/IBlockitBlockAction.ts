@@ -3,5 +3,5 @@ export interface IBlockitBlockAction {
     actionId: string;
     value?: string;
     messageId?: string;
-    triggerId?: string;
+    triggerId: string;
 }

@@ -7,7 +7,7 @@ export enum BlockitResponseType {
 
 export interface IBlockitResponse {
     success: boolean;
-    triggerId: string;
+    triggerId?: string;
     type?: BlockitResponseType;
     title?: ITextObject;
     submit?: ITextObject;
