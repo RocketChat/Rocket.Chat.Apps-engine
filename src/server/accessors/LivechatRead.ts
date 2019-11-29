@@ -14,11 +14,32 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.findRooms(visitor, departmentId, this.appId);
     }
 
+    /**
+     * @deprecated This method does not adhere to the conversion practices applied
+     * elsewhere in the Apps-Engine and will be removed in the next major version.
+     * Prefer the alternative methods to fetch visitors.
+     */
     public getLivechatVisitors(query: object): Promise<Array<IVisitor>> {
         return this.livechatBridge.findVisitors(query, this.appId);
     }
 
-    public getLivechatDepartments(query: object): Promise<Array<IDepartment>> {
-        return this.livechatBridge.findDepartments(query, this.appId);
+    public getLivechatVisitorById(id: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorById(id, this.appId);
+    }
+
+    public getLivechatVisitorByEmail(email: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByEmail(email, this.appId);
+    }
+
+    public getLivechatVisitorByToken(token: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByToken(token, this.appId);
+    }
+
+    public getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined> {
+        return this.livechatBridge.findVisitorByPhoneNumber(phoneNumber, this.appId);
+    }
+
+    public getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined> {
+        return this.livechatBridge.findDepartmentByIdOrName(value, this.appId);
     }
 }
