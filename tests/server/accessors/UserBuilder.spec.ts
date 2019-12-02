@@ -1,6 +1,6 @@
 import { Expect, Test } from 'alsatian';
 
-import { IUserCreator } from '../../../src/definition/users';
+import { IUserCreation } from '../../../src/definition/users';
 import { UserBuilder } from '../../../src/server/accessors';
 import { TestData } from '../../test-data/utilities';
 
@@ -14,12 +14,12 @@ export class UserBuilderAccessorTestFixture {
     @Test()
     public settingOnUserBuilder() {
         const ubOnce = new UserBuilder();
-        Expect(ubOnce.setData({ name: 'Test User', email: 'testuser@gmail.com', username: 'testuser'  } as IUserCreator)).toBe(ubOnce);
+        Expect(ubOnce.setData({ name: 'Test User', email: 'testuser@gmail.com', username: 'testuser'  } as IUserCreation)).toBe(ubOnce);
         Expect((ubOnce as any).user.name).toBe('Test User');
         Expect((ubOnce as any).user.username).toBe('testuser');
         Expect((ubOnce as any).user.email).toBe('testuser@gmail.com');
 
-        const user: IUserCreator = {} as IUserCreator;
+        const user: IUserCreation = {} as IUserCreation;
         const ub = new UserBuilder(user);
 
         Expect(ub.setEmail('testuser@gmail.com')).toBe(ub);

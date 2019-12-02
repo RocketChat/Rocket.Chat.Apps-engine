@@ -4,7 +4,7 @@ import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IUserCreator } from '../../definition/users';
+import { IUserCreation } from '../../definition/users';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
@@ -47,7 +47,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public startUser(data?: IUserCreator): IUserBuilder {
+    public startUser(data?: IUserCreation): IUserBuilder {
         if (data) {
             delete data.id;
         }
@@ -55,7 +55,7 @@ export class ModifyCreator implements IModifyCreator {
         return new UserBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder |IUserBuilder): Promise<string> {
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IUserBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
