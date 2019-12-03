@@ -606,7 +606,8 @@ export class AppListenerManager {
         const actionData = ((blockitType: string, blockitData: IBlockitAction) => {
             const {
                 actionId,
-                messageId,
+                message,
+                user,
                 triggerId,
             } = blockitData;
 
@@ -618,11 +619,10 @@ export class AppListenerManager {
                         appId,
                         actionId,
                         value,
-                        messageId,
+                        message,
                         triggerId,
+                        user,
                     } as IBlockitBlockAction;
-                // case 'messageAction':
-                    // 	break;
                 case 'viewSubmit':
                     const { state } = blockitData.payload as { state: object };
 
@@ -630,8 +630,8 @@ export class AppListenerManager {
                         appId,
                         actionId,
                         state,
-                        messageId,
                         triggerId,
+                        user,
                     } as IBlockitViewSubmit;
                 case 'viewClosed':
                     const { view, isCleared } = blockitData.payload as { view: object, isCleared: boolean };
@@ -640,6 +640,7 @@ export class AppListenerManager {
                         appId,
                         view,
                         isCleared,
+                        user,
                     } as IBlockitViewClose;
                     break;
             }
