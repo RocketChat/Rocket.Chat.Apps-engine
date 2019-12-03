@@ -46,4 +46,5 @@ export enum AppMethod {
     // Blockit handlers
     BLOCKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     BLOCKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
+    BLOCKIT_VIEW_CLOSE = 'executeViewClosedHandler',
 }

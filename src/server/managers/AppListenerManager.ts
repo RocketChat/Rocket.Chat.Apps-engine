@@ -4,7 +4,7 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
-import { IBlockitAction, IBlockitBlockAction, IBlockitResponse, IBlockitViewSubmit } from '../../definition/blockit';
+import { IBlockitAction, IBlockitBlockAction, IBlockitResponse, IBlockitViewClose, IBlockitViewSubmit } from '../../definition/blockit';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -594,7 +594,7 @@ export class AppListenerManager {
                 case 'viewSubmit':
                     return AppMethod.BLOCKIT_VIEW_SUBMIT;
                 case 'viewClosed':
-                    break;
+                    return AppMethod.BLOCKIT_VIEW_CLOSE;
             }
         })(type);
 
@@ -634,6 +634,13 @@ export class AppListenerManager {
                         triggerId,
                     } as IBlockitViewSubmit;
                 case 'viewClosed':
+                    const { view, isCleared } = blockitData.payload as { view: object, isCleared: boolean };
+
+                    return {
+                        appId,
+                        view,
+                        isCleared,
+                    } as IBlockitViewClose;
                     break;
             }
         })(type, data);
