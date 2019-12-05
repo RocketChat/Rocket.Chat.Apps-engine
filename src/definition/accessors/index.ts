@@ -42,6 +42,7 @@ import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
 import { IUploadRead } from './IUploadRead';
 import { IUserBuilder } from './IUserBuilder';
+import { IUserCreator } from './IUserCreator';
 import { IUserRead } from './IUserRead';
 
 export {
@@ -84,6 +85,7 @@ export {
     ISlashCommandsExtend,
     ISlashCommandsModify,
     IUserBuilder,
+    IUserCreator,
     IUploadRead,
     IUserRead,
     LogMessageSeverity,
