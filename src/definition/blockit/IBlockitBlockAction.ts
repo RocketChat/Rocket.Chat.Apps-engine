@@ -1,4 +1,5 @@
 import { IMessage } from '../messages';
+import { IRoom } from '../rooms';
 import { IUser } from '../users';
 
 export interface IBlockitBlockAction {
@@ -7,5 +8,6 @@ export interface IBlockitBlockAction {
     value?: string;
     message?: IMessage;
     user: IUser;
+    room: IRoom;
     triggerId: string;
 }

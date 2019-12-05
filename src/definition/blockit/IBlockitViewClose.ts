@@ -1,3 +1,4 @@
+import { IRoom } from '../rooms';
 import { IUser } from '../users';
 
 export interface IBlockitViewClose {
@@ -5,4 +6,5 @@ export interface IBlockitViewClose {
     view: object;
     isCleared: boolean;
     user: IUser;
+    room: IRoom;
 }

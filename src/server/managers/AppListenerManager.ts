@@ -608,11 +608,12 @@ export class AppListenerManager {
                 actionId,
                 message,
                 user,
+                room,
                 triggerId,
             } = blockitData;
 
             switch (blockitType) {
-                case 'blockAction':
+                case 'blockAction': {
                     const { value } = blockitData.payload as { value: string };
 
                     return {
@@ -620,31 +621,38 @@ export class AppListenerManager {
                         actionId,
                         value,
                         message,
+                        room,
                         triggerId,
                         user,
                     } as IBlockitBlockAction;
-                case 'viewSubmit':
-                    const { state } = blockitData.payload as { state: object };
+                }
+                case 'viewSubmit': {
+                    const { view } = blockitData.payload as { view: object };
 
                     return {
                         appId,
                         actionId,
-                        state,
+                        view,
+                        room,
                         triggerId,
                         user,
                     } as IBlockitViewSubmit;
-                case 'viewClosed':
+                }
+                case 'viewClosed': {
                     const { view, isCleared } = blockitData.payload as { view: object, isCleared: boolean };
 
                     return {
                         appId,
                         view,
+                        room,
                         isCleared,
                         user,
                     } as IBlockitViewClose;
-                    break;
+                }
             }
         })(type, data);
+
+        console.log('actionData ->', actionData);
 
         return app.call(method,
             actionData,
