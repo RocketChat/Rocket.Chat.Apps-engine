@@ -28,6 +28,7 @@ import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
 import { UserBuilder } from './UserBuilder';
+import { UserCreator } from './UserCreator';
 import { UserRead } from './UserRead';
 
 export {
@@ -61,5 +62,6 @@ export {
     SlashCommandsModify,
     UploadRead,
     UserBuilder,
+    UserCreator,
     UserRead,
 };

@@ -1,9 +1,9 @@
-import { IUser, IUserCreation } from '../users';
+import { IUserCreation } from '../users';
 
 export interface IUserCreator {
     /**
      * Creates an app user.
-     * @param user the basic information of the users
+     * @param data the essential data for creating a user
      */
-    createAppUser(data: IUserCreation): Promise<IUser>;
+    createAppUser(data: IUserCreation): Promise<string>;
 }
