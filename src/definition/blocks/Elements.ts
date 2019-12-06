@@ -9,6 +9,8 @@ export interface IBlockElement {
     type: BlockElementType;
 }
 
+export type AvailableElements = IButtonElement | IImageElement;
+
 export interface IInteractiveElement extends IBlockElement {
     actionId: string;
     value?: string;
