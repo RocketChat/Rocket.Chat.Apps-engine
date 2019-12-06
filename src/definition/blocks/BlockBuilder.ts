@@ -1,7 +1,7 @@
 import * as uuid from 'uuid/v4';
 
 import { Omit } from '../../lib/utils';
-import { BlockType, IActionsBlock, IBlock, IImageBlock, ISectionBlock } from './Blocks';
+import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, ISectionBlock } from './Blocks';
 import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
@@ -11,6 +11,7 @@ type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveE
 type SectionBlockParam = BlockFunctionParameter<ISectionBlock>;
 type ImageBlockParam = BlockFunctionParameter<IImageBlock>;
 type ActionsBlockParam = BlockFunctionParameter<IActionsBlock>;
+type ContextBlockParam = BlockFunctionParameter<IContextBlock>;
 
 type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
 type ImageElementParam = ElementFunctionParameter<IImageElement>;
@@ -42,6 +43,12 @@ export class BlockBuilder {
 
     public addActionsBlock(block: ActionsBlockParam): BlockBuilder {
         this.addBlock({ type: BlockType.ACTIONS, ...block } as IActionsBlock);
+
+        return this;
+    }
+
+    public addContextBlock(block: ContextBlockParam): BlockBuilder {
+        this.addBlock({ type: BlockType.CONTEXT, ...block } as IContextBlock);
 
         return this;
     }
