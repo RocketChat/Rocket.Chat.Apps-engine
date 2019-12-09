@@ -11,16 +11,23 @@ import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 import { UserBuilder } from './UserBuilder';
+import { UserCreator } from './UserCreator';
 
 export class ModifyCreator implements IModifyCreator {
     private livechatCreator: LivechatCreator;
+    private userCreator: UserCreator;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.livechatCreator = new LivechatCreator(bridges, appId);
+        this.userCreator = new UserCreator(bridges, appId);
     }
 
     public getLivechatCreator(): ILivechatCreator {
         return this.livechatCreator;
+    }
+
+    public getUserCreator(): UserCreator {
+        return this.userCreator;
     }
 
     public startMessage(data?: IMessage): IMessageBuilder {

@@ -652,6 +652,8 @@ export class AppManager {
             return false;
         }
 
+        this.accessorManager.getModifier(app.getID()).getCreator().getUserCreator().createAppUser();
+
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 

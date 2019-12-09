@@ -1,12 +1,14 @@
 export interface IUserCreation {
-    id?: string;
-    email: string;
     name: string;
     username: string;
+    email: string;
+    avatarUrl?: string;
+    id?: string;
     active?: boolean;
     roles?: Array<string>;
     verified?: boolean;
     joinDefaultChannels?: boolean;
     sendWelcomeEmail?: boolean;
     requirePasswordChange?: boolean;
+    setRandomPassword?: boolean;
 }
