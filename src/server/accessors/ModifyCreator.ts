@@ -19,7 +19,7 @@ export class ModifyCreator implements IModifyCreator {
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.livechatCreator = new LivechatCreator(bridges, appId);
-        this.userCreator = new UserCreator(bridges, appId);
+        this.userCreator = new UserCreator(bridges);
     }
 
     public getLivechatCreator(): ILivechatCreator {

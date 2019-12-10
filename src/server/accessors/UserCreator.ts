@@ -1,20 +1,13 @@
 import { IUserCreator } from '../../definition/accessors/IUserCreator';
-import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges';
+import { ProxiedApp } from '../ProxiedApp';
 
 export class UserCreator implements IUserCreator {
     constructor(
         private readonly bridges: AppBridges,
-        private readonly appId: string,
     ) { }
 
-    public createAppUser(): Promise<string> {
-        const app = AppManager.Instance.getOneById(this.appId);
-
-        if (!app) {
-            throw new Error(`App ${ this.appId } was not found!`);
-        }
-
+    public createAppUser(app: ProxiedApp): Promise<string | boolean> {
         const userData = {
             name: app.getInfo().name,
             username: app.getInfo().nameSlug,
@@ -23,9 +16,10 @@ export class UserCreator implements IUserCreator {
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
             setRandomPassword: true,
+            appId: app.getID(),
         };
 
-        return this.bridges.getUserBridge().create(userData, this.appId, {
+        return this.bridges.getUserBridge().create(userData, app.getID(), {
             avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
         });
     }

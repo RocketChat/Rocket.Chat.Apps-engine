@@ -383,7 +383,7 @@ export class AppManager {
             return aff;
         }
 
-        const created = await this.storage.create({
+        const compiled = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
@@ -393,17 +393,28 @@ export class AppManager {
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
-        });
+        };
+
+        // Now that is has all been compiled, let's get the
+        // the App instance from the source.
+        const app = this.getCompiler().toSandBox(this, compiled);
+
+        // Create an app user for this app before installing it.
+        const appUserId = await this.accessorManager.getModifier(app.getID()).getCreator().getUserCreator().createAppUser(app);
+
+        if (!appUserId) {
+            aff.setAppUserError('Failed to create an app user for this app.');
+
+            return aff;
+        }
+
+        const created = await this.storage.create(compiled);
 
         if (!created) {
             aff.setStorageError('Failed to create the App, the storage did not return it.');
 
             return aff;
         }
-
-        // Now that is has all been compiled, let's get the
-        // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, created);
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -651,8 +662,6 @@ export class AppManager {
             await app.setStatus(AppStatus.INVALID_SETTINGS_DISABLED, silenceStatus);
             return false;
         }
-
-        this.accessorManager.getModifier(app.getID()).getCreator().getUserCreator().createAppUser();
 
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
