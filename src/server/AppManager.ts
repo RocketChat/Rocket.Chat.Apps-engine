@@ -400,7 +400,7 @@ export class AppManager {
         const app = this.getCompiler().toSandBox(this, compiled);
 
         // Create an app user for this app before installing it.
-        const appUserId = await this.accessorManager.getModifier(app.getID()).getCreator().getUserCreator().createAppUser(app);
+        const appUserId = await this.createAppUser(app);
 
         if (!appUserId) {
             aff.setAppUserError({
@@ -778,5 +778,22 @@ export class AppManager {
         }
 
         return enable;
+    }
+
+    private createAppUser(app: ProxiedApp): Promise<string | boolean> {
+        const userData = {
+            name: app.getInfo().name,
+            username: app.getInfo().nameSlug,
+            email: `${ Math.random().toString(36).slice(2, 10) }@rocketchat.app`,
+            roles: ['app'],
+            joinDefaultChannels: true,
+            sendWelcomeEmail: false,
+            setRandomPassword: true,
+            appId: app.getID(),
+        };
+
+        return this.bridges.getUserBridge().create(userData, app.getID(), {
+            avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+        });
     }
 }

@@ -142,16 +142,6 @@ export class TestData {
         };
     }
 
-    public static getUserCreator(id?: string, email?: string, username?: string, roles?: Array<string>): IUserCreation {
-        return {
-            id: id ? id : 'BBxwgCBzLeMC6esTb',
-            email: email ? email : 'testemail@gmail.com',
-            name: 'testBotName',
-            username: username ? username : 'testbot',
-            roles: roles ? roles : ['bot'],
-        };
-    }
-
     public static getSlashCommand(command?: string): ISlashCommand {
         return {
             command: command ? command : 'testing-cmd',

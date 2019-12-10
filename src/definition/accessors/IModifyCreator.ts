@@ -5,7 +5,6 @@ import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';
 import { IRoomBuilder } from './IRoomBuilder';
-import { IUserCreator } from './IUserCreator';
 
 export interface IModifyCreator {
     /**
@@ -13,11 +12,6 @@ export interface IModifyCreator {
      * Livechat integrations
      */
     getLivechatCreator(): ILivechatCreator;
-
-    /**
-     * Gets the creator responsible for creating a user.
-     */
-    getUserCreator(): IUserCreator;
 
     /**
      * Starts the process for building a new message object.
