@@ -4,7 +4,7 @@ import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IUserCreation } from '../../definition/users';
+import { IUser } from '../../definition/users';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
@@ -47,7 +47,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public startUser(data?: IUserCreation): IUserBuilder {
+    public startUser(data?: Partial<IUser>): IUserBuilder {
         if (data) {
             delete data.id;
         }

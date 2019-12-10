@@ -1,5 +1,5 @@
 import { RocketChatAssociationModel } from '../metadata';
-import { IUserCreation } from '../users';
+import { IUser, IUserEmail } from '../users';
 
 /**
  * Interface for creating a user.
@@ -15,19 +15,19 @@ export interface IUserBuilder {
      *
      * @param user the user data to set
      */
-    setData(user: IUserCreation): IUserBuilder;
+    setData(user: Partial<IUser>): IUserBuilder;
 
     /**
-     * Sets the email of the user
+     * Sets emails of the user
      *
-     * @param email the email address of the user
+     * @param emails the array of email addresses of the user
      */
-    setEmail(email: string): IUserBuilder;
+    setEmails(emails: Array<IUserEmail>): IUserBuilder;
 
     /**
-     * Gets the email address of the user
+     * Gets emails of the user
      */
-    getEmail(): string;
+    getEmails(): Array<IUserEmail>;
 
     /**
      * Sets the display name of this user.
@@ -128,5 +128,5 @@ export interface IUserBuilder {
     /**
      * Gets the user
      */
-    getUser(): IUserCreation;
+    getUser(): Partial<IUser>;
 }

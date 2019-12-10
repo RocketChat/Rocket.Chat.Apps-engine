@@ -1,31 +1,31 @@
 import { IUserBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IUserCreation } from '../../definition/users';
+import { IUser, IUserEmail } from '../../definition/users';
 
 export class UserBuilder implements IUserBuilder {
     public kind: RocketChatAssociationModel.USER;
 
-    private user: IUserCreation;
+    private user: Partial<IUser>;
 
-    constructor(user?: IUserCreation) {
+    constructor(user?: Partial<IUser>) {
         this.kind = RocketChatAssociationModel.USER;
-        this.user = user ? user : ({} as IUserCreation);
+        this.user = user ? user : ({} as Partial<IUser>);
     }
 
-    public setData(data: IUserCreation): IUserBuilder {
+    public setData(data: Partial<IUser>): IUserBuilder {
         delete data.id;
         this.user = data;
 
         return this;
     }
 
-    public setEmail(email: string): IUserBuilder {
-        this.user.email = email;
+    public setEmails(emails: Array<IUserEmail>): IUserBuilder {
+        this.user.emails = emails;
         return this;
     }
 
-    public getEmail(): string {
-        return this.user.email;
+    public getEmails(): Array<IUserEmail> {
+        return this.user.emails;
     }
 
     public setDisplayName(name: string): IUserBuilder {
@@ -100,12 +100,12 @@ export class UserBuilder implements IUserBuilder {
         return this.user.sendWelcomeEmail;
     }
 
-    public getUser(): IUserCreation {
+    public getUser(): Partial<IUser> {
         if (!this.user.username) {
             throw new Error('The "username" property is required.');
         }
-        if (!this.user.email) {
-            throw new Error('The "email" property is required.');
+        if (!this.user.emails) {
+            throw new Error('The "emails" property is required.');
         }
         if (!this.user.name) {
             throw new Error('The "name" property is required.');

@@ -16,4 +16,9 @@ export interface IUser {
     createdAt: Date;
     updatedAt: Date;
     lastLoginAt: Date;
+    active?: boolean;
+    joinDefaultChannels?: boolean;
+    verified?: boolean;
+    requirePasswordChange?: boolean;
+    sendWelcomeEmail?: boolean;
 }
