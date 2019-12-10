@@ -10,7 +10,7 @@ export class AppFabricationFulfillment {
     public compilerErrors: Array<ICompilerError>;
     public licenseValidationResult: AppLicenseValidationResult;
     public storageError: string;
-    public appUserError: string;
+    public appUserError: object;
 
     constructor() {
         this.compilerErrors = new Array<ICompilerError>();
@@ -54,15 +54,15 @@ export class AppFabricationFulfillment {
         this.storageError = errorMessage;
     }
 
-    public setAppUserError(errorMessage: string): void {
-        this.appUserError = errorMessage;
+    public setAppUserError(error: object): void {
+        this.appUserError = error;
     }
 
     public getStorageError(): string {
         return this.storageError;
     }
 
-    public getAppUserError(): string {
+    public getAppUserError(): object {
         return this.appUserError;
     }
 

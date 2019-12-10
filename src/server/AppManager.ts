@@ -403,7 +403,10 @@ export class AppManager {
         const appUserId = await this.accessorManager.getModifier(app.getID()).getCreator().getUserCreator().createAppUser(app);
 
         if (!appUserId) {
-            aff.setAppUserError('Failed to create an app user for this app.');
+            aff.setAppUserError({
+                username: app.getInfo().nameSlug,
+                message: 'Failed to create an app user for this app.',
+            });
 
             return aff;
         }
