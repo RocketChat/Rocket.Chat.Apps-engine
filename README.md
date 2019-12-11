@@ -10,7 +10,7 @@ Currently, a Rocket.Chat App can:
 - Listen to message events
   - before/after sent
   - before/after updated
-  - ...
+  - before/after deleted
 - Listen to room events
   - before/after created
   - before/after deleted
