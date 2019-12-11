@@ -1,3 +1,4 @@
+import { IBlockitResponse } from '../blockit';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
@@ -25,6 +26,8 @@ export interface INotifier {
      * @param message The message content to notify users about
      */
     notifyRoom(room: IRoom, message: IMessage): Promise<void>;
+
+    sendUiInteration(user: IUser, interaction: IBlockitResponse): Promise<void>;
 
     /** Gets a new message builder for building a notification message. */
     getMessageBuilder(): IMessageBuilder;
