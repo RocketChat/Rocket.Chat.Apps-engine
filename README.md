@@ -7,8 +7,13 @@
 The Apps-Engine is Rocket.Chat's _plugin framework_ - it provides the APIs for Rocket.Chat Apps to interact with the host system.
 
 Currently, a Rocket.Chat App can:
-- Listen to message events (before a message is sent, after a message is updated, etc)
-- Listen to room events (before a room is created, after a room is deleted)
+- Listen to message events
+  - before/after sent
+  - before/after updated
+  - ...
+- Listen to room events
+  - before/after created
+  - before/after deleted
 - Send messages to users and livechat visitors
 - Register new slash commands
 - Register new HTTP endpoints
