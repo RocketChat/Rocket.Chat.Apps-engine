@@ -45,46 +45,6 @@ export class UserBuilderAccessorTestFixture {
         Expect(user.roles).toEqual(['bot']);
         Expect(ub.getRoles()).toEqual(['bot']);
 
-        Expect(ub.setActive(true)).toBe(ub);
-        Expect(user.active).toEqual(true);
-        Expect(ub.getActive()).toEqual(true);
-
-        Expect(ub.setActive(false)).toBe(ub);
-        Expect(user.active).toEqual(false);
-        Expect(ub.getActive()).toEqual(false);
-
-        Expect(ub.setJoinDefaultChannels(true)).toBe(ub);
-        Expect(user.joinDefaultChannels).toEqual(true);
-        Expect(ub.getJoinDefaultChannels()).toEqual(true);
-
-        Expect(ub.setJoinDefaultChannels(false)).toBe(ub);
-        Expect(user.joinDefaultChannels).toEqual(false);
-        Expect(ub.getJoinDefaultChannels()).toEqual(false);
-
-        Expect(ub.setVerified(true)).toBe(ub);
-        Expect(user.verified).toEqual(true);
-        Expect(ub.getVerified()).toEqual(true);
-
-        Expect(ub.setVerified(false)).toBe(ub);
-        Expect(user.verified).toEqual(false);
-        Expect(ub.getVerified()).toEqual(false);
-
-        Expect(ub.setRequirePasswordchange(true)).toBe(ub);
-        Expect(user.requirePasswordChange).toEqual(true);
-        Expect(ub.getRequirePasswordchange()).toEqual(true);
-
-        Expect(ub.setRequirePasswordchange(false)).toBe(ub);
-        Expect(user.requirePasswordChange).toEqual(false);
-        Expect(ub.getRequirePasswordchange()).toEqual(false);
-
-        Expect(ub.setSendWelcomeEmail(true)).toBe(ub);
-        Expect(user.sendWelcomeEmail).toEqual(true);
-        Expect(ub.getSendWelcomeEmail()).toEqual(true);
-
-        Expect(ub.setSendWelcomeEmail(false)).toBe(ub);
-        Expect(user.sendWelcomeEmail).toEqual(false);
-        Expect(ub.getSendWelcomeEmail()).toEqual(false);
-
         Expect(ub.getUser()).toBe(user);
     }
 }
