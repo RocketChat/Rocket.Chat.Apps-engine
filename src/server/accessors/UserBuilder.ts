@@ -55,51 +55,6 @@ export class UserBuilder implements IUserBuilder {
         return this.user.roles;
     }
 
-    public setActive(active: boolean): IUserBuilder {
-        this.user.active = active;
-        return this;
-    }
-
-    public getActive(): boolean {
-        return this.user.active;
-    }
-
-    public setJoinDefaultChannels(join: boolean): IUserBuilder {
-        this.user.joinDefaultChannels = join;
-        return this;
-    }
-
-    public getJoinDefaultChannels(): boolean {
-        return this.user.joinDefaultChannels;
-    }
-
-    public setVerified(verified: boolean): IUserBuilder {
-        this.user.verified = verified;
-        return this;
-    }
-
-    public getVerified(): boolean {
-        return this.user.verified;
-    }
-
-    public setRequirePasswordchange(changePassword: boolean): IUserBuilder {
-        this.user.requirePasswordChange = changePassword;
-        return this;
-    }
-
-    public getRequirePasswordchange(): boolean {
-        return this.user.requirePasswordChange;
-    }
-
-    public setSendWelcomeEmail(sendEmail: boolean): IUserBuilder {
-        this.user.sendWelcomeEmail = sendEmail;
-        return this;
-    }
-
-    public getSendWelcomeEmail(): boolean {
-        return this.user.sendWelcomeEmail;
-    }
-
     public getUser(): Partial<IUser> {
         if (!this.user.username) {
             throw new Error('The "username" property is required.');
