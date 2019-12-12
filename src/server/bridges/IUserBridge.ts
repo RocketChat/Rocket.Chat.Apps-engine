@@ -1,8 +1,4 @@
-import { IUser } from '../../definition/users';
-
-interface IUserCreateOptions {
-    avatarUrl?: string;
-}
+import { IUser, IUserCreationOptions } from '../../definition/users';
 
 export interface IUserBridge {
     getById(id: string, appId: string): Promise<IUser>;
@@ -15,7 +11,7 @@ export interface IUserBridge {
      * @param appId the id of the app calling this
      * @param options options for passing extra data
      */
-    create(data: Partial<IUser>, appId: string, options?: IUserCreateOptions): Promise<string>;
+    create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
 
     getActiveUserCount(): Promise<number>;
 }
