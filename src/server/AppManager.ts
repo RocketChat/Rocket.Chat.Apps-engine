@@ -782,18 +782,17 @@ export class AppManager {
 
     private createAppUser(app: ProxiedApp): Promise<string | boolean> {
         const userData = {
-            name: app.getInfo().name,
+            _id: app.getInfo().nameSlug,
             username: app.getInfo().nameSlug,
-            email: `${ Math.random().toString(36).slice(2, 10) }@rocketchat.app`,
+            name: app.getInfo().name,
             roles: ['app'],
-            joinDefaultChannels: true,
-            sendWelcomeEmail: false,
-            setRandomPassword: true,
             appId: app.getID(),
         };
 
         return this.bridges.getUserBridge().create(userData, app.getID(), {
             avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+            joinDefaultChannels: true,
+            sendWelcomeEmail: false,
         });
     }
 }
