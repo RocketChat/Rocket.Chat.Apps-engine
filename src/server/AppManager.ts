@@ -15,6 +15,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { IMarketplaceInfo } from './marketplace';
 
@@ -787,6 +788,7 @@ export class AppManager {
             name: app.getInfo().name,
             roles: ['app'],
             appId: app.getID(),
+            type: UserType.APP,
         };
 
         return this.bridges.getUserBridge().create(userData, app.getID(), {
