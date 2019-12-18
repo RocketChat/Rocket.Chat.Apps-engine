@@ -1,12 +1,12 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IBlockitBlockAction } from './IBlockitBlockAction';
-import { IBlockitResponse } from './IBlockitResponse';
-import { IBlockitViewClose } from './IBlockitViewClose';
-import { IBlockitViewSubmit } from './IBlockitViewSubmit';
+import { IUIKitInteractionResponse, IUIKitResponse } from './IUIKitResponse';
+import { IUIKitViewClose } from './IUIKitViewClose';
+import { IUIKitViewSubmit } from './IUIKitViewSubmit';
+import { IUIKitBlockInteraction } from './UIKitInteractionContext';
 
 /** Handler for after a message is sent. */
-export interface IBlockitActionHandler {
+export interface IUIKitInteractionHandler {
     /**
      * Method called when a block action is invoked.
      *
@@ -15,8 +15,8 @@ export interface IBlockitActionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.BLOCKIT_BLOCK_ACTION]?(data: IBlockitBlockAction, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IBlockitResponse>;
+    [AppMethod.UIKIT_BLOCK_ACTION]?(data: IUIKitBlockInteraction, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+        Promise<IUIKitResponse | IUIKitInteractionResponse>;
 
     /**
      * Method called when a modal is submitted.
@@ -26,7 +26,8 @@ export interface IBlockitActionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.BLOCKIT_VIEW_SUBMIT]?(data: IBlockitViewSubmit, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IBlockitResponse>;
+    [AppMethod.UIKIT_VIEW_SUBMIT]?(data: IUIKitViewSubmit, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+        Promise<IUIKitResponse | IUIKitInteractionResponse>;
 
     /**
      * Method called when a modal is closed.
@@ -36,5 +37,6 @@ export interface IBlockitActionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.BLOCKIT_VIEW_CLOSE]?(data: IBlockitViewClose, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<IBlockitResponse>;
+    [AppMethod.UIKIT_VIEW_CLOSE]?(data: IUIKitViewClose, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+        Promise<IUIKitResponse>;
 }

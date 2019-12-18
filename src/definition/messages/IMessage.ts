@@ -1,5 +1,5 @@
-import { IBlock } from '../blocks';
 import { IRoom } from '../rooms';
+import { IBlock } from '../uikit';
 import { IUser } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageFile } from './IMessageFile';

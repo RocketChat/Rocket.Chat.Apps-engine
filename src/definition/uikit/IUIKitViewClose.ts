@@ -1,7 +1,7 @@
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 
-export interface IBlockitViewClose {
+export interface IUIKitViewClose {
     appId: string;
     view: object;
     isCleared: boolean;

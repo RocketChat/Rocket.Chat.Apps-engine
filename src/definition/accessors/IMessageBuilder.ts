@@ -1,7 +1,7 @@
-import { BlockBuilder, IBlock } from '../blocks';
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
+import { BlockBuilder, IBlock } from '../uikit';
 import { IUser } from '../users';
 
 /**

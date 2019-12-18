@@ -1,8 +1,8 @@
 import { IMessageBuilder } from '../../definition/accessors';
-import { BlockBuilder, IBlock } from '../../definition/blocks';
 import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
+import { BlockBuilder, IBlock } from '../../definition/uikit';
 import { IUser } from '../../definition/users';
 
 export class MessageBuilder implements IMessageBuilder {

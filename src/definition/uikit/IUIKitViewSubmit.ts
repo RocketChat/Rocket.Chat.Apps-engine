@@ -1,11 +1,11 @@
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
-import { IBlockitView } from './IBlockitView';
+import { IUIKitView } from './IUIKitView';
 
-export interface IBlockitViewSubmit {
+export interface IUIKitViewSubmit {
     appId: string;
     actionId: string;
-    view: IBlockitView;
+    view: IUIKitView;
     user: IUser;
     room?: IRoom;
     triggerId?: string;

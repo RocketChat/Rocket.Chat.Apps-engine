@@ -1,6 +1,6 @@
-import { IBlockitResponse } from '../../definition/blockit/IBlockitResponse';
+import { IUIKitResponse } from '../../definition/uikit';
 import { IUser } from '../../definition/users/IUser';
 
 export interface IUiInteractionBridge {
-    notifyUser(user: IUser, interaction: IBlockitResponse, appId: string): Promise<void>;
+    notifyUser(user: IUser, interaction: IUIKitResponse, appId: string): Promise<void>;
 }

@@ -1,6 +1,6 @@
 import * as uuid from 'uuid/v4';
 
-import { Omit } from '../../lib/utils';
+import { Omit } from '../../../lib/utils';
 import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, ISectionBlock } from './Blocks';
 import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
 

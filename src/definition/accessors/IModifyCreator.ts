@@ -1,7 +1,7 @@
-import { BlockBuilder } from '../blocks';
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
+import { BlockBuilder } from '../uikit';
 import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';

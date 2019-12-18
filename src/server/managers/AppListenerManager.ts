@@ -1,17 +1,18 @@
-import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
-import { AppManager } from '../AppManager';
-import { AppInterface } from '../compiler';
-import { ProxiedApp } from '../ProxiedApp';
-import { AppAccessorManager } from './AppAccessorManager';
-
-import { IBlockitAction, IBlockitBlockAction, IBlockitResponse, IBlockitViewClose, IBlockitViewSubmit } from '../../definition/blockit';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
+import { IUIKitAction, IUIKitResponse, IUIKitViewClose, IUIKitViewSubmit } from '../../definition/uikit';
+import { UIKitInteractionType } from '../../definition/uikit/IUIKitAction';
+import { IUIKitBlockInteraction } from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
+import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
+import { AppManager } from '../AppManager';
+import { AppInterface } from '../compiler';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
+import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
+import { AppAccessorManager } from './AppAccessorManager';
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -53,7 +54,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IBlockitAction): Promise<void | boolean | IMessage | IRoom | IUser | IBlockitResponse> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitAction): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -95,7 +96,7 @@ export class AppListenerManager {
                 this.executePostRoomDeleted(data as IRoom);
                 return;
             case AppInterface.IBlockitActionHandler:
-                return this.executeBlockitAction(data as IBlockitAction);
+                return this.executeUIKitAction(data as IUIKitAction);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -582,19 +583,17 @@ export class AppListenerManager {
         }
     }
 
-    private async executeBlockitAction(data: IBlockitAction): Promise<IBlockitResponse> {
+    private async executeUIKitAction(data: IUIKitAction): Promise<IUIKitResponse> {
         const { appId, type } = data;
 
-        const method = ((blockitType: string) => {
-            switch (blockitType) {
-                case 'blockAction':
-                    return AppMethod.BLOCKIT_BLOCK_ACTION;
-                // case 'messageAction':
-                    // 	break;
-                case 'viewSubmit':
-                    return AppMethod.BLOCKIT_VIEW_SUBMIT;
-                case 'viewClosed':
-                    return AppMethod.BLOCKIT_VIEW_CLOSE;
+        const method = ((interactionType: string) => {
+            switch (interactionType) {
+                case UIKitInteractionType.BLOCK:
+                    return AppMethod.UIKIT_BLOCK_ACTION;
+                case UIKitInteractionType.VIEW_SUBMIT:
+                    return AppMethod.UIKIT_VIEW_SUBMIT;
+                case UIKitInteractionType.VIEW_CLOSED:
+                    return AppMethod.UIKIT_VIEW_CLOSE;
             }
         })(type);
 
@@ -603,31 +602,31 @@ export class AppListenerManager {
             return;
         }
 
-        const actionData = ((blockitType: string, blockitData: IBlockitAction) => {
+        const actionData = ((interactionType: UIKitInteractionType, interactionData: IUIKitAction) => {
             const {
                 actionId,
                 message,
                 user,
                 room,
                 triggerId,
-            } = blockitData;
+            } = interactionData;
 
-            switch (blockitType) {
-                case 'blockAction': {
-                    const { value } = blockitData.payload as { value: string };
+            switch (interactionType) {
+                case UIKitInteractionType.BLOCK: {
+                    const { value } = interactionData.payload as { value: string };
 
                     return {
                         appId,
                         actionId,
-                        value,
-                        message,
+                        user,
                         room,
                         triggerId,
-                        user,
-                    } as IBlockitBlockAction;
+                        value,
+                        message,
+                    } as IUIKitBlockInteraction;
                 }
-                case 'viewSubmit': {
-                    const { view } = blockitData.payload as { view: object };
+                case UIKitInteractionType.VIEW_SUBMIT: {
+                    const { view } = interactionData.payload as { view: object };
 
                     return {
                         appId,
@@ -636,10 +635,10 @@ export class AppListenerManager {
                         room,
                         triggerId,
                         user,
-                    } as IBlockitViewSubmit;
+                    } as IUIKitViewSubmit;
                 }
-                case 'viewClosed': {
-                    const { view, isCleared } = blockitData.payload as { view: object, isCleared: boolean };
+                case UIKitInteractionType.VIEW_CLOSED: {
+                    const { view, isCleared } = interactionData.payload as { view: object, isCleared: boolean };
 
                     return {
                         appId,
@@ -647,12 +646,10 @@ export class AppListenerManager {
                         room,
                         isCleared,
                         user,
-                    } as IBlockitViewClose;
+                    } as IUIKitViewClose;
                 }
             }
         })(type, data);
-
-        console.log('actionData ->', actionData);
 
         return app.call(method,
             actionData,

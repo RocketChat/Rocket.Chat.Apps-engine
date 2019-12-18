@@ -1,7 +1,7 @@
 import { IMessageBuilder, INotifier } from '../../definition/accessors';
-import { IBlockitResponse } from '../../definition/blockit';
 import { IMessage } from '../../definition/messages';
 import { IRoom } from '../../definition/rooms';
+import { IUIKitResponse } from '../../definition/uikit';
 import { IUser } from '../../definition/users';
 import { IMessageBridge, IUiInteractionBridge } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
@@ -21,7 +21,7 @@ export class Notifier implements INotifier {
         await this.msgBridge.notifyRoom(room, message, this.appId);
     }
 
-    public async sendUiInteration(user: IUser, interaction: IBlockitResponse): Promise<void> {
+    public async sendUiInteration(user: IUser, interaction: IUIKitResponse): Promise<void> {
         this.uiInteractionBridge.notifyUser(user, interaction, this.appId);
     }
 
