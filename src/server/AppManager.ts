@@ -447,6 +447,7 @@ export class AppManager {
             await this.disable(id).catch();
         }
 
+        this.removeAppUser(app.getID());
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
         this.apiManager.unregisterApis(app.getID());
@@ -796,5 +797,9 @@ export class AppManager {
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
         });
+    }
+
+    private removeAppUser(appId: string): Promise<boolean> {
+        return this.bridges.getUserBridge().removeAppUser(appId);
     }
 }

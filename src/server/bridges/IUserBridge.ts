@@ -13,5 +13,12 @@ export interface IUserBridge {
      */
     create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
 
+    /**
+     * Remove the app user from the system.
+     *
+     * @param appId the id of the app calling this
+     */
+    removeAppUser(appId: string): Promise<boolean>;
+
     getActiveUserCount(): Promise<number>;
 }
