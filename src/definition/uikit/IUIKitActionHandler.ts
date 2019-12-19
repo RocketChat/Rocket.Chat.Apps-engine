@@ -1,42 +1,40 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
 import { IUIKitInteractionResponse, IUIKitResponse } from './IUIKitResponse';
-import { IUIKitViewClose } from './IUIKitViewClose';
-import { IUIKitViewSubmit } from './IUIKitViewSubmit';
-import { IUIKitBlockInteraction } from './UIKitInteractionContext';
+import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from './UIKitInteractionContext';
 
 /** Handler for after a message is sent. */
 export interface IUIKitInteractionHandler {
     /**
      * Method called when a block action is invoked.
      *
-     * @param data
+     * @param context
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_BLOCK_ACTION]?(data: IUIKitBlockInteraction, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+    [AppMethod.UIKIT_BLOCK_ACTION]?(context: UIKitBlockInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
         Promise<IUIKitResponse | IUIKitInteractionResponse>;
 
     /**
      * Method called when a modal is submitted.
      *
-     * @param data
+     * @param context
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_VIEW_SUBMIT]?(data: IUIKitViewSubmit, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+    [AppMethod.UIKIT_VIEW_SUBMIT]?(context: UIKitViewSubmitInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
         Promise<IUIKitResponse | IUIKitInteractionResponse>;
 
     /**
      * Method called when a modal is closed.
      *
-     * @param data
+     * @param context
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_VIEW_CLOSE]?(data: IUIKitViewClose, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
+    [AppMethod.UIKIT_VIEW_CLOSE]?(context: UIKitViewCloseInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
         Promise<IUIKitResponse>;
 }

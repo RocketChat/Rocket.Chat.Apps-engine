@@ -1,9 +1,9 @@
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
-import { IUIKitAction, IUIKitResponse, IUIKitViewClose, IUIKitViewSubmit } from '../../definition/uikit';
+import { IUIKitAction, IUIKitResponse, IUIKitView } from '../../definition/uikit';
 import { UIKitInteractionType } from '../../definition/uikit/IUIKitAction';
-import { IUIKitBlockInteraction } from '../../definition/uikit/UIKitInteractionContext';
+import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
@@ -602,7 +602,7 @@ export class AppListenerManager {
             return;
         }
 
-        const actionData = ((interactionType: UIKitInteractionType, interactionData: IUIKitAction) => {
+        const interactionContext = ((interactionType: UIKitInteractionType, interactionData: IUIKitAction) => {
             const {
                 actionId,
                 message,
@@ -615,7 +615,7 @@ export class AppListenerManager {
                 case UIKitInteractionType.BLOCK: {
                     const { value } = interactionData.payload as { value: string };
 
-                    return {
+                    return new UIKitBlockInteractionContext({
                         appId,
                         actionId,
                         user,
@@ -623,36 +623,37 @@ export class AppListenerManager {
                         triggerId,
                         value,
                         message,
-                    } as IUIKitBlockInteraction;
+                    });
                 }
                 case UIKitInteractionType.VIEW_SUBMIT: {
-                    const { view } = interactionData.payload as { view: object };
+                    const { view } = interactionData.payload as { view: IUIKitView };
 
-                    return {
+                    return new UIKitViewSubmitInteractionContext({
                         appId,
                         actionId,
                         view,
                         room,
                         triggerId,
                         user,
-                    } as IUIKitViewSubmit;
+                    });
                 }
                 case UIKitInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: object, isCleared: boolean };
+                    const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
 
-                    return {
+                    return new UIKitViewCloseInteractionContext({
                         appId,
+                        actionId,
                         view,
                         room,
                         isCleared,
                         user,
-                    } as IUIKitViewClose;
+                    });
                 }
             }
         })(type, data);
 
         return app.call(method,
-            actionData,
+            interactionContext,
             this.am.getReader(appId),
             this.am.getHttp(appId),
             this.am.getPersistence(appId),
