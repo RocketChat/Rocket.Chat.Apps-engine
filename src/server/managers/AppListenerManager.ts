@@ -1,3 +1,4 @@
+import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -54,7 +55,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitAction): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitAction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -97,6 +98,10 @@ export class AppListenerManager {
                 return;
             case AppInterface.IBlockitActionHandler:
                 return this.executeUIKitAction(data as IUIKitAction);
+            // Livechat
+            case AppInterface.ILivechatRoomClosedHandler:
+                this.executeLivechatRoomClosed(data as ILivechatRoom);
+                return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -659,5 +664,24 @@ export class AppListenerManager {
             this.am.getPersistence(appId),
             this.am.getModifier(appId),
         );
+    }
+    // Livechat
+    private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
+        }
     }
 }

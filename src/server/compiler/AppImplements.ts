@@ -21,6 +21,8 @@ export enum AppInterface {
     IPostRoomDeleted = 'IPostRoomDeleted',
     // Blocks
     IBlockitActionHandler = 'IBlockitActionHandler',
+    // Livechat
+    ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
 }
 
 export class AppImplements {

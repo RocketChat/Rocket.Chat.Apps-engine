@@ -47,4 +47,6 @@ export enum AppMethod {
     UIKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
+    // Livechat
+    EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
 }
