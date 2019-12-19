@@ -6,5 +6,5 @@ import { AppInterface } from '../compiler';
 export interface IListenerBridge {
     messageEvent(int: AppInterface, message: IMessage): Promise<void | boolean | IMessage>;
     roomEvent(int: AppInterface, room: IRoom): Promise<void | boolean | IRoom>;
-    blockitEvent(int: AppInterface, action: IUIKitInteraction): Promise<void | boolean>;
+    uiKitInteractionEvent(int: AppInterface, action: IUIKitInteraction): Promise<void | boolean>;
 }
