@@ -21,7 +21,7 @@ export class Notifier implements INotifier {
         await this.msgBridge.notifyRoom(room, message, this.appId);
     }
 
-    public async sendUiInteration(user: IUser, interaction: IUIKitResponse): Promise<void> {
+    public async sendUiInteraction(user: IUser, interaction: IUIKitResponse): Promise<void> {
         this.uiInteractionBridge.notifyUser(user, interaction, this.appId);
     }
 

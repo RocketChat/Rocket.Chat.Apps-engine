@@ -27,7 +27,7 @@ export interface INotifier {
      */
     notifyRoom(room: IRoom, message: IMessage): Promise<void>;
 
-    sendUiInteration(user: IUser, interaction: IUIKitResponse): Promise<void>;
+    sendUiInteraction(user: IUser, interaction: IUIKitResponse): Promise<void>;
 
     /** Gets a new message builder for building a notification message. */
     getMessageBuilder(): IMessageBuilder;
