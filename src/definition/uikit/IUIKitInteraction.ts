@@ -8,7 +8,7 @@ export enum UIKitInteractionType {
     VIEW_CLOSED = 'viewClosed',
 }
 
-export interface IUIKitAction {
+export interface IUIKitInteraction {
     type: UIKitInteractionType;
     user: IUser;
     appId: string;

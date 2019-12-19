@@ -1,4 +1,4 @@
-export * from './IUIKitAction';
+export * from './IUIKitInteraction';
 export * from './IUIKitView';
 export * from './IUIKitActionHandler';
 export * from './IUIKitResponse';

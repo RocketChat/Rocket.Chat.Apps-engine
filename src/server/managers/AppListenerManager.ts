@@ -2,8 +2,7 @@ import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
-import { IUIKitAction, IUIKitResponse, IUIKitView } from '../../definition/uikit';
-import { UIKitInteractionType } from '../../definition/uikit/IUIKitAction';
+import { IUIKitInteraction, IUIKitResponse, IUIKitView, UIKitInteractionType } from '../../definition/uikit';
 import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
@@ -55,7 +54,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitAction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitInteraction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -96,8 +95,8 @@ export class AppListenerManager {
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
                 return;
-            case AppInterface.IBlockitActionHandler:
-                return this.executeUIKitAction(data as IUIKitAction);
+            case AppInterface.IUIKitInteractionHandler:
+                return this.executeUIKitInteraction(data as IUIKitInteraction);
             // Livechat
             case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
@@ -588,7 +587,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executeUIKitAction(data: IUIKitAction): Promise<IUIKitResponse> {
+    private async executeUIKitInteraction(data: IUIKitInteraction): Promise<IUIKitResponse> {
         const { appId, type } = data;
 
         const method = ((interactionType: string) => {
@@ -607,7 +606,7 @@ export class AppListenerManager {
             return;
         }
 
-        const interactionContext = ((interactionType: UIKitInteractionType, interactionData: IUIKitAction) => {
+        const interactionContext = ((interactionType: UIKitInteractionType, interactionData: IUIKitInteraction) => {
             const {
                 actionId,
                 message,
