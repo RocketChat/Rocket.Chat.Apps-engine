@@ -5,7 +5,7 @@ import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IUIKitResponse, IUIKitViewResponse, UIKitResponseType } from './IUIKitResponse';
-import { IUIKitView } from './IUIKitView';
+import { IUIKitView, UIKitViewType } from './IUIKitView';
 
 import uuid = require('uuid/v1');
 
@@ -32,7 +32,7 @@ export interface IUIKitViewCloseInteraction extends IUIKitBaseInteraction {
     isCleared: boolean;
 }
 
-export type IUIKitViewParam = Omit<IUIKitView, 'appId' | 'id'> & Partial<Pick<IUIKitView, 'id'>>;
+export type IUIKitModalViewParam = Omit<IUIKitView, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitView, 'id'>>;
 export abstract class UIKitInteractionContext {
     private baseContext: IUIKitBaseInteraction;
     constructor(baseContext: IUIKitBaseInteraction) {
@@ -54,13 +54,14 @@ export abstract class UIKitInteractionContext {
             success: false,
         };
     }
-    public modalViewResponse(viewData: IUIKitViewParam): IUIKitViewResponse {
+    public modalViewResponse(viewData: IUIKitModalViewParam): IUIKitViewResponse {
         return {
             success: true,
             type: UIKitResponseType.MODAL,
             triggerId: this.baseContext.triggerId,
             view: {
                 appId: this.baseContext.appId,
+                type: UIKitViewType.MODAL,
                 id: viewData.id ? viewData.id : uuid(),
                 ...viewData,
             },

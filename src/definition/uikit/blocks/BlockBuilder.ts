@@ -1,8 +1,7 @@
-import * as uuid from 'uuid/v4';
-
+import * as uuid from 'uuid/v1';
 import { Omit } from '../../../lib/utils';
-import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, ISectionBlock } from './Blocks';
-import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInteractiveElement } from './Elements';
+import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
+import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInputElement, IInteractiveElement, IPlainTextInputElement } from './Elements';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
@@ -12,9 +11,11 @@ type SectionBlockParam = BlockFunctionParameter<ISectionBlock>;
 type ImageBlockParam = BlockFunctionParameter<IImageBlock>;
 type ActionsBlockParam = BlockFunctionParameter<IActionsBlock>;
 type ContextBlockParam = BlockFunctionParameter<IContextBlock>;
+type InputBlockParam = BlockFunctionParameter<IInputBlock>;
 
 type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
 type ImageElementParam = ElementFunctionParameter<IImageElement>;
+type PlainTextInputElementParam = ElementFunctionParameter<IPlainTextInputElement>;
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
@@ -53,6 +54,12 @@ export class BlockBuilder {
         return this;
     }
 
+    public addInputBlock(block: InputBlockParam): BlockBuilder {
+        this.addBlock({ type: BlockType.INPUT, ...block } as IInputBlock);
+
+        return this;
+    }
+
     public getBlocks() {
         return this.blocks;
     }
@@ -71,12 +78,27 @@ export class BlockBuilder {
        } as IImageElement;
     }
 
-    private newInteractiveElement<T extends IInteractiveElement>(block: T): T {
-        if (!block.actionId) {
-            block.actionId = this.generateActionId();
+    public newPlainTextInputElement(info: PlainTextInputElementParam): IPlainTextInputElement {
+        return this.newInputElement({
+            type: BlockElementType.PLAIN_TEXT_INPUT,
+            ...info,
+        } as IPlainTextInputElement);
+    }
+
+    private newInteractiveElement<T extends IInteractiveElement>(element: T): T {
+        if (!element.actionId) {
+            element.actionId = this.generateActionId();
         }
 
-        return block;
+        return element;
+    }
+
+    private newInputElement<T extends IInputElement>(element: T): T {
+        if (!element.actionId) {
+            element.actionId = this.generateActionId();
+        }
+
+        return element;
     }
 
     private addBlock(block: IBlock): void {

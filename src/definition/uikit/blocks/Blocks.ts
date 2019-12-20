@@ -1,4 +1,4 @@
-import { AvailableElements, IBlockElement, IImageElement } from './Elements';
+import { AvailableElements, IBlockElement, IImageElement, IPlainTextInputElement } from './Elements';
 import { ITextObject } from './Objects';
 
 export enum BlockType {
@@ -7,6 +7,7 @@ export enum BlockType {
     IMAGE = 'image',
     ACTIONS = 'actions',
     CONTEXT = 'context',
+    INPUT = 'inupt',
 }
 
 export interface IBlock {
@@ -26,7 +27,6 @@ export interface IImageBlock extends IBlock {
     imageUrl: string;
     altText: string;
     title?: ITextObject;
-    blockId?: string;
 }
 
 export interface IDividerBlock extends IBlock {
@@ -41,4 +41,11 @@ export interface IActionsBlock extends IBlock {
 export interface IContextBlock extends IBlock {
     type: BlockType.CONTEXT;
     elements: Array<ITextObject | IImageElement>;
+}
+
+export interface IInputBlock extends IBlock {
+    type: BlockType.INPUT;
+    element: IPlainTextInputElement;
+    label: ITextObject;
+    optional?: boolean;
 }
