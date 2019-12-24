@@ -18,4 +18,8 @@ export class TestsUserBridge implements IUserBridge {
     public getActiveUserCount(): Promise<number> {
         throw new Error('Method not implemented.');
     }
+
+    public removeAppUser(appId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
 }
