@@ -796,13 +796,14 @@ export class AppManager {
     }
 
     private createAppUser(app: ProxiedApp): Promise<string | boolean> {
-        const appUser = this.getAppUserById(app.getID());
         const userData = {
-            ...appUser,
-            _id: appUser.id,
+            _id: app.getInfo().nameSlug,
+            username: app.getInfo().nameSlug,
+            name: app.getInfo().name,
+            roles: ['app'],
+            appId: app.getID(),
+            type: UserType.APP,
         };
-
-        delete userData.id;
 
         return this.bridges.getUserBridge().create(userData, app.getID(), {
             avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
