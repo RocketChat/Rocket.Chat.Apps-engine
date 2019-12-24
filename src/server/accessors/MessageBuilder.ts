@@ -3,6 +3,7 @@ import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
+import { AppManager } from '../AppManager';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
@@ -11,6 +12,12 @@ export class MessageBuilder implements IMessageBuilder {
     constructor(message?: IMessage) {
         this.kind = RocketChatAssociationModel.MESSAGE;
         this.msg = message ? message : ({} as IMessage);
+
+        const manager = AppManager.Instance;
+
+        this.setSender({
+            id: manager.get
+        } as IUser);
     }
 
     public setData(data: IMessage): IMessageBuilder {
