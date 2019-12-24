@@ -9,15 +9,12 @@ export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
     private msg: IMessage;
 
-    constructor(message?: IMessage) {
-        this.kind = RocketChatAssociationModel.MESSAGE;
-        this.msg = message ? message : ({} as IMessage);
-
+    constructor(private appId: string, message?: IMessage) {
         const manager = AppManager.Instance;
 
-        this.setSender({
-            id: manager.get
-        } as IUser);
+        this.kind = RocketChatAssociationModel.MESSAGE;
+        this.msg = message ? message : ({} as IMessage);
+        this.setSender(manager.getAppUserById(this.appId));
     }
 
     public setData(data: IMessage): IMessageBuilder {

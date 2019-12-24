@@ -28,7 +28,7 @@ export class ModifyCreator implements IModifyCreator {
             delete data.id;
         }
 
-        return new MessageBuilder(data);
+        return new MessageBuilder(this.appId, data);
     }
 
     public startLivechatMessage(data?: ILivechatMessage): ILivechatMessageBuilder {
@@ -36,7 +36,7 @@ export class ModifyCreator implements IModifyCreator {
             delete data.id;
         }
 
-        return new LivechatMessageBuilder(data);
+        return new LivechatMessageBuilder(this.appId, data);
     }
 
     public startRoom(data?: IRoom): IRoomBuilder {

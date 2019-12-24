@@ -11,7 +11,7 @@ export class LivechatMessageBuilder implements ILivechatMessageBuilder {
     public kind: RocketChatAssociationModel.LIVECHAT_MESSAGE;
     private msg: ILivechatMessage;
 
-    constructor(message?: ILivechatMessage) {
+    constructor(private appId: string, message?: ILivechatMessage) {
         this.kind = RocketChatAssociationModel.LIVECHAT_MESSAGE;
         this.msg = message ? message : ({} as ILivechatMessage);
     }
@@ -184,6 +184,6 @@ export class LivechatMessageBuilder implements ILivechatMessageBuilder {
     }
 
     public getMessageBuilder(): IMessageBuilder {
-        return new MessageBuilder(this.msg as IMessage);
+        return new MessageBuilder(this.appId, this.msg as IMessage);
     }
 }
