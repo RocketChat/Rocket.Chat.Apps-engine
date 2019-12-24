@@ -1,26 +1,42 @@
-import { Expect, Test } from 'alsatian';
+import { Expect, SetupFixture, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
+import { AppManager } from '../../../src/server/AppManager';
+// import { TestsAppBridges } from '../../test-data/bridges/appBridges';
+// import { TestsAppLogStorage } from '../../test-data/logStorage';
+// import { TestsAppStorage } from '../../test-data/storage';
 
 export class MessageBuilderAccessorTestFixture {
+    private mockAppId: string = 'mockAppId';
+
+    @SetupFixture
+    public setupFixture() {
+        // Expect(() => new AppManager(
+        //     new TestsAppStorage(),
+        //     new TestsAppLogStorage(),
+        //     new TestsAppBridges(),
+        // )).not.toThrow();
+        console.log(AppManager.Instance);
+    }
+
     @Test()
     public basicMessageBuilder() {
-        Expect(() => new MessageBuilder()).not.toThrow();
-        Expect(() => new MessageBuilder(TestData.getMessage())).not.toThrow();
+        Expect(() => new MessageBuilder(this.mockAppId)).not.toThrow();
+        Expect(() => new MessageBuilder(this.mockAppId, TestData.getMessage())).not.toThrow();
     }
 
     @Test()
     public settingOnMessageBuilder() {
-        const mbOnce = new MessageBuilder();
+        const mbOnce = new MessageBuilder(this.mockAppId);
 
         // setData just replaces the passed in object, so let's treat it differently
         Expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
         Expect((mbOnce as any).msg.text).toBe('hello');
 
         const msg: IMessage = {} as IMessage;
-        const mb = new MessageBuilder(msg);
+        const mb = new MessageBuilder(this.mockAppId, msg);
 
         Expect(mb.setThreadId('a random thread id')).toBe(mb);
         Expect(msg.threadId).toBe('a random thread id');

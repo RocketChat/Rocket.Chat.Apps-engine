@@ -63,7 +63,7 @@ export class ModifyUpdaterTestFixture {
         const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
 
         const msg = { } as IMessage;
-        const msgBd = new MessageBuilder(msg);
+        const msgBd = new MessageBuilder(this.mockAppId, msg);
         await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
         msgBd.setRoom(TestData.getRoom());
         Expect(msg.room).toBeDefined();
