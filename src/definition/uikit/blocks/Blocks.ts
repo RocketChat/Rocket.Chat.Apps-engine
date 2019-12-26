@@ -7,7 +7,7 @@ export enum BlockType {
     IMAGE = 'image',
     ACTIONS = 'actions',
     CONTEXT = 'context',
-    INPUT = 'inupt',
+    INPUT = 'input',
 }
 
 export interface IBlock {
