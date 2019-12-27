@@ -14,7 +14,9 @@ export class MessageBuilder implements IMessageBuilder {
 
         this.kind = RocketChatAssociationModel.MESSAGE;
         this.msg = message ? message : ({} as IMessage);
-        this.setSender(manager.getAppUserById(this.appId));
+        if (manager) {
+            this.setSender(manager.getAppUserById(this.appId));
+        }
     }
 
     public setData(data: IMessage): IMessageBuilder {
