@@ -57,6 +57,7 @@ export abstract class UIKitInteractionContext {
     public modalViewResponse(viewData: IUIKitModalViewParam): IUIKitViewResponse {
         return {
             success: true,
+            user: this.baseContext.user,
             type: UIKitResponseType.MODAL,
             triggerId: this.baseContext.triggerId,
             view: {

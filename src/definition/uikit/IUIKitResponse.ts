@@ -1,3 +1,4 @@
+import { IUser } from '../users';
 import { IUIKitView } from './IUIKitView';
 
 export enum UIKitResponseType {
@@ -7,6 +8,7 @@ export enum UIKitResponseType {
 
 export interface IUIKitResponse {
     success: boolean;
+    user?: IUser;
 }
 
 export interface IUIKitInteractionResponse extends IUIKitResponse {

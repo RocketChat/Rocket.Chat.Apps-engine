@@ -40,6 +40,7 @@ import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
+import { IUIController } from './IUIController';
 import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 
@@ -82,6 +83,7 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUIController,
     IUploadRead,
     IUserRead,
     LogMessageSeverity,

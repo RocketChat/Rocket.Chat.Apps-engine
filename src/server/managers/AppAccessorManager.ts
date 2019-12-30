@@ -1,5 +1,17 @@
 import {
+    IConfigurationExtend,
+    IConfigurationModify,
+    IEnvironmentRead,
+    IHttp,
+    IHttpExtend,
+    IModify,
+    IPersistence,
+    IRead,
+} from '../../definition/accessors';
+import {
+    ApiExtend,
     ConfigurationExtend,
+    ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
     Http,
@@ -13,6 +25,7 @@ import {
     Reader,
     RoomRead,
     ServerSettingRead,
+    ServerSettingsModify,
     SettingRead,
     SettingsExtend,
     SlashCommandsExtend,
@@ -20,22 +33,8 @@ import {
     UploadRead,
     UserRead,
 } from '../accessors';
-import { ApiExtend } from '../accessors/ApiExtend';
-import { ConfigurationModify } from '../accessors/ConfigurationModify';
-import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
-
-import {
-    IConfigurationExtend,
-    IConfigurationModify,
-    IEnvironmentRead,
-    IHttp,
-    IHttpExtend,
-    IModify,
-    IPersistence,
-    IRead,
-} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;
@@ -128,7 +127,7 @@ export class AppAccessorManager {
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
-            const noti = new Notifier(this.bridges.getMessageBridge(), appId, this.bridges.getUiInteractionBridge());
+            const noti = new Notifier(this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
 
