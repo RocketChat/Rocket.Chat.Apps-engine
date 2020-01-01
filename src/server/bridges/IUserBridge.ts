@@ -1,4 +1,4 @@
-import { IUser, IUserCreationOptions } from '../../definition/users';
+import { IUser, IUserCreationOptions, UserStatusConnection } from '../../definition/users';
 
 export interface IUserBridge {
     getById(id: string, appId: string): Promise<IUser>;
@@ -21,4 +21,11 @@ export interface IUserBridge {
     removeAppUser(appId: string): Promise<boolean>;
 
     getActiveUserCount(): Promise<number>;
+
+    /**
+     * Set the status of the user.
+     * @param status the status of the user
+     * @param appId the id of the app calling this
+     */
+    setUserStatus(status: UserStatusConnection, appId: string): Promise<void>;
 }

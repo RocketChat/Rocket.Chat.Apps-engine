@@ -15,7 +15,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
-import { IUser, UserType } from '../definition/users';
+import { IUser, UserStatusConnection, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { IMarketplaceInfo } from './marketplace';
 
@@ -241,6 +241,7 @@ export class AppManager {
                 this.commandManager.unregisterCommands(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
+                this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, rl.getID());
                 continue;
             }
 
@@ -369,6 +370,7 @@ export class AppManager {
         this.commandManager.unregisterCommands(rl.getID());
         this.apiManager.unregisterApis(rl.getID());
         this.accessorManager.purifyApp(rl.getID());
+        this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, rl.getID());
 
         await rl.setStatus(status, silent);
 
@@ -460,7 +462,7 @@ export class AppManager {
             await this.disable(id).catch();
         }
 
-        this.removeAppUser(app.getID());
+        this.bridges.getUserBridge().removeAppUser(app.getID());
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
         this.apiManager.unregisterApis(app.getID());
@@ -618,6 +620,7 @@ export class AppManager {
 
                 this.commandManager.unregisterCommands(app.getID());
                 this.apiManager.unregisterApis(app.getID());
+                this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, app.getID());
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
             })
@@ -710,6 +713,7 @@ export class AppManager {
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
+            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, storageItem.id);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -780,9 +784,11 @@ export class AppManager {
             this.commandManager.registerCommands(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
+            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.ONLINE, app.getID());
         } else {
             this.commandManager.unregisterCommands(app.getID());
             this.apiManager.unregisterApis(app.getID());
+            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, app.getID());
         }
 
         if (saveToDb) {
@@ -810,9 +816,5 @@ export class AppManager {
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
         });
-    }
-
-    private removeAppUser(appId: string): Promise<boolean> {
-        return this.bridges.getUserBridge().removeAppUser(appId);
     }
 }
