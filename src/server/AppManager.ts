@@ -792,6 +792,7 @@ export class AppManager {
             appId: app.getID(),
             type: UserType.APP,
             status: 'online',
+            isEnabled: true,
         };
 
         return this.bridges.getUserBridge().create(userData, app.getID(), {
