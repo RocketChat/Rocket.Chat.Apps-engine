@@ -59,9 +59,7 @@ export class UserBuilder implements IUserBuilder {
         if (!this.user.username) {
             throw new Error('The "username" property is required.');
         }
-        if (!this.user.emails) {
-            throw new Error('The "emails" property is required.');
-        }
+
         if (!this.user.name) {
             throw new Error('The "name" property is required.');
         }
