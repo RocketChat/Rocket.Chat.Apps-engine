@@ -16,7 +16,7 @@ export interface IUserBridge {
     create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
 
     /**
-     * Remove the app user from the system.
+     * Remove a user.
      *
      * @param appId the id of the app calling this
      */
