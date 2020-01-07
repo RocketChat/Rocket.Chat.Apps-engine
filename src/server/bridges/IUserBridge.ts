@@ -18,7 +18,8 @@ export interface IUserBridge {
     /**
      * Remove a user.
      *
-     * @param appId the id of the app calling this
+     * @param user the user object to be removed
+     * @param appId the id of the app executing the call
      */
     remove(user: IUser, appId: string): Promise<boolean>;
 
