@@ -3,12 +3,8 @@ import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
-// import { TestsAppBridges } from '../../test-data/bridges/appBridges';
-// import { TestsAppLogStorage } from '../../test-data/logStorage';
-// import { TestsAppStorage } from '../../test-data/storage';
 
 export class MessageBuilderAccessorTestFixture {
-
     @Test()
     public basicMessageBuilder() {
         Expect(() => new MessageBuilder()).not.toThrow();
