@@ -9,7 +9,6 @@ import { AppManager } from '../../../src/server/AppManager';
 // import { TestsAppStorage } from '../../test-data/storage';
 
 export class MessageBuilderAccessorTestFixture {
-    private mockAppId: string = 'mockAppId';
 
     @SetupFixture
     public setupFixture() {
@@ -23,20 +22,20 @@ export class MessageBuilderAccessorTestFixture {
 
     @Test()
     public basicMessageBuilder() {
-        Expect(() => new MessageBuilder(this.mockAppId)).not.toThrow();
-        Expect(() => new MessageBuilder(this.mockAppId, TestData.getMessage())).not.toThrow();
+        Expect(() => new MessageBuilder()).not.toThrow();
+        Expect(() => new MessageBuilder(TestData.getMessage())).not.toThrow();
     }
 
     @Test()
     public settingOnMessageBuilder() {
-        const mbOnce = new MessageBuilder(this.mockAppId);
+        const mbOnce = new MessageBuilder();
 
         // setData just replaces the passed in object, so let's treat it differently
         Expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
         Expect((mbOnce as any).msg.text).toBe('hello');
 
         const msg: IMessage = {} as IMessage;
-        const mb = new MessageBuilder(this.mockAppId, msg);
+        const mb = new MessageBuilder(msg);
 
         Expect(mb.setThreadId('a random thread id')).toBe(mb);
         Expect(msg.threadId).toBe('a random thread id');

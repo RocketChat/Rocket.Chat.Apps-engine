@@ -8,10 +8,10 @@ export interface IUser {
     name: string;
     roles: Array<string>;
     type: UserType;
+    status: string;
+    statusConnection: UserStatusConnection;
+    isEnabled: boolean;
     emails?: Array<IUserEmail>;
-    isEnabled?: boolean;
-    status?: string;
-    statusConnection?: UserStatusConnection;
     utcOffset?: number;
     createdAt?: Date;
     updatedAt?: Date;

@@ -22,7 +22,7 @@ export class ModifyUpdater implements IModifyUpdater {
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
         const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
 
-        return new MessageBuilder(this.appId, msg);
+        return new MessageBuilder(msg);
     }
 
     public async room(roomId: string, updater: IUser): Promise<IRoomBuilder> {
@@ -46,7 +46,7 @@ export class ModifyUpdater implements IModifyUpdater {
         const result = builder.getMessage();
 
         if (!result.id) {
-            throw new Error('Invalid message, can not update a message without an id.');
+            throw new Error('Invalid message, can\'t update a message without an id.');
         }
 
         if (!result.sender || !result.sender.id) {

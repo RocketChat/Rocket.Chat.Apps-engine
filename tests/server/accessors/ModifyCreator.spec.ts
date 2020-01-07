@@ -1,9 +1,9 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom, RoomType } from '../../../src/definition/rooms';
-
+import { IUser, UserStatusConnection, UserType } from '../../../src/definition/users';
 import { ModifyCreator } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
+import { AppBridges, IMessageBridge, IRoomBridge, IUserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyCreatorTestFixture {
@@ -11,10 +11,23 @@ export class ModifyCreatorTestFixture {
     private mockRoomBridge: IRoomBridge;
     private mockMessageBridge: IMessageBridge;
     private mockAppBridge: AppBridges;
+    private mockAppUser: IUser;
+    private mockUserBridge: IUserBridge;
 
     @SetupFixture
     public setupFixture() {
         this.mockAppId = 'testing-app';
+
+        this.mockAppUser = {
+            id: 'mockAppUser',
+            isEnabled: true,
+            name: 'mockAppUser',
+            roles: ['app'],
+            status: 'online',
+            statusConnection: UserStatusConnection.UNDEFINED,
+            type: UserType.APP,
+            username: 'mockAppUser',
+        };
 
         this.mockRoomBridge = {
             create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
@@ -28,15 +41,16 @@ export class ModifyCreatorTestFixture {
             },
         } as IMessageBridge;
 
-        const rmBridge = this.mockRoomBridge;
-        const msgBridge = this.mockMessageBridge;
+        this.mockUserBridge = {
+            getAppUser: (appId: string) => {
+                return Promise.resolve(this.mockAppUser);
+            },
+        } as IUserBridge;
+
         this.mockAppBridge = {
-            getMessageBridge() {
-                return msgBridge;
-            },
-            getRoomBridge() {
-                return rmBridge;
-            },
+            getMessageBridge: () => this.mockMessageBridge,
+            getRoomBridge: () => this.mockRoomBridge,
+            getUserBridge: () => this.mockUserBridge,
         } as AppBridges;
     }
 
@@ -62,7 +76,7 @@ export class ModifyCreatorTestFixture {
         await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
         msgBd.setRoom(TestData.getRoom());
         Expect(msg.room).toBeDefined();
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
+        await Expect(async () => await mc.finish(msgBd)).not.toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 

@@ -1,16 +1,14 @@
-import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder, IUserBuilder } from '../../definition/accessors';
+import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IUser } from '../../definition/users';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
-import { UserBuilder } from './UserBuilder';
 
 export class ModifyCreator implements IModifyCreator {
     private livechatCreator: LivechatCreator;
@@ -28,7 +26,7 @@ export class ModifyCreator implements IModifyCreator {
             delete data.id;
         }
 
-        return new MessageBuilder(this.appId, data);
+        return new MessageBuilder(data);
     }
 
     public startLivechatMessage(data?: ILivechatMessage): ILivechatMessageBuilder {
@@ -36,7 +34,7 @@ export class ModifyCreator implements IModifyCreator {
             delete data.id;
         }
 
-        return new LivechatMessageBuilder(this.appId, data);
+        return new LivechatMessageBuilder(data);
     }
 
     public startRoom(data?: IRoom): IRoomBuilder {
@@ -47,15 +45,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public startUser(data?: Partial<IUser>): IUserBuilder {
-        if (data) {
-            delete data.id;
-        }
-
-        return new UserBuilder(data);
-    }
-
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IUserBuilder): Promise<string> {
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -63,19 +53,23 @@ export class ModifyCreator implements IModifyCreator {
                 return this._finishLivechatMessage(builder);
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
-            case RocketChatAssociationModel.USER:
-                return this._finishUser(builder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): Promise<string> {
+    private async _finishMessage(builder: IMessageBuilder): Promise<string> {
         const result = builder.getMessage();
         delete result.id;
 
         if (!result.sender || !result.sender.id) {
-            throw new Error('Invalid sender assigned to the message.');
+            const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+
+            if (!appUser) {
+                throw new Error('Invalid sender assigned to the message.');
+            }
+
+            result.sender = appUser;
         }
 
         return this.bridges.getMessageBridge().create(result, this.appId);
@@ -125,11 +119,5 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
-    }
-
-    private _finishUser(builder: IUserBuilder): Promise<string> {
-        const result = builder.getUser();
-        delete result.id;
-        return this.bridges.getUserBridge().create(result, this.appId);
     }
 }

@@ -15,7 +15,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
-import { IUser, UserStatusConnection, UserType } from '../definition/users';
+import { IUser, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { IMarketplaceInfo } from './marketplace';
 
@@ -241,7 +241,6 @@ export class AppManager {
                 this.commandManager.unregisterCommands(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
-                this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, rl.getID());
                 continue;
             }
 
@@ -306,19 +305,6 @@ export class AppManager {
         return this.apps.get(appId);
     }
 
-    public getAppUserById(appId: string): IUser {
-        const app = this.getOneById(appId);
-
-        return {
-            id: app.getInfo().nameSlug,
-            username: app.getInfo().nameSlug,
-            name: app.getInfo().name,
-            roles: ['app'],
-            appId: app.getID(),
-            type: UserType.APP,
-        } as IUser;
-    }
-
     public async enable(id: string): Promise<boolean> {
         const rl = this.apps.get(id);
 
@@ -370,7 +356,6 @@ export class AppManager {
         this.commandManager.unregisterCommands(rl.getID());
         this.apiManager.unregisterApis(rl.getID());
         this.accessorManager.purifyApp(rl.getID());
-        this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, rl.getID());
 
         await rl.setStatus(status, silent);
 
@@ -415,10 +400,10 @@ export class AppManager {
         // the App instance from the source.
         const app = this.getCompiler().toSandBox(this, compiled);
 
-        // Create an app user for this app before installing it.
-        const appUserId = await this.createAppUser(app);
-
-        if (!appUserId) {
+        // Create a user for the app
+        try {
+            await this.createAppUser(app);
+        } catch (err) {
             aff.setAppUserError({
                 username: app.getInfo().nameSlug,
                 message: 'Failed to create an app user for this app.',
@@ -431,6 +416,8 @@ export class AppManager {
 
         if (!created) {
             aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            await this.removeAppUser(app);
 
             return aff;
         }
@@ -459,20 +446,20 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id).catch();
+            await this.disable(id);
         }
 
-        this.bridges.getUserBridge().removeAppUser(app.getID());
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
+        await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().appRemoved(app);
 
         this.apps.delete(app.getID());
 
@@ -620,7 +607,6 @@ export class AppManager {
 
                 this.commandManager.unregisterCommands(app.getID());
                 this.apiManager.unregisterApis(app.getID());
-                this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, app.getID());
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
             })
@@ -713,7 +699,6 @@ export class AppManager {
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
-            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, storageItem.id);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -784,11 +769,9 @@ export class AppManager {
             this.commandManager.registerCommands(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
-            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.ONLINE, app.getID());
         } else {
             this.commandManager.unregisterCommands(app.getID());
             this.apiManager.unregisterApis(app.getID());
-            this.bridges.getUserBridge().setUserStatus(UserStatusConnection.OFFLINE, app.getID());
         }
 
         if (saveToDb) {
@@ -801,14 +784,14 @@ export class AppManager {
         return enable;
     }
 
-    private createAppUser(app: ProxiedApp): Promise<string | boolean> {
-        const userData = {
-            _id: app.getInfo().nameSlug,
+    private createAppUser(app: ProxiedApp): Promise<string> {
+        const userData: Partial<IUser> = {
             username: app.getInfo().nameSlug,
             name: app.getInfo().name,
             roles: ['app'],
             appId: app.getID(),
             type: UserType.APP,
+            status: 'online',
         };
 
         return this.bridges.getUserBridge().create(userData, app.getID(), {
@@ -816,5 +799,15 @@ export class AppManager {
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
         });
+    }
+
+    private async removeAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (!appUser) {
+            return true;
+        }
+
+        return this.bridges.getUserBridge().remove(appUser, app.getID());
     }
 }
