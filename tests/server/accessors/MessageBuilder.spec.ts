@@ -1,24 +1,13 @@
-import { Expect, SetupFixture, Test } from 'alsatian';
+import { Expect, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder } from '../../../src/server/accessors';
-import { AppManager } from '../../../src/server/AppManager';
 // import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 // import { TestsAppLogStorage } from '../../test-data/logStorage';
 // import { TestsAppStorage } from '../../test-data/storage';
 
 export class MessageBuilderAccessorTestFixture {
-
-    @SetupFixture
-    public setupFixture() {
-        // Expect(() => new AppManager(
-        //     new TestsAppStorage(),
-        //     new TestsAppLogStorage(),
-        //     new TestsAppBridges(),
-        // )).not.toThrow();
-        console.log(AppManager.Instance);
-    }
 
     @Test()
     public basicMessageBuilder() {
