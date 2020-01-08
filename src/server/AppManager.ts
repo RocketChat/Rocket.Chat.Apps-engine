@@ -786,7 +786,7 @@ export class AppManager {
 
     private createAppUser(app: ProxiedApp): Promise<string> {
         const userData: Partial<IUser> = {
-            username: app.getInfo().nameSlug,
+            username: `app.${ app.getInfo().nameSlug }`,
             name: app.getInfo().name,
             roles: ['app'],
             appId: app.getID(),
