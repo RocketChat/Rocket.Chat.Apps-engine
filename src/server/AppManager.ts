@@ -15,6 +15,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { IUser, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { IMarketplaceInfo } from './marketplace';
 
@@ -383,7 +384,7 @@ export class AppManager {
             return aff;
         }
 
-        const created = await this.storage.create({
+        const compiled = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
@@ -393,17 +394,33 @@ export class AppManager {
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
-        });
+        };
 
-        if (!created) {
-            aff.setStorageError('Failed to create the App, the storage did not return it.');
+        // Now that is has all been compiled, let's get the
+        // the App instance from the source.
+        const app = this.getCompiler().toSandBox(this, compiled);
+
+        // Create a user for the app
+        try {
+            await this.createAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getInfo().nameSlug,
+                message: 'Failed to create an app user for this app.',
+            });
 
             return aff;
         }
 
-        // Now that is has all been compiled, let's get the
-        // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, created);
+        const created = await this.storage.create(compiled);
+
+        if (!created) {
+            aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            await this.removeAppUser(app);
+
+            return aff;
+        }
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -429,19 +446,20 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id).catch();
+            await this.disable(id);
         }
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
+        await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().appRemoved(app);
 
         this.apps.delete(app.getID());
 
@@ -764,5 +782,33 @@ export class AppManager {
         }
 
         return enable;
+    }
+
+    private createAppUser(app: ProxiedApp): Promise<string> {
+        const userData: Partial<IUser> = {
+            username: `app.${ app.getInfo().nameSlug }`,
+            name: app.getInfo().name,
+            roles: ['app'],
+            appId: app.getID(),
+            type: UserType.APP,
+            status: 'online',
+            isEnabled: true,
+        };
+
+        return this.bridges.getUserBridge().create(userData, app.getID(), {
+            avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+            joinDefaultChannels: true,
+            sendWelcomeEmail: false,
+        });
+    }
+
+    private async removeAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (!appUser) {
+            return true;
+        }
+
+        return this.bridges.getUserBridge().remove(appUser, app.getID());
     }
 }

@@ -58,12 +58,18 @@ export class ModifyCreator implements IModifyCreator {
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): Promise<string> {
+    private async _finishMessage(builder: IMessageBuilder): Promise<string> {
         const result = builder.getMessage();
         delete result.id;
 
         if (!result.sender || !result.sender.id) {
-            throw new Error('Invalid sender assigned to the message.');
+            const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+
+            if (!appUser) {
+                throw new Error('Invalid sender assigned to the message.');
+            }
+
+            result.sender = appUser;
         }
 
         return this.bridges.getMessageBridge().create(result, this.appId);

@@ -46,7 +46,7 @@ export class ModifyUpdater implements IModifyUpdater {
         const result = builder.getMessage();
 
         if (!result.id) {
-            throw new Error('Invalid message, can not update a message without an id.');
+            throw new Error('Invalid message, can\'t update a message without an id.');
         }
 
         if (!result.sender || !result.sender.id) {
