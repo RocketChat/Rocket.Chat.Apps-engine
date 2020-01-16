@@ -2,14 +2,14 @@ import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 
-export enum UIKitInteractionType {
+export enum UIKitIncomingInteractionType {
     BLOCK = 'blockAction',
     VIEW_SUBMIT = 'viewSubmit',
     VIEW_CLOSED = 'viewClosed',
 }
 
-export interface IUIKitInteraction {
-    type: UIKitInteractionType;
+export interface IUIKitIncomingInteraction {
+    type: UIKitIncomingInteractionType;
     user: IUser;
     appId: string;
     actionId: string;

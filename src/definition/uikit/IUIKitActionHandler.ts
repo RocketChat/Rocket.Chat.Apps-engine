@@ -1,6 +1,6 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IUIKitInteractionResponse, IUIKitResponse } from './IUIKitResponse';
+import { IUIKitResponse } from './IUIKitInteractionType';
 import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from './UIKitInteractionContext';
 
 /** Handler for after a message is sent. */
@@ -14,7 +14,7 @@ export interface IUIKitInteractionHandler {
      * @param persistence An accessor to the App's persistence
      */
     [AppMethod.UIKIT_BLOCK_ACTION]?(context: UIKitBlockInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse | IUIKitInteractionResponse>;
+        Promise<IUIKitResponse>;
 
     /**
      * Method called when a modal is submitted.
@@ -25,7 +25,7 @@ export interface IUIKitInteractionHandler {
      * @param persistence An accessor to the App's persistence
      */
     [AppMethod.UIKIT_VIEW_SUBMIT]?(context: UIKitViewSubmitInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse | IUIKitInteractionResponse>;
+        Promise<IUIKitResponse>;
 
     /**
      * Method called when a modal is closed.

@@ -2,7 +2,7 @@ import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
-import { IUIKitInteraction, IUIKitResponse, IUIKitView, UIKitInteractionType } from '../../definition/uikit';
+import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
@@ -54,7 +54,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitInteraction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitIncomingInteraction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -96,7 +96,7 @@ export class AppListenerManager {
                 this.executePostRoomDeleted(data as IRoom);
                 return;
             case AppInterface.IUIKitInteractionHandler:
-                return this.executeUIKitInteraction(data as IUIKitInteraction);
+                return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
             case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
@@ -587,16 +587,16 @@ export class AppListenerManager {
         }
     }
 
-    private async executeUIKitInteraction(data: IUIKitInteraction): Promise<IUIKitResponse> {
+    private async executeUIKitInteraction(data: IUIKitIncomingInteraction): Promise<IUIKitResponse> {
         const { appId, type } = data;
 
         const method = ((interactionType: string) => {
             switch (interactionType) {
-                case UIKitInteractionType.BLOCK:
+                case UIKitIncomingInteractionType.BLOCK:
                     return AppMethod.UIKIT_BLOCK_ACTION;
-                case UIKitInteractionType.VIEW_SUBMIT:
+                case UIKitIncomingInteractionType.VIEW_SUBMIT:
                     return AppMethod.UIKIT_VIEW_SUBMIT;
-                case UIKitInteractionType.VIEW_CLOSED:
+                case UIKitIncomingInteractionType.VIEW_CLOSED:
                     return AppMethod.UIKIT_VIEW_CLOSE;
             }
         })(type);
@@ -606,7 +606,7 @@ export class AppListenerManager {
             return;
         }
 
-        const interactionContext = ((interactionType: UIKitInteractionType, interactionData: IUIKitInteraction) => {
+        const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitIncomingInteraction) => {
             const {
                 actionId,
                 message,
@@ -616,7 +616,7 @@ export class AppListenerManager {
             } = interactionData;
 
             switch (interactionType) {
-                case UIKitInteractionType.BLOCK: {
+                case UIKitIncomingInteractionType.BLOCK: {
                     const { value } = interactionData.payload as { value: string };
 
                     return new UIKitBlockInteractionContext({
@@ -629,7 +629,7 @@ export class AppListenerManager {
                         message,
                     });
                 }
-                case UIKitInteractionType.VIEW_SUBMIT: {
+                case UIKitIncomingInteractionType.VIEW_SUBMIT: {
                     const { view } = interactionData.payload as { view: IUIKitView };
 
                     return new UIKitViewSubmitInteractionContext({
@@ -641,7 +641,7 @@ export class AppListenerManager {
                         user,
                     });
                 }
-                case UIKitInteractionType.VIEW_CLOSED: {
+                case UIKitIncomingInteractionType.VIEW_CLOSED: {
                     const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
 
                     return new UIKitViewCloseInteractionContext({
