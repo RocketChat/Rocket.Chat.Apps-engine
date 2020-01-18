@@ -4,6 +4,8 @@ export enum BlockElementType {
     BUTTON = 'button',
     IMAGE = 'image',
     PLAIN_TEXT_INPUT = 'plain_text_input',
+    STATIC_SELECT = 'static_select',
+    MULTI_STATIC_SELECT = 'multi_static_select',
 }
 
 export interface IBlockElement {
@@ -21,6 +23,7 @@ export interface IInputElement extends IBlockElement {
     actionId: string;
     initialValue?: string;
 }
+
 export enum ButtonStyle {
     PRIMARY = 'primary',
     DANGER = 'danger',
@@ -42,4 +45,27 @@ export interface IImageElement extends IBlockElement {
 
 export interface IPlainTextInputElement extends IInputElement {
     type: BlockElementType.PLAIN_TEXT_INPUT;
+}
+
+export interface ISelectElement extends IBlockElement {
+    type: BlockElementType.STATIC_SELECT | BlockElementType.MULTI_STATIC_SELECT;
+    actionId: string;
+    initialValue?: Array<string>;
+}
+
+export interface ISelectOption {
+    text: ITextObject;
+    value: string;
+}
+
+export interface IStaticSelectElement extends ISelectElement {
+    type: BlockElementType.STATIC_SELECT;
+    placeholder: ITextObject;
+    options: Array<ISelectOption>;
+}
+
+export interface IMultiStaticSelectElement extends ISelectElement {
+    type: BlockElementType.MULTI_STATIC_SELECT;
+    placeholder: ITextObject;
+    options: Array<ISelectOption>;
 }

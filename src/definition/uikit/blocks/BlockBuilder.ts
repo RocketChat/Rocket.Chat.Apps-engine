@@ -1,7 +1,18 @@
 import * as uuid from 'uuid/v1';
 import { Omit } from '../../../lib/utils';
 import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
-import { BlockElementType, IBlockElement, IButtonElement, IImageElement, IInputElement, IInteractiveElement, IPlainTextInputElement } from './Elements';
+import {
+    BlockElementType,
+    IBlockElement,
+    IButtonElement,
+    IImageElement,
+    IInputElement,
+    IInteractiveElement,
+    IMultiStaticSelectElement,
+    IPlainTextInputElement,
+    ISelectElement,
+    IStaticSelectElement,
+} from './Elements';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
@@ -16,6 +27,8 @@ type InputBlockParam = BlockFunctionParameter<IInputBlock>;
 type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
 type ImageElementParam = ElementFunctionParameter<IImageElement>;
 type PlainTextInputElementParam = ElementFunctionParameter<IPlainTextInputElement>;
+type StaticSelectElementParam = ElementFunctionParameter<IStaticSelectElement>;
+type MultiStaticSelectElementParam = ElementFunctionParameter<IMultiStaticSelectElement>;
 
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
@@ -75,7 +88,7 @@ export class BlockBuilder {
         return {
             type: BlockElementType.IMAGE,
             ...info,
-       } as IImageElement;
+       };
     }
 
     public newPlainTextInputElement(info: PlainTextInputElementParam): IPlainTextInputElement {
@@ -83,6 +96,20 @@ export class BlockBuilder {
             type: BlockElementType.PLAIN_TEXT_INPUT,
             ...info,
         } as IPlainTextInputElement);
+    }
+
+    public newStaticSelectElement(info: StaticSelectElementParam): IStaticSelectElement {
+        return this.newSelectElement({
+            type: BlockElementType.STATIC_SELECT,
+            ...info,
+        } as IStaticSelectElement);
+    }
+
+    public newMultiStaticElement(info: MultiStaticSelectElementParam): IMultiStaticSelectElement {
+        return this.newSelectElement({
+            type: BlockElementType.MULTI_STATIC_SELECT,
+            ...info,
+        } as IMultiStaticSelectElement);
     }
 
     private newInteractiveElement<T extends IInteractiveElement>(element: T): T {
@@ -94,6 +121,14 @@ export class BlockBuilder {
     }
 
     private newInputElement<T extends IInputElement>(element: T): T {
+        if (!element.actionId) {
+            element.actionId = this.generateActionId();
+        }
+
+        return element;
+    }
+
+    private newSelectElement<T extends ISelectElement>(element: T): T {
         if (!element.actionId) {
             element.actionId = this.generateActionId();
         }
