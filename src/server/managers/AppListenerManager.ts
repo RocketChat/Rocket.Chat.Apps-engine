@@ -4,6 +4,7 @@ import { AppInterface } from '../compiler';
 import { ProxiedApp } from '../ProxiedApp';
 import { AppAccessorManager } from './AppAccessorManager';
 
+import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -52,7 +53,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser): Promise<void | boolean | IMessage | IRoom | IUser> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -92,6 +93,10 @@ export class AppListenerManager {
                 return this.executePreRoomDeletePrevent(data as IRoom);
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
+                return;
+            // Livechat
+            case AppInterface.ILivechatRoomClosedHandler:
+                this.executeLivechatRoomClosed(data as ILivechatRoom);
                 return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
@@ -576,6 +581,26 @@ export class AppListenerManager {
                     this.am.getPersistence(appId),
                 );
             }
+        }
+    }
+
+    // Livechat
+    private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
         }
     }
 }
