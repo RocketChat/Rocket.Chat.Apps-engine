@@ -14,7 +14,7 @@ export class SchedulerRead implements ISchedulerRead {
         throw new Error('Method not implemented.');
     }
 
-    public getJobById(id: string): Promise<Array<IJob>> {
+    public getJobById(id: string): Promise<IJob> {
         throw new Error('Method not implemented.');
     }
 }

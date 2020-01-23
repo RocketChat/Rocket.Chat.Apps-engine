@@ -7,14 +7,14 @@ export class Schedule {
 
     constructor(cron: string) {
         this.originalCron = cron;
-        this.details = parseExpression(cron);
+        this.details = parseExpression(cron, { utc: true }); // make all dates utc based instead of timezone based
     }
 
     public hasNext(): boolean {
         return this.details.hasNext();
     }
 
-    public getNext(): Date {
+    public getNext(): Date | undefined {
         if (this.details.hasNext()) {
             const cd = this.details.next() as ICronDate;
 
