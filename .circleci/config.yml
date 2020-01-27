@@ -106,22 +106,6 @@ jobs:
                 fi;
             fi;
 
-  # REMOVE BEFORE MERGING
-  publish-blocks:
-    <<: *defaults
-
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-      - run:
-          name: Publish package
-          command: |
-            npm version --no-git-tag-version "$(node -p "require('./package.json').version")-blockitchat.$CIRCLE_BUILD_NUM"
-            npm publish --access public --tag blockit-chat
-
   codecov:
     <<: *defaults
 
@@ -174,11 +158,3 @@ workflows:
                   - beta
               tags:
                 only: /^v.*/
-      # REMOVE BEFORE MERGING
-      - publish-blocks:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - blockit-chat
