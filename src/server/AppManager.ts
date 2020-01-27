@@ -505,6 +505,18 @@ export class AppManager {
         // the App instance from the source.
         const app = this.getCompiler().toSandBox(this, stored);
 
+        // Ensure there is an user for the app
+        try {
+            await this.ensureAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getInfo().nameSlug,
+                message: 'Failed to create an app user for this app.',
+            });
+
+            return aff;
+        }
+
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -810,5 +822,15 @@ export class AppManager {
         }
 
         return this.bridges.getUserBridge().remove(appUser, app.getID());
+    }
+
+    private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (appUser) {
+            return true;
+        }
+
+        return !!this.createAppUser(app);
     }
 }
