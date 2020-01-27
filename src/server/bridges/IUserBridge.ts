@@ -5,7 +5,7 @@ export interface IUserBridge {
 
     getByUsername(username: string, appId: string): Promise<IUser>;
 
-    getAppUser(appId: string): Promise<IUser>;
+    getAppUser(appId: string): Promise<IUser | undefined>;
 
     /**
      * Creates a user.
