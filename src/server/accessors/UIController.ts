@@ -22,7 +22,6 @@ export class UIController implements IUIController {
             appId: this.appId,
         };
 
-        console.log('openModalView', user);
 
         return this.uiInteractionBridge.notifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
