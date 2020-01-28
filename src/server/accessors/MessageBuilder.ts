@@ -166,10 +166,14 @@ export class MessageBuilder implements IMessageBuilder {
     }
 
     public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
+        if (!Array.isArray(this.msg.blocks)) {
+            this.msg.blocks = [];
+        }
+
         if (blocks instanceof BlockBuilder) {
-            [].concat(this.msg.blocks, blocks.getBlocks());
+            this.msg.blocks.push(...blocks.getBlocks());
         } else {
-            [].concat(this.msg.blocks, blocks);
+            this.msg.blocks.push(...blocks);
         }
 
         return this;
