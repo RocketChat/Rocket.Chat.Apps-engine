@@ -27,6 +27,11 @@ export class ModifyCreatorTestFixture {
             statusConnection: UserStatusConnection.UNDEFINED,
             type: UserType.APP,
             username: 'mockAppUser',
+            emails: [],
+            utcOffset: -5,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            lastLoginAt: new Date(),
         };
 
         this.mockRoomBridge = {
