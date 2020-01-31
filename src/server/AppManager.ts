@@ -437,7 +437,6 @@ export class AppManager {
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
-        await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
