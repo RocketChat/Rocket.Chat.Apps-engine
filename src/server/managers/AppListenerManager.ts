@@ -25,6 +25,7 @@ export class AppListenerManager {
     }
 
     public registerListeners(app: ProxiedApp): void {
+        this.unregisterListeners(app);
         const impleList = app.getImplementationList();
         for (const int in app.getImplementationList()) {
             if (impleList[int]) {

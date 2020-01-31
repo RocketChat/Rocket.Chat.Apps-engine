@@ -428,6 +428,9 @@ export class AppManager {
     public async remove(id: string): Promise<ProxiedApp> {
         const app = this.apps.get(id);
 
+        // Let everyone know that the App has been removed
+        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+
         if (AppStatusUtils.isEnabled(app.getStatus())) {
             await this.disable(id).catch();
         }
@@ -438,9 +441,6 @@ export class AppManager {
         this.accessorManager.purifyApp(app.getID());
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
-
-        // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
 
         this.apps.delete(app.getID());
 
@@ -486,15 +486,15 @@ export class AppManager {
         // the App instance from the source.
         const app = this.getCompiler().toSandBox(this, stored);
 
+        // Let everyone know that the App has been updated
+        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
+
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
         aff.setApp(app);
 
         // Start up the app
         await this.runStartUpProcess(stored, app, false, true);
-
-        // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
 
         return aff;
     }
