@@ -2,7 +2,7 @@ import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IV
 import { IUser } from '../../definition/users';
 
 export interface ILivechatBridge {
-    isOnline(): boolean;
+    isOnline(department?: string): boolean;
     createMessage(message: ILivechatMessage, appId: string): Promise<string>;
     getMessageById(messageId: string, appId: string): Promise<ILivechatMessage>;
     updateMessage(message: ILivechatMessage, appId: string): Promise<void>;
