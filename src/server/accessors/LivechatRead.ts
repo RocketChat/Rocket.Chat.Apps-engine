@@ -6,8 +6,8 @@ import { ILivechatBridge } from '../bridges/ILivechatBridge';
 export class LivechatRead implements ILivechatRead {
     constructor(private readonly livechatBridge: ILivechatBridge, private readonly appId: string) { }
 
-    public isOnline(): boolean {
-        return this.livechatBridge.isOnline();
+    public isOnline(departmentId?: string): boolean {
+        return this.livechatBridge.isOnline(departmentId);
     }
 
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {
