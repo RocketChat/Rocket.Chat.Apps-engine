@@ -75,6 +75,7 @@ export class AppApiManager {
             return;
         }
 
+        this.bridge.unregisterApis(appId);
         for (const [, apiapp] of this.providedApis.get(appId).entries()) {
             this.registerApi(appId, apiapp);
         }
