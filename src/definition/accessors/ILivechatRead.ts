@@ -5,9 +5,9 @@ import { IVisitor } from '../livechat/IVisitor';
 export interface ILivechatRead {
     /**
      * Gets online status of the livechat.
-     * @param department (optional) the id of the livechat department
+     * @param departmentId (optional) the id of the livechat department
      */
-    isOnline(department?: string): boolean;
+    isOnline(departmentId?: string): boolean;
     getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>>;
     /**
      * @deprecated This method does not adhere to the conversion practices applied
