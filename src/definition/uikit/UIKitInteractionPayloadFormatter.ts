@@ -1,4 +1,5 @@
-import { IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
+import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
+import { IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
 import { UIKitViewType } from './IUIKitView';
 import { IUIKitModalViewParam } from './UIKitInteractionResponder';
 
@@ -21,5 +22,19 @@ export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIK
             id: view.id ? view.id : uuid(),
             ...view,
         },
+    };
+}
+
+export function formatErrorInteraction(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteraction): IUIKitErrorInteraction {
+    if (UIKitInteractionType.ERRORS !== context.type) {
+        throw new Error(`Invalid type "${ context.type }" for error interaction`);
+    }
+
+    return {
+        appId: context.appId,
+        type: UIKitInteractionType.ERRORS,
+        errors: errorInteraction.errors,
+        viewId: errorInteraction.viewId,
+        triggerId: context.triggerId,
     };
 }

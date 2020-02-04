@@ -14,12 +14,13 @@ export interface IUIKitBaseIncomingInteraction {
 export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingInteraction {
     value?: string;
     message?: IMessage;
-    triggerId: IUIKitBaseIncomingInteraction['triggerId'];
+    triggerId: string;
     room: IUIKitBaseIncomingInteraction['room'];
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {
     view: IUIKitView;
+    triggerId: string;
 }
 
 export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingInteraction {

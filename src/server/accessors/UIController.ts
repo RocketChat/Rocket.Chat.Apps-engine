@@ -1,7 +1,7 @@
 import { IUIController } from '../../definition/accessors';
-import { IUIKitInteractionParam } from '../../definition/accessors/IUIController';
-import { IUIKitInteraction, UIKitInteractionType } from '../../definition/uikit';
-import { formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
+import { IUIKitErrorInteractionParam, IUIKitInteractionParam } from '../../definition/accessors/IUIController';
+import { UIKitInteractionType } from '../../definition/uikit';
+import { formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, IUiInteractionBridge } from '../bridges';
@@ -25,7 +25,7 @@ export class UIController implements IUIController {
         return this.uiInteractionBridge.notifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
 
-    public updateModalView(view: IUIKitModalViewParam, context: IUIKitInteraction, user: IUser) {
+    public updateModalView(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser) {
         const interactionContext = {
             ...context,
             type: UIKitInteractionType.MODAL_UPDATE,
@@ -33,5 +33,15 @@ export class UIController implements IUIController {
         };
 
         return this.uiInteractionBridge.notifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+    }
+
+    public setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser) {
+        const interactionContext = {
+            ...context,
+            type: UIKitInteractionType.ERRORS,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.notifyUser(user, formatErrorInteraction(errorInteraction, interactionContext), this.appId);
     }
 }
