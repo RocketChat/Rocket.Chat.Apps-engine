@@ -11,6 +11,7 @@ export class SlashCommandContext {
         private room: IRoom,
         private params: Array<string>,
         private threadId?: string,
+        private triggerId?: string,
     ) { }
 
     /** The user who sent the command. */
@@ -30,5 +31,9 @@ export class SlashCommandContext {
 
     public getThreadId(): string | undefined {
         return this.threadId;
+    }
+
+    public getTriggerId(): string | undefined {
+        return this.triggerId;
     }
 }

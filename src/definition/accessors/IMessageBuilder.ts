@@ -1,6 +1,7 @@
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
+import { BlockBuilder, IBlock } from '../uikit';
 import { IUser } from '../users';
 
 /**
@@ -193,4 +194,22 @@ export interface IMessageBuilder {
      * *Note:* This will error out if the Room has not been defined.
      */
     getMessage(): IMessage;
+
+    /**
+     * Adds a block collection to the message's
+     * own collection
+     */
+    addBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Sets the block collection of the message
+     *
+     * @param blocks
+     */
+    setBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Gets the block collection of the message
+     */
+    getBlocks(): Array<IBlock>;
 }

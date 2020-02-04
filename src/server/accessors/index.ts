@@ -1,3 +1,4 @@
+import { ApiExtend } from './ApiExtend';
 import { AppAccessors } from './AppAccessors';
 import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
@@ -31,6 +32,7 @@ import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
 
 export {
+    ApiExtend,
     AppAccessors,
     ConfigurationExtend,
     ConfigurationModify,
