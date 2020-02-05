@@ -7,7 +7,7 @@ export class LivechatRead implements ILivechatRead {
     constructor(private readonly livechatBridge: ILivechatBridge, private readonly appId: string) { }
 
     /**
-     * @deprecated prefer the `isOnlineAsync` method.
+     * @deprecated please use the `isOnlineAsync` method instead.
      * In the next major, this method will be `async`
      */
     public isOnline(departmentId?: string): boolean {
