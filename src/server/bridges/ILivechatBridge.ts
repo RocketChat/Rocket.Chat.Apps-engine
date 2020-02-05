@@ -2,7 +2,12 @@ import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IV
 import { IUser } from '../../definition/users';
 
 export interface ILivechatBridge {
+    /**
+     * @deprecated please use the `isOnlineAsync` method instead.
+     * In the next major, this method will be `async`
+     */
     isOnline(departmentId?: string): boolean;
+    isOnlineAsync(departmentId?: string): Promise<boolean>;
     createMessage(message: ILivechatMessage, appId: string): Promise<string>;
     getMessageById(messageId: string, appId: string): Promise<ILivechatMessage>;
     updateMessage(message: ILivechatMessage, appId: string): Promise<void>;
