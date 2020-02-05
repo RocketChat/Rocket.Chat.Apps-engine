@@ -21,7 +21,7 @@ export interface IInteractiveElement extends IBlockElement {
 
 export interface IInputElement extends IBlockElement {
     actionId: string;
-    initialValue?: string;
+    initialValue?: string | Array<string>;
 }
 
 export enum ButtonStyle {
@@ -47,9 +47,8 @@ export interface IPlainTextInputElement extends IInputElement {
     type: BlockElementType.PLAIN_TEXT_INPUT;
 }
 
-export interface ISelectElement extends IBlockElement {
+export interface ISelectElement extends IInputElement {
     type: BlockElementType.STATIC_SELECT | BlockElementType.MULTI_STATIC_SELECT;
-    actionId: string;
     initialValue?: Array<string>;
 }
 

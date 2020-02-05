@@ -1,4 +1,4 @@
-import { AvailableElements, IBlockElement, IImageElement, IPlainTextInputElement } from './Elements';
+import { AvailableElements, IBlockElement, IImageElement, IInputElement } from './Elements';
 import { ITextObject } from './Objects';
 
 export enum BlockType {
@@ -45,7 +45,7 @@ export interface IContextBlock extends IBlock {
 
 export interface IInputBlock extends IBlock {
     type: BlockType.INPUT;
-    element: IPlainTextInputElement;
+    element: IInputElement;
     label: ITextObject;
     optional?: boolean;
 }
