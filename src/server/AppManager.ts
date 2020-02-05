@@ -405,7 +405,7 @@ export class AppManager {
             await this.createAppUser(app);
         } catch (err) {
             aff.setAppUserError({
-                username: app.getInfo().nameSlug,
+                username: app.getAppUserUsername(),
                 message: 'Failed to create an app user for this app.',
             });
 
@@ -512,7 +512,7 @@ export class AppManager {
             await this.ensureAppUser(app);
         } catch (err) {
             aff.setAppUserError({
-                username: app.getInfo().nameSlug,
+                username: app.getAppUserUsername(),
                 message: 'Failed to create an app user for this app.',
             });
 
@@ -800,7 +800,7 @@ export class AppManager {
 
     private createAppUser(app: ProxiedApp): Promise<string> {
         const userData: Partial<IUser> = {
-            username: `app.${ app.getInfo().nameSlug }`,
+            username: app.getAppUserUsername(),
             name: app.getInfo().name,
             roles: ['app'],
             appId: app.getID(),
