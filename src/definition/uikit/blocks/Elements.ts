@@ -62,6 +62,7 @@ export interface IStaticSelectElement extends ISelectElement {
     type: BlockElementType.STATIC_SELECT;
     placeholder: ITextObject;
     options: Array<ISelectOption>;
+    initialValue?: string;
 }
 
 export interface IMultiStaticSelectElement extends ISelectElement {
