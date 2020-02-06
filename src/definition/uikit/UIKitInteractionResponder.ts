@@ -35,7 +35,7 @@ export class UIKitInteractionResponder {
 
         return {
             success: true,
-            ...formatModalInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.MODAL_OPEN }),
+            ...formatModalInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.MODAL_UPDATE }),
         };
     }
 
