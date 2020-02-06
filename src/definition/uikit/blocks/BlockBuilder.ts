@@ -13,6 +13,7 @@ import {
     ISelectElement,
     IStaticSelectElement,
 } from './Elements';
+import { ITextObject, TextObjectType } from './Objects';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
@@ -75,6 +76,21 @@ export class BlockBuilder {
 
     public getBlocks() {
         return this.blocks;
+    }
+
+    public newPlainTextObject(text: string, emoji: boolean = false): ITextObject {
+        return {
+            type: TextObjectType.PLAINTEXT,
+            text,
+            emoji,
+        };
+    }
+
+    public newMarkdownTextObject(text: string): ITextObject {
+        return {
+            type: TextObjectType.MARKDOWN,
+            text,
+        };
     }
 
     public newButtonElement(info: ButtonElementParam): IButtonElement {

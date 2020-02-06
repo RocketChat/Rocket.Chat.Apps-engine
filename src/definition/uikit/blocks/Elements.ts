@@ -46,11 +46,11 @@ export interface IImageElement extends IBlockElement {
 
 export interface IPlainTextInputElement extends IInputElement {
     type: BlockElementType.PLAIN_TEXT_INPUT;
+    initialValue?: string;
 }
 
 export interface ISelectElement extends IInputElement {
     type: BlockElementType.STATIC_SELECT | BlockElementType.MULTI_STATIC_SELECT;
-    initialValue?: Array<string>;
 }
 
 export interface ISelectOption {
@@ -68,4 +68,5 @@ export interface IMultiStaticSelectElement extends ISelectElement {
     type: BlockElementType.MULTI_STATIC_SELECT;
     placeholder: ITextObject;
     options: Array<ISelectOption>;
+    initialValue?: Array<string>;
 }
