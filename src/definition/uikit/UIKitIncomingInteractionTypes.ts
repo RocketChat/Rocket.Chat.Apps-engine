@@ -2,6 +2,10 @@ import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IUIKitView } from './IUIKitView';
+import {
+    IUIKitIncomingInteractionMessageContainer,
+    IUIKitIncomingInteractionModalContainer,
+} from './UIKitIncomingInteractionContainer';
 
 export interface IUIKitBaseIncomingInteraction {
     appId: string;
@@ -16,6 +20,7 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     message?: IMessage;
     triggerId: string;
     room: IUIKitBaseIncomingInteraction['room'];
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {
