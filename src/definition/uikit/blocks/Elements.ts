@@ -21,6 +21,7 @@ export interface IInteractiveElement extends IBlockElement {
 
 export interface IInputElement extends IBlockElement {
     actionId: string;
+    placeholder: ITextObject;
     initialValue?: string | Array<string>;
 }
 

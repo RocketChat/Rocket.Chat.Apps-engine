@@ -1,6 +1,11 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
+import {
+    IUIKitIncomingInteractionMessageContainer,
+    IUIKitIncomingInteractionModalContainer,
+    IUIKitIncomingInteractionSlashCommandContainer,
+} from './UIKitIncomingInteractionContainer';
 
 export enum UIKitIncomingInteractionType {
     BLOCK = 'blockAction',
@@ -10,6 +15,7 @@ export enum UIKitIncomingInteractionType {
 
 export interface IUIKitIncomingInteraction {
     type: UIKitIncomingInteractionType;
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionSlashCommandContainer | IUIKitIncomingInteractionMessageContainer;
     user: IUser;
     appId: string;
     actionId: string;
