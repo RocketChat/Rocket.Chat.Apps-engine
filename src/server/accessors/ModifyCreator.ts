@@ -1,9 +1,9 @@
 import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
-
-import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
+import { BlockBuilder } from '../../definition/uikit';
 import { AppBridges } from '../bridges';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
@@ -19,6 +19,10 @@ export class ModifyCreator implements IModifyCreator {
 
     public getLivechatCreator(): ILivechatCreator {
         return this.livechatCreator;
+    }
+
+    public getBlockBuilder(): BlockBuilder {
+        return new BlockBuilder(this.appId);
     }
 
     public startMessage(data?: IMessage): IMessageBuilder {
@@ -58,12 +62,18 @@ export class ModifyCreator implements IModifyCreator {
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): Promise<string> {
+    private async _finishMessage(builder: IMessageBuilder): Promise<string> {
         const result = builder.getMessage();
         delete result.id;
 
         if (!result.sender || !result.sender.id) {
-            throw new Error('Invalid sender assigned to the message.');
+            const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+
+            if (!appUser) {
+                throw new Error('Invalid sender assigned to the message.');
+            }
+
+            result.sender = appUser;
         }
 
         return this.bridges.getMessageBridge().create(result, this.appId);

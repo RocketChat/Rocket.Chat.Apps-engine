@@ -3,6 +3,8 @@ import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
+import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
@@ -25,6 +27,7 @@ export class AppListenerManager {
     }
 
     public registerListeners(app: ProxiedApp): void {
+        this.unregisterListeners(app);
         const impleList = app.getImplementationList();
         for (const int in app.getImplementationList()) {
             if (impleList[int]) {
@@ -53,7 +56,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -100,6 +103,8 @@ export class AppListenerManager {
                 return;
             case AppInterface.IPostExternalComponentClosed:
                 this.executePostExternalComponentClosed(data as IExternalComponent);
+            case AppInterface.IUIKitInteractionHandler:
+                return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
             case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
@@ -625,6 +630,83 @@ export class AppListenerManager {
         }
     }
 
+    private async executeUIKitInteraction(data: IUIKitIncomingInteraction): Promise<IUIKitResponse> {
+        const { appId, type } = data;
+
+        const method = ((interactionType: string) => {
+            switch (interactionType) {
+                case UIKitIncomingInteractionType.BLOCK:
+                    return AppMethod.UIKIT_BLOCK_ACTION;
+                case UIKitIncomingInteractionType.VIEW_SUBMIT:
+                    return AppMethod.UIKIT_VIEW_SUBMIT;
+                case UIKitIncomingInteractionType.VIEW_CLOSED:
+                    return AppMethod.UIKIT_VIEW_CLOSE;
+            }
+        })(type);
+
+        const app = this.manager.getOneById(appId);
+        if (!app.hasMethod(method)) {
+            return;
+        }
+
+        const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitIncomingInteraction) => {
+            const {
+                actionId,
+                message,
+                user,
+                room,
+                triggerId,
+            } = interactionData;
+
+            switch (interactionType) {
+                case UIKitIncomingInteractionType.BLOCK: {
+                    const { value } = interactionData.payload as { value: string };
+
+                    return new UIKitBlockInteractionContext({
+                        appId,
+                        actionId,
+                        user,
+                        room,
+                        triggerId,
+                        value,
+                        message,
+                    });
+                }
+                case UIKitIncomingInteractionType.VIEW_SUBMIT: {
+                    const { view } = interactionData.payload as { view: IUIKitView };
+
+                    return new UIKitViewSubmitInteractionContext({
+                        appId,
+                        actionId,
+                        view,
+                        room,
+                        triggerId,
+                        user,
+                    });
+                }
+                case UIKitIncomingInteractionType.VIEW_CLOSED: {
+                    const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
+
+                    return new UIKitViewCloseInteractionContext({
+                        appId,
+                        actionId,
+                        view,
+                        room,
+                        isCleared,
+                        user,
+                    });
+                }
+            }
+        })(type, data);
+
+        return app.call(method,
+            interactionContext,
+            this.am.getReader(appId),
+            this.am.getHttp(appId),
+            this.am.getPersistence(appId),
+            this.am.getModifier(appId),
+        );
+    }
     // Livechat
     private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);

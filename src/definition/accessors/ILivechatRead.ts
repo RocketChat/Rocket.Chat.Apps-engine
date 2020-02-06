@@ -3,7 +3,17 @@ import { ILivechatRoom } from '../livechat/ILivechatRoom';
 import { IVisitor } from '../livechat/IVisitor';
 
 export interface ILivechatRead {
-    isOnline(): boolean;
+    /**
+     * Gets online status of the livechat.
+     * @param departmentId (optional) the id of the livechat department
+     * @deprecated use `isOnlineAsync` instead
+     */
+    isOnline(departmentId?: string): boolean;
+    /**
+     * Gets online status of the livechat.
+     * @param departmentId (optional) the id of the livechat department
+     */
+    isOnlineAsync(departmentId?: string): Promise<boolean>;
     getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>>;
     /**
      * @deprecated This method does not adhere to the conversion practices applied

@@ -6,8 +6,18 @@ import { ILivechatBridge } from '../bridges/ILivechatBridge';
 export class LivechatRead implements ILivechatRead {
     constructor(private readonly livechatBridge: ILivechatBridge, private readonly appId: string) { }
 
-    public isOnline(): boolean {
-        return this.livechatBridge.isOnline();
+    /**
+     * @deprecated please use the `isOnlineAsync` method instead.
+     * In the next major, this method will be `async`
+     */
+    public isOnline(departmentId?: string): boolean {
+        console.warn('The `LivechatRead.isOnline` method is deprecated and won\'t behave as intended. Please use `LivechatRead.isOnlineAsync` instead');
+
+        return this.livechatBridge.isOnline(departmentId);
+    }
+
+    public isOnlineAsync(departmentId?: string): Promise<boolean> {
+        return this.livechatBridge.isOnlineAsync(departmentId);
     }
 
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {

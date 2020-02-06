@@ -31,7 +31,8 @@
   "files": [
     "client/**",
     "server/**",
-    "definition/**"
+    "definition/**",
+    "lib/**"
   ],
   "author": {
     "name": "Rocket.Chat",

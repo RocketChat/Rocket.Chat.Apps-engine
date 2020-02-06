@@ -22,6 +22,8 @@ export enum AppInterface {
     // External Components
     IPostExternalComponentOpened = 'IPostExternalComponentOpened',
     IPostExternalComponentClosed = 'IPostExternalComponentClosed',
+    // Blocks
+    IUIKitInteractionHandler = 'IUIKitInteractionHandler',
     // Livechat
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
 }

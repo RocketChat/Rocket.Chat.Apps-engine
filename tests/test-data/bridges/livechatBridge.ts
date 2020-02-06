@@ -3,7 +3,10 @@ import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
 export class TestLivechatBridge implements ILivechatBridge {
-    public isOnline(): boolean {
+    public isOnline(departmentId?: string): boolean {
+        throw new Error('Method not implemented');
+    }
+    public isOnlineAsync(departmentId?: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
     public createMessage(message: ILivechatMessage, appId: string): Promise<string> {
