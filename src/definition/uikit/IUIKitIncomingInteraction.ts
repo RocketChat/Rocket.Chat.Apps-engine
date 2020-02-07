@@ -4,7 +4,6 @@ import { IUser } from '../users';
 import {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
-    IUIKitIncomingInteractionSlashCommandContainer,
 } from './UIKitIncomingInteractionContainer';
 
 export enum UIKitIncomingInteractionType {
@@ -15,7 +14,7 @@ export enum UIKitIncomingInteractionType {
 
 export interface IUIKitIncomingInteraction {
     type: UIKitIncomingInteractionType;
-    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionSlashCommandContainer | IUIKitIncomingInteractionMessageContainer;
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
     user: IUser;
     appId: string;
     actionId: string;
