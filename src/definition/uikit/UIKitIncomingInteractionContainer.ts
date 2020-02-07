@@ -1,9 +1,15 @@
-export interface IUIKitIncomingInteractionContainer {
-    type: string;
+export enum UIKitIncomingInteractionContainerType {
+    MESSAGE = 'message',
+    VIEW = 'view',
 }
-export interface IUIKitIncomingInteractionModalContainer extends IUIKitIncomingInteractionContainer {
+
+export interface IUIKitIncomingInteractionContainer {
+    type: UIKitIncomingInteractionContainerType;
     id: string;
 }
+export interface IUIKitIncomingInteractionModalContainer extends IUIKitIncomingInteractionContainer {
+    type: UIKitIncomingInteractionContainerType.MESSAGE;
+}
 export interface IUIKitIncomingInteractionMessageContainer extends IUIKitIncomingInteractionContainer {
-    id: string; // TODO
+    type: UIKitIncomingInteractionContainerType.VIEW;
 }
