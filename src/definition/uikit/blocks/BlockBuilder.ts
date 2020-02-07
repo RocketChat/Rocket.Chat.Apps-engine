@@ -9,6 +9,7 @@ import {
     IInputElement,
     IInteractiveElement,
     IMultiStaticSelectElement,
+    IOverflowMenuElement,
     IPlainTextInputElement,
     ISelectElement,
     IStaticSelectElement,
@@ -27,6 +28,7 @@ type InputBlockParam = BlockFunctionParameter<IInputBlock>;
 
 type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
 type ImageElementParam = ElementFunctionParameter<IImageElement>;
+type OverflowMenuElementParam = ElementFunctionParameter<IOverflowMenuElement>;
 type PlainTextInputElementParam = ElementFunctionParameter<IPlainTextInputElement>;
 type StaticSelectElementParam = ElementFunctionParameter<IStaticSelectElement>;
 type MultiStaticSelectElementParam = ElementFunctionParameter<IMultiStaticSelectElement>;
@@ -105,6 +107,13 @@ export class BlockBuilder {
             type: BlockElementType.IMAGE,
             ...info,
        };
+    }
+
+    public newOverflowMenuElement(info: OverflowMenuElementParam): IOverflowMenuElement {
+        return this.newInteractiveElement({
+            type: BlockElementType.OVERFLOW_MENU,
+            ...info,
+        } as IOverflowMenuElement);
     }
 
     public newPlainTextInputElement(info: PlainTextInputElementParam): IPlainTextInputElement {
