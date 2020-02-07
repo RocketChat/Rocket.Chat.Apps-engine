@@ -1,8 +1,9 @@
-import { IConfirmationObject, ITextObject } from './Objects';
+import { IConfirmationDialogObject, IOptionObject, ITextObject } from './Objects';
 
 export enum BlockElementType {
     BUTTON = 'button',
     IMAGE = 'image',
+    OVERFLOW_MENU = 'overflow',
     PLAIN_TEXT_INPUT = 'plain_text_input',
     STATIC_SELECT = 'static_select',
     MULTI_STATIC_SELECT = 'multi_static_select',
@@ -12,11 +13,10 @@ export interface IBlockElement {
     type: BlockElementType;
 }
 
-export type AvailableElements = IButtonElement | IImageElement;
+export type AccessoryElements = IButtonElement | IImageElement | IOverflowMenuElement;
 
 export interface IInteractiveElement extends IBlockElement {
     actionId: string;
-    value?: string;
 }
 
 export interface IInputElement extends IBlockElement {
@@ -33,15 +33,22 @@ export enum ButtonStyle {
 export interface IButtonElement extends IInteractiveElement {
     type: BlockElementType.BUTTON;
     text: ITextObject;
+    value?: string;
     url?: string;
     style?: ButtonStyle;
-    confirm?: IConfirmationObject;
+    confirm?: IConfirmationDialogObject;
 }
 
 export interface IImageElement extends IBlockElement {
     type: BlockElementType.IMAGE;
     imageUrl: string;
     altText: string;
+}
+
+export interface IOverflowMenuElement extends IInteractiveElement {
+    type: BlockElementType.OVERFLOW_MENU;
+    options: Array<IOptionObject>;
+    confirm?: IConfirmationDialogObject;
 }
 
 export interface IPlainTextInputElement extends IInputElement {
@@ -53,21 +60,16 @@ export interface ISelectElement extends IInputElement {
     type: BlockElementType.STATIC_SELECT | BlockElementType.MULTI_STATIC_SELECT;
 }
 
-export interface ISelectOption {
-    text: ITextObject;
-    value: string;
-}
-
 export interface IStaticSelectElement extends ISelectElement {
     type: BlockElementType.STATIC_SELECT;
     placeholder: ITextObject;
-    options: Array<ISelectOption>;
+    options: Array<IOptionObject>;
     initialValue?: string;
 }
 
 export interface IMultiStaticSelectElement extends ISelectElement {
     type: BlockElementType.MULTI_STATIC_SELECT;
     placeholder: ITextObject;
-    options: Array<ISelectOption>;
+    options: Array<IOptionObject>;
     initialValue?: Array<string>;
 }
