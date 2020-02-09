@@ -7,9 +7,19 @@ import { IUser } from '../users/IUser';
  * messages in a read-only-fashion.
  */
 export interface IMessageRead {
-    getById(id: string): Promise<IMessage | undefined>;
+    /**
+     * Gets the entire ID of the message.
+     */
+    getById(): IMessage;
 
-    getSenderUser(messageId: string): Promise<IUser | undefined>;
+    /**
+     * Gets the User which sent the message.
+     */
+    getSenderUser(): IUser;
 
-    getRoom(messageId: string): Promise<IRoom | undefined>;
+    /**
+     * Gets the room where this message was sent to.
+     */
+    getRoom(): IRoom;
 }
+   
