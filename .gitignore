@@ -52,5 +52,6 @@ jspm_packages
 /client
 /definition
 /server
+/lib
 
 .DS_Store

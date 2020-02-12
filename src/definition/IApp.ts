@@ -27,6 +27,13 @@ export interface IApp {
     getNameSlug(): string;
 
     /**
+     * Gets the username of this App's app user.
+     *
+     * @return {string} the username of the app user
+     */
+    getAppUserUsername(): string;
+
+    /**
      * Get the ID of this App, please see <link> for how to obtain an ID for your App.
      *
      * @return {number} the ID

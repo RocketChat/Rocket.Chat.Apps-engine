@@ -16,4 +16,5 @@ export interface IUser {
     createdAt: Date;
     updatedAt: Date;
     lastLoginAt: Date;
+    appId?: string;
 }

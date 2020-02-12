@@ -1,3 +1,4 @@
+import { ApiExtend } from './ApiExtend';
 import { AppAccessors } from './AppAccessors';
 import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
@@ -27,9 +28,11 @@ import { SettingsExtend } from './SettingsExtend';
 import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
+import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
 
 export {
+    ApiExtend,
     AppAccessors,
     ConfigurationExtend,
     ConfigurationModify,
@@ -59,5 +62,6 @@ export {
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
+    UserBuilder,
     UserRead,
 };
