@@ -11,8 +11,8 @@ export interface IUIKitView {
     type: UIKitViewType;
     title: ITextObject;
     blocks: Array<IBlock>;
-    close: IButtonElement;
-    submit: IButtonElement;
+    close?: IButtonElement;
+    submit?: IButtonElement;
     state?: object;
     clearOnClose?: boolean;
     notifyOnClose?: boolean;
