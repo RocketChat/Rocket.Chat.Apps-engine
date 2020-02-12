@@ -1,4 +1,4 @@
-import { IConfirmationDialogObject, IOptionObject, ITextObject } from './Objects';
+import { IOptionObject, ITextObject } from './Objects';
 
 export enum BlockElementType {
     BUTTON = 'button',
@@ -36,7 +36,7 @@ export interface IButtonElement extends IInteractiveElement {
     value?: string;
     url?: string;
     style?: ButtonStyle;
-    confirm?: IConfirmationDialogObject;
+    // confirm?: IConfirmationDialogObject;
 }
 
 export interface IImageElement extends IBlockElement {
@@ -48,7 +48,7 @@ export interface IImageElement extends IBlockElement {
 export interface IOverflowMenuElement extends IInteractiveElement {
     type: BlockElementType.OVERFLOW_MENU;
     options: Array<IOptionObject>;
-    confirm?: IConfirmationDialogObject;
+    // confirm?: IConfirmationDialogObject;
 }
 
 export interface IPlainTextInputElement extends IInputElement {
