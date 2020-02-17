@@ -4,7 +4,15 @@ import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
-import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from '../../definition/uikit/UIKitInteractionContext';
+import {
+    IUIKitIncomingInteractionMessageContainer,
+    IUIKitIncomingInteractionModalContainer,
+} from '../../definition/uikit/UIKitIncomingInteractionContainer';
+import {
+    UIKitBlockInteractionContext,
+    UIKitViewCloseInteractionContext,
+    UIKitViewSubmitInteractionContext,
+} from '../../definition/uikit/UIKitInteractionContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
@@ -656,6 +664,7 @@ export class AppListenerManager {
                 user,
                 room,
                 triggerId,
+                container,
             } = interactionData;
 
             switch (interactionType) {
@@ -670,6 +679,7 @@ export class AppListenerManager {
                         triggerId,
                         value,
                         message,
+                        container: container as IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer,
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_SUBMIT: {

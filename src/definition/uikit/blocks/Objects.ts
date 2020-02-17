@@ -9,9 +9,14 @@ export interface ITextObject {
     emoji?: boolean;
 }
 
-export interface IConfirmationObject {
-    title: ITextObject;
+// export interface IConfirmationDialogObject {
+//     title: ITextObject;
+//     text: ITextObject;
+//     confirm: ITextObject;
+//     deny: ITextObject;
+// }
+
+export interface IOptionObject {
     text: ITextObject;
-    confirm: ITextObject;
-    deny: ITextObject;
+    value: string;
 }

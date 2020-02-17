@@ -9,10 +9,12 @@ import {
     IInputElement,
     IInteractiveElement,
     IMultiStaticSelectElement,
+    IOverflowMenuElement,
     IPlainTextInputElement,
     ISelectElement,
     IStaticSelectElement,
 } from './Elements';
+import { ITextObject, TextObjectType } from './Objects';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
@@ -26,6 +28,7 @@ type InputBlockParam = BlockFunctionParameter<IInputBlock>;
 
 type ButtonElementParam = ElementFunctionParameter<IButtonElement>;
 type ImageElementParam = ElementFunctionParameter<IImageElement>;
+type OverflowMenuElementParam = ElementFunctionParameter<IOverflowMenuElement>;
 type PlainTextInputElementParam = ElementFunctionParameter<IPlainTextInputElement>;
 type StaticSelectElementParam = ElementFunctionParameter<IStaticSelectElement>;
 type MultiStaticSelectElementParam = ElementFunctionParameter<IMultiStaticSelectElement>;
@@ -77,6 +80,21 @@ export class BlockBuilder {
         return this.blocks;
     }
 
+    public newPlainTextObject(text: string, emoji: boolean = false): ITextObject {
+        return {
+            type: TextObjectType.PLAINTEXT,
+            text,
+            emoji,
+        };
+    }
+
+    public newMarkdownTextObject(text: string): ITextObject {
+        return {
+            type: TextObjectType.MARKDOWN,
+            text,
+        };
+    }
+
     public newButtonElement(info: ButtonElementParam): IButtonElement {
         return this.newInteractiveElement({
             type: BlockElementType.BUTTON,
@@ -89,6 +107,13 @@ export class BlockBuilder {
             type: BlockElementType.IMAGE,
             ...info,
        };
+    }
+
+    public newOverflowMenuElement(info: OverflowMenuElementParam): IOverflowMenuElement {
+        return this.newInteractiveElement({
+            type: BlockElementType.OVERFLOW_MENU,
+            ...info,
+        } as IOverflowMenuElement);
     }
 
     public newPlainTextInputElement(info: PlainTextInputElementParam): IPlainTextInputElement {

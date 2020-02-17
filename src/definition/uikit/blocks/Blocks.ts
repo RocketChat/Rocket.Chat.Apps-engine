@@ -1,4 +1,4 @@
-import { AvailableElements, IBlockElement, IImageElement, IInputElement } from './Elements';
+import { AccessoryElements, IBlockElement, IImageElement, IInputElement } from './Elements';
 import { ITextObject } from './Objects';
 
 export enum BlockType {
@@ -19,7 +19,7 @@ export interface IBlock {
 export interface ISectionBlock extends IBlock {
     type: BlockType.SECTION;
     text: ITextObject;
-    accessory?: AvailableElements;
+    accessory?: AccessoryElements;
 }
 
 export interface IImageBlock extends IBlock {
