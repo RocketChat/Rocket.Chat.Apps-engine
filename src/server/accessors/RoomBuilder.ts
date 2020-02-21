@@ -142,6 +142,14 @@ export class RoomBuilder implements IRoomBuilder {
     public getCustomFields(): { [key: string]: object } {
       return this.room.customFields;
     }
+    public setParentRoom(parentRoom: IRoom): IRoomBuilder {
+        this.room.parentRoom = parentRoom;
+        return this;
+    }
+
+    public getParentRoom(): IRoom {
+        return this.room.parentRoom;
+    }
 
     public getRoom(): IRoom {
         return this.room;

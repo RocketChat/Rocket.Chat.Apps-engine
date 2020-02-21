@@ -16,6 +16,7 @@ export class Room implements IRoom {
     public updatedAt?: Date;
     public lastModifiedAt?: Date;
     public customFields?: { [key: string]: any };
+    public parentRoom?: IRoom;
     private _USERNAMES: Array<string>;
 
     /**
@@ -53,6 +54,7 @@ export class Room implements IRoom {
             updatedAt: this.updatedAt,
             lastModifiedAt: this.lastModifiedAt,
             customFields: this.customFields,
+            parentRoom: this.parentRoom,
         };
     }
 

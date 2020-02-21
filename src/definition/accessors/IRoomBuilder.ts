@@ -174,6 +174,17 @@ export interface IRoomBuilder {
     getCustomFields(): { [key: string]: object };
 
     /**
+     * Sets parent room id, for rooms of type Discussion
+     *
+     * @param fields the data to set
+     */
+    setParentRoom(parentRoom: IRoom): IRoomBuilder;
+
+    /**
+     * Gets the parent room id
+     */
+    getParentRoom(): IRoom;
+    /**
      * Gets the resulting room that has been built up to the point of calling this method.
      * Note: modifying the returned value will have no effect.
      */
