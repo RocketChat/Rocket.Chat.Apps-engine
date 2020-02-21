@@ -4,6 +4,7 @@ import { IUser } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageFile } from './IMessageFile';
 import { IMessageReactions } from './IMessageReaction';
+import { MessageType } from './MessageType';
 
 export interface IMessage {
     id?: string;
@@ -25,4 +26,6 @@ export interface IMessage {
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
     blocks?: Array<IBlock>;
+    discussionRoom?: IRoom;
+    type?: MessageType;
 }

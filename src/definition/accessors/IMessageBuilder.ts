@@ -1,4 +1,4 @@
-import { IMessage, IMessageAttachment } from '../messages';
+import { IMessage, IMessageAttachment, MessageType } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
 import { BlockBuilder, IBlock } from '../uikit';
@@ -36,6 +36,18 @@ export interface IMessageBuilder {
      * `IMessageRead.getById()` method
      */
     getThreadId(): string;
+
+    /**
+     * Sets the discussion room
+     *
+     * @param discussionRoom The discussion room
+     */
+    setDiscussionRoom(discussionRoom: IRoom): IMessageBuilder;
+
+    /**
+     * Retrieves the discussion room
+     */
+    getDiscussionRoom(): IRoom;
 
     /**
      * Sets the room where this message should be sent to.
@@ -212,4 +224,17 @@ export interface IMessageBuilder {
      * Gets the block collection of the message
      */
     getBlocks(): Array<IBlock>;
+
+    /**
+     * Sets the message's type.
+     *
+     * @param type the message type
+     */
+    setType(type: MessageType): IMessageBuilder;
+
+    /**
+     * Gets the room's type.
+     */
+    getType(): MessageType;
+
 }

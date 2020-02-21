@@ -1,5 +1,5 @@
 import { IMessageBuilder } from '../../definition/accessors';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import { IMessage, IMessageAttachment, MessageType } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { BlockBuilder, IBlock } from '../../definition/uikit';
@@ -29,6 +29,15 @@ export class MessageBuilder implements IMessageBuilder {
 
     public getThreadId(): string {
         return this.msg.threadId;
+    }
+
+    public setDiscussionRoom(discussionRoom: IRoom): IMessageBuilder {
+        this.msg.discussionRoom = discussionRoom;
+        return this;
+    }
+
+    public getDiscussionRoom(): IRoom {
+        return this.msg.discussionRoom;
     }
 
     public setRoom(room: IRoom): IMessageBuilder {
@@ -192,4 +201,13 @@ export class MessageBuilder implements IMessageBuilder {
     public getBlocks() {
         return this.msg.blocks;
     }
+    public setType(type: MessageType): IMessageBuilder {
+        this.msg.type = type;
+        return this;
+    }
+
+    public getType(): MessageType {
+        return this.msg.type;
+    }
+
 }

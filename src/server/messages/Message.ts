@@ -1,4 +1,5 @@
-import { IMessage, IMessageAttachment, IMessageReactions } from '../../definition/messages';
+import { IMessage, IMessageAttachment, IMessageReactions, MessageType } from '../../definition/messages';
+import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { AppManager } from '../AppManager';
 import { Room } from '../rooms/Room';
@@ -19,6 +20,8 @@ export class Message implements IMessage {
     public groupable?: boolean;
     public parseUrls?: boolean;
     public customFields?: { [key: string]: any };
+    public discussionRoom?: IRoom;
+    public type?: MessageType;
     private _ROOM: Room;
 
     public get room(): Room {
