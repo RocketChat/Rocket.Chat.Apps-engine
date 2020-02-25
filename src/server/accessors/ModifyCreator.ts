@@ -96,7 +96,7 @@ export class ModifyCreator implements IModifyCreator {
         return this.bridges.getLivechatBridge().createMessage(result, this.appId);
     }
 
-    private _finishRoom(builder: IRoomBuilder): Promise<string> {
+    private async _finishRoom(builder: IRoomBuilder): Promise<string> {
         const result = builder.getRoom();
         delete result.id;
 
@@ -106,7 +106,13 @@ export class ModifyCreator implements IModifyCreator {
 
         if (result.type !== RoomType.LIVE_CHAT) {
             if (!result.creator || !result.creator.id) {
-                throw new Error('Invalid creator assigned to the room.');
+                const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+
+                if (!appUser) {
+                    throw new Error('Invalid creator assigned to the message.');
+                }
+
+                result.creator = appUser;
             }
         }
 

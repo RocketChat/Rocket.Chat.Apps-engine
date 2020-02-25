@@ -101,7 +101,7 @@ export class ModifyCreatorTestFixture {
         roomBd.setType(RoomType.CHANNEL);
         Expect(room.type).toBe(RoomType.CHANNEL);
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
+        await Expect(async () => await mc.finish(roomBd)).not.toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
         roomBd.setCreator(TestData.getUser());
         Expect(room.creator).toBeDefined();
 
