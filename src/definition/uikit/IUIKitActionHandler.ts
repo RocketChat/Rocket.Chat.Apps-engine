@@ -1,7 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
 import { IUIKitResponse } from './IUIKitInteractionType';
-import { UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from './UIKitInteractionContext';
+import { UIKitBlockInteractionContext, UIKitContextualBarOpenInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext } from './UIKitInteractionContext';
 
 /** Handler for after a message is sent. */
 export interface IUIKitInteractionHandler {
@@ -37,4 +37,17 @@ export interface IUIKitInteractionHandler {
      */
     [AppMethod.UIKIT_VIEW_CLOSE]?(context: UIKitViewCloseInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
         Promise<IUIKitResponse>;
+
+    /**
+     * Method called when a contextual bar is open.
+     *
+     * @param context
+     * @param read
+     * @param http
+     * @param persistence
+     * @param modify
+     */
+    [AppMethod.UIKIT_CONTEXTUAL_BAR_OPEN]?(
+        context: UIKitContextualBarOpenInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify,
+    ): Promise<IUIKitResponse>;
 }

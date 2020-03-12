@@ -1,6 +1,7 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
+import { IUIKitContextualBar } from './IUIKitContextualBar';
 import { IUIKitView } from './IUIKitView';
 import {
     IUIKitIncomingInteractionMessageContainer,
@@ -31,4 +32,9 @@ export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingI
 export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingInteraction {
     view: IUIKitView;
     isCleared: boolean;
+}
+
+export interface IUIKitContextualBarOpenIncomingInteraction extends IUIKitBaseIncomingInteraction {
+    contextualBar: IUIKitContextualBar;
+    triggerId: string;
 }

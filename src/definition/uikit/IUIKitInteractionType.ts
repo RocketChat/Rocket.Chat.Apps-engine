@@ -1,9 +1,11 @@
+import { IUIKitContextualBar } from './IUIKitContextualBar';
 import { IUIKitView } from './IUIKitView';
 
 export enum UIKitInteractionType {
     MODAL_OPEN = 'modal.open',
     MODAL_CLOSE = 'modal.close',
     MODAL_UPDATE = 'modal.update',
+    CONTEXTUAL_BAR_OPEN = 'contextual_bar.open',
     ERRORS = 'errors',
 }
 
@@ -26,6 +28,11 @@ export interface IUIKitErrorInteraction extends IUIKitInteraction {
 export interface IUIKitModalInteraction extends IUIKitInteraction {
     type: UIKitInteractionType.MODAL_OPEN | UIKitInteractionType.MODAL_UPDATE | UIKitInteractionType.MODAL_CLOSE;
     view: IUIKitView;
+}
+
+export interface IUIKitContextualBarInteraction extends IUIKitInteraction {
+    type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN;
+    contextualBar: IUIKitContextualBar;
 }
 
 export interface IUIKitModalResponse extends IUIKitModalInteraction, IUIKitResponse { }

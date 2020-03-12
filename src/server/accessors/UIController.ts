@@ -1,7 +1,7 @@
 import { IUIController } from '../../definition/accessors';
-import { IUIKitErrorInteractionParam, IUIKitInteractionParam } from '../../definition/accessors/IUIController';
-import { UIKitInteractionType } from '../../definition/uikit';
-import { formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
+import { IUIKitContextualBarParam, IUIKitErrorInteractionParam, IUIKitInteractionParam } from '../../definition/accessors/IUIController';
+import { IUIKitInteraction, UIKitInteractionType } from '../../definition/uikit';
+import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, IUiInteractionBridge } from '../bridges';
@@ -43,5 +43,15 @@ export class UIController implements IUIController {
         };
 
         return this.uiInteractionBridge.notifyUser(user, formatErrorInteraction(errorInteraction, interactionContext), this.appId);
+    }
+
+    public openContextualBar(contextualBar: IUIKitContextualBarParam, context: IUIKitInteractionParam, user: IUser): Promise<void> {
+        const interactionContext: IUIKitInteraction = {
+            ...context,
+            appId: this.appId,
+            type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN,
+        };
+
+        return this.uiInteractionBridge.notifyUser(user, formatContextualBarInteraction(contextualBar, interactionContext), this.appId);
     }
 }
