@@ -6,7 +6,7 @@ import { TestData } from '../../test-data/utilities';
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppSettingsManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSettingsManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppStorage, IAppStorageItem } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -66,6 +66,9 @@ export class AppSettingsManagerTestFixture {
             },
             getCommandManager(): AppSlashCommandManager {
                 return {} as AppSlashCommandManager;
+            },
+            getExternalComponentManager(): AppExternalComponentManager {
+                return {} as AppExternalComponentManager;
             },
             getApiManager(): AppApiManager {
                 return {} as AppApiManager;

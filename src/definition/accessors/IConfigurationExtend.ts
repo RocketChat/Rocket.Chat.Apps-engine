@@ -1,4 +1,5 @@
 import { IApiExtend } from './IApiExtend';
+import { IExternalComponentsExtend } from './IExternalComponentsExtend';
 import { IHttpExtend } from './IHttp';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
@@ -17,4 +18,6 @@ export interface IConfigurationExtend {
     /** Accessor for declaring the commands which your App provides. */
     readonly slashCommands: ISlashCommandsExtend;
     readonly api: IApiExtend;
+
+    readonly externalComponents: IExternalComponentsExtend;
 }

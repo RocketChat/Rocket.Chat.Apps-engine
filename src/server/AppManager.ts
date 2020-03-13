@@ -4,6 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
+    AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
@@ -34,6 +35,7 @@ export class AppManager {
     private readonly listenerManager: AppListenerManager;
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
+    private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
 
@@ -71,6 +73,7 @@ export class AppManager {
         this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
+        this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
 
@@ -125,6 +128,11 @@ export class AppManager {
     /** Gets the api manager's instance. */
     public getApiManager(): AppApiManager {
         return this.apiManager;
+    }
+
+    /** Gets the external component manager's instance. */
+    public getExternalComponentManager(): AppExternalComponentManager {
+        return this.externalComponentManager;
     }
 
     /** Gets the manager of the settings, updates and getting. */
@@ -239,6 +247,7 @@ export class AppManager {
             if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
+                this.externalComponentManager.unregisterExternalComponents(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
                 continue;
@@ -354,6 +363,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(rl.getID());
+        this.externalComponentManager.unregisterExternalComponents(rl.getID());
         this.apiManager.unregisterApis(rl.getID());
         this.accessorManager.purifyApp(rl.getID());
 
@@ -441,7 +451,6 @@ export class AppManager {
 
         return aff;
     }
-
     public async remove(id: string): Promise<ProxiedApp> {
         const app = this.apps.get(id);
 
@@ -454,6 +463,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
+        this.externalComponentManager.purgeExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.removeAppUser(app);
@@ -620,6 +630,7 @@ export class AppManager {
                 }
 
                 this.commandManager.unregisterCommands(app.getID());
+                this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
@@ -712,6 +723,7 @@ export class AppManager {
 
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
+            this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
@@ -781,10 +793,12 @@ export class AppManager {
 
         if (enable) {
             this.commandManager.registerCommands(app.getID());
+            this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
+            this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
         }
 
