@@ -111,6 +111,7 @@ export class AppListenerManager {
                 return;
             case AppInterface.IPostExternalComponentClosed:
                 this.executePostExternalComponentClosed(data as IExternalComponent);
+                return;
             case AppInterface.IUIKitInteractionHandler:
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
