@@ -1,5 +1,17 @@
 import {
+    IConfigurationExtend,
+    IConfigurationModify,
+    IEnvironmentRead,
+    IHttp,
+    IHttpExtend,
+    IModify,
+    IPersistence,
+    IRead,
+} from '../../definition/accessors';
+import {
+    ApiExtend,
     ConfigurationExtend,
+    ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
     Http,
@@ -13,6 +25,7 @@ import {
     Reader,
     RoomRead,
     ServerSettingRead,
+    ServerSettingsModify,
     SettingRead,
     SettingsExtend,
     SlashCommandsExtend,
@@ -20,22 +33,8 @@ import {
     UploadRead,
     UserRead,
 } from '../accessors';
-import { ApiExtend } from '../accessors/ApiExtend';
-import { ConfigurationModify } from '../accessors/ConfigurationModify';
-import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
-
-import {
-    IConfigurationExtend,
-    IConfigurationModify,
-    IEnvironmentRead,
-    IHttp,
-    IHttpExtend,
-    IModify,
-    IPersistence,
-    IRead,
-} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;

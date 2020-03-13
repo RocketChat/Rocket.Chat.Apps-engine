@@ -1,6 +1,7 @@
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
+import { BlockBuilder } from '../uikit';
 import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';
@@ -13,6 +14,10 @@ export interface IModifyCreator {
      */
     getLivechatCreator(): ILivechatCreator;
 
+    /**
+     * Gets a new instance of a BlockBuilder
+     */
+    getBlockBuilder(): BlockBuilder;
     /**
      * Starts the process for building a new message object.
      *

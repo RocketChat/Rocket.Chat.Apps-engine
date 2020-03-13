@@ -1,5 +1,5 @@
 import { AppBridges } from './bridges';
-import { AppCompiler, AppFabricationFulfillment, AppPackageParser, IParseAppZipResult, IParseBundleZipResult, ZipContentType } from './compiler';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -15,6 +15,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { IUser, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { AppConsole } from './logging';
 import { IMarketplaceInfo } from './marketplace';
@@ -156,20 +157,14 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const zipResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(item.zip, 'base64'));
-
-                if (zipResult.contentType !== ZipContentType.APP) {
-                    throw new Error('Invalid zip content provided');
-                }
-
-                const result = zipResult.parsed as IParseAppZipResult;
+                const result = await this.getParser().parseZip(this.getCompiler(), item.zip);
 
                 aff.setAppInfo(result.info);
                 aff.setImplementedInterfaces(result.implemented.getValues());
                 aff.setCompilerErrors(result.compilerErrors);
 
                 if (result.compilerErrors.length > 0) {
-                    const errors = result.compilerErrors.map(({ message }: { message: string }) => message).join('\n');
+                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
 
                     throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
                 }
@@ -378,55 +373,55 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<Array<AppFabricationFulfillment>> {
-        const parseResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(zipContentsBase64d, 'base64'));
-
-        if (parseResult.contentType === ZipContentType.APP) {
-            return [await this.addApp(parseResult.parsed as IParseAppZipResult, enable, marketplaceInfo)];
-        }
-
-        if (parseResult.contentType === ZipContentType.BUNDLE) {
-            return this.addBundle(parseResult.parsed as IParseBundleZipResult, enable);
-        }
-    }
-
-    private addBundle(bundleParseResult: IParseBundleZipResult, enable: boolean): Promise<Array<AppFabricationFulfillment>> {
-        return Promise.all(bundleParseResult.apps.map(({ parseResult, license }) => this.addApp(parseResult, enable)));
-    }
-
-    private async addApp(parseResult: IParseAppZipResult, enable: boolean, marketplaceInfo?: IMarketplaceInfo) {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
-        aff.setAppInfo(parseResult.info);
-        aff.setCompilerErrors(parseResult.compilerErrors);
+        aff.setAppInfo(result.info);
+        aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
 
-        if (parseResult.compilerErrors.length > 0) {
+        if (result.compilerErrors.length > 0) {
             return aff;
         }
 
-        aff.setImplementedInterfaces(parseResult.implemented.getValues());
-
-        const created = await this.storage.create({
-            id: parseResult.info.id,
-            info: parseResult.info,
+        const compiled = {
+            id: result.info.id,
+            info: result.info,
             status: AppStatus.UNKNOWN,
-            zip: parseResult.zipContentsBase64d,
-            compiled: parseResult.compiledFiles,
-            languageContent: parseResult.languageContent,
+            zip: zipContentsBase64d,
+            compiled: result.compiledFiles,
+            languageContent: result.languageContent,
             settings: {},
-            implemented: parseResult.implemented.getValues(),
+            implemented: result.implemented.getValues(),
             marketplaceInfo,
-        });
+        };
+
+        // Now that is has all been compiled, let's get the
+        // the App instance from the source.
+        const app = this.getCompiler().toSandBox(this, compiled);
+
+        // Create a user for the app
+        try {
+            await this.createAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getAppUserUsername(),
+                message: 'Failed to create an app user for this app.',
+            });
+
+            return aff;
+        }
+
+        const created = await this.storage.create(compiled);
 
         if (!created) {
             aff.setStorageError('Failed to create the App, the storage did not return it.');
 
+            await this.removeAppUser(app);
+
             return aff;
         }
-
-        // Now that is has all been compiled, let's get the
-        // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, created);
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -451,20 +446,23 @@ export class AppManager {
     public async remove(id: string): Promise<ProxiedApp> {
         const app = this.apps.get(id);
 
+        // Let everyone know that the App has been removed
+        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id).catch();
+            await this.disable(id);
         }
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
+        await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
-        await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().appRemoved(app);
 
         this.apps.delete(app.getID());
 
@@ -473,13 +471,7 @@ export class AppManager {
 
     public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const zipResult = await this.getParser().parseZip(this.getCompiler(), Buffer.from(zipContentsBase64d, 'base64'));
-
-        if (zipResult.contentType !== ZipContentType.APP) {
-            throw new Error('Invalid zip content provided');
-        }
-
-        const result = zipResult.parsed as IParseAppZipResult;
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
@@ -516,15 +508,27 @@ export class AppManager {
         // the App instance from the source.
         const app = this.getCompiler().toSandBox(this, stored);
 
+        // Ensure there is an user for the app
+        try {
+            await this.ensureAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getAppUserUsername(),
+                message: 'Failed to create an app user for this app.',
+            });
+
+            return aff;
+        }
+
+        // Let everyone know that the App has been updated
+        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
+
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
         aff.setApp(app);
 
         // Start up the app
         await this.runStartUpProcess(stored, app, false, true);
-
-        // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
 
         return aff;
     }
@@ -793,5 +797,43 @@ export class AppManager {
         }
 
         return enable;
+    }
+
+    private createAppUser(app: ProxiedApp): Promise<string> {
+        const userData: Partial<IUser> = {
+            username: app.getAppUserUsername(),
+            name: app.getInfo().name,
+            roles: ['app'],
+            appId: app.getID(),
+            type: UserType.APP,
+            status: 'online',
+            isEnabled: true,
+        };
+
+        return this.bridges.getUserBridge().create(userData, app.getID(), {
+            avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+            joinDefaultChannels: true,
+            sendWelcomeEmail: false,
+        });
+    }
+
+    private async removeAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (!appUser) {
+            return true;
+        }
+
+        return this.bridges.getUserBridge().remove(appUser, app.getID());
+    }
+
+    private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (appUser) {
+            return true;
+        }
+
+        return !!this.createAppUser(app);
     }
 }

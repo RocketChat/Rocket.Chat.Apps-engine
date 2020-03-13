@@ -11,7 +11,19 @@ export class TestsUserBridge implements IUserBridge {
         throw new Error('Method not implemented.');
     }
 
+    public create(user: Partial<IUser>): Promise<string> {
+        throw new Error('Method not implemented');
+    }
+
     public getActiveUserCount(): Promise<number> {
+        throw new Error('Method not implemented.');
+    }
+
+    public remove(user: IUser, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getAppUser(appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 }

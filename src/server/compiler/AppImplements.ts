@@ -19,6 +19,10 @@ export enum AppInterface {
     IPostRoomCreate = 'IPostRoomCreate',
     IPreRoomDeletePrevent = 'IPreRoomDeletePrevent',
     IPostRoomDeleted = 'IPostRoomDeleted',
+    // Blocks
+    IUIKitInteractionHandler = 'IUIKitInteractionHandler',
+    // Livechat
+    ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
 }
 
 export class AppImplements {

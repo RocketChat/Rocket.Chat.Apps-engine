@@ -11,6 +11,7 @@ import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
+import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
 import { IUserBridge } from './IUserBridge';
 
@@ -30,4 +31,5 @@ export abstract class AppBridges {
     public abstract getServerSettingBridge(): IServerSettingBridge;
     public abstract getUploadBridge(): IUploadBridge;
     public abstract getUserBridge(): IUserBridge;
+    public abstract getUiInteractionBridge(): IUiInteractionBridge;
 }

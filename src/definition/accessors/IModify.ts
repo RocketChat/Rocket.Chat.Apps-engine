@@ -2,6 +2,7 @@ import { IModifyCreator } from './IModifyCreator';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
 import { INotifier } from './INotifier';
+import { IUIController } from './IUIController';
 
 export interface IModify {
     getCreator(): IModifyCreator;
@@ -16,4 +17,8 @@ export interface IModify {
      * @returns the notifier accessor
      */
     getNotifier(): INotifier;
+    /**
+     * Gets the accessor for interacting with the UI
+     */
+    getUiController(): IUIController;
 }
