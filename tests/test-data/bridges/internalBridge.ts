@@ -10,7 +10,7 @@ export class TestsInternalBridge implements IInternalBridge {
         throw new Error('Method not implemented.');
     }
 
-    public isDevelopmentModeEnabled(): boolean {
+    public async isDevelopmentModeEnabled(): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 }

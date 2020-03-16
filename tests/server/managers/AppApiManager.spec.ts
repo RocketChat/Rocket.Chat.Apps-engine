@@ -34,7 +34,7 @@ export class AppApiManagerTestFixture {
         const bridges = this.mockBridges;
 
         this.mockInternalBridge = {
-            isDevelopmentModeEnabled() {
+            async isDevelopmentModeEnabled() {
                 return true;
             },
         } as IInternalBridge;
