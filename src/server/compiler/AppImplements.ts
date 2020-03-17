@@ -19,6 +19,9 @@ export enum AppInterface {
     IPostRoomCreate = 'IPostRoomCreate',
     IPreRoomDeletePrevent = 'IPreRoomDeletePrevent',
     IPostRoomDeleted = 'IPostRoomDeleted',
+    // Upload
+    IPreFileUploadAllow = 'IPreFileUploadAllow',
+    IPreFileUploadModify = 'IPreFileUploadModify',
     // Blocks
     IUIKitInteractionHandler = 'IUIKitInteractionHandler',
     // Livechat

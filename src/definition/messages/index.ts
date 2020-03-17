@@ -19,6 +19,7 @@ import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
 import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
 import { MessageActionType } from './MessageActionType';
 import { MessageProcessingType } from './MessageProcessingType';
+export * from './IPreFileUploadAllow';
 
 export {
     IMessage,

@@ -47,6 +47,11 @@ export enum AppMethod {
     UIKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
+
+    // File Upload
+    CHECK_PRE_FILEUPLOAD_ALLOW = 'checkPreFileUploadAllow',
+    EXECUTE_PRE_FILEUPLOAD_ALLOW = 'executePreFileUploadAllow',
+
     // Livechat
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
 }

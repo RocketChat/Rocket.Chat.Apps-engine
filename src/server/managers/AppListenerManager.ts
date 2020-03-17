@@ -110,6 +110,8 @@ export class AppListenerManager {
             case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
                 return;
+            case AppInterface.IPreFileUploadAllow:
+                return this.executePreFileUploadAllow(data);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
@@ -693,5 +695,40 @@ export class AppListenerManager {
                 this.am.getPersistence(appId),
             );
         }
+    }
+    private async executePreFileUploadAllow(data: any): Promise<boolean> {
+
+        for (const appId of this.listeners.get(AppInterface.IPreFileUploadAllow)) {
+            const app = this.manager.getOneById(appId);
+            if (app.hasMethod(AppMethod.CHECK_PRE_FILEUPLOAD_ALLOW)) {
+                const continueOn = await app.call(AppMethod.CHECK_PRE_FILEUPLOAD_ALLOW,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+
+                if (!continueOn) {
+                    continue;
+                }
+            }
+
+            if (app.hasMethod(AppMethod.EXECUTE_PRE_FILEUPLOAD_ALLOW)) {
+                const result = await app.call(AppMethod.EXECUTE_PRE_FILEUPLOAD_ALLOW,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as Error || null || Boolean;
+
+                if (typeof result === 'boolean' && result === true) {
+                    return result;
+                }
+
+                if (result instanceof Error) {
+                    throw result;
+                }
+            }
+        }
+        throw new Error('error-invalid-file-type');
     }
 }
