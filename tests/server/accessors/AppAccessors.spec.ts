@@ -5,7 +5,7 @@ import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';
 import { AppAccessors } from '../../../src/server/accessors';
 import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
+import { AppBridges, IInternalBridge } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppApiManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
@@ -21,10 +21,35 @@ export class AppAccessorsTestFixture {
     private mockAccessors: AppAccessorManager;
     private mockManager: AppManager;
     private mockApiManager: AppApiManager;
+    private mockInternalBridge: IInternalBridge;
 
     @SetupFixture
     public setupFixture() {
         this.mockBridges = new TestsAppBridges();
+
+        const bridges = this.mockBridges;
+
+        this.mockInternalBridge = {
+            async isDevelopmentModeEnabled() {
+                return true;
+            },
+        } as IInternalBridge;
+
+        bridges.getInternalBridge = () => this.mockInternalBridge;
+
+        this.mockManager = {
+            getBridges(): AppBridges {
+                return bridges;
+            },
+            getCommandManager() {
+                return {} as AppSlashCommandManager;
+            },
+            getLogStorage(): AppLogStorage {
+                return new TestsAppLogStorage();
+            },
+        } as AppManager;
+
+        const manager = this.mockManager;
 
         this.mockApp = {
             getID() {
@@ -44,27 +69,15 @@ export class AppAccessorsTestFixture {
                     Promise.reject('You told me so') : Promise.resolve();
             },
             setupLogger(method: AppMethod): AppConsole {
-                return new AppConsole(method);
+                return new AppConsole(method, manager);
             },
         } as ProxiedApp;
 
-        const bri = this.mockBridges;
         const app = this.mockApp;
-        this.mockManager = {
-            getBridges(): AppBridges {
-                return bri;
-            },
-            getCommandManager() {
-                return {} as AppSlashCommandManager;
-            },
-            getOneById(appId: string): ProxiedApp {
-                return appId === 'failMePlease' ? undefined : app;
-            },
-            getLogStorage(): AppLogStorage {
-                return new TestsAppLogStorage();
-            },
-        } as AppManager;
 
+        this.mockManager.getOneById = (appId: string): ProxiedApp => {
+            return appId === 'failMePlease' ? undefined : app;
+        };
         this.mockAccessors = new AppAccessorManager(this.mockManager);
         const ac = this.mockAccessors;
         this.mockManager.getAccessorManager = function _getAccessorManager(): AppAccessorManager {

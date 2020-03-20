@@ -54,7 +54,7 @@ export class ProxiedApp implements IApp {
     }
 
     public setupLogger(method: AppMethod): AppConsole {
-        const logger = new AppConsole(method);
+        const logger = new AppConsole(method, this.manager);
         // Set the logger to our new one
         (this.app as any).logger = logger;
 

@@ -2,14 +2,23 @@ import * as stackTrace from 'stack-trace';
 
 import { ILogEntry, ILogger, LogMessageSeverity } from '../../definition/accessors';
 import { AppMethod } from '../../definition/metadata';
+import { AppManager } from '../AppManager';
 import { ILoggerStorageEntry } from './ILoggerStorageEntry';
 
 export class AppConsole implements ILogger {
     public static toStorageEntry(appId: string, logger: AppConsole): ILoggerStorageEntry {
+        const entries = logger.getEntries();
+
+        if (logger.isDevelopmentModeEnabled) {
+            entries.forEach(({ severity, args }) => {
+                console.log(`[${ severity.toUpperCase() }] ${ appId } `, args.join(' '));
+            });
+        }
+
         return {
             appId,
             method: logger.getMethod(),
-            entries: logger.getEntries(),
+            entries,
             startTime: logger.getStartTime(),
             endTime: logger.getEndTime(),
             totalTime: logger.getTotalTime(),
@@ -21,10 +30,14 @@ export class AppConsole implements ILogger {
     private entries: Array<ILogEntry>;
     private start: Date;
 
-    constructor(method: AppMethod) {
+    constructor(method: AppMethod, private manager: AppManager) {
         this.method = method;
         this.entries = new Array<ILogEntry>();
         this.start = new Date();
+    }
+
+    public get isDevelopmentModeEnabled(): boolean {
+        return this.manager.getBridges().getInternalBridge().isDevelopmentModeEnabled();
     }
 
     public debug(...items: Array<any>): void {
@@ -89,9 +102,6 @@ export class AppConsole implements ILogger {
             timestamp: new Date(),
             args: i,
         });
-
-        // This should be a setting? :thinking:
-        // console.log(`${ severity.toUpperCase() }:`, i);
     }
 
     private getFunc(stack: Array<stackTrace.StackFrame>): string {

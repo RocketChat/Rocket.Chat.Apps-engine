@@ -17,6 +17,7 @@ import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IUser, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
+import { AppConsole } from './logging';
 import { IMarketplaceInfo } from './marketplace';
 
 export class AppManager {
@@ -177,7 +178,7 @@ export class AppManager {
                 console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`);
                 console.error(e);
 
-                const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
+                const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED, new AppConsole(AppMethod._CONSTRUCTOR, this));
                 app.getLogger().error(e);
                 this.logStorage.storeEntries(app.getID(), app.getLogger());
 
