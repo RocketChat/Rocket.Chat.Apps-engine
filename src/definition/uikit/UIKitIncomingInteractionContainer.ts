@@ -8,8 +8,8 @@ export interface IUIKitIncomingInteractionContainer {
     id: string;
 }
 export interface IUIKitIncomingInteractionModalContainer extends IUIKitIncomingInteractionContainer {
-    type: UIKitIncomingInteractionContainerType.MESSAGE;
+    type: UIKitIncomingInteractionContainerType.VIEW;
 }
 export interface IUIKitIncomingInteractionMessageContainer extends IUIKitIncomingInteractionContainer {
-    type: UIKitIncomingInteractionContainerType.VIEW;
+    type: UIKitIncomingInteractionContainerType.MESSAGE;
 }
