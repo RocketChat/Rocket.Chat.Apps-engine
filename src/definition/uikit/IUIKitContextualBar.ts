@@ -4,6 +4,7 @@ export enum UIKitContextualBarType {
     ROOM_USER_INFO = 'room.user-info',
     ROOM_MEMBERS_LIST = 'room.members-list',
     ROOM_MORE =  'room.more',
+    CUSTOM = 'room.custom',
 }
 
 export interface IUIKitContextualBar {

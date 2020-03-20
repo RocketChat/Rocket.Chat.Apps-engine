@@ -5,7 +5,7 @@ export enum UIKitInteractionType {
     MODAL_OPEN = 'modal.open',
     MODAL_CLOSE = 'modal.close',
     MODAL_UPDATE = 'modal.update',
-    CONTEXTUAL_BAR_OPEN = 'contextual_bar.open',
+    CONTEXTUAL_BAR_OPEN = 'contextual-bar.open',
     ERRORS = 'errors',
 }
 
