@@ -39,6 +39,15 @@ export class UIKitInteractionResponder {
         };
     }
 
+    public closeModalViewResponse(viewData: IUIKitModalViewParam): IUIKitModalResponse {
+        const { appId, triggerId } = this.baseContext;
+
+        return {
+            success: true,
+            ...formatModalInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.MODAL_CLOSE }),
+        };
+    } 
+    
     public viewErrorResponse(errorInteraction: IUIKitErrorInteractionParam): IUIKitErrorResponse {
         const { appId, triggerId } = this.baseContext;
 
