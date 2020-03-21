@@ -1,24 +1,21 @@
-
-import { IUser, UserType, IUserEmail, UserStatusConnection } from "../../definition/users";
-import { AppManager } from '../AppManager';
+import { IUser, IUserEmail, UserStatusConnection, UserType } from '../../definition/users';
 export class User implements IUser {
+    public id: string;
+    public username: string;
+    public emails: Array<IUserEmail>;
+    public type: UserType;
+    public isEnabled: boolean;
+    public name: string;
+    public roles: Array<string>;
+    public status: string;
+    public statusConnection: UserStatusConnection;
+    public utcOffset: number;
+    public createdAt: Date;
+    public updatedAt: Date;
+    public lastLoginAt: Date;
+    public appId?: string;
 
-    id: string;
-    username: string;
-    emails: Array<IUserEmail>;
-    type: UserType;
-    isEnabled: boolean;
-    name: string;
-    roles: Array<string>;
-    status: string;
-    statusConnection: UserStatusConnection;
-    utcOffset: number;
-    createdAt: Date;
-    updatedAt: Date;
-    lastLoginAt: Date;
-    appId?: string;
-
-    public constructor(user: IUser, private manager: AppManager) {
+    public constructor(user: IUser) {
         Object.assign(this, user);
     }
 }

@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
 import { IUser } from '.';
+import { IHttp, IPersistence, IRead } from '../accessors';
 import { IRoom } from '../rooms';
 
 /**  Handler which is called to determine whether a user is allowed to send a message or not. */
@@ -15,7 +15,7 @@ export interface IPreUserJoinRoomPrevent {
      * @param http An accessor to the outside world
      * @returns whether to run the prevent or not
      */
-    checkPreUserJoinPrevent?(user: IUser, room: IRoom ,read: IRead, http: IHttp): Promise<boolean>;
+    checkPreUserJoinPrevent?(user: IUser, room: IRoom, read: IRead, http: IHttp): Promise<boolean>;
 
     /**
      * Method which is to be used to prevent a message from being sent.

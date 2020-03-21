@@ -110,11 +110,9 @@ export class AppListenerManager {
             // Livechat
             case AppInterface.ILivechatRoomClosedHandler:
                 return this.executeLivechatRoomClosed(data as ILivechatRoom);
-                return;
             // User
             case AppInterface.IPreUserJoinRoomPrevent:
                 return this.executePreUserJoinPrevent(data);
-            
             case AppInterface.IPostUserJoinRoom:
                 return this.executePostUserJoin(data);
             default:
@@ -124,8 +122,8 @@ export class AppListenerManager {
     }
     private async executePreUserJoinPrevent(data: any) {
         let prevented = false;
-        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user), this.manager);
-        const cfRoom = new User(Utilities.deepCloneAndFreeze(data.room), this.manager);
+        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user));
+        const cfRoom = new User(Utilities.deepCloneAndFreeze(data.room));
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
             const app = this.manager.getOneById(appId);
@@ -159,7 +157,7 @@ export class AppListenerManager {
     }
 
     private async executePostUserJoin(data: any) {
-        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user), this.manager);
+        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user));
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data.room), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
@@ -174,7 +172,6 @@ export class AppListenerManager {
                     this.am.getHttp(appId),
                 ) as boolean;
             }
-
             if (continueOn && app.hasMethod(AppMethod.EXECUTE_POST_USER_JOIN)) {
                 await app.call(AppMethod.EXECUTE_POST_USER_JOIN,
                     cfUser,
