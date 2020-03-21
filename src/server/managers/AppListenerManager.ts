@@ -20,6 +20,7 @@ import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
+import { User } from '../users/User';
 import { AppAccessorManager } from './AppAccessorManager';
 
 export class AppListenerManager {
@@ -108,14 +109,83 @@ export class AppListenerManager {
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
             case AppInterface.ILivechatRoomClosedHandler:
-                this.executeLivechatRoomClosed(data as ILivechatRoom);
+                return this.executeLivechatRoomClosed(data as ILivechatRoom);
                 return;
+            // User
+            case AppInterface.IPreUserJoinRoomPrevent:
+                return this.executePreUserJoinPrevent(data);
+            
+            case AppInterface.IPostUserJoinRoom:
+                return this.executePostUserJoin(data);
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
                 return;
         }
     }
+    private async executePreUserJoinPrevent(data: any) {
+        let prevented = false;
+        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user), this.manager);
+        const cfRoom = new User(Utilities.deepCloneAndFreeze(data.room), this.manager);
 
+        for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECK_PRE_USER_JOIN_PREVENT)) {
+                continueOn = await app.call(AppMethod.CHECK_PRE_USER_JOIN_PREVENT,
+                    cfUser,
+                    cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTE_PRE_USER_JOIN_PREVENT)) {
+                prevented = await app.call(AppMethod.EXECUTE_PRE_USER_JOIN_PREVENT,
+                    cfUser,
+                    cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                ) as boolean;
+
+                if (prevented) {
+                    return prevented;
+                }
+            }
+        }
+
+        return prevented;
+    }
+
+    private async executePostUserJoin(data: any) {
+        const cfUser = new User(Utilities.deepCloneAndFreeze(data.user), this.manager);
+        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data.room), this.manager);
+
+        for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
+            const app = this.manager.getOneById(appId);
+
+            let continueOn = true;
+            if (app.hasMethod(AppMethod.CHECK_POST_USER_JOIN)) {
+                continueOn = await app.call(AppMethod.CHECK_POST_USER_JOIN,
+                    cfUser,
+                    cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                ) as boolean;
+            }
+
+            if (continueOn && app.hasMethod(AppMethod.EXECUTE_POST_USER_JOIN)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_JOIN,
+                    cfUser,
+                    cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
     // Messages
     private async executePreMessageSentPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;

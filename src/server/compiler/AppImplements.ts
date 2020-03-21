@@ -23,6 +23,10 @@ export enum AppInterface {
     IUIKitInteractionHandler = 'IUIKitInteractionHandler',
     // Livechat
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
+    // Users
+
+    IPreUserJoinRoomPrevent= 'IPreUserJoinRoomPrevent',
+    IPostUserJoinRoom = 'IPostUserJoinRoom',
 }
 
 export class AppImplements {

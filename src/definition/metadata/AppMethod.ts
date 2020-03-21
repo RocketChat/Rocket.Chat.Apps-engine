@@ -49,4 +49,11 @@ export enum AppMethod {
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
     // Livechat
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
+
+    // User
+    CHECK_PRE_USER_JOIN_PREVENT = 'checkPreUserJoinPrevent',
+    EXECUTE_PRE_USER_JOIN_PREVENT = 'executePreUserJoinPrevent',
+
+    CHECK_POST_USER_JOIN = 'checkPostUserJoin',
+    EXECUTE_POST_USER_JOIN = 'executePostUserJoin',
 }
