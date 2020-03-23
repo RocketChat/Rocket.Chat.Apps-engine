@@ -23,6 +23,9 @@ import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 
+export type AppsEngineEventData = IMessage | IRoom | IUser | IUIKitIncomingInteraction | ILivechatRoom | IExternalComponent;
+export type AppsEngineEventListenerReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom;
+
 export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
@@ -64,8 +67,8 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
-        switch (int) {
+    public async executeListener(eventInterface: AppInterface, data: AppsEngineEventData): Promise<AppsEngineEventListenerReturn> {
+        switch (eventInterface) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
                 return this.executePreMessageSentPrevent(data as IMessage);
@@ -112,6 +115,11 @@ export class AppListenerManager {
             case AppInterface.IPostExternalComponentClosed:
                 this.executePostExternalComponentClosed(data as IExternalComponent);
                 return;
+            // Users
+            case AppInterface.IPostUserCreated:
+                this.executePostUserCreated(data as IUser);
+                return;
+            // UI interactions
             case AppInterface.IUIKitInteractionHandler:
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
@@ -631,6 +639,23 @@ export class AppListenerManager {
             if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
                 await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
                     cfExternalComponent,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserCreated(data: IUser): Promise<void> {
+        const frozenUser = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_CREATED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_CREATED,
+                    frozenUser,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
