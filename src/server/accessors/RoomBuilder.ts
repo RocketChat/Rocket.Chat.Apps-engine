@@ -4,8 +4,8 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
 export class RoomBuilder implements IRoomBuilder {
-    public kind: RocketChatAssociationModel.ROOM;
-    private room: IRoom;
+    public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+    protected room: IRoom;
     private members: Array<string>;
 
     constructor(data?: IRoom) {

@@ -2,7 +2,7 @@ import { IDiscussionBuilder, ILivechatCreator, ILivechatMessageBuilder, IMessage
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IDiscussion, IRoom, RoomType } from '../../definition/rooms';
+import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppBridges } from '../bridges';
 import { DiscussionBuilder } from './DiscussionBuilder';
@@ -50,7 +50,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public startDiscussion(data?: IDiscussion): IDiscussionBuilder {
+    public startDiscussion(data?: IRoom): IDiscussionBuilder {
         if (data) {
             delete data.id;
         }
@@ -67,7 +67,7 @@ export class ModifyCreator implements IModifyCreator {
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
             case RocketChatAssociationModel.DISCUSSION:
-                return this._finishDiscussion(builder);
+                return this._finishDiscussion(builder as IDiscussionBuilder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }

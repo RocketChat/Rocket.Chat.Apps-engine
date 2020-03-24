@@ -1,6 +1,6 @@
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
-import { IDiscussion, IRoom } from '../rooms';
+import { IRoom } from '../rooms';
 import { BlockBuilder } from '../uikit';
 import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { ILivechatCreator } from './ILivechatCreator';
@@ -53,7 +53,7 @@ export interface IModifyCreator {
      *          the `id` property will be ignored
      * @return an IDiscussionBuilder instance
      */
-    startDiscussion(data?: IDiscussion): IDiscussionBuilder;
+    startDiscussion(data?: IRoom): IDiscussionBuilder;
 
     /**
      * Finishes the creating process, saving the object to the database.

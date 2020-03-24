@@ -19,4 +19,5 @@ export interface IRoom {
     updatedAt?: Date;
     lastModifiedAt?: Date;
     customFields?: { [key: string]: any };
+    parentRoom?: IRoom;
 }
