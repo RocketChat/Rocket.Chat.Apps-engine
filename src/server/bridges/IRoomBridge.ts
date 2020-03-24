@@ -10,4 +10,5 @@ export interface IRoomBridge {
     getDirectByUsernames(username: Array<string>, appId: string): Promise<IRoom>;
     getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
+    createDiscussion(room: IRoom, members: Array<string>, appId: string): Promise<string>;
 }

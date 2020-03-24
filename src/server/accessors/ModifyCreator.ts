@@ -1,10 +1,11 @@
-import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import { IDiscussionBuilder, ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom, RoomType } from '../../definition/rooms';
+import { IDiscussion, IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppBridges } from '../bridges';
+import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
@@ -49,7 +50,15 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder): Promise<string> {
+    public startDiscussion(data?: IDiscussion): IDiscussionBuilder {
+        if (data) {
+            delete data.id;
+        }
+
+        return new DiscussionBuilder(data);
+    }
+
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -57,6 +66,8 @@ export class ModifyCreator implements IModifyCreator {
                 return this._finishLivechatMessage(builder);
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
+            case RocketChatAssociationModel.DISCUSSION:
+                return this._finishDiscussion(builder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
@@ -123,5 +134,28 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
+    }
+
+    private _finishDiscussion(builder: IDiscussionBuilder): Promise<string> {
+        const result = builder.getRoom();
+        delete result.id;
+
+        if (!result.creator || !result.creator.id) {
+            throw new Error('Invalid creator assigned to the discussion.');
+        }
+
+        if (!result.slugifiedName || !result.slugifiedName.trim()) {
+            throw new Error('Invalid slugifiedName assigned to the discussion.');
+        }
+
+        if (!result.displayName || !result.displayName.trim()) {
+            throw new Error('Invalid displayName assigned to the discussion.');
+        }
+
+        if (!result.parentRoom || !result.parentRoom.id) {
+            throw new Error('Invalid parentRoom assigned to the discussion.');
+        }
+
+        return this.bridges.getRoomBridge().createDiscussion(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
 }
