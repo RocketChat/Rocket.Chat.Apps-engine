@@ -143,6 +143,10 @@ export class RoomBuilder implements IRoomBuilder {
       return this.room.customFields;
     }
 
+    public getUserIds(): Array<string> {
+      return this.room.userIds;
+    }
+
     public getRoom(): IRoom {
         return this.room;
     }
