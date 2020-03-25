@@ -144,7 +144,7 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public getUserIds(): Array<string> {
-      return this.room.uids;
+      return this.room.userIds;
     }
 
     public getRoom(): IRoom {
