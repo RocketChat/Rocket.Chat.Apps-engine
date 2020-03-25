@@ -11,6 +11,7 @@ export interface IRoom {
      * @deprecated usernames will be removed on version 2.0.0
      */
     usernames: Array<string>;
+    uids?: Array<string>;
     isDefault?: boolean;
     isReadOnly?: boolean;
     displaySystemMessages?: boolean;
