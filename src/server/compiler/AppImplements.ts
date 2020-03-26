@@ -27,7 +27,7 @@ export enum AppInterface {
     // Livechat
     ILivechatRoomStartedHandler = 'ILivechatRoomStartedHandler',
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
-    ILivechatAssignAgentHandler = 'IPreLivechatAssignAgentHandler',
+    ILivechatAssignAgentHandler = 'ILivechatAssignAgentHandler',
     ILivechatUnassignAgentHandler = 'ILivechatUnassignAgentHandler',
 }
 
