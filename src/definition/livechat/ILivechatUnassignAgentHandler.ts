@@ -5,11 +5,11 @@ import { ILivechatContext } from './ILivechatContext';
 /**
  * Handler called after the unassignment of a livechat agent.
  */
-export interface ILivechatAssignAgentHandler {
+export interface ILivechatUnassignAgentHandler {
     /**
      * Handler called *after* the unassignment of a livechat agent.
      *
-     * @param agent The agent unassigned.
+     * @param data the livechat context data which contains agent's info and room's info.
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
