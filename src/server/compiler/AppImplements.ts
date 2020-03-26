@@ -25,7 +25,10 @@ export enum AppInterface {
     // Blocks
     IUIKitInteractionHandler = 'IUIKitInteractionHandler',
     // Livechat
+    ILivechatRoomStartedHandler = 'ILivechatRoomStartedHandler',
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
+    ILivechatAssignAgentHandler = 'IPreLivechatAssignAgentHandler',
+    ILivechatUnassignAgentHandler = 'ILivechatUnassignAgentHandler',
 }
 
 export class AppImplements {

@@ -51,5 +51,8 @@ export enum AppMethod {
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
     // Livechat
+    EXECUTE_LIVECHAT_ROOM_STARTED_HANDLER = 'executeLivechatRoomStartedHandler',
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
+    EXECUTE_LIVECHAT_ASSIGN_AGENT_HANDLER = 'executeLivechatAssignAgentHandler',
+    EXECUTE_LIVECHAT_UNASSIGN_AGENT_HANDLER = 'executeLivechatUnassignAgentHandler',
 }

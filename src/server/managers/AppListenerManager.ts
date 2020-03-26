@@ -1,5 +1,5 @@
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatRoom } from '../../definition/livechat';
+import { ILivechatContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -64,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -115,8 +115,17 @@ export class AppListenerManager {
             case AppInterface.IUIKitInteractionHandler:
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
+            case AppInterface.ILivechatRoomStartedHandler:
+                this.executeLivechatRoomStarted(data as ILivechatRoom);
+                return;
             case AppInterface.ILivechatRoomClosedHandler:
                 this.executeLivechatRoomClosed(data as ILivechatRoom);
+                return;
+            case AppInterface.ILivechatAssignAgentHandler:
+                this.executeLivechatAssignAgent(data as ILivechatContext);
+                return;
+            case AppInterface.ILivechatUnassignAgentHandler:
+                this.executeLivechatUnassignAgent(data as ILivechatContext);
                 return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
@@ -719,6 +728,25 @@ export class AppListenerManager {
         );
     }
     // Livechat
+    private async executeLivechatRoomStarted(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomStartedHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_STARTED_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_STARTED_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
+        }
+    }
+
     private async executeLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
@@ -730,6 +758,44 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
+        }
+    }
+
+    private async executeLivechatAssignAgent(data: ILivechatContext): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatAssignAgentHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ASSIGN_AGENT_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ASSIGN_AGENT_HANDLER,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+            );
+        }
+    }
+
+    private async executeLivechatUnassignAgent(data: ILivechatContext): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.ILivechatRoomStartedHandler)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_UNASSIGN_AGENT_HANDLER)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_LIVECHAT_UNASSIGN_AGENT_HANDLER,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
