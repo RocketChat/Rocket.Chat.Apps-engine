@@ -1,4 +1,5 @@
 import { IDiscussionBuilder } from '../../definition/accessors';
+import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
 import { IRoom } from '../../definition/rooms/IRoom';
@@ -6,6 +7,8 @@ import { RoomBuilder } from './RoomBuilder';
 
 export class DiscussionBuilder extends RoomBuilder implements IDiscussionBuilder {
     public kind: RocketChatAssociationModel.DISCUSSION;
+    private reply: string;
+    private parentMessage: IMessage;
 
     constructor(data?: IRoom) {
         super(data);
@@ -20,5 +23,23 @@ export class DiscussionBuilder extends RoomBuilder implements IDiscussionBuilder
 
     public getParentRoom(): IRoom {
         return this.room.parentRoom;
+    }
+
+    public setReply(reply: string): IDiscussionBuilder {
+        this.reply = reply;
+        return this;
+    }
+
+    public getReply(): string {
+        return this.reply;
+    }
+
+    public setParentMessage(parentMessage: IMessage): IDiscussionBuilder {
+        this.parentMessage = parentMessage;
+        return this;
+    }
+
+    public getParentMessage(): IMessage {
+        return this.parentMessage;
     }
 }

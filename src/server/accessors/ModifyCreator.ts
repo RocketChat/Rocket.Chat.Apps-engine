@@ -1,4 +1,11 @@
-import { IDiscussionBuilder, ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import {
+    IDiscussionBuilder,
+    ILivechatCreator,
+    ILivechatMessageBuilder,
+    IMessageBuilder,
+    IModifyCreator,
+    IRoomBuilder,
+} from '../../definition/accessors';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
@@ -137,25 +144,31 @@ export class ModifyCreator implements IModifyCreator {
     }
 
     private _finishDiscussion(builder: IDiscussionBuilder): Promise<string> {
-        const result = builder.getRoom();
-        delete result.id;
+        const room = builder.getRoom();
+        delete room.id;
 
-        if (!result.creator || !result.creator.id) {
+        if (!room.creator || !room.creator.id) {
             throw new Error('Invalid creator assigned to the discussion.');
         }
 
-        if (!result.slugifiedName || !result.slugifiedName.trim()) {
+        if (!room.slugifiedName || !room.slugifiedName.trim()) {
             throw new Error('Invalid slugifiedName assigned to the discussion.');
         }
 
-        if (!result.displayName || !result.displayName.trim()) {
+        if (!room.displayName || !room.displayName.trim()) {
             throw new Error('Invalid displayName assigned to the discussion.');
         }
 
-        if (!result.parentRoom || !result.parentRoom.id) {
+        if (!room.parentRoom || !room.parentRoom.id) {
             throw new Error('Invalid parentRoom assigned to the discussion.');
         }
 
-        return this.bridges.getRoomBridge().createDiscussion(result, builder.getMembersToBeAddedUsernames(), this.appId);
+        return this.bridges.getRoomBridge().createDiscussion(
+            room,
+            builder.getParentMessage(),
+            builder.getReply(),
+            builder.getMembersToBeAddedUsernames(),
+            this.appId,
+        );
     }
 }

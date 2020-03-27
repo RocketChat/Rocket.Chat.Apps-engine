@@ -1,4 +1,5 @@
 import { IRoomBuilder } from '.';
+import { IMessage } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
 
@@ -14,4 +15,12 @@ export interface IDiscussionBuilder extends IRoomBuilder {
     setParentRoom(parentRoom: IRoom): IDiscussionBuilder;
 
     getParentRoom(): IRoom;
+
+    setParentMessage(parentMessage: IMessage): IDiscussionBuilder;
+
+    getParentMessage(): IMessage;
+
+    setReply(reply: string): IDiscussionBuilder;
+
+    getReply(): string;
 }
