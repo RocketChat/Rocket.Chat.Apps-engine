@@ -174,6 +174,11 @@ export interface IRoomBuilder {
     getCustomFields(): { [key: string]: object };
 
     /**
+     * Gets user ids of members from a direct message
+     */
+    getUserIds(): Array<string>;
+
+    /**
      * Gets the resulting room that has been built up to the point of calling this method.
      * Note: modifying the returned value will have no effect.
      */
