@@ -27,7 +27,7 @@ export class AppListenerManagerTestFixture {
             },
             getOneById(appId: string) {
                 return this.mockApp;
-            }
+            },
         } as AppManager;
     }
 
