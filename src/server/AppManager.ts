@@ -798,7 +798,13 @@ export class AppManager {
         return enable;
     }
 
-    private createAppUser(app: ProxiedApp): Promise<string> {
+    private async createAppUser(app: ProxiedApp): Promise<string> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (appUser) {
+            return appUser.id;
+        }
+
         const userData: Partial<IUser> = {
             username: app.getAppUserUsername(),
             name: app.getInfo().name,
