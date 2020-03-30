@@ -10,7 +10,7 @@ export class DiscussionBuilder extends RoomBuilder implements IDiscussionBuilder
     private reply: string;
     private parentMessage: IMessage;
 
-    constructor(data?: IRoom) {
+    constructor(data?: Partial<IRoom>) {
         super(data);
         this.kind = RocketChatAssociationModel.DISCUSSION;
         this.room.type = RoomType.PRIVATE_GROUP;

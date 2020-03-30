@@ -8,15 +8,15 @@ export class RoomBuilder implements IRoomBuilder {
     protected room: IRoom;
     private members: Array<string>;
 
-    constructor(data?: IRoom) {
+    constructor(data?: Partial<IRoom>) {
         this.kind = RocketChatAssociationModel.ROOM;
-        this.room = data ? data : ({ customFields: {} } as IRoom);
+        this.room = (data ? data : { customFields: {} }) as IRoom;
         this.members = new Array<string>();
     }
 
-    public setData(data: IRoom): IRoomBuilder {
+    public setData(data: Partial<IRoom>): IRoomBuilder {
         delete data.id;
-        this.room = data;
+        this.room = data as IRoom;
 
         return this;
     }

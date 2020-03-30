@@ -16,7 +16,7 @@ export interface IRoomBuilder {
      *
      * @param room the room data to set
      */
-    setData(room: IRoom): IRoomBuilder;
+    setData(room: Partial<IRoom>): IRoomBuilder;
 
     /**
      * Sets the display name of this room.
