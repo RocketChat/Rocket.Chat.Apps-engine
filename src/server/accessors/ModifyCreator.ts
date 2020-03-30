@@ -57,7 +57,7 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public startDiscussion(data?: IRoom): IDiscussionBuilder {
+    public startDiscussion(data?: Partial<IRoom>): IDiscussionBuilder {
         if (data) {
             delete data.id;
         }

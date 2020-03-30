@@ -53,7 +53,7 @@ export interface IModifyCreator {
      *          the `id` property will be ignored
      * @return an IDiscussionBuilder instance
      */
-    startDiscussion(data?: IRoom): IDiscussionBuilder;
+    startDiscussion(data?: Partial<IRoom>): IDiscussionBuilder;
 
     /**
      * Finishes the creating process, saving the object to the database.
