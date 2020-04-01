@@ -129,7 +129,7 @@ export class AppAccessorManager {
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
-            const noti = new Notifier(this.bridges.getMessageBridge(), appId);
+            const noti = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
 
