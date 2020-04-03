@@ -10,9 +10,6 @@ enum AllowedInternalModules {
     buffer,
     crypto,
     dns,
-    http,
-    https,
-    net,
     path,
     querystring,
     readline,
@@ -21,7 +18,6 @@ enum AllowedInternalModules {
     timers,
     util,
     url,
-    zlib,
 }
 
 export class Utilities {
