@@ -5,10 +5,23 @@ import * as vm from 'vm';
 import { ICompilerFile } from '../compiler';
 
 enum AllowedInternalModules {
-    path,
-    url,
-    crypto,
+    assert,
+    async_hooks,
     buffer,
+    crypto,
+    dns,
+    http,
+    https,
+    net,
+    path,
+    querystring,
+    readline,
+    stream,
+    string_decoder,
+    timers,
+    util,
+    url,
+    zlib,
 }
 
 export class Utilities {
