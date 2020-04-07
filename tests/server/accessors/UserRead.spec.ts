@@ -21,6 +21,9 @@ export class UserReadAccessorTestFixture {
             getByUsername(id, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
+            getAppUser(appId: string): Promise<IUser> {
+                return Promise.resolve(theUser);
+            },
         } as IUserBridge;
     }
 
@@ -35,5 +38,8 @@ export class UserReadAccessorTestFixture {
 
         Expect(await ur.getByUsername('username')).toBeDefined();
         Expect(await ur.getByUsername('username')).toEqual(this.user);
+
+        Expect(await ur.getAppUser()).toBeDefined();
+        Expect(await ur.getAppUser()).toEqual(this.user);
     }
 }
