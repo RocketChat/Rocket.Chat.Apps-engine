@@ -8,4 +8,9 @@ export interface IUserRead {
     getById(id: string): Promise<IUser>;
 
     getByUsername(username: string): Promise<IUser>;
+
+    /**
+     * Gets the app user of this app.
+     */
+    getAppUser(): Promise<IUser>;
 }
