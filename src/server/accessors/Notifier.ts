@@ -16,10 +16,6 @@ export class Notifier implements INotifier {
         if (!message.sender || !message.sender.id) {
             const appUser = await this.userBridge.getAppUser(this.appId);
 
-            if (!appUser) {
-                throw new Error('Invalid sender assigned to the message.');
-            }
-
             message.sender = appUser;
         }
 
@@ -29,10 +25,6 @@ export class Notifier implements INotifier {
     public async notifyRoom(room: IRoom, message: IMessage): Promise<void> {
         if (!message.sender || !message.sender.id) {
             const appUser = await this.userBridge.getAppUser(this.appId);
-
-            if (!appUser) {
-                throw new Error('Invalid sender assigned to the message.');
-            }
 
             message.sender = appUser;
         }
