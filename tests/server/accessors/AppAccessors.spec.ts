@@ -7,7 +7,7 @@ import { AppAccessors } from '../../../src/server/accessors';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -56,6 +56,9 @@ export class AppAccessorsTestFixture {
             },
             getCommandManager() {
                 return {} as AppSlashCommandManager;
+            },
+            getExternalComponentManager() {
+                return {} as AppExternalComponentManager;
             },
             getOneById(appId: string): ProxiedApp {
                 return appId === 'failMePlease' ? undefined : app;

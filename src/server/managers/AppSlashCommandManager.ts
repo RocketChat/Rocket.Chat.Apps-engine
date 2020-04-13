@@ -21,18 +21,26 @@ import { AppSlashCommand } from './AppSlashCommand';
 export class AppSlashCommandManager {
     private readonly bridge: IAppCommandBridge;
     private readonly accessors: AppAccessorManager;
-    // Variable that contains the commands which have been provided by apps.
-    // The key of the top map is app id and the key of the inner map is the command
+    /**
+     * Variable that contains the commands which have been provided by apps.
+     * The key of the top map is app id and the key of the inner map is the command
+     */
     private providedCommands: Map<string, Map<string, AppSlashCommand>>;
-    // Contains the commands which have modified the system commands
+    /**
+     * Contains the commands which have modified the system commands
+     */
     private modifiedCommands: Map<string, AppSlashCommand>;
-    // Contains the commands as keys and appId that touched it.
-    // Doesn't matter whether the app provided, modified, disabled, or enabled.
-    // As long as an app touched the command (besides to see if it exists), then it is listed here.
+    /**
+     * Contains the commands as keys and appId that touched it.
+     * Doesn't matter whether the app provided, modified, disabled, or enabled.
+     * As long as an app touched the command (besides to see if it exists), then it is listed here.
+     */
     private touchedCommandsToApps: Map<string, string>;
-    // Contains the apps and the commands they have touched. The key is the appId and value is the commands.
-    // Doesn't matter whether the app provided, modified, disabled, or enabled.
-    // As long as an app touched the command (besides to see if it exists), then it is listed here.
+    /**
+     * Contains the apps and the commands they have touched. The key is the appId and value is the commands.
+     * Doesn't matter whether the app provided, modified, disabled, or enabled.
+     * As long as an app touched the command (besides to see if it exists), then it is listed here.
+     */
     private appsTouchedCommands: Map<string, Array<string>>;
 
     constructor(private readonly manager: AppManager) {

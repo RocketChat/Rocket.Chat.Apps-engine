@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-engine",
-  "version": "1.12.1",
+  "version": "1.13.0-beta",
   "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index",
   "typings": "index",
@@ -8,6 +8,7 @@
     "start": "gulp",
     "lint": "tslint --project tsconfig.json",
     "fix-lint": "tslint --project tsconfig.json --fix",
+    "bundle": "gulp bundle",
     "compile": "gulp compile",
     "go-publish": "gulp publish",
     "go-publish-beta": "gulp publish-beta",
@@ -65,6 +66,7 @@
     "@types/stack-trace": "0.0.29",
     "@types/uuid": "^3.4.3",
     "alsatian": "^2.2.1",
+    "browserify": "^16.5.0",
     "codecov": "^3.0.1",
     "del": "^3.0.0",
     "eslint": "^4.19.1",
@@ -82,7 +84,8 @@
     "tap-bark": "^1.0.0",
     "ts-node": "^6.2.0",
     "tslint": "^5.11.0",
-    "typedoc": "^0.15.0"
+    "typedoc": "^0.15.0",
+    "uglify-es": "^3.3.9"
   },
   "dependencies": {
     "adm-zip": "^0.4.9",

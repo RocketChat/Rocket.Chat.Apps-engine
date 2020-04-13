@@ -1,3 +1,4 @@
+import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
@@ -63,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | IUIKitIncomingInteraction | ILivechatRoom): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -103,6 +104,13 @@ export class AppListenerManager {
                 return this.executePreRoomDeletePrevent(data as IRoom);
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
+                return;
+            // External Components
+            case AppInterface.IPostExternalComponentOpened:
+                this.executePostExternalComponentOpened(data as IExternalComponent);
+                return;
+            case AppInterface.IPostExternalComponentClosed:
+                this.executePostExternalComponentClosed(data as IExternalComponent);
                 return;
             case AppInterface.IUIKitInteractionHandler:
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
@@ -588,6 +596,41 @@ export class AppListenerManager {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTROOMDELETED,
                     cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    // External Components
+    private async executePostExternalComponentOpened(data: IExternalComponent): Promise<void> {
+        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
+                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
+                    cfExternalComponent,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostExternalComponentClosed(data: IExternalComponent): Promise<void> {
+        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
+                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
+                    cfExternalComponent,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),

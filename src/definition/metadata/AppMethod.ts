@@ -43,6 +43,9 @@ export enum AppMethod {
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
+    // External Component handlers
+    EXECUTEPOSTEXTERNALCOMPONENTOPENED = 'executePostExternalComponentOpened',
+    EXECUTEPOSTEXTERNALCOMPONENTCLOSED = 'executePostExternalComponentClosed',
     // Blockit handlers
     UIKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',

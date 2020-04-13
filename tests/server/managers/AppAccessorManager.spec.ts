@@ -2,7 +2,7 @@ import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Te
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppSlashCommandManager  } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSlashCommandManager  } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
@@ -22,6 +22,9 @@ export class AppAccessorManagerTestFixture {
             },
             getCommandManager() {
                 return {} as AppSlashCommandManager;
+            },
+            getExternalComponentManager() {
+                return {} as AppExternalComponentManager;
             },
             getApiManager() {
                 return {} as AppApiManager;
@@ -43,6 +46,7 @@ export class AppAccessorManagerTestFixture {
         this.spies.push(SpyOn(this.bridges, 'getUserBridge'));
         this.spies.push(SpyOn(this.manager, 'getBridges'));
         this.spies.push(SpyOn(this.manager, 'getCommandManager'));
+        this.spies.push(SpyOn(this.manager, 'getExternalComponentManager'));
         this.spies.push(SpyOn(this.manager, 'getApiManager'));
     }
 
@@ -65,6 +69,7 @@ export class AppAccessorManagerTestFixture {
         Expect(() => acm.getConfigurationExtend('fake')).toThrowError(Error, 'No App found by the provided id: fake');
         Expect(acm.getConfigurationExtend('testing')).toBeDefined();
 
+        Expect(this.manager.getExternalComponentManager).toHaveBeenCalled().exactly(1);
         Expect(this.manager.getCommandManager).toHaveBeenCalled().exactly(1);
         Expect(this.manager.getApiManager).toHaveBeenCalled().exactly(1);
     }
