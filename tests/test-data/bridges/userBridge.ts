@@ -26,4 +26,8 @@ export class TestsUserBridge implements IUserBridge {
     public getAppUser(appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
+
+    public async update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented');
+    }
 }
