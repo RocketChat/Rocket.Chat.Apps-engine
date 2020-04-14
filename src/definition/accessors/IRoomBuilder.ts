@@ -8,7 +8,7 @@ import { IUser } from '../users';
  * be able to successfully save the room object.
  */
 export interface IRoomBuilder {
-    kind: RocketChatAssociationModel.ROOM;
+    kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
 
     /**
      * Provides a convient way to set the data for the room.
@@ -16,7 +16,7 @@ export interface IRoomBuilder {
      *
      * @param room the room data to set
      */
-    setData(room: IRoom): IRoomBuilder;
+    setData(room: Partial<IRoom>): IRoomBuilder;
 
     /**
      * Sets the display name of this room.
