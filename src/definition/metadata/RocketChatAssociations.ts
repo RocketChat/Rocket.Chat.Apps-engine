@@ -1,5 +1,6 @@
 export enum RocketChatAssociationModel {
     ROOM = 'room',
+    DISCUSSION = 'discussion',
     MESSAGE = 'message',
     LIVECHAT_MESSAGE = 'livechat-message',
     USER = 'user',

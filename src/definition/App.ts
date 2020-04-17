@@ -61,7 +61,7 @@ export abstract class App implements IApp {
      * Please use read.getAppUser instead.
      */
     public getAppUserUsername(): string {
-        return `app.${ this.info.nameSlug }`;
+        return `${ this.info.nameSlug }.bot`;
     }
 
     /**
