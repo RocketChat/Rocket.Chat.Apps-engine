@@ -12,5 +12,5 @@ export interface IUserRead {
     /**
      * Gets the app user of this app.
      */
-    getAppUser(): Promise<IUser>;
+    getAppUser(appId: string): Promise<IUser>;
 }

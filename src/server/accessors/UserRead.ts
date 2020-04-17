@@ -13,7 +13,7 @@ export class UserRead implements IUserRead {
         return this.userBridge.getByUsername(username, this.appId);
     }
 
-    public getAppUser(): Promise<IUser> {
-        return this.userBridge.getAppUser(this.appId);
+    public getAppUser(appId: string): Promise<IUser | undefined> {
+        return this.userBridge.getAppUser(appId);
     }
 }
