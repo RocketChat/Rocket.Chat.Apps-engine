@@ -60,7 +60,7 @@ If you notice problems related to these missing modules, consider running:
 
 Simply restart the meteor process and it should be fixed.
 
-2. Sometimes when using meteor npm install PATH_TO_APPS_ENGINE will cause the following error :-
+2. Sometimes when using `meteor npm install PATH_TO_APPS_ENGINE` will cause the following error :-
 
 ```
 npm ERR! code ENOENT
