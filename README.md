@@ -25,8 +25,9 @@ Some features the Engine allows Apps to use:
 ## Development environment with Rocket.Chat
 When developing new functionalities, you need to integrate the local version of the Apps-Engine with your local version of Rocket.Chat.
 
-First of all, make sure you've compiled the changes you've made to the Apps-Engine, since that is what Rocket.Chat will execute:
+First of all, make sure you've installed all required packages and compiled the changes you've made to the Apps-Engine, since that is what Rocket.Chat will execute:
 ```sh
+npm install
 npm run compile
 ```
 
@@ -43,7 +44,8 @@ That's it! Now when you start Rocket.Chat with the `meteor` command, it will use
 
 Whenever you make changes to the engine, run `npm run compile` again - meteor will take care of restarting the server due to the changes.
 
-**Note:** Sometimes, when you update the Apps-Engine code and compile it while Rocket.Chat is running, you might run on errors similar to these:
+## Troubleshooting
+1. Sometimes, when you update the Apps-Engine code and compile it while Rocket.Chat is running, you might run on errors similar to these:
 
 ```
 Unable to resolve some modules:
@@ -57,6 +59,28 @@ If you notice problems related to these missing modules, consider running:
 ```
 
 Simply restart the meteor process and it should be fixed.
+
+2. Sometimes when using `meteor npm install PATH_TO_APPS_ENGINE` will cause the following error :-
+
+```
+npm ERR! code ENOENT
+npm ERR! syscall rename
+npm ERR! path PATH_TO_ROCKETCHAT/node_modules/.staging/@rocket.chat/apps-engine-c7135600/node_modules/@babel/code-frame
+npm ERR! dest PATH_TO_ROCKETCHAT/node_modules/.staging/@babel/code-frame-f3697825
+npm ERR! errno -2
+npm ERR! enoent ENOENT: no such file or directory, rename 'PATH_TO_ROCKETCHAT/node_modules/.staging/@rocket.chat/apps-engine-c7135600/node_modules/@babel/code-frame' -> 'PATH_TO_ROCKETCHAT/node_modules/.staging/@babel/code-frame-f3697825'
+npm ERR! enoent This is related to npm not being able to find a file.
+npm ERR! enoent 
+```
+Here `PATH_TO_ROCKETCHAT` is the path to the main rocketchat server repo in your system
+To correct this we reinstall the package once again deleting the previous package
+```
+~/Rocket.Chat$ rm -rf node_modules/@rocket.chat/apps-engine
+~/Rocket.Chat$ cd PATH_TO_APP_ENGINE
+~/Rocket.Chat.Apps-engine$ npm install
+~/Rocket.Chat.Apps-engine$ cd PATH_TO_ROCKETCHAT
+~/Rocket.Chat$ meteor npm install ../Rocket.Chat.Apps-engine
+```
 
 ## Implementer Needs to Implement:
 - `src/server/storage/AppStorage`
