@@ -25,10 +25,14 @@ export enum AppInterface {
     // Blocks
     IUIKitInteractionHandler = 'IUIKitInteractionHandler',
     // Livechat
-    ILivechatRoomStartedHandler = 'ILivechatRoomStartedHandler',
+    IPostLivechatRoomStarted = 'IPostLivechatRoomStarted',
+    IPostLivechatRoomClosed = 'IPostLivechatRoomClosed',
+    /**
+     * @deprecated due to AppInterface.IPostLivechatRoomClosed
+     */
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
-    ILivechatAssignAgentHandler = 'ILivechatAssignAgentHandler',
-    ILivechatUnassignAgentHandler = 'ILivechatUnassignAgentHandler',
+    IPostLivechatAgentAssigned = 'IPostLivechatAgentAssigned',
+    IPostLivechatAgentUnassigned = 'IPostLivechatAgentUnassigned',
 }
 
 export class AppImplements {

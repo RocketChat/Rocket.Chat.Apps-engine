@@ -1,12 +1,13 @@
 import { IDepartment } from './IDepartment';
-import { ILivechatAssignAgentHandler } from './ILivechatAssignAgentHandler';
 import { ILivechatContext } from './ILivechatContext';
 import { ILivechatMessage } from './ILivechatMessage';
 import { ILivechatRoom } from './ILivechatRoom';
 import { ILivechatRoomClosedHandler } from './ILivechatRoomClosedHandler';
-import { ILivechatRoomStartedHandler } from './ILivechatRoomStartedHandler';
 import { ILivechatTransferData } from './ILivechatTransferData';
-import { ILivechatUnassignAgentHandler } from './ILivechatUnassignAgentHandler';
+import { IPostLivechatAgentAssigned } from './IPostLivechatAgentAssigned';
+import { IPostLivechatAgentUnassigned } from './IPostLivechatAgentUnassigned';
+import { IPostLivechatRoomClosed } from './IPostLivechatRoomClosed';
+import { IPostLivechatRoomStarted } from './IPostLivechatRoomStarted';
 import { IVisitor } from './IVisitor';
 import { IVisitorEmail } from './IVisitorEmail';
 import { IVisitorPhone } from './IVisitorPhone';
@@ -15,10 +16,11 @@ export {
     ILivechatContext,
     ILivechatMessage,
     ILivechatRoom,
-    ILivechatRoomStartedHandler,
+    IPostLivechatAgentAssigned,
+    IPostLivechatAgentUnassigned,
+    IPostLivechatRoomStarted,
+    IPostLivechatRoomClosed,
     ILivechatRoomClosedHandler,
-    ILivechatAssignAgentHandler,
-    ILivechatUnassignAgentHandler,
     ILivechatTransferData,
     IDepartment,
     IVisitor,
