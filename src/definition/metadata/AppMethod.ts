@@ -53,7 +53,7 @@ export enum AppMethod {
     // Livechat
     EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
     /**
-     * @deprecated due to AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED
+     * @deprecated please use the AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED method
      */
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
     EXECUTE_POST_LIVECHAT_ROOM_CLOSED = 'executePostLivechatRoomClosed',
