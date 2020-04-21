@@ -1,6 +1,6 @@
 import { IHttp, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { ILivechatContext } from './ILivechatContext';
+import { ILivechatEventContext } from './ILivechatEventContext';
 
 /**
  * Handler called after the unassignment of a livechat agent.
@@ -14,5 +14,5 @@ export interface IPostLivechatAgentUnassigned {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSGNED](context: ILivechatContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSGNED](context: ILivechatEventContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
 }

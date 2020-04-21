@@ -1,5 +1,5 @@
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatContext, ILivechatRoom } from '../../definition/livechat';
+import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
@@ -64,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -126,10 +126,10 @@ export class AppListenerManager {
                 this.executePostLivechatRoomClosed(data as ILivechatRoom);
                 return;
             case AppInterface.IPostLivechatAgentAssigned:
-                this.executePostLivechatAgentAssigned(data as ILivechatContext);
+                this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
                 return;
             case AppInterface.IPostLivechatAgentUnassigned:
-                this.executePostLivechatAgentUnassigned(data as ILivechatContext);
+                this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
                 return;
             default:
                 console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
@@ -789,7 +789,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executePostLivechatAgentAssigned(data: ILivechatContext): Promise<void> {
+    private async executePostLivechatAgentAssigned(data: ILivechatEventContext): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentAssigned)) {
@@ -808,7 +808,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executePostLivechatAgentUnassigned(data: ILivechatContext): Promise<void> {
+    private async executePostLivechatAgentUnassigned(data: ILivechatEventContext): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentUnassigned)) {
