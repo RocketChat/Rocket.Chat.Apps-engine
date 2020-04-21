@@ -119,7 +119,7 @@ export class AppListenerManager {
                 this.executePostLivechatRoomStarted(data as ILivechatRoom);
                 return;
             /**
-             * @deprecated due to AppInterface.IPostLivechatRoomClosed
+             * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
              */
             case AppInterface.ILivechatRoomClosedHandler:
             case AppInterface.IPostLivechatRoomClosed:
