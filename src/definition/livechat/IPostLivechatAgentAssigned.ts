@@ -14,5 +14,5 @@ export interface IPostLivechatAgentAssigned {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSGNED](context: ILivechatEventContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED](context: ILivechatEventContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
 }

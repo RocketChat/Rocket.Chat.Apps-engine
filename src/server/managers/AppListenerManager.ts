@@ -796,11 +796,11 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentAssigned)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSGNED)) {
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED)) {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSGNED,
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -815,11 +815,11 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentUnassigned)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSGNED)) {
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED)) {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSGNED,
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
