@@ -774,7 +774,7 @@ export class AppListenerManager {
     private async executePostLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomClosed)) {
             const app = this.manager.getOneById(appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED)) {
