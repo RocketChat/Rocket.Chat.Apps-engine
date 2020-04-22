@@ -122,6 +122,7 @@ export class AppListenerManager {
              * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
              */
             case AppInterface.ILivechatRoomClosedHandler:
+                this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomClosed:
                 this.executePostLivechatRoomClosed(data as ILivechatRoom);
                 return;
@@ -751,13 +752,9 @@ export class AppListenerManager {
         }
     }
 
-    private async executePostLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
+    private async executeLivechatRoomClosedHandler(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        /**
-         * @deprecated should remove this for loop after the AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER
-         * was removed.
-         */
         for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
             const app = this.manager.getOneById(appId);
 
@@ -772,6 +769,10 @@ export class AppListenerManager {
                 this.am.getPersistence(appId),
             );
         }
+    }
+
+    private async executePostLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
             const app = this.manager.getOneById(appId);
