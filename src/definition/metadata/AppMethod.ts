@@ -51,5 +51,12 @@ export enum AppMethod {
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
     // Livechat
+    EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
+    /**
+     * @deprecated please use the AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED method
+     */
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
+    EXECUTE_POST_LIVECHAT_ROOM_CLOSED = 'executePostLivechatRoomClosed',
+    EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED = 'executePostLivechatAgentAssigned',
+    EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED = 'executePostLivechatAgentUnassigned',
 }
