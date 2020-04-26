@@ -2,7 +2,8 @@ import { IBlock, IButtonElement, ITextObject } from './blocks';
 
 export enum UIKitViewType {
     MODAL = 'modal',
-    HOME = 'home',
+    CONTEXTUAL_BAR = 'contextual_bar',
+    // HOME = 'home',
 }
 
 export interface IUIKitView {

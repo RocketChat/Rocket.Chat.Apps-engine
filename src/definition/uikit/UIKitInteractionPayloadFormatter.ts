@@ -1,7 +1,7 @@
-import { IUIKitContextualBarParam, IUIKitErrorInteractionParam } from '../accessors/IUIController';
+import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
 import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
 import { UIKitViewType } from './IUIKitView';
-import { IUIKitModalViewParam } from './UIKitInteractionResponder';
+import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
 
 import uuid = require('uuid/v1');
 
@@ -25,7 +25,7 @@ export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIK
     };
 }
 
-export function formatContextualBarInteraction(contextualBar: IUIKitContextualBarParam, context: IUIKitInteraction): IUIKitContextualBarInteraction {
+export function formatContextualBarInteraction(view: IUIKitContextualBarViewParam, context: IUIKitInteraction): IUIKitContextualBarInteraction {
     if (![UIKitInteractionType.CONTEXTUAL_BAR_OPEN].includes(context.type)) {
         throw new Error(`Invalid type "${ context.type }" for contextual bar interaction`);
     }
@@ -36,10 +36,11 @@ export function formatContextualBarInteraction(contextualBar: IUIKitContextualBa
         type,
         triggerId: context.triggerId,
         appId: context.appId,
-        contextualBar: {
-            type: contextualBar.type,
-            id: contextualBar.id ? contextualBar.id : uuid(),
-            ...contextualBar,
+        view: {
+            appId: context.appId,
+            type: UIKitViewType.CONTEXTUAL_BAR,
+            id: view.id ? view.id : uuid(),
+            ...view,
         },
     };
 }

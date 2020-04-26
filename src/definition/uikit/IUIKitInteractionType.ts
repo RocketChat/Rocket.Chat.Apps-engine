@@ -1,4 +1,3 @@
-import { IUIKitContextualBar } from './IUIKitContextualBar';
 import { IUIKitView } from './IUIKitView';
 
 export enum UIKitInteractionType {
@@ -32,8 +31,9 @@ export interface IUIKitModalInteraction extends IUIKitInteraction {
 
 export interface IUIKitContextualBarInteraction extends IUIKitInteraction {
     type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN;
-    contextualBar: IUIKitContextualBar;
+    view: IUIKitView;
 }
 
 export interface IUIKitModalResponse extends IUIKitModalInteraction, IUIKitResponse { }
+export interface IUIKitContextualBarResponse extends IUIKitContextualBarInteraction, IUIKitResponse { }
 export interface IUIKitErrorResponse extends IUIKitErrorInteraction, IUIKitResponse { }
