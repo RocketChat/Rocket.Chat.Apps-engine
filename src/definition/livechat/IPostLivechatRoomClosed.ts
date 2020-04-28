@@ -4,9 +4,8 @@ import { ILivechatRoom } from './ILivechatRoom';
 
 /**
  * Handler called after a livechat room is closed.
- * @deprecated please prefer the IPostLivechatRoomClosed event
  */
-export interface ILivechatRoomClosedHandler {
+export interface IPostLivechatRoomClosed {
     /**
      * Method called *after* a livechat room is closed.
      *
@@ -15,5 +14,5 @@ export interface ILivechatRoomClosedHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER](data: ILivechatRoom, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED](room: ILivechatRoom, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
 }

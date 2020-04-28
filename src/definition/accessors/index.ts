@@ -2,6 +2,7 @@ import { IApiExtend } from './IApiExtend';
 import { IAppAccessors } from './IAppAccessors';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
+import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
 import { IEnvironmentRead } from './IEnvironmentRead';
 import { IExternalComponentsExtend } from './IExternalComponentsExtend';
@@ -51,6 +52,7 @@ export {
     IAppAccessors,
     IConfigurationExtend,
     IConfigurationModify,
+    IDiscussionBuilder,
     IEnvironmentalVariableRead,
     IEnvironmentRead,
     IExternalComponentsExtend,
