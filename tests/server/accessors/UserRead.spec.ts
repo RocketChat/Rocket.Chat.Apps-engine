@@ -8,6 +8,7 @@ import { TestData } from '../../test-data/utilities';
 export class UserReadAccessorTestFixture {
     private user: IUser;
     private mockUserBridge: IUserBridge;
+    private mockAppId: 'test-appId';
 
     @SetupFixture
     public setupFixture() {
@@ -19,6 +20,9 @@ export class UserReadAccessorTestFixture {
                 return Promise.resolve(theUser);
             },
             getByUsername(id, appId): Promise<IUser> {
+                return Promise.resolve(theUser);
+            },
+            getAppUser(appId: string): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
         } as IUserBridge;
@@ -35,5 +39,8 @@ export class UserReadAccessorTestFixture {
 
         Expect(await ur.getByUsername('username')).toBeDefined();
         Expect(await ur.getByUsername('username')).toEqual(this.user);
+
+        Expect(await ur.getAppUser(this.mockAppId)).toBeDefined();
+        Expect(await ur.getAppUser(this.mockAppId)).toEqual(this.user);
     }
 }
