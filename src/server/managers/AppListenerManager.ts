@@ -2,7 +2,7 @@ import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
-import { IRoom } from '../../definition/rooms';
+import { IPreRoomUserJoinedContext, IRoom } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import {
     IUIKitIncomingInteractionMessageContainer,
@@ -64,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IPreRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -105,6 +105,8 @@ export class AppListenerManager {
             case AppInterface.IPostRoomDeleted:
                 this.executePostRoomDeleted(data as IRoom);
                 return;
+            case AppInterface.IPreRoomUserJoined:
+                return this.executePreRoomUserJoined(data as IPreRoomUserJoinedContext);
             // External Components
             case AppInterface.IPostExternalComponentOpened:
                 this.executePostExternalComponentOpened(data as IExternalComponent);
@@ -610,6 +612,23 @@ export class AppListenerManager {
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTROOMDELETED,
                     cfRoom,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePreRoomUserJoined(data: IPreRoomUserJoinedContext): Promise<void> {
+        data.room = new Room(data.room, this.manager);
+
+        for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED)) {
+                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED,
+                    data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),

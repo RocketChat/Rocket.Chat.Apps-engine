@@ -17,3 +17,5 @@ export {
     IPreRoomCreatePrevent,
     IPreRoomDeletePrevent,
 };
+
+export * from './IPreRoomUserJoined';
