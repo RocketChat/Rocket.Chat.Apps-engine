@@ -620,8 +620,12 @@ export class AppListenerManager {
         }
     }
 
-    private async executePreRoomUserJoined(data: IPreRoomUserJoinedContext): Promise<void> {
+    private async executePreRoomUserJoined(externalData: IPreRoomUserJoinedContext): Promise<void> {
+        const data = Utilities.deepClone(externalData);
+
         data.room = new Room(data.room, this.manager);
+
+        Utilities.deepFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
             const app = this.manager.getOneById(appId);
