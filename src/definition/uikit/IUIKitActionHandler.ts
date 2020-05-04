@@ -25,7 +25,7 @@ export interface IUIKitInteractionHandler {
      * @param persistence An accessor to the App's persistence
      */
     [AppMethod.UIKIT_VIEW_SUBMIT]?(context: UIKitViewSubmitInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse>;
+        Promise<IUIKitResponse | Array<IUIKitResponse>>;
 
     /**
      * Method called when a modal is closed.

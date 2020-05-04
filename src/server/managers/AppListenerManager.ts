@@ -64,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | Array<IUIKitResponse> | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -653,7 +653,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executeUIKitInteraction(data: IUIKitIncomingInteraction): Promise<IUIKitResponse> {
+    private async executeUIKitInteraction(data: IUIKitIncomingInteraction): Promise<IUIKitResponse | Array<IUIKitResponse>> {
         const { appId, type } = data;
 
         const method = ((interactionType: string) => {
