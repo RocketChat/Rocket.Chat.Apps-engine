@@ -625,9 +625,12 @@ export class AppListenerManager {
     private async executePreRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
         const data = Utilities.deepClone(externalData);
 
-        data.room = new Room(data.room, this.manager);
+        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
+        Utilities.deepFreeze(data.joiningUser);
 
-        Utilities.deepFreeze(data);
+        if (data.invitingUser) {
+            Utilities.deepFreeze(data.invitingUser);
+        }
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
             const app = this.manager.getOneById(appId);
@@ -646,9 +649,12 @@ export class AppListenerManager {
     private async executePostRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
         const data = Utilities.deepClone(externalData);
 
-        data.room = new Room(data.room, this.manager);
+        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
+        Utilities.deepFreeze(data.joiningUser);
 
-        Utilities.deepFreeze(data);
+        if (data.invitingUser) {
+            Utilities.deepFreeze(data.invitingUser);
+        }
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
             const app = this.manager.getOneById(appId);
