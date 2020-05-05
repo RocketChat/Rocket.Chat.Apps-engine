@@ -2,7 +2,7 @@ import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppMethod } from '../../definition/metadata';
-import { IPreRoomUserJoinedContext, IRoom } from '../../definition/rooms';
+import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import {
     IUIKitIncomingInteractionMessageContainer,
@@ -64,7 +64,7 @@ export class AppListenerManager {
     }
 
     // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IPreRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -106,7 +106,9 @@ export class AppListenerManager {
                 this.executePostRoomDeleted(data as IRoom);
                 return;
             case AppInterface.IPreRoomUserJoined:
-                return this.executePreRoomUserJoined(data as IPreRoomUserJoinedContext);
+                return this.executePreRoomUserJoined(data as IRoomUserJoinedContext);
+            case AppInterface.IPostRoomUserJoined:
+                return this.executePostRoomUserJoined(data as IRoomUserJoinedContext);
             // External Components
             case AppInterface.IPostExternalComponentOpened:
                 this.executePostExternalComponentOpened(data as IExternalComponent);
@@ -620,7 +622,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executePreRoomUserJoined(externalData: IPreRoomUserJoinedContext): Promise<void> {
+    private async executePreRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
         const data = Utilities.deepClone(externalData);
 
         data.room = new Room(data.room, this.manager);
@@ -632,6 +634,27 @@ export class AppListenerManager {
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED)) {
                 await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED,
+                    data,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
+        const data = Utilities.deepClone(externalData);
+
+        data.room = new Room(data.room, this.manager);
+
+        Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_JOINED)) {
+                await app.call(AppMethod.EXECUTE_POST_ROOM_USER_JOINED,
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
