@@ -12,6 +12,7 @@ import {
     IRoomBridge,
     IRoomSubscriptionBridge,
     IServerSettingBridge,
+    IUiInteractionBridge,
     IUploadBridge,
     IUserBridge,
 } from '../../../src/server/bridges';
@@ -28,6 +29,7 @@ import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsSubscriptionBridge } from './subscriptionBridge';
+import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
 
@@ -47,6 +49,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly httpBridge: TestsHttpBridge;
     private readonly livechatBridge: TestLivechatBridge;
     private readonly uploadBridge: TestUploadBridge;
+    private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
 
     constructor() {
         super();
@@ -65,6 +68,7 @@ export class TestsAppBridges extends AppBridges {
         this.httpBridge = new TestsHttpBridge();
         this.livechatBridge = new TestLivechatBridge();
         this.uploadBridge = new TestUploadBridge();
+        this.uiIntegrationBridge = new TestsUiIntegrationBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -129,5 +133,9 @@ export class TestsAppBridges extends AppBridges {
 
     public getUploadBridge(): IUploadBridge {
         return this.uploadBridge;
+    }
+
+    public getUiInteractionBridge(): IUiInteractionBridge {
+        return this.uiIntegrationBridge;
     }
 }

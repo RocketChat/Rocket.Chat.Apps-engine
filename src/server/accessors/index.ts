@@ -1,8 +1,10 @@
+import { ApiExtend } from './ApiExtend';
 import { AppAccessors } from './AppAccessors';
 import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
+import { ExternalComponentsExtend } from './ExternalComponentsExtend';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
 import { LivechatRead } from './LivechatRead';
@@ -28,14 +30,17 @@ import { SettingsExtend } from './SettingsExtend';
 import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
+import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
 
 export {
+    ApiExtend,
     AppAccessors,
     ConfigurationExtend,
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    ExternalComponentsExtend,
     Http,
     HttpExtend,
     LivechatRead,
@@ -61,5 +66,6 @@ export {
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
+    UserBuilder,
     UserRead,
 };

@@ -11,6 +11,7 @@ export interface IRoom {
      * @deprecated usernames will be removed on version 2.0.0
      */
     usernames: Array<string>;
+    userIds?: Array<string>;
     isDefault?: boolean;
     isReadOnly?: boolean;
     displaySystemMessages?: boolean;
@@ -19,4 +20,5 @@ export interface IRoom {
     updatedAt?: Date;
     lastModifiedAt?: Date;
     customFields?: { [key: string]: any };
+    parentRoom?: IRoom;
 }

@@ -21,6 +21,11 @@ export class MessageBuilderAccessorTestFixture {
 
         const msg: IMessage = {} as IMessage;
         const mb = new MessageBuilder(msg);
+
+        Expect(mb.setThreadId('a random thread id')).toBe(mb);
+        Expect(msg.threadId).toBe('a random thread id');
+        Expect(mb.getThreadId()).toBe('a random thread id');
+
         Expect(mb.setRoom(TestData.getRoom())).toBe(mb);
         Expect(msg.room).toEqual(TestData.getRoom());
         Expect(mb.getRoom()).toEqual(TestData.getRoom());

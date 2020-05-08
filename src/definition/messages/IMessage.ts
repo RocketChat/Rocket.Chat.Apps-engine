@@ -1,4 +1,5 @@
 import { IRoom } from '../rooms';
+import { IBlock } from '../uikit';
 import { IUser } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageFile } from './IMessageFile';
@@ -6,6 +7,7 @@ import { IMessageReactions } from './IMessageReaction';
 
 export interface IMessage {
     id?: string;
+    threadId?: string;
     room: IRoom;
     sender: IUser;
     text?: string;
@@ -22,4 +24,5 @@ export interface IMessage {
     groupable?: boolean;
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
+    blocks?: Array<IBlock>;
 }

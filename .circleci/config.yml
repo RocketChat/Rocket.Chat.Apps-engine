@@ -2,14 +2,17 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:7.10.1
+    - image: circleci/node:8.15-stretch
 
 whitelist: &whitelist
   paths:
     - .git/*
     - .nyc_output/*
     - coverage/*
-    - dist/*
+    - client/*
+    - server/*
+    - definition/*
+    - lib/*
     - node_modules/*
     - src/*
     - tests/*
@@ -119,17 +122,29 @@ workflows:
 
   build:
     jobs:
-      - checkout
+      - checkout:
+          filters:
+            tags:
+              only: /^v.*/
       - test:
           requires:
             - checkout
+          filters:
+            tags:
+              only: /^v.*/
       - lint:
           requires:
             - checkout
+          filters:
+            tags:
+              only: /^v.*/
       - build:
           requires:
             - lint
             - test
+          filters:
+            tags:
+              only: /^v.*/
       - codecov:
           requires:
             - build
@@ -139,7 +154,7 @@ workflows:
           filters:
               branches:
                 only:
-                    - alpha
-                    - beta
+                  - alpha
+                  - beta
               tags:
                 only: /^v.*/

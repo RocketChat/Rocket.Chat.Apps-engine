@@ -2,6 +2,7 @@ import { IMessageBuilder } from '../../definition/accessors';
 import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
+import { BlockBuilder, IBlock } from '../../definition/uikit';
 import { IUser } from '../../definition/users';
 
 export class MessageBuilder implements IMessageBuilder {
@@ -18,6 +19,16 @@ export class MessageBuilder implements IMessageBuilder {
         this.msg = data;
 
         return this;
+    }
+
+    public setThreadId(threadId: string): IMessageBuilder {
+        this.msg.threadId = threadId;
+
+        return this;
+    }
+
+    public getThreadId(): string {
+        return this.msg.threadId;
     }
 
     public setRoom(room: IRoom): IMessageBuilder {
@@ -152,5 +163,33 @@ export class MessageBuilder implements IMessageBuilder {
         }
 
         return this.msg;
+    }
+
+    public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
+        if (!Array.isArray(this.msg.blocks)) {
+            this.msg.blocks = [];
+        }
+
+        if (blocks instanceof BlockBuilder) {
+            this.msg.blocks.push(...blocks.getBlocks());
+        } else {
+            this.msg.blocks.push(...blocks);
+        }
+
+        return this;
+    }
+
+    public setBlocks(blocks: BlockBuilder | Array<IBlock>) {
+        if (blocks instanceof BlockBuilder) {
+            this.msg.blocks = blocks.getBlocks();
+        } else {
+            this.msg.blocks = blocks;
+        }
+
+        return this;
+    }
+
+    public getBlocks() {
+        return this.msg.blocks;
     }
 }

@@ -4,19 +4,19 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
 export class RoomBuilder implements IRoomBuilder {
-    public kind: RocketChatAssociationModel.ROOM;
-    private room: IRoom;
+    public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+    protected room: IRoom;
     private members: Array<string>;
 
-    constructor(data?: IRoom) {
+    constructor(data?: Partial<IRoom>) {
         this.kind = RocketChatAssociationModel.ROOM;
-        this.room = data ? data : ({ customFields: {} } as IRoom);
+        this.room = (data ? data : { customFields: {} }) as IRoom;
         this.members = new Array<string>();
     }
 
-    public setData(data: IRoom): IRoomBuilder {
+    public setData(data: Partial<IRoom>): IRoomBuilder {
         delete data.id;
-        this.room = data;
+        this.room = data as IRoom;
 
         return this;
     }
@@ -141,6 +141,10 @@ export class RoomBuilder implements IRoomBuilder {
 
     public getCustomFields(): { [key: string]: object } {
       return this.room.customFields;
+    }
+
+    public getUserIds(): Array<string> {
+      return this.room.userIds;
     }
 
     public getRoom(): IRoom {

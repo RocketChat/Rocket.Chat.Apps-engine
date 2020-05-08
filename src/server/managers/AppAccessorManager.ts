@@ -1,7 +1,20 @@
 import {
+    IConfigurationExtend,
+    IConfigurationModify,
+    IEnvironmentRead,
+    IHttp,
+    IHttpExtend,
+    IModify,
+    IPersistence,
+    IRead,
+} from '../../definition/accessors';
+import {
+    ApiExtend,
     ConfigurationExtend,
+    ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    ExternalComponentsExtend,
     Http,
     HttpExtend,
     LivechatRead,
@@ -14,6 +27,7 @@ import {
     RoomRead,
     RoomSubscriptionRead,
     ServerSettingRead,
+    ServerSettingsModify,
     SettingRead,
     SettingsExtend,
     SlashCommandsExtend,
@@ -21,22 +35,8 @@ import {
     UploadRead,
     UserRead,
 } from '../accessors';
-import { ApiExtend } from '../accessors/ApiExtend';
-import { ConfigurationModify } from '../accessors/ConfigurationModify';
-import { ServerSettingsModify } from '../accessors/ServerSettingsModify';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
-
-import {
-    IConfigurationExtend,
-    IConfigurationModify,
-    IEnvironmentRead,
-    IHttp,
-    IHttpExtend,
-    IModify,
-    IPersistence,
-    IRead,
-} from '../../definition/accessors';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;
@@ -86,8 +86,9 @@ export class AppAccessorManager {
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
             const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
+            const excs = new ExternalComponentsExtend(this.manager.getExternalComponentManager(), appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs));
         }
 
         return this.configExtenders.get(appId);

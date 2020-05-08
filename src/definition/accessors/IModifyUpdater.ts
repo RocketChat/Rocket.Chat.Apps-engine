@@ -2,6 +2,7 @@ import { IUser } from '../users';
 import { ILivechatUpdater } from './ILivechatUpdater';
 import { IMessageBuilder } from './IMessageBuilder';
 import { IRoomBuilder } from './IRoomBuilder';
+import { IUserUpdater } from './IUserUpdater';
 
 export interface IModifyUpdater {
     /**
@@ -9,6 +10,12 @@ export interface IModifyUpdater {
      * Livechat integrations
      */
     getLivechatUpdater(): ILivechatUpdater;
+
+    /**
+     * Gets the update object responsible for
+     * methods that update users
+     */
+    getUserUpdater(): IUserUpdater;
 
     /**
      * Modifies an existing message.

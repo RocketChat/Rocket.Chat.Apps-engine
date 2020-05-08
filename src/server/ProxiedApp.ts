@@ -44,7 +44,6 @@ export class ProxiedApp implements IApp {
     }
 
     public hasMethod(method: AppMethod): boolean {
-        console.log('Checking:', method);
         return typeof (this.app as any)[method] === 'function';
     }
 
@@ -114,6 +113,10 @@ export class ProxiedApp implements IApp {
 
     public getNameSlug(): string {
         return this.app.getNameSlug();
+    }
+
+    public getAppUserUsername(): string {
+        return this.app.getAppUserUsername();
     }
 
     public getID(): string {

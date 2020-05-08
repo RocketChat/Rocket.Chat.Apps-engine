@@ -4,6 +4,7 @@ import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
     AppApiManager,
+    AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
     AppSettingsManager,
@@ -15,6 +16,7 @@ import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { IUser, UserType } from '../definition/users';
 import { InvalidLicenseError } from './errors';
 import { IMarketplaceInfo } from './marketplace';
 
@@ -33,6 +35,7 @@ export class AppManager {
     private readonly listenerManager: AppListenerManager;
     private readonly commandManager: AppSlashCommandManager;
     private readonly apiManager: AppApiManager;
+    private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
 
@@ -70,6 +73,7 @@ export class AppManager {
         this.listenerManager = new AppListenerManager(this);
         this.commandManager = new AppSlashCommandManager(this);
         this.apiManager = new AppApiManager(this);
+        this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
 
@@ -126,6 +130,11 @@ export class AppManager {
         return this.apiManager;
     }
 
+    /** Gets the external component manager's instance. */
+    public getExternalComponentManager(): AppExternalComponentManager {
+        return this.externalComponentManager;
+    }
+
     /** Gets the manager of the settings, updates and getting. */
     public getSettingsManager(): AppSettingsManager {
         return this.settingsManager;
@@ -162,7 +171,9 @@ export class AppManager {
                 aff.setCompilerErrors(result.compilerErrors);
 
                 if (result.compilerErrors.length > 0) {
-                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors.`);
+                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
+
+                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
                 }
 
                 item.compiled = result.compiledFiles;
@@ -236,6 +247,7 @@ export class AppManager {
             if (rl.getStatus() === AppStatus.INITIALIZED) {
                 this.listenerManager.unregisterListeners(rl);
                 this.commandManager.unregisterCommands(rl.getID());
+                this.externalComponentManager.unregisterExternalComponents(rl.getID());
                 this.apiManager.unregisterApis(rl.getID());
                 this.accessorManager.purifyApp(rl.getID());
                 continue;
@@ -351,6 +363,7 @@ export class AppManager {
 
         this.listenerManager.unregisterListeners(rl);
         this.commandManager.unregisterCommands(rl.getID());
+        this.externalComponentManager.unregisterExternalComponents(rl.getID());
         this.apiManager.unregisterApis(rl.getID());
         this.accessorManager.purifyApp(rl.getID());
 
@@ -381,7 +394,7 @@ export class AppManager {
             return aff;
         }
 
-        const created = await this.storage.create({
+        const compiled = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
@@ -391,17 +404,33 @@ export class AppManager {
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
-        });
+        };
 
-        if (!created) {
-            aff.setStorageError('Failed to create the App, the storage did not return it.');
+        // Now that is has all been compiled, let's get the
+        // the App instance from the source.
+        const app = this.getCompiler().toSandBox(this, compiled);
+
+        // Create a user for the app
+        try {
+            await this.createAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getAppUserUsername(),
+                message: 'Failed to create an app user for this app.',
+            });
 
             return aff;
         }
 
-        // Now that is has all been compiled, let's get the
-        // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, created);
+        const created = await this.storage.create(compiled);
+
+        if (!created) {
+            aff.setStorageError('Failed to create the App, the storage did not return it.');
+
+            await this.removeAppUser(app);
+
+            return aff;
+        }
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -422,24 +451,27 @@ export class AppManager {
 
         return aff;
     }
-
     public async remove(id: string): Promise<ProxiedApp> {
         const app = this.apps.get(id);
 
+        // Let everyone know that the App has been removed
+        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await this.disable(id).catch();
+            await this.disable(id);
         }
 
         this.listenerManager.unregisterListeners(app);
         this.commandManager.unregisterCommands(app.getID());
+        this.externalComponentManager.purgeExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
+        await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
-        await this.logStorage.removeEntriesFor(app.getID());
         await this.storage.remove(app.getID());
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().appRemoved(app);
 
         this.apps.delete(app.getID());
 
@@ -485,15 +517,27 @@ export class AppManager {
         // the App instance from the source.
         const app = this.getCompiler().toSandBox(this, stored);
 
+        // Ensure there is an user for the app
+        try {
+            await this.ensureAppUser(app);
+        } catch (err) {
+            aff.setAppUserError({
+                username: app.getAppUserUsername(),
+                message: 'Failed to create an app user for this app.',
+            });
+
+            return aff;
+        }
+
+        // Let everyone know that the App has been updated
+        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
+
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
         aff.setApp(app);
 
         // Start up the app
         await this.runStartUpProcess(stored, app, false, true);
-
-        // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
 
         return aff;
     }
@@ -586,6 +630,7 @@ export class AppManager {
                 }
 
                 this.commandManager.unregisterCommands(app.getID());
+                this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
@@ -678,6 +723,7 @@ export class AppManager {
 
             console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
+            this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
             result = false;
 
@@ -747,10 +793,12 @@ export class AppManager {
 
         if (enable) {
             this.commandManager.registerCommands(app.getID());
+            this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
+            this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
         }
 
@@ -762,5 +810,49 @@ export class AppManager {
         }
 
         return enable;
+    }
+
+    private async createAppUser(app: ProxiedApp): Promise<string> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (appUser) {
+            return appUser.id;
+        }
+
+        const userData: Partial<IUser> = {
+            username: app.getAppUserUsername(),
+            name: app.getInfo().name,
+            roles: ['app'],
+            appId: app.getID(),
+            type: UserType.APP,
+            status: 'online',
+            isEnabled: true,
+        };
+
+        return this.bridges.getUserBridge().create(userData, app.getID(), {
+            avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+            joinDefaultChannels: true,
+            sendWelcomeEmail: false,
+        });
+    }
+
+    private async removeAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (!appUser) {
+            return true;
+        }
+
+        return this.bridges.getUserBridge().remove(appUser, app.getID());
+    }
+
+    private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
+        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+
+        if (appUser) {
+            return true;
+        }
+
+        return !!this.createAppUser(app);
     }
 }

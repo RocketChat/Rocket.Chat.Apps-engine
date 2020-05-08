@@ -1,6 +1,8 @@
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
+import { BlockBuilder } from '../uikit';
+import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';
@@ -13,6 +15,10 @@ export interface IModifyCreator {
      */
     getLivechatCreator(): ILivechatCreator;
 
+    /**
+     * Gets a new instance of a BlockBuilder
+     */
+    getBlockBuilder(): BlockBuilder;
     /**
      * Starts the process for building a new message object.
      *
@@ -41,10 +47,19 @@ export interface IModifyCreator {
     startRoom(data?: IRoom): IRoomBuilder;
 
     /**
+     * Starts the process for building a new discussion.
+     *
+     * @param data (optional) the initial data to pass into the builder,
+     *          the `id` property will be ignored
+     * @return an IDiscussionBuilder instance
+     */
+    startDiscussion(data?: Partial<IRoom>): IDiscussionBuilder;
+
+    /**
      * Finishes the creating process, saving the object to the database.
      *
      * @param builder the builder instance
      * @return the resulting `id` of the resulting object
      */
-    finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder): Promise<string>;
+    finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder): Promise<string>;
 }

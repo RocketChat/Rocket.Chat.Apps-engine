@@ -1,6 +1,7 @@
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
+import { BlockBuilder, IBlock } from '../uikit';
 import { IUser } from '../users';
 
 /**
@@ -18,6 +19,23 @@ export interface IMessageBuilder {
      * @param message the message data to set
      */
     setData(message: IMessage): IMessageBuilder;
+
+    /**
+     * Sets the thread to which this message belongs, if any.
+     *
+     * @param threadId The id of the thread
+     */
+    setThreadId(threadId: string): IMessageBuilder;
+
+    /**
+     * Retrieves the threadId to which this message belongs,
+     * if any.
+     *
+     * If you would like to retrieve the actual message that
+     * the thread originated from, you can use the
+     * `IMessageRead.getById()` method
+     */
+    getThreadId(): string;
 
     /**
      * Sets the room where this message should be sent to.
@@ -176,4 +194,22 @@ export interface IMessageBuilder {
      * *Note:* This will error out if the Room has not been defined.
      */
     getMessage(): IMessage;
+
+    /**
+     * Adds a block collection to the message's
+     * own collection
+     */
+    addBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Sets the block collection of the message
+     *
+     * @param blocks
+     */
+    setBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+
+    /**
+     * Gets the block collection of the message
+     */
+    getBlocks(): Array<IBlock>;
 }

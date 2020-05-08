@@ -1,10 +1,18 @@
-import { ILivechatCreator, ILivechatMessageBuilder, IMessageBuilder, IModifyCreator, IRoomBuilder } from '../../definition/accessors';
+import {
+    IDiscussionBuilder,
+    ILivechatCreator,
+    ILivechatMessageBuilder,
+    IMessageBuilder,
+    IModifyCreator,
+    IRoomBuilder,
+} from '../../definition/accessors';
+import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
-
-import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
+import { BlockBuilder } from '../../definition/uikit';
 import { AppBridges } from '../bridges';
+import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
@@ -19,6 +27,10 @@ export class ModifyCreator implements IModifyCreator {
 
     public getLivechatCreator(): ILivechatCreator {
         return this.livechatCreator;
+    }
+
+    public getBlockBuilder(): BlockBuilder {
+        return new BlockBuilder(this.appId);
     }
 
     public startMessage(data?: IMessage): IMessageBuilder {
@@ -45,7 +57,15 @@ export class ModifyCreator implements IModifyCreator {
         return new RoomBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder): Promise<string> {
+    public startDiscussion(data?: Partial<IRoom>): IDiscussionBuilder {
+        if (data) {
+            delete data.id;
+        }
+
+        return new DiscussionBuilder(data);
+    }
+
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -53,17 +73,25 @@ export class ModifyCreator implements IModifyCreator {
                 return this._finishLivechatMessage(builder);
             case RocketChatAssociationModel.ROOM:
                 return this._finishRoom(builder);
+            case RocketChatAssociationModel.DISCUSSION:
+                return this._finishDiscussion(builder as IDiscussionBuilder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
     }
 
-    private _finishMessage(builder: IMessageBuilder): Promise<string> {
+    private async _finishMessage(builder: IMessageBuilder): Promise<string> {
         const result = builder.getMessage();
         delete result.id;
 
         if (!result.sender || !result.sender.id) {
-            throw new Error('Invalid sender assigned to the message.');
+            const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+
+            if (!appUser) {
+                throw new Error('Invalid sender assigned to the message.');
+            }
+
+            result.sender = appUser;
         }
 
         return this.bridges.getMessageBridge().create(result, this.appId);
@@ -113,5 +141,34 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
+    }
+
+    private _finishDiscussion(builder: IDiscussionBuilder): Promise<string> {
+        const room = builder.getRoom();
+        delete room.id;
+
+        if (!room.creator || !room.creator.id) {
+            throw new Error('Invalid creator assigned to the discussion.');
+        }
+
+        if (!room.slugifiedName || !room.slugifiedName.trim()) {
+            throw new Error('Invalid slugifiedName assigned to the discussion.');
+        }
+
+        if (!room.displayName || !room.displayName.trim()) {
+            throw new Error('Invalid displayName assigned to the discussion.');
+        }
+
+        if (!room.parentRoom || !room.parentRoom.id) {
+            throw new Error('Invalid parentRoom assigned to the discussion.');
+        }
+
+        return this.bridges.getRoomBridge().createDiscussion(
+            room,
+            builder.getParentMessage(),
+            builder.getReply(),
+            builder.getMembersToBeAddedUsernames(),
+            this.appId,
+        );
     }
 }

@@ -2,8 +2,10 @@ import { IApiExtend } from './IApiExtend';
 import { IAppAccessors } from './IAppAccessors';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
+import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
 import { IEnvironmentRead } from './IEnvironmentRead';
+import { IExternalComponentsExtend } from './IExternalComponentsExtend';
 import {
     HttpStatusCode,
     IHttp,
@@ -41,7 +43,9 @@ import { ISettingRead } from './ISettingRead';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
+import { IUIController } from './IUIController';
 import { IUploadRead } from './IUploadRead';
+import { IUserBuilder } from './IUserBuilder';
 import { IUserRead } from './IUserRead';
 
 export {
@@ -49,8 +53,10 @@ export {
     IAppAccessors,
     IConfigurationExtend,
     IConfigurationModify,
+    IDiscussionBuilder,
     IEnvironmentalVariableRead,
     IEnvironmentRead,
+    IExternalComponentsExtend,
     IHttp,
     IHttpExtend,
     IHttpPreRequestHandler,
@@ -84,7 +90,9 @@ export {
     ISettingsExtend,
     ISlashCommandsExtend,
     ISlashCommandsModify,
+    IUIController,
     IUploadRead,
+    IUserBuilder,
     IUserRead,
     LogMessageSeverity,
     RequestMethod,

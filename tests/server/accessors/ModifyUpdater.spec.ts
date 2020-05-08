@@ -67,7 +67,7 @@ export class ModifyUpdaterTestFixture {
         await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
         msgBd.setRoom(TestData.getRoom());
         Expect(msg.room).toBeDefined();
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid message, can not update a message without an id.');
+        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid message, can\'t update a message without an id.');
         msg.id = 'testing-msg';
         await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
         msgBd.setSender(TestData.getUser());
