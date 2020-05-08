@@ -1,9 +1,9 @@
 import { IHttp, IPersistence, IRead } from '../accessors';
-import { AppsEngineError } from '../errors';
+import { AppsEngineException } from '../exceptions';
 import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
 
 export interface IPreRoomUserJoined {
     executePreRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
 }
 
-export class UserCannotJoinError extends AppsEngineError {}
+export class UserNotAllowedJoinException extends AppsEngineException {}

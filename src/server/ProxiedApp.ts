@@ -2,7 +2,7 @@ import * as vm from 'vm';
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
-import { AppsEngineError } from '../definition/errors';
+import { AppsEngineException } from '../definition/exceptions';
 import { IApp } from '../definition/IApp';
 import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppManager } from './AppManager';
@@ -89,7 +89,7 @@ export class ProxiedApp implements IApp {
             logger.error(e);
             logger.debug(`'${method}' was unsuccessful.`);
 
-            if (e instanceof AppsEngineError) {
+            if (e instanceof AppsEngineException) {
                 throw e;
             }
         }
