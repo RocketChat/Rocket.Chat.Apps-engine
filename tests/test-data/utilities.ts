@@ -190,3 +190,27 @@ export class SimpleClass {
         return this.world;
     }
 }
+
+export class EmptyAsyncIterableIterator<T> implements AsyncIterableIterator<T> {
+    public [Symbol.asyncIterator](): AsyncIterableIterator<T> {
+        return this;
+    }
+
+    public next(): Promise<IteratorResult<T>> {
+        return Promise.resolve({
+            value: {} as T,
+            done: false,
+        });
+    }
+
+    public return?(): Promise<IteratorResult<T>> {
+        return Promise.resolve({
+            done: true,
+            value: undefined,
+        });
+    }
+
+    public throw?(e?: any): Promise<IteratorResult<T>> {
+        throw e;
+    }
+}
