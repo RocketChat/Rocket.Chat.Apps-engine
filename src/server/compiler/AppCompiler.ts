@@ -36,6 +36,7 @@ export class AppCompiler {
             types: ['node'],
             // Set this to true if you would like to see the module resolution process
             traceResolution: false,
+            lib: ['lib.esnext.d.ts'],
         };
 
         this.libraryFiles = {};
