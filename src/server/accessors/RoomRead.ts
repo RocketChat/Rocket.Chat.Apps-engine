@@ -24,7 +24,7 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.getCreatorByName(name, this.appId);
     }
 
-    public getMessages(roomId: string): Promise<IterableIterator<IMessage>> {
+    public getMessages(roomId: string): Promise<AsyncIterableIterator<IMessage>> {
         return this.roomBridge.getMessages(roomId, this.appId);
     }
 

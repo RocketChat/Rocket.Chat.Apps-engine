@@ -24,7 +24,7 @@ export class TestsRoomBridge implements IRoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    public getMessages(roomId: string): Promise<IterableIterator<IMessage>> {
+    public getMessages(roomId: string): Promise<AsyncIterableIterator<IMessage>> {
         throw new Error('Method not implemented.');
     }
 

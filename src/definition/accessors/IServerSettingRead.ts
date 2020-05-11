@@ -31,7 +31,7 @@ export interface IServerSettingRead {
      *
      * @return an iterator of the exposed settings
      */
-    getAll(): Promise<IterableIterator<ISetting>>;
+    getAll(): Promise<AsyncIterableIterator<ISetting>>;
 
     /**
      * Checks if the server setting for the id provided is readable,

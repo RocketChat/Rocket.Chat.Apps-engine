@@ -20,7 +20,7 @@ export class ServerSettingRead implements IServerSettingRead {
         return set.value || set.packageValue;
     }
 
-    public getAll(): Promise<IterableIterator<ISetting>> {
+    public getAll(): Promise<AsyncIterableIterator<ISetting>> {
         throw new Error('Method not implemented.');
         // return this.settingBridge.getAll(this.appId);
     }
