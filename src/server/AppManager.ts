@@ -239,21 +239,18 @@ export class AppManager {
             return;
         }
 
-        for (const rl of this.apps.values()) {
-            if (AppStatusUtils.isDisabled(rl.getStatus())) {
-                continue;
+        for (const app of this.apps.values()) {
+            if (app.getStatus() === AppStatus.INITIALIZED) {
+                this.listenerManager.unregisterListeners(app);
+                this.commandManager.unregisterCommands(app.getID());
+                this.externalComponentManager.unregisterExternalComponents(app.getID());
+                this.apiManager.unregisterApis(app.getID());
+                this.accessorManager.purifyApp(app.getID());
+            } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
+                await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
 
-            if (rl.getStatus() === AppStatus.INITIALIZED) {
-                this.listenerManager.unregisterListeners(rl);
-                this.commandManager.unregisterCommands(rl.getID());
-                this.externalComponentManager.unregisterExternalComponents(rl.getID());
-                this.apiManager.unregisterApis(rl.getID());
-                this.accessorManager.purifyApp(rl.getID());
-                continue;
-            }
-
-            await this.disable(rl.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
+            this.listenerManager.releaseEssentialEvents(app);
         }
 
         // Remove all the apps from the system now that we have unloaded everything
@@ -350,33 +347,34 @@ export class AppManager {
             throw new Error('Invalid disabled status');
         }
 
-        const rl = this.apps.get(id);
+        const app = this.apps.get(id);
 
-        if (!rl) {
+        if (!app) {
             throw new Error(`No App by the id "${id}" exists.`);
         }
 
-        if (AppStatusUtils.isEnabled(rl.getStatus())) {
-            await rl.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(rl.getID()))
+        if (AppStatusUtils.isEnabled(app.getStatus())) {
+            await app.call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(app.getID()))
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        this.listenerManager.unregisterListeners(rl);
-        this.commandManager.unregisterCommands(rl.getID());
-        this.externalComponentManager.unregisterExternalComponents(rl.getID());
-        this.apiManager.unregisterApis(rl.getID());
-        this.accessorManager.purifyApp(rl.getID());
+        this.listenerManager.unregisterListeners(app);
+        this.listenerManager.lockEssentialEvents(app);
+        this.commandManager.unregisterCommands(app.getID());
+        this.externalComponentManager.unregisterExternalComponents(app.getID());
+        this.apiManager.unregisterApis(app.getID());
+        this.accessorManager.purifyApp(app.getID());
 
-        await rl.setStatus(status, silent);
+        await app.setStatus(status, silent);
 
         const storageItem = await this.storage.retrieveOne(id);
 
-        rl.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
-        await rl.validateLicense().catch();
+        app.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
+        await app.validateLicense().catch();
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
-        storageItem.status = rl.getStatus();
+        storageItem.status = app.getStatus();
         await this.storage.update(storageItem).catch();
 
         return true;
@@ -462,6 +460,7 @@ export class AppManager {
         }
 
         this.listenerManager.unregisterListeners(app);
+        this.listenerManager.releaseEssentialEvents(app);
         this.commandManager.unregisterCommands(app.getID());
         this.externalComponentManager.purgeExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
@@ -796,10 +795,12 @@ export class AppManager {
             this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
+            this.listenerManager.releaseEssentialEvents(app);
         } else {
             this.commandManager.unregisterCommands(app.getID());
             this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
+            this.listenerManager.lockEssentialEvents(app);
         }
 
         if (saveToDb) {

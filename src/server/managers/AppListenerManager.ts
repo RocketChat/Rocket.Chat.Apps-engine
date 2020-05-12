@@ -1,3 +1,4 @@
+import { AppsEngineException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
@@ -23,25 +24,40 @@ import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 
+export class EssentialAppDisabledException extends AppsEngineException {}
+
 export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
+    /**
+     * Blocked events are those who are listed in an app's
+     * "essentials" list but the app is disabled.
+     *
+     * They will throw a BlockedEventException upon call
+     */
+    private blockedEvents: Map<string, Array<string>>;
 
     constructor(private readonly manager: AppManager) {
         this.am = manager.getAccessorManager();
         this.listeners = new Map<string, Array<string>>();
+        this.blockedEvents = new Map<string, Array<string>>();
 
-        Object.keys(AppInterface).forEach((intt) => this.listeners.set(intt, new Array<string>()));
+        Object.keys(AppInterface).forEach((intt) => {
+            this.listeners.set(intt, new Array<string>());
+            this.blockedEvents.set(intt, new Array<string>());
+        });
     }
 
     public registerListeners(app: ProxiedApp): void {
         this.unregisterListeners(app);
-        const impleList = app.getImplementationList();
-        for (const int in app.getImplementationList()) {
-            if (impleList[int]) {
-                this.listeners.get(int).push(app.getID());
+
+        Object.entries(app.getImplementationList()).forEach(([event, isImplemented]) => {
+            if (!isImplemented) {
+                return;
             }
-        }
+
+            this.listeners.get(event).push(app.getID());
+        });
     }
 
     public unregisterListeners(app: ProxiedApp): void {
@@ -50,6 +66,44 @@ export class AppListenerManager {
                 const where = apps.indexOf(app.getID());
                 this.listeners.get(int).splice(where, 1);
             }
+        });
+    }
+
+    public releaseEssentialEvents(app: ProxiedApp): void {
+        if (!app.getEssentials()) {
+            return;
+        }
+
+        app.getEssentials().forEach((event) => {
+            const blockedEvent = this.blockedEvents.get(event);
+
+            if (!blockedEvent) {
+                return;
+            }
+
+            const appIndex = blockedEvent.findIndex((value) => value === app.getID());
+
+            if (appIndex === -1) {
+                return;
+            }
+
+            blockedEvent.splice(appIndex, 1);
+        });
+    }
+
+    public lockEssentialEvents(app: ProxiedApp): void {
+        if (!app.getEssentials()) {
+            return;
+        }
+
+        app.getEssentials().forEach((event) => {
+            const blockedEvent = this.blockedEvents.get(event);
+
+            if (!blockedEvent) {
+                return;
+            }
+
+            blockedEvent.push(app.getID());
         });
     }
 
@@ -63,8 +117,18 @@ export class AppListenerManager {
         return results;
     }
 
+    public isEventBlocked(event: AppInterface): boolean {
+        const blockedEventList = this.blockedEvents.get(event);
+
+        return !!(blockedEventList && blockedEventList.length);
+    }
+
     // tslint:disable-next-line
     public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+        if (this.isEventBlocked(int)) {
+            throw new EssentialAppDisabledException('There is one or more apps that are essential to this event but are disabled');
+        }
+
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
