@@ -2,7 +2,7 @@ import { AppsEngineException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
-import { AppMethod } from '../../definition/metadata';
+import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import {
@@ -17,7 +17,6 @@ import {
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
-import { AppInterface } from '../compiler';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';

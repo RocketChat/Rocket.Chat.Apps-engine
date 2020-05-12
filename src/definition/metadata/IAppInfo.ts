@@ -1,4 +1,4 @@
-import { AppInterface } from '../../server/compiler';
+import { AppInterface } from './AppInterface';
 import { IAppAuthorInfo } from './IAppAuthorInfo';
 
 export interface IAppInfo {
