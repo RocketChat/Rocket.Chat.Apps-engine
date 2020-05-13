@@ -222,9 +222,11 @@ export class AppManager {
 
         // Now let's enable the apps which were once enabled
         // but are not currently disabled.
-        for (const rl of this.apps.values()) {
-            if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
-                await this.enableApp(items.get(rl.getID()), rl, true, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
+        for (const app of this.apps.values()) {
+            if (!AppStatusUtils.isDisabled(app.getStatus()) && AppStatusUtils.isEnabled(app.getPreviousStatus())) {
+                await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
+            } else if (!AppStatusUtils.isError(app.getStatus())) {
+                this.listenerManager.lockEssentialEvents(app);
             }
         }
 
