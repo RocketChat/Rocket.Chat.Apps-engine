@@ -29,21 +29,21 @@ export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
     /**
-     * Blocked events are those who are listed in an app's
+     * Locked events are those who are listed in an app's
      * "essentials" list but the app is disabled.
      *
-     * They will throw a BlockedEventException upon call
+     * They will throw a EssentialAppDisabledException upon call
      */
-    private blockedEvents: Map<string, Array<string>>;
+    private lockedEvents: Map<string, Set<string>>;
 
     constructor(private readonly manager: AppManager) {
         this.am = manager.getAccessorManager();
         this.listeners = new Map<string, Array<string>>();
-        this.blockedEvents = new Map<string, Array<string>>();
+        this.lockedEvents = new Map<string, Set<string>>();
 
         Object.keys(AppInterface).forEach((intt) => {
             this.listeners.set(intt, new Array<string>());
-            this.blockedEvents.set(intt, new Array<string>());
+            this.lockedEvents.set(intt, new Set<string>());
         });
     }
 
@@ -74,19 +74,13 @@ export class AppListenerManager {
         }
 
         app.getEssentials().forEach((event) => {
-            const blockedEvent = this.blockedEvents.get(event);
+            const lockedEvent = this.lockedEvents.get(event);
 
-            if (!blockedEvent) {
+            if (!lockedEvent) {
                 return;
             }
 
-            const appIndex = blockedEvent.findIndex((value) => value === app.getID());
-
-            if (appIndex === -1) {
-                return;
-            }
-
-            blockedEvent.splice(appIndex, 1);
+            lockedEvent.delete(app.getID());
         });
     }
 
@@ -96,13 +90,13 @@ export class AppListenerManager {
         }
 
         app.getEssentials().forEach((event) => {
-            const blockedEvent = this.blockedEvents.get(event);
+            const lockedEvent = this.lockedEvents.get(event);
 
-            if (!blockedEvent) {
+            if (!lockedEvent) {
                 return;
             }
 
-            blockedEvent.push(app.getID());
+            lockedEvent.add(app.getID());
         });
     }
 
@@ -117,9 +111,9 @@ export class AppListenerManager {
     }
 
     public isEventBlocked(event: AppInterface): boolean {
-        const blockedEventList = this.blockedEvents.get(event);
+        const lockedEventList = this.lockedEvents.get(event);
 
-        return !!(blockedEventList && blockedEventList.length);
+        return !!(lockedEventList && lockedEventList.size);
     }
 
     // tslint:disable-next-line
@@ -200,7 +194,7 @@ export class AppListenerManager {
                 this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
                 return;
             default:
-                console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
+                console.warn('An invalid listener was called');
                 return;
         }
     }
