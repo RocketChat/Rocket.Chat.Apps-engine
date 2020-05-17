@@ -1,7 +1,8 @@
+import { AppsEngineException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
-import { AppMethod } from '../../definition/metadata';
+import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import {
@@ -16,32 +17,46 @@ import {
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
-import { AppInterface } from '../compiler';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 
+export class EssentialAppDisabledException extends AppsEngineException {}
+
 export class AppListenerManager {
     private am: AppAccessorManager;
     private listeners: Map<string, Array<string>>;
+    /**
+     * Locked events are those who are listed in an app's
+     * "essentials" list but the app is disabled.
+     *
+     * They will throw a EssentialAppDisabledException upon call
+     */
+    private lockedEvents: Map<string, Set<string>>;
 
     constructor(private readonly manager: AppManager) {
         this.am = manager.getAccessorManager();
         this.listeners = new Map<string, Array<string>>();
+        this.lockedEvents = new Map<string, Set<string>>();
 
-        Object.keys(AppInterface).forEach((intt) => this.listeners.set(intt, new Array<string>()));
+        Object.keys(AppInterface).forEach((intt) => {
+            this.listeners.set(intt, new Array<string>());
+            this.lockedEvents.set(intt, new Set<string>());
+        });
     }
 
     public registerListeners(app: ProxiedApp): void {
         this.unregisterListeners(app);
-        const impleList = app.getImplementationList();
-        for (const int in app.getImplementationList()) {
-            if (impleList[int]) {
-                this.listeners.get(int).push(app.getID());
+
+        Object.entries(app.getImplementationList()).forEach(([event, isImplemented]) => {
+            if (!isImplemented) {
+                return;
             }
-        }
+
+            this.listeners.get(event).push(app.getID());
+        });
     }
 
     public unregisterListeners(app: ProxiedApp): void {
@@ -50,6 +65,38 @@ export class AppListenerManager {
                 const where = apps.indexOf(app.getID());
                 this.listeners.get(int).splice(where, 1);
             }
+        });
+    }
+
+    public releaseEssentialEvents(app: ProxiedApp): void {
+        if (!app.getEssentials()) {
+            return;
+        }
+
+        app.getEssentials().forEach((event) => {
+            const lockedEvent = this.lockedEvents.get(event);
+
+            if (!lockedEvent) {
+                return;
+            }
+
+            lockedEvent.delete(app.getID());
+        });
+    }
+
+    public lockEssentialEvents(app: ProxiedApp): void {
+        if (!app.getEssentials()) {
+            return;
+        }
+
+        app.getEssentials().forEach((event) => {
+            const lockedEvent = this.lockedEvents.get(event);
+
+            if (!lockedEvent) {
+                return;
+            }
+
+            lockedEvent.add(app.getID());
         });
     }
 
@@ -63,8 +110,18 @@ export class AppListenerManager {
         return results;
     }
 
+    public isEventBlocked(event: AppInterface): boolean {
+        const lockedEventList = this.lockedEvents.get(event);
+
+        return !!(lockedEventList && lockedEventList.size);
+    }
+
     // tslint:disable-next-line
     public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+        if (this.isEventBlocked(int)) {
+            throw new EssentialAppDisabledException('There is one or more apps that are essential to this event but are disabled');
+        }
+
         switch (int) {
             // Messages
             case AppInterface.IPreMessageSentPrevent:
@@ -137,7 +194,7 @@ export class AppListenerManager {
                 this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
                 return;
             default:
-                console.warn('Unimplemented (or invalid) AppInterface was just tried to execute.');
+                console.warn('An invalid listener was called');
                 return;
         }
     }

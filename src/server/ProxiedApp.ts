@@ -154,6 +154,10 @@ export class ProxiedApp implements IApp {
         return this.app.getAccessors();
     }
 
+    public getEssentials(): IAppInfo['essentials'] {
+        return this.getInfo().essentials;
+    }
+
     public getLatestLicenseValidationResult(): AppLicenseValidationResult {
         return this.latestLicenseValidationResult;
     }
