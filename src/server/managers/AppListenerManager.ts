@@ -1,4 +1,4 @@
-import { AppsEngineException } from '../../definition/exceptions';
+import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
@@ -22,8 +22,6 @@ import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
-
-export class EssentialAppDisabledException extends AppsEngineException {}
 
 export class AppListenerManager {
     private am: AppAccessorManager;
