@@ -19,5 +19,5 @@ export interface IRoomUserJoinedContext {
      * The user that has invited `joiningUser` to `room`,
      * if any.
      */
-    invitingUser?: IUser;
+    inviter?: IUser;
 }

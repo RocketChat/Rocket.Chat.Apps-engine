@@ -683,8 +683,8 @@ export class AppListenerManager {
         data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
         Utilities.deepFreeze(data.joiningUser);
 
-        if (data.invitingUser) {
-            Utilities.deepFreeze(data.invitingUser);
+        if (data.inviter) {
+            Utilities.deepFreeze(data.inviter);
         }
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
@@ -707,8 +707,8 @@ export class AppListenerManager {
         data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
         Utilities.deepFreeze(data.joiningUser);
 
-        if (data.invitingUser) {
-            Utilities.deepFreeze(data.invitingUser);
+        if (data.inviter) {
+            Utilities.deepFreeze(data.inviter);
         }
 
         for (const appId of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
