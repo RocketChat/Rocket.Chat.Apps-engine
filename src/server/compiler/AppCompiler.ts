@@ -36,6 +36,7 @@ export class AppCompiler {
             types: ['node'],
             // Set this to true if you would like to see the module resolution process
             traceResolution: false,
+            // This enables the compiler to identify the `AsyncIterableIterator` name
             lib: ['lib.esnext.d.ts'],
         };
 
