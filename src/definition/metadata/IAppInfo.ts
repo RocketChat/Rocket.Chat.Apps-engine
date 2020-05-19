@@ -13,5 +13,5 @@ export interface IAppInfo {
     iconFile: string;
     /** Base64 string of the App's icon. */
     iconFileContent?: string;
-    essentials?: [AppInterface];
+    essentials?: Array<AppInterface>;
 }
