@@ -43,6 +43,8 @@ export enum AppMethod {
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
+    EXECUTE_PRE_ROOM_USER_JOINED = 'executePreRoomUserJoined',
+    EXECUTE_POST_ROOM_USER_JOINED = 'executePostRoomUserJoined',
     // External Component handlers
     EXECUTEPOSTEXTERNALCOMPONENTOPENED = 'executePostExternalComponentOpened',
     EXECUTEPOSTEXTERNALCOMPONENTCLOSED = 'executePostExternalComponentClosed',

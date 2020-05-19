@@ -1,6 +1,6 @@
 import { AppCompiler } from './AppCompiler';
 import { AppFabricationFulfillment } from './AppFabricationFulfillment';
-import { AppImplements, AppInterface } from './AppImplements';
+import { AppImplements } from './AppImplements';
 import { AppPackageParser } from './AppPackageParser';
 import { ICompilerError } from './ICompilerError';
 import { ICompilerFile } from './ICompilerFile';
@@ -11,7 +11,6 @@ export {
     AppCompiler,
     AppFabricationFulfillment,
     AppImplements,
-    AppInterface,
     AppPackageParser,
     ICompilerFile,
     ICompilerError,

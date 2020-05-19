@@ -1,6 +1,6 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
+import { AppInterface } from '../../../src/definition/metadata';
 import { AppManager } from '../../../src/server/AppManager';
-import { AppInterface } from '../../../src/server/compiler';
 import { AppListenerManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 
