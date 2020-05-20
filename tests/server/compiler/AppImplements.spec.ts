@@ -1,6 +1,6 @@
 import { Expect, Test } from 'alsatian';
-
-import { AppImplements, AppInterface } from '../../../src/server/compiler';
+import { AppInterface } from '../../../src/definition/metadata';
+import { AppImplements } from '../../../src/server/compiler';
 
 export class AppImplementsTestFixture {
     @Test()

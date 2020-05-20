@@ -1,32 +1,5 @@
+import { AppInterface } from '../../definition/metadata/AppInterface';
 import { Utilities } from '../misc/Utilities';
-
-export enum AppInterface {
-    // Messages
-    IPreMessageSentPrevent = 'IPreMessageSentPrevent',
-    IPreMessageSentExtend = 'IPreMessageSentExtend',
-    IPreMessageSentModify = 'IPreMessageSentModify',
-    IPostMessageSent = 'IPostMessageSent',
-    IPreMessageDeletePrevent = 'IPreMessageDeletePrevent',
-    IPostMessageDeleted = 'IPostMessageDeleted',
-    IPreMessageUpdatedPrevent = 'IPreMessageUpdatedPrevent',
-    IPreMessageUpdatedExtend = 'IPreMessageUpdatedExtend',
-    IPreMessageUpdatedModify = 'IPreMessageUpdatedModify',
-    IPostMessageUpdated = 'IPostMessageUpdated',
-    // Rooms
-    IPreRoomCreatePrevent = 'IPreRoomCreatePrevent',
-    IPreRoomCreateExtend = 'IPreRoomCreateExtend',
-    IPreRoomCreateModify = 'IPreRoomCreateModify',
-    IPostRoomCreate = 'IPostRoomCreate',
-    IPreRoomDeletePrevent = 'IPreRoomDeletePrevent',
-    IPostRoomDeleted = 'IPostRoomDeleted',
-    // External Components
-    IPostExternalComponentOpened = 'IPostExternalComponentOpened',
-    IPostExternalComponentClosed = 'IPostExternalComponentClosed',
-    // Blocks
-    IUIKitInteractionHandler = 'IUIKitInteractionHandler',
-    // Livechat
-    ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
-}
 
 export class AppImplements {
     private implemented: { [key: string]: boolean };

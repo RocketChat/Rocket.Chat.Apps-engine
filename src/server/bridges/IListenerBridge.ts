@@ -1,7 +1,7 @@
 import { IMessage } from '../../definition/messages';
+import { AppInterface } from '../../definition/metadata';
 import { IRoom } from '../../definition/rooms';
 import { IUIKitIncomingInteraction } from '../../definition/uikit';
-import { AppInterface } from '../compiler';
 
 export interface IListenerBridge {
     messageEvent(int: AppInterface, message: IMessage): Promise<void | boolean | IMessage>;

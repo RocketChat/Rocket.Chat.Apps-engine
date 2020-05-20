@@ -43,6 +43,8 @@ export enum AppMethod {
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
     EXECUTEPOSTROOMDELETED = 'executePostRoomDeleted',
+    EXECUTE_PRE_ROOM_USER_JOINED = 'executePreRoomUserJoined',
+    EXECUTE_POST_ROOM_USER_JOINED = 'executePostRoomUserJoined',
     // External Component handlers
     EXECUTEPOSTEXTERNALCOMPONENTOPENED = 'executePostExternalComponentOpened',
     EXECUTEPOSTEXTERNALCOMPONENTCLOSED = 'executePostExternalComponentClosed',
@@ -51,5 +53,12 @@ export enum AppMethod {
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
     // Livechat
+    EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
+    /**
+     * @deprecated please use the AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED method
+     */
     EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER = 'executeLivechatRoomClosedHandler',
+    EXECUTE_POST_LIVECHAT_ROOM_CLOSED = 'executePostLivechatRoomClosed',
+    EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED = 'executePostLivechatAgentAssigned',
+    EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED = 'executePostLivechatAgentUnassigned',
 }
