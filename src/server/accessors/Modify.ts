@@ -24,7 +24,7 @@ export class Modify implements IModify {
         this.creator = new ModifyCreator(this.bridges, this.appId);
         this.updater = new ModifyUpdater(this.bridges, this.appId);
         this.extender = new ModifyExtender(this.bridges, this.appId);
-        this.notifier = new Notifier(this.bridges.getMessageBridge(), this.appId);
+        this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
         this.uiController = new UIController(this.appId, this.bridges);
     }
 
