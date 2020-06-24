@@ -64,34 +64,107 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="rocket-chat-apps-engine">Rocket.Chat Apps Engine</h1>
-				<p>The engine which manages and controls everything....more details coming soon.</p>
-				<h2 id="thoughts-while-working-for-docs-">Thoughts While Working (for docs)</h2>
+				<a href="#thoughts-while-working-for-docs" id="thoughts-while-working-for-docs" style="color: inherit; text-decoration: none;">
+					<h2>Thoughts While Working (for docs)</h2>
+				</a>
 				<ul>
 					<li>Apps which don&#39;t provide a valid uuid4 id will be assigned one, but this is not recommended and your App should provide an id</li>
 					<li>The language strings are only done on the clients (<code>TAPi18next.addResourceBundle(lang, projectName, translations);</code>)</li>
 					<li>The implementer of this should restrict the server setting access and environmental variables. Idea is to allow the implementer to have a default set of restricted ones while letting the admin/owner of the server to restrict it even further or lift the restriction on some more. Simple interface with settings and checkbox to allow/disallow them. :thinking:</li>
 				</ul>
-				<h2 id="to-think-about-">To Think About?</h2>
+				<a href="#what-does-the-apps-engine-enable-you-to-do" id="what-does-the-apps-engine-enable-you-to-do" style="color: inherit; text-decoration: none;">
+					<h2>What does the Apps-Engine enable you to do?</h2>
+				</a>
+				<p>The Apps-Engine is Rocket.Chat&#39;s <em>plugin framework</em> - it provides the APIs for Rocket.Chat Apps to interact with the host system.</p>
+				<p>Currently, a Rocket.Chat App can:</p>
 				<ul>
-					<li>Will we support es6? Since we currently check <code>extends</code> keyword and can check <code>implements</code> via determing what methods exist</li>
-					<li>Using <a href="https://www.npmjs.com/package/jsonc-parser">https://www.npmjs.com/package/jsonc-parser</a> for the json parsing?</li>
+					<li>Listen to message events<ul>
+							<li>before/after sent</li>
+							<li>before/after updated</li>
+							<li>before/after deleted</li>
+						</ul>
+					</li>
+					<li>Listen to room events<ul>
+							<li>before/after created</li>
+							<li>before/after deleted</li>
+						</ul>
+					</li>
+					<li>Send messages to users and livechat visitors</li>
+					<li>Register new slash commands</li>
+					<li>Register new HTTP endpoints</li>
 				</ul>
-				<h2 id="implementer-needs-to-implement-">Implementer Needs to Implement:</h2>
+				<p>Some features the Engine allows Apps to use:</p>
+				<ul>
+					<li>Key-Value Storage system</li>
+					<li>App specific settings</li>
+				</ul>
+				<a href="#development-environment-with-rocketchat" id="development-environment-with-rocketchat" style="color: inherit; text-decoration: none;">
+					<h2>Development environment with Rocket.Chat</h2>
+				</a>
+				<p>When developing new functionalities, you need to integrate the local version of the Apps-Engine with your local version of Rocket.Chat.</p>
+				<p>First of all, make sure you&#39;ve installed all required packages and compiled the changes you&#39;ve made to the Apps-Engine, since that is what Rocket.Chat will execute:</p>
+				<pre><code class="language-sh">npm install
+npm run compile</code></pre>
+				<p>Now, you need to setup a local Rocket.Chat server, <a href="https://github.com/RocketChat/Rocket.Chat#development">so head to the project&#39;s README for instructions on getting started</a> (if you haven&#39;t already). Make sure to actually clone the repo, since you will probably need to add some code to it in order to make your new functionality work.</p>
+				<p>After that, <code>cd</code> into Rocket.Chat folder and run:</p>
+				<pre><code class="language-sh">meteor npm install PATH_TO_APPS_ENGINE</code></pre>
+				<p>Where <code>PATH_TO_APPS_ENGINE</code> is the path to the Apps-Engine repo you&#39;ve cloned.</p>
+				<p>That&#39;s it! Now when you start Rocket.Chat with the <code>meteor</code> command, it will use your local Apps-Engine instead of the one on NPM :)</p>
+				<p>Whenever you make changes to the engine, run <code>npm run compile</code> again - meteor will take care of restarting the server due to the changes.</p>
+				<a href="#troubleshooting" id="troubleshooting" style="color: inherit; text-decoration: none;">
+					<h2>Troubleshooting</h2>
+				</a>
+				<ol>
+					<li>Sometimes, when you update the Apps-Engine code and compile it while Rocket.Chat is running, you might run on errors similar to these:</li>
+				</ol>
+				<pre><code>Unable to resolve some <span class="hljs-string">modules:</span>
+
+  <span class="hljs-string">"@rocket.chat/apps-engine/definition/AppStatus"</span> <span class="hljs-keyword">in</span>
+<span class="hljs-regexp">/Users/</span>dev<span class="hljs-regexp">/rocket.chat/</span>Rocket.Chat<span class="hljs-regexp">/app/</span>apps<span class="hljs-regexp">/client/</span>admin/helpers.js (web.browser)
+
+If you notice problems related to these missing modules, consider <span class="hljs-string">running:</span>
+
+  meteor npm install --save <span class="hljs-meta">@rocket</span>.chat/apps-engine</code></pre><p>Simply restart the meteor process and it should be fixed.</p>
+				<ol start="2">
+					<li>Sometimes when using <code>meteor npm install PATH_TO_APPS_ENGINE</code> will cause the following error :-</li>
+				</ol>
+				<pre><code><span class="hljs-built_in">npm</span> ERR! code ENOENT
+<span class="hljs-built_in">npm</span> ERR! syscall rename
+<span class="hljs-built_in">npm</span> ERR! path PATH_TO_ROCKETCHAT<span class="hljs-regexp">/node_modules/</span>.staging<span class="hljs-regexp">/@rocket.chat/apps-engine-c7135600/node_modules/</span>@babel/code-frame
+<span class="hljs-built_in">npm</span> ERR! dest PATH_TO_ROCKETCHAT<span class="hljs-regexp">/node_modules/</span>.staging/@babel/code-frame-f3697825
+<span class="hljs-built_in">npm</span> ERR! errno -<span class="hljs-number">2</span>
+<span class="hljs-built_in">npm</span> ERR! enoent ENOENT: <span class="hljs-literal">no</span> such file <span class="hljs-keyword">or</span> directory, rename <span class="hljs-string">'PATH_TO_ROCKETCHAT/node_modules/.staging/@rocket.chat/apps-engine-c7135600/node_modules/@babel/code-frame'</span><span class="hljs-function"> -&gt;</span> <span class="hljs-string">'PATH_TO_ROCKETCHAT/node_modules/.staging/@babel/code-frame-f3697825'</span>
+<span class="hljs-built_in">npm</span> ERR! enoent This <span class="hljs-keyword">is</span> related <span class="hljs-keyword">to</span> <span class="hljs-built_in">npm</span> <span class="hljs-keyword">not</span> being able <span class="hljs-keyword">to</span> find a file.
+<span class="hljs-built_in">npm</span> ERR! enoent </code></pre><p>Here <code>PATH_TO_ROCKETCHAT</code> is the path to the main rocketchat server repo in your system
+				To correct this we reinstall the package once again deleting the previous package</p>
+				<pre><code>~<span class="hljs-string">/Rocket.Chat</span>$ rm -rf node_modules/@rocket.chat/apps-engine
+~<span class="hljs-string">/Rocket.Chat</span>$ <span class="hljs-keyword">cd</span> PATH_TO_APP_ENGINE
+~<span class="hljs-string">/Rocket.Chat.Apps-engine</span>$ npm install
+~<span class="hljs-string">/Rocket.Chat.Apps-engine</span>$ <span class="hljs-keyword">cd</span> PATH_TO_ROCKETCHAT
+~<span class="hljs-string">/Rocket.Chat</span>$ meteor npm install <span class="hljs-string">../Rocket.Chat.Apps-engine</span></code></pre>
+				<a href="#implementer-needs-to-implement" id="implementer-needs-to-implement" style="color: inherit; text-decoration: none;">
+					<h2>Implementer Needs to Implement:</h2>
+				</a>
 				<ul>
 					<li><code>src/server/storage/AppStorage</code></li>
 					<li><code>src/server/storage/AppLogStorage</code></li>
 					<li><code>src/server/bridges/*</code></li>
 				</ul>
-				<h2 id="testing-framework-">Testing Framework:</h2>
+				<a href="#testing-framework" id="testing-framework" style="color: inherit; text-decoration: none;">
+					<h2>Testing Framework:</h2>
+				</a>
 				<p>Makes great usage of TypeScript and decorators: <a href="https://github.com/alsatian-test/alsatian/wiki">https://github.com/alsatian-test/alsatian/wiki</a></p>
 				<ul>
 					<li>To run the tests do: <code>npm run unit-tests</code></li>
 					<li>To generate the coverage information: <code>npm run check-coverage</code></li>
 					<li>To view the coverage: <code>npm run view-coverage</code></li>
 				</ul>
-				<h1 id="rocket-chat-apps-typescript-definitions">Rocket.Chat Apps TypeScript Definitions</h1>
-				<h2 id="handlers">Handlers</h2>
+				<a href="#rocketchat-apps-typescript-definitions" id="rocketchat-apps-typescript-definitions" style="color: inherit; text-decoration: none;">
+					<h1>Rocket.Chat Apps TypeScript Definitions</h1>
+				</a>
+				<a href="#handlers" id="handlers" style="color: inherit; text-decoration: none;">
+					<h2>Handlers</h2>
+				</a>
 				<p>Handlers are essentially &quot;listeners&quot; for different events, except there are various ways to handle an event.
 					When something happens there is <code>pre</code> and <code>post</code> handlers.
 					The set of <code>pre</code> handlers happens before the event is finalized.
@@ -111,7 +184,9 @@
 					<li><strong>Modify</strong>: This is ran and allows for destructive changes to the data (change any and everything).</li>
 					<li>Post<strong>Event</strong>: Is mostly for simple listening and no changes can be made to the data.</li>
 				</ul>
-				<h2 id="generating-updating-documentation">Generating/Updating Documentation</h2>
+				<a href="#generatingupdating-documentation" id="generatingupdating-documentation" style="color: inherit; text-decoration: none;">
+					<h2>Generating/Updating Documentation</h2>
+				</a>
 				<p>To update or generate the documentation, please commit your changes first and then in a second commit provide the updated documentation.</p>
 			</div>
 		</div>
@@ -132,10 +207,28 @@
 						<a href="enums/apivisibility.html" class="tsd-kind-icon">Api<wbr>Visibility</a>
 					</li>
 					<li class=" tsd-kind-enum">
+						<a href="enums/appinterface.html" class="tsd-kind-icon">App<wbr>Interface</a>
+					</li>
+					<li class=" tsd-kind-enum">
 						<a href="enums/appmethod.html" class="tsd-kind-icon">App<wbr>Method</a>
 					</li>
 					<li class=" tsd-kind-enum">
 						<a href="enums/appstatus.html" class="tsd-kind-icon">App<wbr>Status</a>
+					</li>
+					<li class=" tsd-kind-enum tsd-is-external">
+						<a href="enums/appsengineuimethods.html" class="tsd-kind-icon">Apps<wbr>EngineUIMethods</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/blockelementtype.html" class="tsd-kind-icon">Block<wbr>Element<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/blocktype.html" class="tsd-kind-icon">Block<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/buttonstyle.html" class="tsd-kind-icon">Button<wbr>Style</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/externalcomponentlocation.html" class="tsd-kind-icon">External<wbr>Component<wbr>Location</a>
 					</li>
 					<li class=" tsd-kind-enum">
 						<a href="enums/httpstatuscode.html" class="tsd-kind-icon">Http<wbr>Status<wbr>Code</a>
@@ -168,6 +261,24 @@
 						<a href="enums/slashcommandpreviewitemtype.html" class="tsd-kind-icon">Slash<wbr>Command<wbr>Preview<wbr>Item<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-enum">
+						<a href="enums/storetype.html" class="tsd-kind-icon">Store<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/textobjecttype.html" class="tsd-kind-icon">Text<wbr>Object<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/uikitincominginteractioncontainertype.html" class="tsd-kind-icon">UIKit<wbr>Incoming<wbr>Interaction<wbr>Container<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/uikitincominginteractiontype.html" class="tsd-kind-icon">UIKit<wbr>Incoming<wbr>Interaction<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/uikitinteractiontype.html" class="tsd-kind-icon">UIKit<wbr>Interaction<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
+						<a href="enums/uikitviewtype.html" class="tsd-kind-icon">UIKit<wbr>View<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-enum">
 						<a href="enums/userstatusconnection.html" class="tsd-kind-icon">User<wbr>Status<wbr>Connection</a>
 					</li>
 					<li class=" tsd-kind-enum">
@@ -183,10 +294,40 @@
 						<a href="classes/appstatusutilsdef.html" class="tsd-kind-icon">App<wbr>Status<wbr>Utils<wbr>Def</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="classes/appsengineexception.html" class="tsd-kind-icon">Apps<wbr>Engine<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/blockbuilder.html" class="tsd-kind-icon">Block<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/essentialappdisabledexception.html" class="tsd-kind-icon">Essential<wbr>App<wbr>Disabled<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="classes/rocketchatassociationrecord.html" class="tsd-kind-icon">Rocket<wbr>Chat<wbr>Association<wbr>Record</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/slashcommandcontext.html" class="tsd-kind-icon">Slash<wbr>Command<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/uikitblockinteractioncontext.html" class="tsd-kind-icon">UIKit<wbr>Block<wbr>Interaction<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/uikitinteractioncontext.html" class="tsd-kind-icon">UIKit<wbr>Interaction<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/uikitinteractionresponder.html" class="tsd-kind-icon">UIKit<wbr>Interaction<wbr>Responder</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/uikitviewcloseinteractioncontext.html" class="tsd-kind-icon">UIKit<wbr>View<wbr>Close<wbr>Interaction<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/uikitviewsubmitinteractioncontext.html" class="tsd-kind-icon">UIKit<wbr>View<wbr>Submit<wbr>Interaction<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/usernotallowedexception.html" class="tsd-kind-icon">User<wbr>Not<wbr>Allowed<wbr>Exception</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iactionsblock.html" class="tsd-kind-icon">IActions<wbr>Block</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iapi.html" class="tsd-kind-icon">IApi</a>
@@ -227,11 +368,23 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iappinfo.html" class="tsd-kind-icon">IApp<wbr>Info</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/iappsengineuiresponse.html" class="tsd-kind-icon">IApps<wbr>EngineUIResponse</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iasset.html" class="tsd-kind-icon">IAsset</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iassetprovider.html" class="tsd-kind-icon">IAsset<wbr>Provider</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iblock.html" class="tsd-kind-icon">IBlock</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iblockelement.html" class="tsd-kind-icon">IBlock<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ibuttonelement.html" class="tsd-kind-icon">IButton<wbr>Element</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iconfigurationextend.html" class="tsd-kind-icon">IConfiguration<wbr>Extend</a>
@@ -240,10 +393,40 @@
 						<a href="interfaces/iconfigurationmodify.html" class="tsd-kind-icon">IConfiguration<wbr>Modify</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/icontextblock.html" class="tsd-kind-icon">IContext<wbr>Block</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/idepartment.html" class="tsd-kind-icon">IDepartment</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/idiscussionbuilder.html" class="tsd-kind-icon">IDiscussion<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/idividerblock.html" class="tsd-kind-icon">IDivider<wbr>Block</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/ienvironmentread.html" class="tsd-kind-icon">IEnvironment<wbr>Read</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ienvironmentalvariableread.html" class="tsd-kind-icon">IEnvironmental<wbr>Variable<wbr>Read</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iexternalcomponent.html" class="tsd-kind-icon">IExternal<wbr>Component</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iexternalcomponentoptions.html" class="tsd-kind-icon">IExternal<wbr>Component<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/iexternalcomponentroominfo.html" class="tsd-kind-icon">IExternal<wbr>Component<wbr>Room<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iexternalcomponentstate.html" class="tsd-kind-icon">IExternal<wbr>Component<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-is-external">
+						<a href="interfaces/iexternalcomponentuserinfo.html" class="tsd-kind-icon">IExternal<wbr>Component<wbr>User<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iexternalcomponentsextend.html" class="tsd-kind-icon">IExternal<wbr>Components<wbr>Extend</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ihttp.html" class="tsd-kind-icon">IHttp</a>
@@ -262,6 +445,48 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ihttpresponse.html" class="tsd-kind-icon">IHttp<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iimageblock.html" class="tsd-kind-icon">IImage<wbr>Block</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iimageelement.html" class="tsd-kind-icon">IImage<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iinputblock.html" class="tsd-kind-icon">IInput<wbr>Block</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iinputelement.html" class="tsd-kind-icon">IInput<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iinteractiveelement.html" class="tsd-kind-icon">IInteractive<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatcreator.html" class="tsd-kind-icon">ILivechat<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechateventcontext.html" class="tsd-kind-icon">ILivechat<wbr>Event<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatmessage.html" class="tsd-kind-icon">ILivechat<wbr>Message</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatmessagebuilder.html" class="tsd-kind-icon">ILivechat<wbr>Message<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatread.html" class="tsd-kind-icon">ILivechat<wbr>Read</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatroom.html" class="tsd-kind-icon">ILivechat<wbr>Room</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatroomclosedhandler.html" class="tsd-kind-icon">ILivechat<wbr>Room<wbr>Closed<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechattransferdata.html" class="tsd-kind-icon">ILivechat<wbr>Transfer<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilivechatupdater.html" class="tsd-kind-icon">ILivechat<wbr>Updater</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ilogentry.html" class="tsd-kind-icon">ILog<wbr>Entry</a>
@@ -294,6 +519,9 @@
 						<a href="interfaces/imessageextender.html" class="tsd-kind-icon">IMessage<wbr>Extender</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/imessagefile.html" class="tsd-kind-icon">IMessage<wbr>File</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/imessagereaction.html" class="tsd-kind-icon">IMessage<wbr>Reaction</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -315,13 +543,43 @@
 						<a href="interfaces/imodifyupdater.html" class="tsd-kind-icon">IModify<wbr>Updater</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/imultistaticselectelement.html" class="tsd-kind-icon">IMulti<wbr>Static<wbr>Select<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/inotifier.html" class="tsd-kind-icon">INotifier</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ioptionobject.html" class="tsd-kind-icon">IOption<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ioverflowmenuelement.html" class="tsd-kind-icon">IOverflow<wbr>Menu<wbr>Element</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ipersistence.html" class="tsd-kind-icon">IPersistence</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ipersistenceread.html" class="tsd-kind-icon">IPersistence<wbr>Read</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iplaintextinputelement.html" class="tsd-kind-icon">IPlain<wbr>Text<wbr>Input<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostexternalcomponentclosed.html" class="tsd-kind-icon">IPost<wbr>External<wbr>Component<wbr>Closed</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostexternalcomponentopened.html" class="tsd-kind-icon">IPost<wbr>External<wbr>Component<wbr>Opened</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostlivechatagentassigned.html" class="tsd-kind-icon">IPost<wbr>Livechat<wbr>Agent<wbr>Assigned</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostlivechatagentunassigned.html" class="tsd-kind-icon">IPost<wbr>Livechat<wbr>Agent<wbr>Unassigned</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostlivechatroomclosed.html" class="tsd-kind-icon">IPost<wbr>Livechat<wbr>Room<wbr>Closed</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostlivechatroomstarted.html" class="tsd-kind-icon">IPost<wbr>Livechat<wbr>Room<wbr>Started</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ipostmessagedeleted.html" class="tsd-kind-icon">IPost<wbr>Message<wbr>Deleted</a>
@@ -337,6 +595,9 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ipostroomdeleted.html" class="tsd-kind-icon">IPost<wbr>Room<wbr>Deleted</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipostroomuserjoined.html" class="tsd-kind-icon">IPost<wbr>Room<wbr>User<wbr>Joined</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ipremessagedeleteprevent.html" class="tsd-kind-icon">IPre<wbr>Message<wbr>Delete<wbr>Prevent</a>
@@ -372,6 +633,9 @@
 						<a href="interfaces/ipreroomdeleteprevent.html" class="tsd-kind-icon">IPre<wbr>Room<wbr>Delete<wbr>Prevent</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipreroomuserjoined.html" class="tsd-kind-icon">IPre<wbr>Room<wbr>User<wbr>Joined</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/iread.html" class="tsd-kind-icon">IRead</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -385,6 +649,15 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iroomread.html" class="tsd-kind-icon">IRoom<wbr>Read</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iroomuserjoinedcontext.html" class="tsd-kind-icon">IRoom<wbr>User<wbr>Joined<wbr>Context</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/isectionblock.html" class="tsd-kind-icon">ISection<wbr>Block</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iselectelement.html" class="tsd-kind-icon">ISelect<wbr>Element</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iserversettingread.html" class="tsd-kind-icon">IServer<wbr>Setting<wbr>Read</a>
@@ -420,7 +693,76 @@
 						<a href="interfaces/islashcommandsmodify.html" class="tsd-kind-icon">ISlash<wbr>Commands<wbr>Modify</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="interfaces/istaticselectelement.html" class="tsd-kind-icon">IStatic<wbr>Select<wbr>Element</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/itextobject.html" class="tsd-kind-icon">IText<wbr>Object</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuicontroller.html" class="tsd-kind-icon">IUIController</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitbaseincominginteraction.html" class="tsd-kind-icon">IUIKit<wbr>Base<wbr>Incoming<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitblockincominginteraction.html" class="tsd-kind-icon">IUIKit<wbr>Block<wbr>Incoming<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikiterrorinteraction.html" class="tsd-kind-icon">IUIKit<wbr>Error<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikiterrorresponse.html" class="tsd-kind-icon">IUIKit<wbr>Error<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitincominginteraction.html" class="tsd-kind-icon">IUIKit<wbr>Incoming<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitincominginteractioncontainer.html" class="tsd-kind-icon">IUIKit<wbr>Incoming<wbr>Interaction<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitincominginteractionmessagecontainer.html" class="tsd-kind-icon">IUIKit<wbr>Incoming<wbr>Interaction<wbr>Message<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitincominginteractionmodalcontainer.html" class="tsd-kind-icon">IUIKit<wbr>Incoming<wbr>Interaction<wbr>Modal<wbr>Container</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitinteraction.html" class="tsd-kind-icon">IUIKit<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitinteractionhandler.html" class="tsd-kind-icon">IUIKit<wbr>Interaction<wbr>Handler</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitmodalinteraction.html" class="tsd-kind-icon">IUIKit<wbr>Modal<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitmodalresponse.html" class="tsd-kind-icon">IUIKit<wbr>Modal<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitresponse.html" class="tsd-kind-icon">IUIKit<wbr>Response</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitview.html" class="tsd-kind-icon">IUIKit<wbr>View</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitviewcloseincominginteraction.html" class="tsd-kind-icon">IUIKit<wbr>View<wbr>Close<wbr>Incoming<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuikitviewsubmitincominginteraction.html" class="tsd-kind-icon">IUIKit<wbr>View<wbr>Submit<wbr>Incoming<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iupload.html" class="tsd-kind-icon">IUpload</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuploadread.html" class="tsd-kind-icon">IUpload<wbr>Read</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="interfaces/iuser.html" class="tsd-kind-icon">IUser</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuserbuilder.html" class="tsd-kind-icon">IUser<wbr>Builder</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iusercreationoptions.html" class="tsd-kind-icon">IUser<wbr>Creation<wbr>Options</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iuseremail.html" class="tsd-kind-icon">IUser<wbr>Email</a>
@@ -428,11 +770,89 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/iuserread.html" class="tsd-kind-icon">IUser<wbr>Read</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/iuserupdater.html" class="tsd-kind-icon">IUser<wbr>Updater</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ivisitor.html" class="tsd-kind-icon">IVisitor</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ivisitoremail.html" class="tsd-kind-icon">IVisitor<wbr>Email</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ivisitorphone.html" class="tsd-kind-icon">IVisitor<wbr>Phone</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#accessoryelements" class="tsd-kind-icon">Accessory<wbr>Elements</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#actionsblockparam" class="tsd-kind-icon">Actions<wbr>Block<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#blockfunctionparameter" class="tsd-kind-icon">Block<wbr>Function<wbr>Parameter</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#buttonelementparam" class="tsd-kind-icon">Button<wbr>Element<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-external tsd-is-not-exported">
+						<a href="globals.html#clientroominfo" class="tsd-kind-icon">Client<wbr>Room<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-external tsd-is-not-exported">
+						<a href="globals.html#clientuserinfo" class="tsd-kind-icon">Client<wbr>User<wbr>Info</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#contextblockparam" class="tsd-kind-icon">Context<wbr>Block<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-not-exported">
+						<a href="globals.html#elementfunctionparameter" class="tsd-kind-icon">Element<wbr>Function<wbr>Parameter</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#iuikiterrorinteractionparam" class="tsd-kind-icon">IUIKit<wbr>Error<wbr>Interaction<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#iuikitinteractionparam" class="tsd-kind-icon">IUIKit<wbr>Interaction<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="globals.html#iuikitmodalviewparam" class="tsd-kind-icon">IUIKit<wbr>Modal<wbr>View<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#imageblockparam" class="tsd-kind-icon">Image<wbr>Block<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#imageelementparam" class="tsd-kind-icon">Image<wbr>Element<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#inputblockparam" class="tsd-kind-icon">Input<wbr>Block<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#multistaticselectelementparam" class="tsd-kind-icon">Multi<wbr>Static<wbr>Select<wbr>Element<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter tsd-is-external">
+						<a href="globals.html#omit" class="tsd-kind-icon">Omit</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#overflowmenuelementparam" class="tsd-kind-icon">Overflow<wbr>Menu<wbr>Element<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#plaintextinputelementparam" class="tsd-kind-icon">Plain<wbr>Text<wbr>Input<wbr>Element<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#sectionblockparam" class="tsd-kind-icon">Section<wbr>Block<wbr>Param</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-is-not-exported">
+						<a href="globals.html#staticselectelementparam" class="tsd-kind-icon">Static<wbr>Select<wbr>Element<wbr>Param</a>
+					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#appstatusutils" class="tsd-kind-icon">App<wbr>Status<wbr>Utils</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="globals.html#example" class="tsd-kind-icon">example</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#formaterrorinteraction" class="tsd-kind-icon">format<wbr>Error<wbr>Interaction</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#formatmodalinteraction" class="tsd-kind-icon">format<wbr>Modal<wbr>Interaction</a>
 					</li>
 				</ul>
 			</nav>
@@ -451,6 +871,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -499,7 +920,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="assets/js/main.js"></script>
