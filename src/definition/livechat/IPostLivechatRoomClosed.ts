@@ -1,4 +1,4 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
 import { ILivechatRoom } from './ILivechatRoom';
 
@@ -11,8 +11,11 @@ export interface IPostLivechatRoomClosed {
      *
      * @param livechatRoom The livechat room which is closed.
      * @param read An accessor to the environment
+     * @param modify An accessor to the modifier
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED](room: ILivechatRoom, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED](
+        room: ILivechatRoom, read: IRead, http: IHttp, modify: IModify, persis: IPersistence,
+    ): Promise<void>;
 }

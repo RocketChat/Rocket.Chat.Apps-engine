@@ -854,6 +854,7 @@ export class AppListenerManager {
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
+                this.am.getModifier(appId),
                 this.am.getPersistence(appId),
             );
         }
@@ -873,6 +874,7 @@ export class AppListenerManager {
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
+                this.am.getModifier(appId),
                 this.am.getPersistence(appId),
             );
         }
@@ -892,6 +894,7 @@ export class AppListenerManager {
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
+                this.am.getModifier(appId),
                 this.am.getPersistence(appId),
             );
         }
@@ -911,6 +914,7 @@ export class AppListenerManager {
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
+                this.am.getModifier(appId),
                 this.am.getPersistence(appId),
             );
         }
@@ -930,6 +934,7 @@ export class AppListenerManager {
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
+                this.am.getModifier(appId),
                 this.am.getPersistence(appId),
             );
         }
