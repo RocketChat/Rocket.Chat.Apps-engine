@@ -11,11 +11,11 @@ export interface IPostLivechatAgentUnassigned {
      *
      * @param data the livechat context data which contains agent's info and room's info.
      * @param read An accessor to the environment
-     * @param modify An accessor to the modifier
      * @param http An accessor to the outside world
-     * @param persistence An accessor to the App's persistence
+     * @param persis An accessor to the App's persistence
+     * @param modify An accessor to the modifier
      */
     [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED](
-        context: ILivechatEventContext, read: IRead, http: IHttp, modify: IModify, persis: IPersistence,
+        context: ILivechatEventContext, read?: IRead, http?: IHttp, persis?: IPersistence, modify?: IModify,
     ): Promise<void>;
 }
