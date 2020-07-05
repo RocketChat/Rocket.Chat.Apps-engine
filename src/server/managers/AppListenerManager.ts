@@ -885,7 +885,6 @@ export class AppListenerManager {
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED)) {
                 continue;
             }
-            console.log('executePostLivechatRoomClosed', appId);
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED,
                 cfLivechatRoom,
