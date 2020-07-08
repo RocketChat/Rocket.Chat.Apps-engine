@@ -16,6 +16,6 @@ export interface IPostLivechatAgentAssigned {
      * @param modify An accessor to the modifier
      */
     [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED](
-        context: ILivechatEventContext, read?: IRead, http?: IHttp, persis?: IPersistence, modify?: IModify,
+        context: ILivechatEventContext, read: IRead, http: IHttp, persis: IPersistence, modify?: IModify,
     ): Promise<void>;
 }
