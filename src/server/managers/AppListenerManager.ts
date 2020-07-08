@@ -175,22 +175,18 @@ export class AppListenerManager {
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
             // Livechat
             case AppInterface.IPostLivechatRoomStarted:
-                this.executePostLivechatRoomStarted(data as ILivechatRoom);
-                return;
+                return this.executePostLivechatRoomStarted(data as ILivechatRoom);
             /**
              * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
              */
             case AppInterface.ILivechatRoomClosedHandler:
-                this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
+                return this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomClosed:
-                this.executePostLivechatRoomClosed(data as ILivechatRoom);
-                return;
+                return this.executePostLivechatRoomClosed(data as ILivechatRoom);
             case AppInterface.IPostLivechatAgentAssigned:
-                this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
-                return;
+                return this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatAgentUnassigned:
-                this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
-                return;
+                return this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -855,6 +851,7 @@ export class AppListenerManager {
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
                 this.am.getPersistence(appId),
+                this.am.getModifier(appId),
             );
         }
     }
@@ -874,6 +871,7 @@ export class AppListenerManager {
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
                 this.am.getPersistence(appId),
+                this.am.getModifier(appId),
             );
         }
     }
@@ -893,6 +891,7 @@ export class AppListenerManager {
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
                 this.am.getPersistence(appId),
+                this.am.getModifier(appId),
             );
         }
     }
@@ -912,6 +911,7 @@ export class AppListenerManager {
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
                 this.am.getPersistence(appId),
+                this.am.getModifier(appId),
             );
         }
     }
@@ -931,6 +931,7 @@ export class AppListenerManager {
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
                 this.am.getPersistence(appId),
+                this.am.getModifier(appId),
             );
         }
     }
