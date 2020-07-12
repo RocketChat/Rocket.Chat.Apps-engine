@@ -19,6 +19,7 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     value?: string;
     message?: IMessage;
     triggerId: string;
+    actionId: string;
     blockId: string;
     room: IUIKitBaseIncomingInteraction['room'];
     container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
