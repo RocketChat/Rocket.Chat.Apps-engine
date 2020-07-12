@@ -9,8 +9,8 @@ import {
 
 export interface IUIKitBaseIncomingInteraction {
     appId: string;
-    actionId: string;
     user: IUser;
+    actionId?: string;
     room?: IRoom;
     triggerId?: string;
 }
@@ -19,6 +19,7 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     value?: string;
     message?: IMessage;
     triggerId: string;
+    blockId: string;
     room: IUIKitBaseIncomingInteraction['room'];
     container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
 }
