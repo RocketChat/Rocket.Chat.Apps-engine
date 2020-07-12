@@ -787,11 +787,12 @@ export class AppListenerManager {
 
             switch (interactionType) {
                 case UIKitIncomingInteractionType.BLOCK: {
-                    const { value } = interactionData.payload as { value: string };
+                    const { value, blockId } = interactionData.payload as { value: string; blockId: string };
 
                     return new UIKitBlockInteractionContext({
                         appId,
                         actionId,
+                        blockId,
                         user,
                         room,
                         triggerId,
