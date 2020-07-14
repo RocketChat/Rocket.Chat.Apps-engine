@@ -54,6 +54,7 @@ export interface IOverflowMenuElement extends IInteractiveElement {
 export interface IPlainTextInputElement extends IInputElement {
     type: BlockElementType.PLAIN_TEXT_INPUT;
     initialValue?: string;
+    multiline?: boolean;
 }
 
 export interface ISelectElement extends IInputElement {
