@@ -98,6 +98,8 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="slashcommandcontext.html#getarguments" class="tsd-kind-icon">get<wbr>Arguments</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="slashcommandcontext.html#getroom" class="tsd-kind-icon">get<wbr>Room</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="slashcommandcontext.html#getsender" class="tsd-kind-icon">get<wbr>Sender</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="slashcommandcontext.html#getthreadid" class="tsd-kind-icon">get<wbr>Thread<wbr>Id</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="slashcommandcontext.html#gettriggerid" class="tsd-kind-icon">get<wbr>Trigger<wbr>Id</a></li>
 							</ul>
 						</section>
 					</div>
@@ -109,13 +111,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Slash<wbr>Command<wbr>Context<span class="tsd-signature-symbol">(</span>sender<span class="tsd-signature-symbol">: </span><a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a>, room<span class="tsd-signature-symbol">: </span><a href="../interfaces/iroom.html" class="tsd-signature-type">IRoom</a>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="slashcommandcontext.html" class="tsd-signature-type">SlashCommandContext</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Slash<wbr>Command<wbr>Context<span class="tsd-signature-symbol">(</span>sender<span class="tsd-signature-symbol">: </span><a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a>, room<span class="tsd-signature-symbol">: </span><a href="../interfaces/iroom.html" class="tsd-signature-type">IRoom</a>, params<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span>, threadId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, triggerId<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="slashcommandcontext.html" class="tsd-signature-type">SlashCommandContext</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6262480/src/definition/slashcommands/SlashCommandContext.ts#L8">slashcommands/SlashCommandContext.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L8">definition/slashcommands/SlashCommandContext.ts:8</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -128,6 +130,12 @@
 								</li>
 								<li>
 									<h5>params: <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> threadId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> triggerId: <span class="tsd-signature-type">string</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="slashcommandcontext.html" class="tsd-signature-type">SlashCommandContext</a></h4>
@@ -147,7 +155,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6262480/src/definition/slashcommands/SlashCommandContext.ts#L22">slashcommands/SlashCommandContext.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L28">definition/slashcommands/SlashCommandContext.ts:28</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -169,7 +177,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6262480/src/definition/slashcommands/SlashCommandContext.ts#L17">slashcommands/SlashCommandContext.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L23">definition/slashcommands/SlashCommandContext.ts:23</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -191,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6262480/src/definition/slashcommands/SlashCommandContext.ts#L12">slashcommands/SlashCommandContext.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L18">definition/slashcommands/SlashCommandContext.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -200,6 +208,46 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/iuser.html" class="tsd-signature-type">IUser</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getthreadid" class="tsd-anchor"></a>
+					<h3>get<wbr>Thread<wbr>Id</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Thread<wbr>Id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L32">definition/slashcommands/SlashCommandContext.ts:32</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="gettriggerid" class="tsd-anchor"></a>
+					<h3>get<wbr>Trigger<wbr>Id</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Trigger<wbr>Id<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/slashcommands/SlashCommandContext.ts#L36">definition/slashcommands/SlashCommandContext.ts:36</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
 						</li>
 					</ul>
 				</section>
@@ -232,6 +280,12 @@
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="slashcommandcontext.html#getsender" class="tsd-kind-icon">get<wbr>Sender</a>
 							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="slashcommandcontext.html#getthreadid" class="tsd-kind-icon">get<wbr>Thread<wbr>Id</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="slashcommandcontext.html#gettriggerid" class="tsd-kind-icon">get<wbr>Trigger<wbr>Id</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -253,6 +307,7 @@
 				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
 				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
 				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
@@ -301,7 +356,7 @@
 	</div>
 </footer>
 <div class="container tsd-generator">
-	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
 </div>
 <div class="overlay"></div>
 <script src="../assets/js/main.js"></script>
