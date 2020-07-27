@@ -17,8 +17,8 @@ export interface IUIKitIncomingInteraction {
     container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
     user: IUser;
     appId: string;
-    actionId: string;
     payload: object;
+    actionId?: string;
     triggerId?: string;
     room?: IRoom;
     message?: IMessage;

@@ -1,4 +1,4 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
 import { ILivechatEventContext } from './ILivechatEventContext';
 
@@ -12,7 +12,10 @@ export interface IPostLivechatAgentAssigned {
      * @param data the livechat context data which contains agent's info and room's info.
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
-     * @param persistence An accessor to the App's persistence
+     * @param persis An accessor to the App's persistence
+     * @param modify An accessor to the modifier
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED](context: ILivechatEventContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED](
+        context: ILivechatEventContext, read: IRead, http: IHttp, persis: IPersistence, modify?: IModify,
+    ): Promise<void>;
 }
