@@ -1,14 +1,13 @@
-import { RequiredApiVersionError } from '../errors';
-import { AppCompiler } from './AppCompiler';
-import { ICompilerFile } from './ICompilerFile';
-import { IParseZipResult } from './IParseZipResult';
-
 import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
+
+import { AppImplements } from '.';
 import { IAppInfo } from '../../definition/metadata/IAppInfo';
+import { RequiredApiVersionError } from '../errors';
+import { IParseAppPackageResult } from './IParseAppPackageResult';
 
 export class AppPackageParser {
     // tslint:disable-next-line:max-line-length
@@ -20,8 +19,8 @@ export class AppPackageParser {
         this.appsEngineVersion = this.getEngineVersion();
     }
 
-    public async parseZip(compiler: AppCompiler, zipBase64: string): Promise<IParseZipResult> {
-        const zip = new AdmZip(Buffer.from(zipBase64, 'base64'));
+    public async unpackageApp(appPackage: Buffer): Promise<IParseAppPackageResult> {
+        const zip = new AdmZip(appPackage);
         const infoZip = zip.getEntry('app.json');
         let info: IAppInfo;
 
@@ -47,9 +46,9 @@ export class AppPackageParser {
         }
 
         // Load all of the TypeScript only files
-        let tsFiles: { [s: string]: ICompilerFile } = {};
+        const files: { [s: string]: string } = {};
 
-        zip.getEntries().filter((entry) => entry.entryName.endsWith('.ts') && !entry.isDirectory).forEach((entry) => {
+        zip.getEntries().filter((entry) => !entry.isDirectory).forEach((entry) => {
             const norm = path.normalize(entry.entryName);
 
             // Files which start with `.` are supposed to be hidden
@@ -57,29 +56,15 @@ export class AppPackageParser {
                 return;
             }
 
-            tsFiles[norm] = {
-                name: norm,
-                content: entry.getData().toString(),
-                version: 0,
-            };
+            files[norm] = entry.getData().toString();
         });
 
         // Ensure that the main class file exists
-        if (!tsFiles[path.normalize(info.classFile)]) {
+        if (!files[path.normalize(info.classFile)]) {
             throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
         }
 
         const languageContent = this.getLanguageContent(zip);
-
-        // Compile all the typescript files to javascript
-        const result = compiler.toJs(info, tsFiles);
-        tsFiles = result.files;
-
-        const compiledFiles: { [s: string]: string } = {};
-        Object.keys(tsFiles).forEach((name) => {
-            const norm = path.normalize(name);
-            compiledFiles[norm.replace(/\./g, '$')] = tsFiles[norm].compiled;
-        });
 
         // Get the icon's content
         const iconFile = this.getIconFile(zip, info.iconFile);
@@ -87,12 +72,15 @@ export class AppPackageParser {
             info.iconFileContent = iconFile;
         }
 
+        const implemented = new AppImplements();
+
+        info.implements.forEach((interfaceName) => implemented.doesImplement(interfaceName));
+
         return {
             info,
-            compiledFiles,
+            files,
             languageContent,
-            implemented: result.implemented,
-            compilerErrors: result.compilerErrors,
+            implemented,
         };
     }
 
