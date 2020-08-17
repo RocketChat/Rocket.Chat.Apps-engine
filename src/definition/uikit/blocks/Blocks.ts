@@ -52,7 +52,7 @@ export interface IInputBlock extends IBlock {
 }
 
 export interface IConditionalBlockFilters {
-    engine?: Array<'rocket.chat' | 'livechat'>;
+    engine?: Array<'rocket.chat' | 'omnichannel'>;
 }
 
 /**
@@ -66,10 +66,10 @@ export interface IConditionalBlockFilters {
  * will be shown in every case like other blocks.
  *
  * Currently supported conditions:
- *      `engine: Array<"rocket.chat" | "livechat">` specifies what engine should
+ *      `engine: Array<"rocket.chat" | "omnichannel">` specifies what engine should
  *      render the block:
  *          "rocket.chat" for regular Rocket.Chat engine
- *          "livechat" for the Livechat/Omnichannel widget engine
+ *          "omnichannel" for the Livechat/Omnichannel widget engine
  *      leave it blank to show the block in both engines
  */
 export interface IConditionalBlock extends IBlock {
