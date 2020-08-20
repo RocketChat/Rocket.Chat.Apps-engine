@@ -5,8 +5,8 @@ export interface ILivechatUpdater {
     /**
      * Transfer a Livechat visitor to another room
      *
-     * @param visitor Visitor to be transfered
-     * @param transferData The data to execute the transfering
+     * @param visitor Visitor to be transferred
+     * @param transferData The data to execute the transferring
      */
     transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData): Promise<boolean>;
 
