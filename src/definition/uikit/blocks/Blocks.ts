@@ -51,8 +51,13 @@ export interface IInputBlock extends IBlock {
     optional?: boolean;
 }
 
+export enum ConditionalBlockFiltersEngine {
+    ROCKETCHAT = 'rocket.chat',
+    LIVECHAT = 'livechat',
+}
+
 export interface IConditionalBlockFilters {
-    engine?: Array<'rocket.chat' | 'omnichannel'>;
+    engine?: Array<ConditionalBlockFiltersEngine>;
 }
 
 /**
