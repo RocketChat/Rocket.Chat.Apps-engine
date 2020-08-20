@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ISettingsExtend | Rocket.Chat Apps TypeScript Definition</title>
+	<title>LivechatTransferEventType | Rocket.Chat Apps TypeScript Definition</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,80 +56,51 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="isettingsextend.html">ISettingsExtend</a>
+					<a href="livechattransfereventtype.html">LivechatTransferEventType</a>
 				</li>
 			</ul>
-			<h1>Interface ISettingsExtend</h1>
+			<h1>Enumeration LivechatTransferEventType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>This accessor provides methods for adding custom settings,
-							which are displayed on your App&#39;s page.
-						This is provided on initialization of your App.</p>
-					</div>
-				</div>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">ISettingsExtend</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
-							<h3>Methods</h3>
+							<h3>Enumeration members</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="isettingsextend.html#providesetting" class="tsd-kind-icon">provide<wbr>Setting</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="livechattransfereventtype.html#agent" class="tsd-kind-icon">AGENT</a></li>
+								<li class="tsd-kind-enum-member tsd-parent-kind-enum"><a href="livechattransfereventtype.html#department" class="tsd-kind-icon">DEPARTMENT</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="providesetting" class="tsd-anchor"></a>
-					<h3>provide<wbr>Setting</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">provide<wbr>Setting<span class="tsd-signature-symbol">(</span>setting<span class="tsd-signature-symbol">: </span><a href="isetting.html" class="tsd-signature-type">ISetting</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/1af3a59/src/definition/accessors/ISettingsExtend.ts#L16">definition/accessors/ISettingsExtend.ts:16</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Adds a setting which can be configured by an administrator.
-										Settings can only be added to groups which have been provided by this App earlier
-									and if a group is not provided, the setting will appear outside of a group.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>setting: <a href="isetting.html" class="tsd-signature-type">ISetting</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the setting</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
+				<h2>Enumeration members</h2>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="agent" class="tsd-anchor"></a>
+					<h3>AGENT</h3>
+					<div class="tsd-signature tsd-kind-icon">AGENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;agent&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/1af3a59/src/definition/livechat/ILivechatTransferEventContext.ts#L6">definition/livechat/ILivechatTransferEventContext.ts:6</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-enum-member tsd-parent-kind-enum">
+					<a name="department" class="tsd-anchor"></a>
+					<h3>DEPARTMENT</h3>
+					<div class="tsd-signature tsd-kind-icon">DEPARTMENT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol"> =&nbsp;&quot;department&quot;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/1af3a59/src/definition/livechat/ILivechatTransferEventContext.ts#L7">definition/livechat/ILivechatTransferEventContext.ts:7</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 		</div>
@@ -145,11 +116,14 @@
 				<ul class="before-current">
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="isettingsextend.html" class="tsd-kind-icon">ISettings<wbr>Extend</a>
+					<li class="current tsd-kind-enum">
+						<a href="livechattransfereventtype.html" class="tsd-kind-icon">Livechat<wbr>Transfer<wbr>Event<wbr>Type</a>
 						<ul>
-							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="isettingsextend.html#providesetting" class="tsd-kind-icon">provide<wbr>Setting</a>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="livechattransfereventtype.html#agent" class="tsd-kind-icon">AGENT</a>
+							</li>
+							<li class=" tsd-kind-enum-member tsd-parent-kind-enum">
+								<a href="livechattransfereventtype.html#department" class="tsd-kind-icon">DEPARTMENT</a>
 							</li>
 						</ul>
 					</li>
