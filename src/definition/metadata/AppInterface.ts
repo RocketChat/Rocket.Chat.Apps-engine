@@ -33,4 +33,5 @@ export enum AppInterface {
     ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
     IPostLivechatAgentAssigned = 'IPostLivechatAgentAssigned',
     IPostLivechatAgentUnassigned = 'IPostLivechatAgentUnassigned',
+    IPostLivechatRoomTransferred = 'IPostLivechatRoomTransferred',
 }
