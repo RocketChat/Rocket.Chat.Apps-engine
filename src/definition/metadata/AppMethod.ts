@@ -61,4 +61,5 @@ export enum AppMethod {
     EXECUTE_POST_LIVECHAT_ROOM_CLOSED = 'executePostLivechatRoomClosed',
     EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED = 'executePostLivechatAgentAssigned',
     EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED = 'executePostLivechatAgentUnassigned',
+    EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED = 'executePostLivechatRoomTransferred',
 }

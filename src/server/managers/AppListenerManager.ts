@@ -1,6 +1,6 @@
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatEventContext, ILivechatRoom } from '../../definition/livechat';
+import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
@@ -22,6 +22,20 @@ import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
+
+type EventData = (
+    IMessage |
+    IRoom |
+    IUser |
+    ILivechatRoom |
+    IUIKitIncomingInteraction |
+    IExternalComponent |
+    ILivechatEventContext |
+    IRoomUserJoinedContext |
+    ILivechatTransferEventContext
+);
+
+type EventReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom;
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -114,8 +128,7 @@ export class AppListenerManager {
         return !!(lockedEventList && lockedEventList.size);
     }
 
-    // tslint:disable-next-line
-    public async executeListener(int: AppInterface, data: IMessage | IRoom | IUser | ILivechatRoom | IUIKitIncomingInteraction | IExternalComponent | ILivechatEventContext | IRoomUserJoinedContext): Promise<void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom> {
+    public async executeListener(int: AppInterface, data: EventData): Promise<EventReturn> {
         if (this.isEventBlocked(int)) {
             throw new EssentialAppDisabledException('There is one or more apps that are essential to this event but are disabled');
         }
@@ -187,6 +200,8 @@ export class AppListenerManager {
                 return this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatAgentUnassigned:
                 return this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
+            case AppInterface.IPostLivechatRoomTransferred:
+                return this.executePostLivechatRoomTransferred(data as ILivechatTransferEventContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -935,5 +950,26 @@ export class AppListenerManager {
                 this.am.getModifier(appId),
             );
         }
+    }
+
+    private async executePostLivechatRoomTransferred(data: ILivechatTransferEventContext): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomTransferred)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED,
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+
     }
 }

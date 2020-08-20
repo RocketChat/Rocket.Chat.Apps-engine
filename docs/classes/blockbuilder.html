@@ -88,6 +88,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="blockbuilder.html#addactionsblock" class="tsd-kind-icon">add<wbr>Actions<wbr>Block</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="blockbuilder.html#addconditionalblock" class="tsd-kind-icon">add<wbr>Conditional<wbr>Block</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="blockbuilder.html#addcontextblock" class="tsd-kind-icon">add<wbr>Context<wbr>Block</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="blockbuilder.html#adddividerblock" class="tsd-kind-icon">add<wbr>Divider<wbr>Block</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="blockbuilder.html#addimageblock" class="tsd-kind-icon">add<wbr>Image<wbr>Block</a></li>
@@ -119,7 +120,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L37">definition/uikit/blocks/BlockBuilder.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L37">definition/uikit/blocks/BlockBuilder.ts:37</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -145,13 +146,39 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L61">definition/uikit/blocks/BlockBuilder.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L61">definition/uikit/blocks/BlockBuilder.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>block: <a href="../globals.html#actionsblockparam" class="tsd-signature-type">ActionsBlockParam</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="addconditionalblock" class="tsd-anchor"></a>
+					<h3>add<wbr>Conditional<wbr>Block</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">add<wbr>Conditional<wbr>Block<span class="tsd-signature-symbol">(</span>innerBlocks<span class="tsd-signature-symbol">: </span><a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/iblock.html" class="tsd-signature-type">IBlock</a><span class="tsd-signature-symbol">&gt;</span>, condition<span class="tsd-signature-symbol">?: </span><a href="../interfaces/iconditionalblockfilters.html" class="tsd-signature-type">IConditionalBlockFilters</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L79">definition/uikit/blocks/BlockBuilder.ts:79</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>innerBlocks: <a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/iblock.html" class="tsd-signature-type">IBlock</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> condition: <a href="../interfaces/iconditionalblockfilters.html" class="tsd-signature-type">IConditionalBlockFilters</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a></h4>
@@ -168,7 +195,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L67">definition/uikit/blocks/BlockBuilder.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L67">definition/uikit/blocks/BlockBuilder.ts:67</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -191,7 +218,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L55">definition/uikit/blocks/BlockBuilder.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L55">definition/uikit/blocks/BlockBuilder.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="blockbuilder.html" class="tsd-signature-type">BlockBuilder</a></h4>
@@ -208,7 +235,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L49">definition/uikit/blocks/BlockBuilder.ts:49</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L49">definition/uikit/blocks/BlockBuilder.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -231,7 +258,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L73">definition/uikit/blocks/BlockBuilder.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L73">definition/uikit/blocks/BlockBuilder.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -254,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L43">definition/uikit/blocks/BlockBuilder.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L43">definition/uikit/blocks/BlockBuilder.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -277,7 +304,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L79">definition/uikit/blocks/BlockBuilder.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L87">definition/uikit/blocks/BlockBuilder.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/iblock.html" class="tsd-signature-type">IBlock</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -294,7 +321,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L98">definition/uikit/blocks/BlockBuilder.ts:98</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L106">definition/uikit/blocks/BlockBuilder.ts:106</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -317,7 +344,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L105">definition/uikit/blocks/BlockBuilder.ts:105</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L113">definition/uikit/blocks/BlockBuilder.ts:113</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -340,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L91">definition/uikit/blocks/BlockBuilder.ts:91</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L99">definition/uikit/blocks/BlockBuilder.ts:99</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -363,7 +390,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L133">definition/uikit/blocks/BlockBuilder.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L141">definition/uikit/blocks/BlockBuilder.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -386,7 +413,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L112">definition/uikit/blocks/BlockBuilder.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L120">definition/uikit/blocks/BlockBuilder.ts:120</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -409,7 +436,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L119">definition/uikit/blocks/BlockBuilder.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L127">definition/uikit/blocks/BlockBuilder.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -432,7 +459,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L83">definition/uikit/blocks/BlockBuilder.ts:83</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L91">definition/uikit/blocks/BlockBuilder.ts:91</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,7 +485,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a7abb23/src/definition/uikit/blocks/BlockBuilder.ts#L126">definition/uikit/blocks/BlockBuilder.ts:126</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/7ed5256/src/definition/uikit/blocks/BlockBuilder.ts#L134">definition/uikit/blocks/BlockBuilder.ts:134</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -493,6 +520,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="blockbuilder.html#addactionsblock" class="tsd-kind-icon">add<wbr>Actions<wbr>Block</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="blockbuilder.html#addconditionalblock" class="tsd-kind-icon">add<wbr>Conditional<wbr>Block</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="blockbuilder.html#addcontextblock" class="tsd-kind-icon">add<wbr>Context<wbr>Block</a>
