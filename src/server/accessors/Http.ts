@@ -30,6 +30,10 @@ export class Http implements IHttp {
         return this._processHandler(url, RequestMethod.DELETE, options);
     }
 
+    public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse>  {
+        return this._processHandler(url, RequestMethod.PATCH, options);
+    }
+
     private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
         let request = options || { };
 
