@@ -13,6 +13,8 @@ export interface IHttp {
     put(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
 
     del(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+
+    patch(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
 }
 
 export enum RequestMethod {
