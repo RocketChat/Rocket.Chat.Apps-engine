@@ -387,7 +387,11 @@ export class AppManager {
             info: result.info,
             status: AppStatus.UNKNOWN,
             zip: appPackage.toString('base64'),
-            compiled: result.files,
+            // tslint:disable-next-line: max-line-length
+            compiled: Object.entries(result.files).reduce(
+                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
+                {} as {[key: string]: string},
+            ),
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
