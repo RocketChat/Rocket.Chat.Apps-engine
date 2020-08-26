@@ -41,6 +41,8 @@ export class AppPackageParser {
             throw new Error('Invalid App package. No "app.json" file.');
         }
 
+        info.classFile = info.classFile.replace('.ts', '.js');
+
         if (!semver.satisfies(this.appsEngineVersion, info.requiredApiVersion)) {
             throw new RequiredApiVersionError(info, this.appsEngineVersion);
         }
@@ -48,7 +50,7 @@ export class AppPackageParser {
         // Load all of the TypeScript only files
         const files: { [s: string]: string } = {};
 
-        zip.getEntries().filter((entry) => !entry.isDirectory).forEach((entry) => {
+        zip.getEntries().filter((entry) => !entry.isDirectory && entry.entryName.endsWith('.js')).forEach((entry) => {
             const norm = path.normalize(entry.entryName);
 
             // Files which start with `.` are supposed to be hidden
@@ -74,7 +76,9 @@ export class AppPackageParser {
 
         const implemented = new AppImplements();
 
-        info.implements.forEach((interfaceName) => implemented.doesImplement(interfaceName));
+        if (Array.isArray(info.implements)) {
+            info.implements.forEach((interfaceName) => implemented.doesImplement(interfaceName));
+        }
 
         return {
             info,
