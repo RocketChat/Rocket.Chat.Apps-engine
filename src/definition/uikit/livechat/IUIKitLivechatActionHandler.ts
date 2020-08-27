@@ -3,7 +3,7 @@ import { AppMethod } from '../../metadata';
 import { IUIKitResponse } from '../IUIKitInteractionType';
 import { UIKitLivechatBlockInteractionContext } from './UIKitLivechatInteractionContext';
 
-/** Handler for after a message is sent. */
+/** Handler for UIKit interactions in the livechat widget. */
 export interface IUIKitLivechatInteractionHandler {
     /**
      * Method called when a block action is invoked.
