@@ -1,7 +1,7 @@
 // tslint:disable:max-classes-per-file
 import { IUIKitBaseIncomingInteraction } from '../UIKitIncomingInteractionTypes';
 import { UIKitInteractionResponder } from '../UIKitInteractionResponder';
-import { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction, IUIKitLivechatViewCloseIncomingInteraction, IUIKitLivechatViewSubmitIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
+import { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
 
 export abstract class UIKitLivechatInteractionContext {
     private baseContext: IUIKitLivechatBaseIncomingInteraction;
@@ -27,26 +27,6 @@ export class UIKitLivechatBlockInteractionContext extends UIKitLivechatInteracti
     }
 
     public getInteractionData(): IUIKitLivechatBlockIncomingInteraction {
-        return this.interactionData;
-    }
-}
-
-export class UIKitLivechatViewSubmitInteractionContext extends UIKitLivechatInteractionContext {
-    constructor(private readonly interactionData: IUIKitLivechatViewSubmitIncomingInteraction) {
-        super(interactionData);
-    }
-
-    public getInteractionData(): IUIKitLivechatViewSubmitIncomingInteraction {
-        return this.interactionData;
-    }
-}
-
-export class UIKitLivechatViewCloseInteractionContext extends UIKitLivechatInteractionContext {
-    constructor(private readonly interactionData: IUIKitLivechatViewCloseIncomingInteraction) {
-        super(interactionData);
-    }
-
-    public getInteractionData(): IUIKitLivechatViewCloseIncomingInteraction {
         return this.interactionData;
     }
 }

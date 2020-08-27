@@ -5,7 +5,7 @@ import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
-import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext, UIKitLivechatViewCloseInteractionContext, UIKitLivechatViewSubmitInteractionContext } from '../../definition/uikit/livechat';
+import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
@@ -863,10 +863,6 @@ export class AppListenerManager {
             switch (interactionType) {
                 case UIKitIncomingInteractionType.BLOCK:
                     return AppMethod.UIKIT_LIVECHAT_BLOCK_ACTION;
-                case UIKitIncomingInteractionType.VIEW_SUBMIT:
-                    return AppMethod.UIKIT_LIVECHAT_VIEW_SUBMIT;
-                case UIKitIncomingInteractionType.VIEW_CLOSED:
-                    return AppMethod.UIKIT_LIVECHAT_VIEW_CLOSE;
             }
         })(type);
 
@@ -899,30 +895,6 @@ export class AppListenerManager {
                         value,
                         message,
                         container: container as IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer,
-                    });
-                }
-                case UIKitIncomingInteractionType.VIEW_SUBMIT: {
-                    const { view } = interactionData.payload as { view: IUIKitView };
-
-                    return new UIKitLivechatViewSubmitInteractionContext({
-                        appId,
-                        actionId,
-                        view,
-                        room,
-                        triggerId,
-                        visitor,
-                    });
-                }
-                case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
-
-                    return new UIKitLivechatViewCloseInteractionContext({
-                        appId,
-                        actionId,
-                        view,
-                        room,
-                        isCleared,
-                        visitor,
                     });
                 }
             }
