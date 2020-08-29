@@ -1,6 +1,6 @@
 import * as uuid from 'uuid/v1';
 import { Omit } from '../../../lib/utils';
-import { BlockType, IActionsBlock, IBlock, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
+import { BlockType, IActionsBlock, IBlock, IConditionalBlock, IConditionalBlockFilters, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
 import {
     BlockElementType,
     IBlockElement,
@@ -72,6 +72,14 @@ export class BlockBuilder {
 
     public addInputBlock(block: InputBlockParam): BlockBuilder {
         this.addBlock({ type: BlockType.INPUT, ...block } as IInputBlock);
+
+        return this;
+    }
+
+    public addConditionalBlock(innerBlocks: BlockBuilder | Array<IBlock>, condition?: IConditionalBlockFilters): BlockBuilder {
+        const render = innerBlocks instanceof BlockBuilder ? innerBlocks.getBlocks() : innerBlocks;
+
+        this.addBlock({ type: BlockType.CONDITIONAL, render, when: condition } as IConditionalBlock);
 
         return this;
     }
