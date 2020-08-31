@@ -6,6 +6,7 @@
   "typings": "index",
   "scripts": {
     "start": "gulp",
+    "test": "npm run unit-tests",
     "lint": "tslint --project tsconfig.json",
     "fix-lint": "tslint --project tsconfig.json --fix",
     "bundle": "gulp bundle",
