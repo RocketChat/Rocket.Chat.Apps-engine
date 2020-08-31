@@ -5,6 +5,7 @@ import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
@@ -29,6 +30,7 @@ type EventData = (
     IUser |
     ILivechatRoom |
     IUIKitIncomingInteraction |
+    IUIKitLivechatIncomingInteraction |
     IExternalComponent |
     ILivechatEventContext |
     IRoomUserJoinedContext |
@@ -186,6 +188,8 @@ export class AppListenerManager {
                 return;
             case AppInterface.IUIKitInteractionHandler:
                 return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
+            case AppInterface.IUIKitLivechatInteractionHandler:
+                return this.executeUIKitLivechatInteraction(data as IUIKitLivechatIncomingInteraction);
             // Livechat
             case AppInterface.IPostLivechatRoomStarted:
                 return this.executePostLivechatRoomStarted(data as ILivechatRoom);
@@ -838,6 +842,59 @@ export class AppListenerManager {
                         room,
                         isCleared,
                         user,
+                    });
+                }
+            }
+        })(type, data);
+
+        return app.call(method,
+            interactionContext,
+            this.am.getReader(appId),
+            this.am.getHttp(appId),
+            this.am.getPersistence(appId),
+            this.am.getModifier(appId),
+        );
+    }
+
+    private async executeUIKitLivechatInteraction(data: IUIKitLivechatIncomingInteraction): Promise<IUIKitResponse> {
+        const { appId, type } = data;
+
+        const method = ((interactionType: string) => {
+            switch (interactionType) {
+                case UIKitIncomingInteractionType.BLOCK:
+                    return AppMethod.UIKIT_LIVECHAT_BLOCK_ACTION;
+            }
+        })(type);
+
+        const app = this.manager.getOneById(appId);
+        if (!app.hasMethod(method)) {
+            return;
+        }
+
+        const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitLivechatIncomingInteraction) => {
+            const {
+                actionId,
+                message,
+                visitor,
+                room,
+                triggerId,
+                container,
+            } = interactionData;
+
+            switch (interactionType) {
+                case UIKitIncomingInteractionType.BLOCK: {
+                    const { value, blockId } = interactionData.payload as { value: string; blockId: string };
+
+                    return new UIKitLivechatBlockInteractionContext({
+                        appId,
+                        actionId,
+                        blockId,
+                        visitor,
+                        room,
+                        triggerId,
+                        value,
+                        message,
+                        container: container as IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer,
                     });
                 }
             }
