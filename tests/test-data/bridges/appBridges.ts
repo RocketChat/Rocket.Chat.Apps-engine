@@ -10,6 +10,7 @@ import {
     IMessageBridge,
     IPersistenceBridge,
     IRoomBridge,
+    IRoomSubscriptionBridge,
     IServerSettingBridge,
     IUiInteractionBridge,
     IUploadBridge,
@@ -27,6 +28,7 @@ import { TestsMessageBridge } from './messageBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
+import { TestsSubscriptionBridge } from './subscriptionBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
@@ -41,6 +43,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly msgBridge: TestsMessageBridge;
     private readonly persisBridge: TestsPersisBridge;
     private readonly roomBridge: TestsRoomBridge;
+    private readonly subscriptionBridge: TestsSubscriptionBridge;
     private readonly internalBridge: TestsInternalBridge;
     private readonly userBridge: TestsUserBridge;
     private readonly httpBridge: TestsHttpBridge;
@@ -59,6 +62,7 @@ export class TestsAppBridges extends AppBridges {
         this.msgBridge = new TestsMessageBridge();
         this.persisBridge = new TestsPersisBridge();
         this.roomBridge = new TestsRoomBridge();
+        this.subscriptionBridge = new TestsSubscriptionBridge();
         this.internalBridge = new TestsInternalBridge();
         this.userBridge = new TestsUserBridge();
         this.httpBridge = new TestsHttpBridge();
@@ -109,6 +113,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getRoomBridge(): IRoomBridge {
         return this.roomBridge;
+    }
+
+    public getRoomSubscriptionBridge(): IRoomSubscriptionBridge {
+        return this.subscriptionBridge;
     }
 
     public getInternalBridge(): IInternalBridge {

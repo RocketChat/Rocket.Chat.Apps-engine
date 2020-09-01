@@ -23,6 +23,7 @@ export class AppCompilerTestFixture {
             emitDecoratorMetadata: true,
             experimentalDecorators: true,
             traceResolution: false,
+            lib: ['lib.esnext.d.ts'],
         };
 
         Expect((compiler as any).compilerOptions).toEqual(expectedOptions);

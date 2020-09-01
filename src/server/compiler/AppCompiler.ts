@@ -36,6 +36,7 @@ export class AppCompiler {
             types: ['node'],
             // Set this to true if you would like to see the module resolution process
             traceResolution: false,
+            lib: ['lib.esnext.d.ts'],
         };
 
         this.libraryFiles = {};
@@ -122,7 +123,7 @@ export class AppCompiler {
             return resolvedModules.push(rs.resolvedModule);
         }
 
-        console.log(`Failed to resolve module: ${ moduleName }`);
+        console.warn(`Failed to resolve module: ${ moduleName }`);
     }
 
     /**
@@ -195,7 +196,7 @@ export class AppCompiler {
 
                 if (moduleNames.length > resolvedModules.length) {
                     const failedCount = moduleNames.length - resolvedModules.length;
-                    console.log(`Failed to resolved ${ failedCount } modules for ${ info.name } v${ info.version }!`);
+                    console.warn(`Failed to resolved ${ failedCount } modules for ${ info.name } v${ info.version }!`);
                 }
 
                 return resolvedModules;

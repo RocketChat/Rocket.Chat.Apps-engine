@@ -11,6 +11,7 @@ import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
+import { IRoomSubscriptionBridge } from './IRoomSubscriptionBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
@@ -29,6 +30,7 @@ export {
     IAppCommandBridge,
     IAppApiBridge,
     IRoomBridge,
+    IRoomSubscriptionBridge,
     IInternalBridge,
     IServerSettingBridge,
     IUserBridge,

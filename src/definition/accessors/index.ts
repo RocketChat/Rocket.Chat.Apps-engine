@@ -36,6 +36,7 @@ import { IRead } from './IRead';
 import { IRoomBuilder } from './IRoomBuilder';
 import { IRoomExtender } from './IRoomExtender';
 import { IRoomRead } from './IRoomRead';
+import { IRoomSubscriptionRead } from './IRoomSubscriptionRead';
 import { IServerSettingRead } from './IServerSettingRead';
 import { IServerSettingsModify } from './IServerSettingsModify';
 import { ISettingRead } from './ISettingRead';
@@ -82,6 +83,7 @@ export {
     IRoomBuilder,
     IRoomExtender,
     IRoomRead,
+    IRoomSubscriptionRead,
     IServerSettingRead,
     IServerSettingsModify,
     ISettingRead,

@@ -25,6 +25,7 @@ import {
     PersistenceRead,
     Reader,
     RoomRead,
+    RoomSubscriptionRead,
     ServerSettingRead,
     ServerSettingsModify,
     SettingRead,
@@ -128,12 +129,13 @@ export class AppAccessorManager {
             const msg = new MessageRead(this.bridges.getMessageBridge(), appId);
             const persist = new PersistenceRead(this.bridges.getPersistenceBridge(), appId);
             const room = new RoomRead(this.bridges.getRoomBridge(), appId);
+            const subscr = new RoomSubscriptionRead(this.bridges.getRoomSubscriptionBridge(), appId);
             const user = new UserRead(this.bridges.getUserBridge(), appId);
             const noti = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload));
+            this.readers.set(appId, new Reader(env, msg, persist, room, subscr, user, noti, livechat, upload));
         }
 
         return this.readers.get(appId);

@@ -10,6 +10,7 @@ import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
 import { IRoomBridge } from './IRoomBridge';
+import { IRoomSubscriptionBridge } from './IRoomSubscriptionBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
@@ -27,6 +28,7 @@ export abstract class AppBridges {
     public abstract getPersistenceBridge(): IPersistenceBridge;
     public abstract getAppActivationBridge(): IAppActivationBridge;
     public abstract getRoomBridge(): IRoomBridge;
+    public abstract getRoomSubscriptionBridge(): IRoomSubscriptionBridge;
     public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): IServerSettingBridge;
     public abstract getUploadBridge(): IUploadBridge;

@@ -1,0 +1,1 @@
+export { IRoomSubscription } from './IRoomSubscription';

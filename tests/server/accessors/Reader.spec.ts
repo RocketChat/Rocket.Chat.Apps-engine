@@ -1,5 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
+import { IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IRoomSubscriptionRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
 
 import { Reader } from '../../../src/server/accessors';
 
@@ -8,6 +8,7 @@ export class ReaderAccessorTestFixture {
     private msg: IMessageRead;
     private pr: IPersistenceRead;
     private rm: IRoomRead;
+    private sb: IRoomSubscriptionRead;
     private ur: IUserRead;
     private ni: INotifier;
     private livechat: ILivechatRead;
@@ -19,6 +20,7 @@ export class ReaderAccessorTestFixture {
         this.msg = {} as IMessageRead;
         this.pr = {} as IPersistenceRead;
         this.rm = {} as IRoomRead;
+        this.sb = {} as IRoomSubscriptionRead;
         this.ur = {} as IUserRead;
         this.ni = {} as INotifier;
         this.livechat = {} as ILivechatRead;
@@ -27,14 +29,15 @@ export class ReaderAccessorTestFixture {
 
     @Test()
     public useReader() {
-        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload)).not.toThrow();
+        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.sb, this.ur, this.ni, this.livechat, this.upload)).not.toThrow();
 
-        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload);
+        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.sb, this.ur, this.ni, this.livechat, this.upload);
         Expect(rd.getEnvironmentReader()).toBeDefined();
         Expect(rd.getMessageReader()).toBeDefined();
         Expect(rd.getNotifier()).toBeDefined();
         Expect(rd.getPersistenceReader()).toBeDefined();
         Expect(rd.getRoomReader()).toBeDefined();
+        Expect(rd.getRoomSubscriptionReader()).toBeDefined();
         Expect(rd.getUserReader()).toBeDefined();
         Expect(rd.getLivechatReader()).toBeDefined();
         Expect(rd.getUploadReader()).toBeDefined();

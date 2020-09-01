@@ -22,6 +22,7 @@ import { Reader } from './Reader';
 import { RoomBuilder } from './RoomBuilder';
 import { RoomExtender } from './RoomExtender';
 import { RoomRead } from './RoomRead';
+import { RoomSubscriptionRead } from './RoomSubscriptionRead';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
 import { SettingRead } from './SettingRead';
@@ -57,6 +58,7 @@ export {
     RoomBuilder,
     RoomExtender,
     RoomRead,
+    RoomSubscriptionRead,
     ServerSettingRead,
     ServerSettingsModify,
     SettingRead,
