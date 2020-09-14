@@ -25,5 +25,5 @@ export interface ILivechatUpdater {
      * @param value The value to be set
      * @param overwrite whether or not to overwrite the existing values
      */
-    setCustomFields(token: IVisitor['token'], key: string, value: string, overwrite?: boolean): Promise<any>;
+    setCustomFields(token: IVisitor['token'], key: string, value: string, overwrite: boolean): Promise<any>;
 }
