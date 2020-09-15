@@ -13,7 +13,8 @@ export class LivechatUpdater implements ILivechatUpdater {
         return this.bridges.getLivechatBridge().closeRoom(room, comment, this.appId);
     }
 
-    public setCustomFields(token: IVisitor['token'], key: string, value: string, overwrite: boolean): Promise<any> {
-        return this.bridges.getLivechatBridge().setCustomFields({ token, key, value, overwrite }, this.appId);
+    public setCustomFields(token: IVisitor['token'], key: string, value: string, overwrite: boolean): Promise<boolean> {
+        return this.bridges.getLivechatBridge().setCustomFields({ token, key, value, overwrite }, this.appId)
+            .then((result) => result > 0);
     }
 }

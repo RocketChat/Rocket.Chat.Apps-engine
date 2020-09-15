@@ -28,5 +28,5 @@ export interface ILivechatBridge {
     findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
     findDepartmentByIdOrName(value: string, appdId: string): Promise<IDepartment | undefined>;
 
-    setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<any>;
+    setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<boolean>;
 }

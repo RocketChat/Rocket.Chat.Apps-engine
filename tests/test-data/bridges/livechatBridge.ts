@@ -52,7 +52,7 @@ export class TestLivechatBridge implements ILivechatBridge {
     public findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
         throw new Error('Method not implemented');
     }
-    public setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<any> {
+    public setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
 }
