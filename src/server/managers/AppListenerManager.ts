@@ -206,6 +206,8 @@ export class AppListenerManager {
                 return this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatRoomTransferred:
                 return this.executePostLivechatRoomTransferred(data as ILivechatTransferEventContext);
+            case AppInterface.IPostLivechatGuestSaved:
+                return this.executePostLivechatGuestSaved(data as ILivechatEventContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1027,6 +1029,24 @@ export class AppListenerManager {
                 this.am.getModifier(appId),
             );
         }
+    }
 
+    private async executePostLivechatGuestSaved(data: ILivechatEventContext): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
+                           cfLivechatRoom,
+                           this.am.getReader(appId),
+                           this.am.getHttp(appId),
+                           this.am.getPersistence(appId),
+                          );
+        }
     }
 }

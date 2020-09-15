@@ -7,6 +7,7 @@ import { ILivechatTransferData } from './ILivechatTransferData';
 import { ILivechatTransferEventContext, LivechatTransferEventType } from './ILivechatTransferEventContext';
 import { IPostLivechatAgentAssigned } from './IPostLivechatAgentAssigned';
 import { IPostLivechatAgentUnassigned } from './IPostLivechatAgentUnassigned';
+import { IPostLivechatGuestSaved } from './IPostLivechatGuestSaved';
 import { IPostLivechatRoomClosed } from './IPostLivechatRoomClosed';
 import { IPostLivechatRoomStarted } from './IPostLivechatRoomStarted';
 import { IPostLivechatRoomTransferred } from './IPostLivechatRoomTransferred';
@@ -20,6 +21,7 @@ export {
     ILivechatRoom,
     IPostLivechatAgentAssigned,
     IPostLivechatAgentUnassigned,
+    IPostLivechatGuestSaved,
     IPostLivechatRoomStarted,
     IPostLivechatRoomClosed,
     IPostLivechatRoomTransferred,
