@@ -1,6 +1,6 @@
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext } from '../../definition/livechat';
+import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
@@ -28,6 +28,7 @@ type EventData = (
     IMessage |
     IRoom |
     IUser |
+    IVisitor |
     ILivechatRoom |
     IUIKitIncomingInteraction |
     IUIKitLivechatIncomingInteraction |
@@ -209,7 +210,7 @@ export class AppListenerManager {
             case AppInterface.IPostLivechatRoomTransferred:
                 return this.executePostLivechatRoomTransferred(data as ILivechatTransferEventContext);
             case AppInterface.IPostLivechatGuestSaved:
-                return this.executePostLivechatGuestSaved(data as ILivechatEventContext);
+                return this.executePostLivechatGuestSaved(data as IVisitor);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1033,7 +1034,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executePostLivechatGuestSaved(data: ILivechatEventContext): Promise<void> {
+    private async executePostLivechatGuestSaved(data: IVisitor): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
