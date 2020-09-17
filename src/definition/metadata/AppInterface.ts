@@ -36,4 +36,5 @@ export enum AppInterface {
     IPostLivechatAgentUnassigned = 'IPostLivechatAgentUnassigned',
     IPostLivechatRoomTransferred = 'IPostLivechatRoomTransferred',
     IPostLivechatGuestSaved = 'IPostLivechatGuestSaved',
+    IPostLivechatRoomSaved = 'IPostLivechatRoomSaved',
 }

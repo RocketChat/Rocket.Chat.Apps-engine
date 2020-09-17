@@ -200,6 +200,8 @@ export class AppListenerManager {
                 return this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomClosed:
                 return this.executePostLivechatRoomClosed(data as ILivechatRoom);
+            case AppInterface.IPostLivechatRoomSaved:
+                return this.executePostLivechatRoomSaved(data as ILivechatRoom);
             case AppInterface.IPostLivechatAgentAssigned:
                 return this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatAgentUnassigned:
@@ -1042,6 +1044,25 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
+                           cfLivechatRoom,
+                           this.am.getReader(appId),
+                           this.am.getHttp(appId),
+                           this.am.getPersistence(appId),
+                          );
+        }
+    }
+
+    private async executePostLivechatRoomSaved(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomSaved)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
                            cfLivechatRoom,
                            this.am.getReader(appId),
                            this.am.getHttp(appId),
