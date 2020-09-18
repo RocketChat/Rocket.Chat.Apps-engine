@@ -1,6 +1,6 @@
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext } from '../../definition/livechat';
+import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
@@ -28,6 +28,7 @@ type EventData = (
     IMessage |
     IRoom |
     IUser |
+    IVisitor |
     ILivechatRoom |
     IUIKitIncomingInteraction |
     IUIKitLivechatIncomingInteraction |
@@ -200,12 +201,16 @@ export class AppListenerManager {
                 return this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomClosed:
                 return this.executePostLivechatRoomClosed(data as ILivechatRoom);
+            case AppInterface.IPostLivechatRoomSaved:
+                return this.executePostLivechatRoomSaved(data as ILivechatRoom);
             case AppInterface.IPostLivechatAgentAssigned:
                 return this.executePostLivechatAgentAssigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatAgentUnassigned:
                 return this.executePostLivechatAgentUnassigned(data as ILivechatEventContext);
             case AppInterface.IPostLivechatRoomTransferred:
                 return this.executePostLivechatRoomTransferred(data as ILivechatTransferEventContext);
+            case AppInterface.IPostLivechatGuestSaved:
+                return this.executePostLivechatGuestSaved(data as IVisitor);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1027,6 +1032,45 @@ export class AppListenerManager {
                 this.am.getModifier(appId),
             );
         }
+    }
 
+    private async executePostLivechatGuestSaved(data: IVisitor): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
+                           cfLivechatRoom,
+                           this.am.getReader(appId),
+                           this.am.getHttp(appId),
+                           this.am.getPersistence(appId),
+                           this.am.getModifier(appId),
+                          );
+        }
+    }
+
+    private async executePostLivechatRoomSaved(data: ILivechatRoom): Promise<void> {
+        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomSaved)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
+                           cfLivechatRoom,
+                           this.am.getReader(appId),
+                           this.am.getHttp(appId),
+                           this.am.getPersistence(appId),
+                           this.am.getModifier(appId),
+                          );
+        }
     }
 }
