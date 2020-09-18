@@ -19,7 +19,6 @@ export class DisabledAppTestFixture {
         },
         classFile: 'TestingApp.ts',
         iconFile: 'testing.jpg',
-        implements: [],
     };
 
     @AsyncTest()

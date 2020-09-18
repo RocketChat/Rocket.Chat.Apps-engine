@@ -164,12 +164,19 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const result = await this.getParser().unpackageApp(Buffer.from(item.zip, 'base64'));
+                const result = await this.getParser().parseZip(this.getCompiler(), item.zip);
 
                 aff.setAppInfo(result.info);
                 aff.setImplementedInterfaces(result.implemented.getValues());
+                aff.setCompilerErrors(result.compilerErrors);
 
-                item.compiled = result.files;
+                if (result.compilerErrors.length > 0) {
+                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
+
+                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
+                }
+
+                item.compiled = result.compiledFiles;
 
                 const app = this.getCompiler().toSandBox(this, item);
                 this.apps.set(item.id, app);
@@ -375,23 +382,24 @@ export class AppManager {
         return true;
     }
 
-    public async add(appPackage: Buffer, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().unpackageApp(appPackage);
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
 
         const compiled = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
-            zip: appPackage.toString('base64'),
-            // tslint:disable-next-line: max-line-length
-            compiled: Object.entries(result.files).reduce(
-                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as {[key: string]: string},
-            ),
+            zip: zipContentsBase64d,
+            compiled: result.compiledFiles,
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
@@ -471,12 +479,17 @@ export class AppManager {
         return app;
     }
 
-    public async update(appPackage: Buffer): Promise<AppFabricationFulfillment> {
+    public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().unpackageApp(appPackage);
+        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
+        aff.setCompilerErrors(result.compilerErrors);
+
+        if (result.compilerErrors.length > 0) {
+            return aff;
+        }
 
         const old = await this.storage.retrieveOne(result.info.id);
 
@@ -493,8 +506,8 @@ export class AppManager {
             id: result.info.id,
             info: result.info,
             status: this.apps.get(old.id).getStatus(),
-            zip: appPackage.toString('base64'),
-            compiled: result.files,
+            zip: zipContentsBase64d,
+            compiled: result.compiledFiles,
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
