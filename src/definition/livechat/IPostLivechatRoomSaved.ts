@@ -16,6 +16,6 @@ export interface IPostLivechatRoomSaved {
      * @param modify An accessor to the modifier
      */
     [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED](
-        context: ILivechatRoom, read: IRead, http: IHttp, persis: IPersistence, modify?: IModify,
+        context: ILivechatRoom, read: IRead, http: IHttp, persis: IPersistence, modify: IModify,
     ): Promise<void>;
 }
