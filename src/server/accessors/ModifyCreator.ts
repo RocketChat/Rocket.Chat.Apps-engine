@@ -5,6 +5,7 @@ import {
     IMessageBuilder,
     IModifyCreator,
     IRoomBuilder,
+    IUploadCreator,
 } from '../../definition/accessors';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
@@ -17,16 +18,23 @@ import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
+import { UploadCreator } from './UploadCreator';
 
 export class ModifyCreator implements IModifyCreator {
     private livechatCreator: LivechatCreator;
+    private uploadCreator: UploadCreator;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.livechatCreator = new LivechatCreator(bridges, appId);
+        this.uploadCreator = new UploadCreator(bridges, appId);
     }
 
     public getLivechatCreator(): ILivechatCreator {
         return this.livechatCreator;
+    }
+
+    public getUploadCreator(): IUploadCreator {
+        return this.uploadCreator;
     }
 
     public getBlockBuilder(): BlockBuilder {

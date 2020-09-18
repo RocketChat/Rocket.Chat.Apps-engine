@@ -6,16 +6,7 @@ import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
 import { IEnvironmentRead } from './IEnvironmentRead';
 import { IExternalComponentsExtend } from './IExternalComponentsExtend';
-import {
-    HttpStatusCode,
-    IHttp,
-    IHttpExtend,
-    IHttpPreRequestHandler,
-    IHttpPreResponseHandler,
-    IHttpRequest,
-    IHttpResponse,
-    RequestMethod,
-} from './IHttp';
+import { HttpStatusCode, IHttp, IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, RequestMethod } from './IHttp';
 import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { ILivechatRead } from './ILivechatRead';
@@ -43,6 +34,7 @@ import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { ISlashCommandsModify } from './ISlashCommandsModify';
 import { IUIController } from './IUIController';
+import { IUploadCreator } from './IUploadCreator';
 import { IUploadRead } from './IUploadRead';
 import { IUserBuilder } from './IUserBuilder';
 import { IUserRead } from './IUserRead';
@@ -90,6 +82,7 @@ export {
     ISlashCommandsModify,
     IUIController,
     IUploadRead,
+    IUploadCreator,
     IUserBuilder,
     IUserRead,
     LogMessageSeverity,
