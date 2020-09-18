@@ -11,4 +11,5 @@ export interface IVisitor {
     phone?: Array<IVisitorPhone>;
     visitorEmails?: Array<IVisitorEmail>;
     customFields?: { [key: string]: any };
+    livechatData?: { [key: string]: any };
 }
