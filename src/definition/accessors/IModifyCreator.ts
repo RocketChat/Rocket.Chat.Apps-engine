@@ -7,13 +7,18 @@ import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';
 import { IRoomBuilder } from './IRoomBuilder';
-
+import { IUploadCreator } from './IUploadCreator';
 export interface IModifyCreator {
     /**
      * Get the creator object responsible for the
      * Livechat integrations
      */
     getLivechatCreator(): ILivechatCreator;
+
+    /**
+     * Get the creator object responsible for the upload.
+     */
+    getUploadCreator(): IUploadCreator;
 
     /**
      * Gets a new instance of a BlockBuilder
