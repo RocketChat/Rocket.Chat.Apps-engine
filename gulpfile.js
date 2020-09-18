@@ -29,7 +29,20 @@ function lint_ts() {
     return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
 }
 
+function perform_patches() {
+    const FileTypeDeClarationPath = './node_modules/file-type/core.d.ts';
+
+    if (fs.existsSync(FileTypeDeClarationPath)) {
+        const patched = fs.readFileSync(FileTypeDeClarationPath)
+            .toString() // Our TypeScript version is too old that doesn't support ReadOnly type
+            .replace('readonly core.MimeType[]', 'core.MimeType[]');
+        fs.writeFileSync(FileTypeDeClarationPath, patched);
+    }
+}
+
 function compile_ts() {
+    perform_patches();
+
     return tsp.src().pipe(sourcemaps.init())
             .pipe(tsp())
             .pipe(sourcemaps.write('.'))
