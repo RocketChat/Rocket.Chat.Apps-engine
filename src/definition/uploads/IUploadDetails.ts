@@ -19,4 +19,8 @@ export interface IUploadDetails {
      * The id of the user that performed the upload
      */
     userId: string;
+    /**
+     * The token of a Livechat visitor
+     */
+    visitorToken?: string;
 }
