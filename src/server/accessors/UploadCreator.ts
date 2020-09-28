@@ -21,6 +21,7 @@ export class UploadCreator implements IUploadCreator {
             size: buffer.length,
             rid: descriptor.room.id,
             userId: descriptor.user && descriptor.user.id,
+            visitorToken: descriptor.visitorToken,
         } as IUploadDetails;
 
         return this.bridges.getUploadBridge().createUpload(details, buffer, this.appId);
