@@ -82,6 +82,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ilivechatupdater.html#closeroom" class="tsd-kind-icon">close<wbr>Room</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ilivechatupdater.html#setcustomfields" class="tsd-kind-icon">set<wbr>Custom<wbr>Fields</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ilivechatupdater.html#transfervisitor" class="tsd-kind-icon">transfer<wbr>Visitor</a></li>
 							</ul>
 						</section>
@@ -100,7 +101,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/9c6a800/src/definition/accessors/ILivechatUpdater.ts#L19">definition/accessors/ILivechatUpdater.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/ILivechatUpdater.ts#L19">definition/accessors/ILivechatUpdater.ts:19</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -128,6 +129,56 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="setcustomfields" class="tsd-anchor"></a>
+					<h3>set<wbr>Custom<wbr>Fields</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">set<wbr>Custom<wbr>Fields<span class="tsd-signature-symbol">(</span>token<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, overwrite<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/ILivechatUpdater.ts#L30">definition/accessors/ILivechatUpdater.ts:30</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Set a livechat visitor&#39;s custom fields by its token</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>token: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The visitor&#39;s token</p>
+									</div>
+								</li>
+								<li>
+									<h5>key: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The key in the custom fields</p>
+									</div>
+								</li>
+								<li>
+									<h5>value: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The value to be set</p>
+									</div>
+								</li>
+								<li>
+									<h5>overwrite: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Whether overwrite or not</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>Promise to whether success or not</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="transfervisitor" class="tsd-anchor"></a>
 					<h3>transfer<wbr>Visitor</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -137,7 +188,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/9c6a800/src/definition/accessors/ILivechatUpdater.ts#L11">definition/accessors/ILivechatUpdater.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/ILivechatUpdater.ts#L11">definition/accessors/ILivechatUpdater.ts:11</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -183,6 +234,9 @@
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ilivechatupdater.html#closeroom" class="tsd-kind-icon">close<wbr>Room</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="ilivechatupdater.html#setcustomfields" class="tsd-kind-icon">set<wbr>Custom<wbr>Fields</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ilivechatupdater.html#transfervisitor" class="tsd-kind-icon">transfer<wbr>Visitor</a>
