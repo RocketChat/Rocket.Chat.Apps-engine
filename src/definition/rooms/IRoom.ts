@@ -21,4 +21,5 @@ export interface IRoom {
     lastModifiedAt?: Date;
     customFields?: { [key: string]: any };
     parentRoom?: IRoom;
+    livechatData?: { [key: string]: any };
 }
