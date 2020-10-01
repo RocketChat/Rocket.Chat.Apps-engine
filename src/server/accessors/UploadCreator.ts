@@ -1,5 +1,3 @@
-import * as FileType from 'file-type';
-
 import { IUploadCreator } from '../../definition/accessors';
 import { IUpload } from '../../definition/uploads';
 import { IUploadDescriptor } from '../../definition/uploads/IUploadDescriptor';
@@ -14,18 +12,16 @@ export class UploadCreator implements IUploadCreator {
 
     public async uploadBuffer(buffer: Buffer, descriptor: IUploadDescriptor): Promise<IUpload> {
 
-        if (!descriptor.hasOwnProperty('user')) {
+        if (!descriptor.hasOwnProperty('user') && !descriptor.visitorToken) {
             descriptor.user = await this.bridges.getUserBridge().getAppUser(this.appId);
         }
-
-        const detectedFileType = await FileType.fromBuffer(buffer);
 
         const details = {
             name: descriptor.filename,
             size: buffer.length,
-            type: detectedFileType.mime,
             rid: descriptor.room.id,
             userId: descriptor.user && descriptor.user.id,
+            visitorToken: descriptor.visitorToken,
         } as IUploadDetails;
 
         return this.bridges.getUploadBridge().createUpload(details, buffer, this.appId);

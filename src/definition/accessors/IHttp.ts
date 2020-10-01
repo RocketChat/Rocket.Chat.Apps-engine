@@ -40,6 +40,14 @@ export interface IHttpRequest {
     };
     timeout?: number;
     /**
+     * The encoding to be used on response data.
+     *
+     * If null, the body is returned as a Buffer. Anything else (including the default value of undefined)
+     * will be passed as the encoding parameter to toString() (meaning this is effectively 'utf8' by default).
+     * (Note: if you expect binary data, you should set encoding: null.)
+     */
+    encoding?: string | null;
+    /**
      * if `true`, requires SSL certificates be valid.
      *
      * Defaul: `true`;
