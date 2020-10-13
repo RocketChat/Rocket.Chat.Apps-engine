@@ -20,10 +20,12 @@ export interface ITypingOptions {
      */
     id: string;
     /**
-     * Timeout to stop the typing,
-     * milliseconds as unit, 15000 by default.
+     * The name of the user who is typing the message
+     *
+     * **Note**: If not provided, it will use app assigned
+     * user's name by default.
      */
-    timeout?: number;
+    username?: string;
 }
 
 export interface INotifier {

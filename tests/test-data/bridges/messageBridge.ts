@@ -1,3 +1,4 @@
+import { ITypingOptions } from '../../../src/definition/accessors/INotifier';
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
@@ -22,6 +23,10 @@ export class TestsMessageBridge implements IMessageBridge {
     }
 
     public notifyRoom(room: IRoom, message: IMessage, appId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    public typing(options: ITypingOptions): Promise<() => Promise<void>> {
         throw new Error('Method not implemented.');
     }
 }
