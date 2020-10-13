@@ -3,6 +3,29 @@ import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IMessageBuilder } from './IMessageBuilder';
 
+export enum TypingScope {
+    Room = 'room',
+}
+
+export interface ITypingOptions {
+    /**
+     * The typing scope where the typing message should be presented,
+     * TypingScope.Room by default.
+     */
+    scope?: TypingScope;
+    /**
+     * The id of the typing scope
+     *
+     * TypingScope.Room <-> room.id
+     */
+    id: string;
+    /**
+     * Timeout to stop the typing,
+     * milliseconds as unit, 15000 by default.
+     */
+    timeout?: number;
+}
+
 export interface INotifier {
     /**
      * Notifies the provided user of the provided message.
@@ -25,6 +48,13 @@ export interface INotifier {
      * @param message The message content to notify users about
      */
     notifyRoom(room: IRoom, message: IMessage): Promise<void>;
+
+    /**
+     * Notifies all of the users a typing indicator in the provided scope.
+     *
+     * @returns a cancellation function to stop typing
+     */
+    typing(options: ITypingOptions): Promise<() => Promise<void>>;
 
     /** Gets a new message builder for building a notification message. */
     getMessageBuilder(): IMessageBuilder;
