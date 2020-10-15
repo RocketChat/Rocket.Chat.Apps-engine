@@ -12,4 +12,9 @@ export class LivechatUpdater implements ILivechatUpdater {
     public closeRoom(room: ILivechatRoom, comment: string): Promise<boolean> {
         return this.bridges.getLivechatBridge().closeRoom(room, comment, this.appId);
     }
+
+    public setCustomFields(token: IVisitor['token'], key: string, value: string, overwrite: boolean): Promise<boolean> {
+        return this.bridges.getLivechatBridge().setCustomFields({ token, key, value, overwrite }, this.appId)
+            .then((result) => result > 0);
+    }
 }
