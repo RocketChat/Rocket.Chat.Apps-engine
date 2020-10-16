@@ -115,7 +115,6 @@
   "pre-push": [
     "lint",
     "compile",
-    "unit-tests",
-    "gen-doc"
+    "unit-tests"
   ]
 }
