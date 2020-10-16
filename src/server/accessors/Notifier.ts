@@ -41,7 +41,9 @@ export class Notifier implements INotifier {
             options.username = appUser && appUser.name || '';
         }
 
-        return this.msgBridge.typing(options);
+        this.msgBridge.typing({ ...options, isTyping: true });
+
+        return () => this.msgBridge.typing({ ...options, isTyping: false });
     }
 
     public getMessageBuilder(): IMessageBuilder {
