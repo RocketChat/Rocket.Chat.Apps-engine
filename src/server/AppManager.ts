@@ -164,12 +164,8 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const result = await this.getParser().unpackageApp(Buffer.from(item.zip, 'base64'));
-
-                aff.setAppInfo(result.info);
-                aff.setImplementedInterfaces(result.implemented.getValues());
-
-                item.compiled = result.files;
+                aff.setAppInfo(item.info);
+                aff.setImplementedInterfaces(item.implemented);
 
                 const app = this.getCompiler().toSandBox(this, item);
                 this.apps.set(item.id, app);
