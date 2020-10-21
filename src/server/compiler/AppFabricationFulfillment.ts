@@ -1,19 +1,16 @@
 import { IAppInfo } from '../../definition/metadata';
 import { AppLicenseValidationResult } from '../marketplace/license';
 import { ProxiedApp } from '../ProxiedApp';
-import { ICompilerError } from './ICompilerError';
 
 export class AppFabricationFulfillment {
     public info: IAppInfo;
     public app: ProxiedApp;
     public implemented: { [int: string]: boolean };
-    public compilerErrors: Array<ICompilerError>;
     public licenseValidationResult: AppLicenseValidationResult;
     public storageError: string;
     public appUserError: object;
 
     constructor() {
-        this.compilerErrors = new Array<ICompilerError>();
         this.licenseValidationResult = new AppLicenseValidationResult();
     }
 
@@ -40,14 +37,6 @@ export class AppFabricationFulfillment {
 
     public getImplementedInferfaces(): { [int: string]: boolean } {
         return this.implemented;
-    }
-
-    public setCompilerErrors(errors: Array<ICompilerError>): void {
-        this.compilerErrors = errors;
-    }
-
-    public getCompilerErrors(): Array<ICompilerError> {
-        return this.compilerErrors;
     }
 
     public setStorageError(errorMessage: string): void {

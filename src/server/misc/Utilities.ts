@@ -2,8 +2,6 @@ import cloneDeep = require('lodash.clonedeep');
 import * as path from 'path';
 import * as vm from 'vm';
 
-import { ICompilerFile } from '../compiler';
-
 enum AllowedInternalModules {
     path,
     url,
@@ -41,7 +39,7 @@ export class Utilities {
         return moduleName in AllowedInternalModules;
     }
 
-    public static buildCustomRequire(files: { [s: string]: ICompilerFile }, currentPath: string = '.'): (mod: string) => {} {
+    public static buildCustomRequire(files: { [s: string]: string }, currentPath: string = '.'): (mod: string) => {} {
         return function _requirer(mod: string): any {
             // Keep compatibility with apps importing apps-ts-definition
             if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
@@ -75,7 +73,7 @@ export class Utilities {
                     process: {},
                 });
 
-                vm.runInContext(files[transformedModule].compiled, context);
+                vm.runInContext(files[transformedModule], context);
 
                 return ourExport;
             }
