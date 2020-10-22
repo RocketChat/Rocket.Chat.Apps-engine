@@ -7,6 +7,7 @@ import {
     AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
+    AppSchedulerManager,
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
@@ -38,6 +39,7 @@ export class AppManager {
     private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
+    private readonly schedulerManager: AppSchedulerManager;
 
     private isLoaded: boolean;
 
@@ -76,6 +78,7 @@ export class AppManager {
         this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
+        this.schedulerManager = new AppSchedulerManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -138,6 +141,10 @@ export class AppManager {
     /** Gets the manager of the settings, updates and getting. */
     public getSettingsManager(): AppSettingsManager {
         return this.settingsManager;
+    }
+
+    public getSchedulerManager(): AppSchedulerManager {
+        return this.schedulerManager;
     }
 
     /** Gets whether the Apps have been loaded or not. */

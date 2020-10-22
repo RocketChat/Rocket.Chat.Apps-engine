@@ -1,6 +1,7 @@
 import { IApiExtend } from './IApiExtend';
 import { IExternalComponentsExtend } from './IExternalComponentsExtend';
 import { IHttpExtend } from './IHttp';
+import { ISchedulerExtend } from './ISchedulerExtend';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 
@@ -17,7 +18,12 @@ export interface IConfigurationExtend {
 
     /** Accessor for declaring the commands which your App provides. */
     readonly slashCommands: ISlashCommandsExtend;
+
+    /** Accessor for declaring api endpoints. */
     readonly api: IApiExtend;
 
     readonly externalComponents: IExternalComponentsExtend;
+
+    /** Accessor for declaring tasks that can be scheduled (like cron) */
+    readonly scheduler: ISchedulerExtend;
 }
