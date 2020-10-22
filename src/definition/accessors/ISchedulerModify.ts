@@ -1,4 +1,4 @@
-import { 
+import {
     IOnetimeSchedule,
     IRecurringSchedule,
 } from '../scheduler';

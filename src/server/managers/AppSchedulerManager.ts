@@ -1,5 +1,7 @@
 import {
-    IProcessor, IOnetimeSchedule, IRecurringSchedule,
+    IOnetimeSchedule,
+    IProcessor,
+    IRecurringSchedule,
 } from '../../definition/scheduler';
 import { AppManager } from '../AppManager';
 import { IAppSchedulerBridge } from '../bridges/IAppSchedulerBridge';
