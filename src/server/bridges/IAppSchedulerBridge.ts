@@ -1,5 +1,7 @@
-import { IProcessor } from '../../definition/scheduler';
+import { IProcessor, IOnetimeSchedule, IRecurringSchedule } from '../../definition/scheduler';
 
 export interface IAppSchedulerBridge {
-    registerProcessor(info: IProcessor, appId: string): Promise<void>;
+    registerProcessor(processor: IProcessor, appId: string): void;
+    scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
+    scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void>;
 }

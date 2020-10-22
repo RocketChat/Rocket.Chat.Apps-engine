@@ -1,4 +1,9 @@
+import { 
+    IOnetimeSchedule,
+    IRecurringSchedule,
+} from '../scheduler';
+
 export interface ISchedulerModify {
-    scheduleOnce(id: string, when: Date, data: object): Promise<void>;
-    scheduleRecurring(id: string, cron: Date, data: object): Promise<void>;
+    scheduleOnce(job: IOnetimeSchedule): Promise<void>;
+    scheduleRecurring(job: IRecurringSchedule): Promise<void>;
 }

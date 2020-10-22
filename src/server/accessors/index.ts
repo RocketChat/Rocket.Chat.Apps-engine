@@ -23,6 +23,7 @@ import { RoomBuilder } from './RoomBuilder';
 import { RoomExtender } from './RoomExtender';
 import { RoomRead } from './RoomRead';
 import { SchedulerExtend } from './SchedulerExtend';
+import { SchedulerModify } from './SchedulerModify';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
 import { SettingRead } from './SettingRead';
@@ -68,4 +69,5 @@ export {
     UserBuilder,
     UserRead,
     SchedulerExtend,
+    SchedulerModify,
 };
