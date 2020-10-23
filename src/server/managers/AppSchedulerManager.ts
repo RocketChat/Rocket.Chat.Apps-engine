@@ -25,11 +25,11 @@ export class AppSchedulerManager {
         this.bridge.scheduleRecurring(job, appId);
     }
 
-    public async cancelScheduledJob(jobId: string, appId: string): Promise<void> {
-        this.bridge.cancelScheduledJob(jobId, appId);
+    public async cancelJob(jobId: string, appId: string): Promise<void> {
+        this.bridge.cancelJob(jobId, appId);
     }
 
-    public async removeAllJobs(appId: string): Promise<void> {
-        this.bridge.removeAllJobs(appId);
+    public async cancelAllJobs(appId: string): Promise<void> {
+        this.bridge.cancelAllJobs(appId);
     }
 }

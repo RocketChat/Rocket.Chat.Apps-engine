@@ -255,7 +255,7 @@ export class AppManager {
                 this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
                 this.accessorManager.purifyApp(app.getID());
-                await this.schedulerManager.removeAllJobs(app.getID());
+                await this.schedulerManager.cancelAllJobs(app.getID());
             } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
                 await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
@@ -374,7 +374,7 @@ export class AppManager {
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
-        await this.schedulerManager.removeAllJobs(app.getID());
+        await this.schedulerManager.cancelAllJobs(app.getID());
 
         await app.setStatus(status, silent);
 
@@ -479,7 +479,7 @@ export class AppManager {
         await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
-        await this.schedulerManager.removeAllJobs(app.getID());
+        await this.schedulerManager.cancelAllJobs(app.getID());
 
         // Let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().appRemoved(app);
@@ -736,7 +736,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
-            await this.schedulerManager.removeAllJobs(storageItem.id);
+            await this.schedulerManager.cancelAllJobs(storageItem.id);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -814,7 +814,7 @@ export class AppManager {
             this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
             this.listenerManager.lockEssentialEvents(app);
-            await this.schedulerManager.removeAllJobs(app.getID());
+            await this.schedulerManager.cancelAllJobs(app.getID());
         }
 
         if (saveToDb) {
