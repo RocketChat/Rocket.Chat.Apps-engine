@@ -2,6 +2,7 @@ import { IModifyCreator } from './IModifyCreator';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
 import { INotifier } from './INotifier';
+import { ISchedulerModify } from './ISchedulerModify';
 import { IUIController } from './IUIController';
 
 export interface IModify {
@@ -21,4 +22,9 @@ export interface IModify {
      * Gets the accessor for interacting with the UI
      */
     getUiController(): IUIController;
+
+    /**
+     * Gets the accessor for creating scheduled jobs
+     */
+    getScheduler(): ISchedulerModify;
 }

@@ -3,16 +3,16 @@ import {
     IOnetimeSchedule,
     IRecurringSchedule,
 } from '../../definition/scheduler';
-import { AppSchedulerManager } from '../managers/AppSchedulerManager';
+import { IAppSchedulerBridge } from '../bridges';
 
 export class SchedulerModify implements ISchedulerModify {
-    constructor(private readonly manager: AppSchedulerManager, private readonly appId: string) {}
+    constructor(private readonly bridge: IAppSchedulerBridge, private readonly appId: string) {}
 
     public async scheduleOnce(job: IOnetimeSchedule): Promise<void> {
-        this.manager.scheduleOnce(job, this.appId);
+        this.bridge.scheduleOnce(job, this.appId);
     }
 
     public async scheduleRecurring(job: IRecurringSchedule): Promise<void> {
-        this.manager.scheduleRecurring(job, this.appId);
+        this.bridge.scheduleRecurring(job, this.appId);
     }
 }

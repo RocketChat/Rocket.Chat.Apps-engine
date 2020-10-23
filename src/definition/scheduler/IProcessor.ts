@@ -1,4 +1,4 @@
 export interface IProcessor {
-    name: string;
+    id: string;
     processor: (data: object) => Promise<void>;
 }
