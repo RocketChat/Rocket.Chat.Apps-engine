@@ -1,4 +1,8 @@
 export interface IProcessor {
     id: string;
-    processor: (data: object) => Promise<void>;
+    processor: (job: IJob) => Promise<void>;
+}
+
+interface IJob {
+    [key: string]: any;
 }

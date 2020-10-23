@@ -13,8 +13,8 @@ export class AppSchedulerManager {
         this.bridge = this.manager.getBridges().getSchedulerBridge();
     }
 
-    public registerProcessor(processor: IProcessor, appId: string): void {
-        this.bridge.registerProcessor(processor,  appId);
+    public registerProcessors(processors: Array<IProcessor> = [], appId: string): void {
+        this.bridge.registerProcessors(processors,  appId);
     }
 
     public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
