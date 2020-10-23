@@ -19,4 +19,8 @@ export class SchedulerModify implements ISchedulerModify {
     public async cancelScheduledJob(jobId: string): Promise<void> {
         this.bridge.cancelScheduledJob(jobId, this.appId);
     }
+
+    public async removeAllJobs(): Promise<void> {
+        this.bridge.removeAllJobs(this.appId);
+    }
 }

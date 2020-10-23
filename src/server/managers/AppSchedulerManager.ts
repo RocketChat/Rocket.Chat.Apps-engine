@@ -28,4 +28,8 @@ export class AppSchedulerManager {
     public async cancelScheduledJob(jobId: string, appId: string): Promise<void> {
         this.bridge.cancelScheduledJob(jobId, appId);
     }
+
+    public async removeAllJobs(appId: string): Promise<void> {
+        this.bridge.removeAllJobs(appId);
+    }
 }
