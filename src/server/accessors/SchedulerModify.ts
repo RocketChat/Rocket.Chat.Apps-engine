@@ -15,4 +15,8 @@ export class SchedulerModify implements ISchedulerModify {
     public async scheduleRecurring(job: IRecurringSchedule): Promise<void> {
         this.bridge.scheduleRecurring(job, this.appId);
     }
+
+    public async cancelScheduledJob(jobId: string): Promise<void> {
+        this.bridge.cancelScheduledJob(jobId, this.appId);
+    }
 }

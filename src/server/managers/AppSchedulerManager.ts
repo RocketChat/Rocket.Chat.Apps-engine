@@ -24,4 +24,8 @@ export class AppSchedulerManager {
     public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
         this.bridge.scheduleRecurring(job, appId);
     }
+
+    public async cancelScheduledJob(jobId: string, appId: string): Promise<void> {
+        this.bridge.cancelScheduledJob(jobId, appId);
+    }
 }
