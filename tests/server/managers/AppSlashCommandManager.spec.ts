@@ -13,7 +13,7 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { Room } from '../../../src/server/rooms/Room';
@@ -73,6 +73,9 @@ export class AppSlashCommandManagerTestFixture {
             },
             getLogStorage(): AppLogStorage {
                 return new TestsAppLogStorage();
+            },
+            getSchedulerManager() {
+                return {} as AppSchedulerManager;
             },
         } as AppManager;
 
