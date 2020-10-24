@@ -35,7 +35,7 @@ export class AppSchedulerManager {
     }
 
     public async callProcessor(processorId: string, data: object): Promise<void> {
-        
+
     }
 
     public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
