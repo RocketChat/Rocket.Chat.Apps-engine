@@ -2,6 +2,7 @@ import {
     AppBridges,
     IAppActivationBridge,
     IAppDetailChangesBridge,
+    IAppSchedulerBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
     IInternalBridge,
@@ -26,6 +27,7 @@ import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
+import { TestSchedulerBridge } from './schedulerBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
@@ -47,6 +49,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly livechatBridge: TestLivechatBridge;
     private readonly uploadBridge: TestUploadBridge;
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
+    private readonly schedulerBridge: TestSchedulerBridge;
 
     constructor() {
         super();
@@ -65,6 +68,7 @@ export class TestsAppBridges extends AppBridges {
         this.livechatBridge = new TestLivechatBridge();
         this.uploadBridge = new TestUploadBridge();
         this.uiIntegrationBridge = new TestsUiIntegrationBridge();
+        this.schedulerBridge = new TestSchedulerBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -129,5 +133,9 @@ export class TestsAppBridges extends AppBridges {
 
     public getUiInteractionBridge(): IUiInteractionBridge {
         return this.uiIntegrationBridge;
+    }
+
+    public getSchedulerBridge(): IAppSchedulerBridge {
+        return this.schedulerBridge;
     }
 }

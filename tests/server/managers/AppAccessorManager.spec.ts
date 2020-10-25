@@ -2,7 +2,7 @@ import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Te
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSlashCommandManager  } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager  } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
@@ -31,6 +31,9 @@ export class AppAccessorManagerTestFixture {
             },
             getOneById(appId: string): ProxiedApp {
                 return appId === 'testing' ? {} as ProxiedApp : undefined;
+            },
+            getSchedulerManager() {
+                return {} as AppSchedulerManager;
             },
         } as AppManager;
     }

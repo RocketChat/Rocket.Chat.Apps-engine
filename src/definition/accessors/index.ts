@@ -27,6 +27,8 @@ import { IRead } from './IRead';
 import { IRoomBuilder } from './IRoomBuilder';
 import { IRoomExtender } from './IRoomExtender';
 import { IRoomRead } from './IRoomRead';
+import { ISchedulerExtend } from './ISchedulerExtend';
+import { ISchedulerModify } from './ISchedulerModify';
 import { IServerSettingRead } from './IServerSettingRead';
 import { IServerSettingsModify } from './IServerSettingsModify';
 import { ISettingRead } from './ISettingRead';
@@ -88,4 +90,6 @@ export {
     LogMessageSeverity,
     RequestMethod,
     IApiExtend,
+    ISchedulerModify,
+    ISchedulerExtend,
 };

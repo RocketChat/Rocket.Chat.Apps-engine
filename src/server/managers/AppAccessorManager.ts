@@ -25,6 +25,7 @@ import {
     PersistenceRead,
     Reader,
     RoomRead,
+    SchedulerExtend,
     ServerSettingRead,
     ServerSettingsModify,
     SettingRead,
@@ -86,8 +87,9 @@ export class AppAccessorManager {
             const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
             const excs = new ExternalComponentsExtend(this.manager.getExternalComponentManager(), appId);
+            const scheduler = new SchedulerExtend(this.manager.getSchedulerManager(), appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs, scheduler));
         }
 
         return this.configExtenders.get(appId);
