@@ -1,9 +1,3 @@
-import { IOnetimeSchedule } from './IOnetimeSchedule';
-import { IProcessor } from './IProcessor';
-import { IRecurringSchedule } from './IRecurringSchedule';
-
-export {
-    IProcessor,
-    IRecurringSchedule,
-    IOnetimeSchedule,
-};
+export { IOnetimeSchedule } from './IOnetimeSchedule';
+export { IProcessor, IJobContext } from './IProcessor';
+export { IRecurringSchedule } from './IRecurringSchedule';
