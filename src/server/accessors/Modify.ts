@@ -4,6 +4,7 @@ import {
     IModifyExtender,
     IModifyUpdater,
     INotifier,
+    ISchedulerModify,
     IUIController,
 } from '../../definition/accessors';
 import { AppBridges } from '../bridges';
@@ -11,6 +12,7 @@ import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
 import { Notifier } from './Notifier';
+import { SchedulerModify } from './SchedulerModify';
 import { UIController } from './UIController';
 
 export class Modify implements IModify {
@@ -19,6 +21,7 @@ export class Modify implements IModify {
     private extender: IModifyExtender;
     private notifier: INotifier;
     private uiController: IUIController;
+    private scheduler: ISchedulerModify;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.creator = new ModifyCreator(this.bridges, this.appId);
@@ -26,6 +29,7 @@ export class Modify implements IModify {
         this.extender = new ModifyExtender(this.bridges, this.appId);
         this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
         this.uiController = new UIController(this.appId, this.bridges);
+        this.scheduler = new SchedulerModify(this.bridges.getSchedulerBridge(), this.appId);
     }
 
     public getCreator(): IModifyCreator {
@@ -46,5 +50,9 @@ export class Modify implements IModify {
 
     public getUiController(): IUIController {
         return this.uiController;
+    }
+
+    public getScheduler(): ISchedulerModify {
+        return this.scheduler;
     }
 }

@@ -2,6 +2,7 @@ import { IAppActivationBridge } from './IAppActivationBridge';
 import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
+import { IAppSchedulerBridge } from './IAppSchedulerBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
@@ -32,4 +33,5 @@ export abstract class AppBridges {
     public abstract getUploadBridge(): IUploadBridge;
     public abstract getUserBridge(): IUserBridge;
     public abstract getUiInteractionBridge(): IUiInteractionBridge;
+    public abstract getSchedulerBridge(): IAppSchedulerBridge;
 }

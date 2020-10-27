@@ -3,6 +3,7 @@ import { AppApiManager } from './AppApiManager';
 import { AppExternalComponentManager } from './AppExternalComponentManager';
 import { AppLicenseManager } from './AppLicenseManager';
 import { AppListenerManager } from './AppListenerManager';
+import { AppSchedulerManager } from './AppSchedulerManager';
 import { AppSettingsManager } from './AppSettingsManager';
 import { AppSlashCommandManager } from './AppSlashCommandManager';
 
@@ -14,4 +15,5 @@ export {
     AppSettingsManager,
     AppSlashCommandManager,
     AppApiManager,
+    AppSchedulerManager,
 };

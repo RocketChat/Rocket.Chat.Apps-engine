@@ -1,7 +1,7 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
 import { Modify } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IUiInteractionBridge, IUserBridge } from '../../../src/server/bridges';
+import { AppBridges, IAppSchedulerBridge, IMessageBridge, IUiInteractionBridge, IUserBridge } from '../../../src/server/bridges';
 
 export class ModifyAccessorTestFixture {
     private mockAppBridges: AppBridges;
@@ -17,6 +17,9 @@ export class ModifyAccessorTestFixture {
             },
             getUiInteractionBridge(): IUiInteractionBridge {
                 return {} as IUiInteractionBridge;
+            },
+            getSchedulerBridge() {
+                return {} as IAppSchedulerBridge;
             },
         } as AppBridges;
     }

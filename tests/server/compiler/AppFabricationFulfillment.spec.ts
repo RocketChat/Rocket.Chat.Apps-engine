@@ -3,7 +3,7 @@ import { App } from '../../../src/definition/App';
 import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppInterface, IAppInfo } from '../../../src/definition/metadata';
 import { AppManager } from '../../../src/server/AppManager';
-import { AppFabricationFulfillment, ICompilerError } from '../../../src/server/compiler';
+import { AppFabricationFulfillment } from '../../../src/server/compiler';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { IAppStorageItem } from '../../../src/server/storage';
 
@@ -24,6 +24,7 @@ export class AppFabricationFulfillmentTestFixture {
             },
             classFile: 'TestingApp.ts',
             iconFile: 'testing.jpg',
+            implements: [],
         };
 
         Expect(() => new AppFabricationFulfillment()).not.toThrow();
@@ -36,16 +37,6 @@ export class AppFabricationFulfillmentTestFixture {
         expectedInter[AppInterface.IPreMessageSentPrevent] = true;
         Expect(() => aff.setImplementedInterfaces(expectedInter)).not.toThrow();
         Expect(aff.getImplementedInferfaces()).toEqual(expectedInter);
-
-        const expectedCompiledErrors: Array<ICompilerError> = new Array<ICompilerError>();
-        expectedCompiledErrors.push({
-            file: 'TestingApp.ts',
-            line: 3,
-            character: 54,
-            message: 'Empty space',
-        });
-        Expect(() => aff.setCompilerErrors(expectedCompiledErrors)).not.toThrow();
-        Expect(aff.getCompilerErrors()).toEqual(expectedCompiledErrors);
 
         const fakeApp = new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {} as App, (mod: string) => mod);
         Expect(() => aff.setApp(fakeApp)).not.toThrow();
