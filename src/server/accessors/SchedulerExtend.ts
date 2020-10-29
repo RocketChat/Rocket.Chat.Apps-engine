@@ -5,7 +5,7 @@ import { AppSchedulerManager } from '../managers/AppSchedulerManager';
 export class SchedulerExtend implements ISchedulerExtend {
     constructor(private readonly manager: AppSchedulerManager, private readonly appId: string) {}
 
-    public registerProcessors(processors: Array<IProcessor> = []): void {
-        this.manager.registerProcessors(processors, this.appId);
+    public async registerProcessors(processors: Array<IProcessor> = []): Promise<void> {
+        await this.manager.registerProcessors(processors, this.appId);
     }
 }

@@ -35,7 +35,12 @@ export class AppSchedulerManager {
 
             this.registeredProcessors.get(appId)[processorId] = processor;
 
-            return { id: processorId, processor: this.wrapProcessor(appId, processorId).bind(this) };
+            return {
+                id: processorId,
+                processor: this.wrapProcessor(appId, processorId).bind(this),
+                // @TODO maybe null it not that great of a value for this...
+                startupSetting: processor.startupSetting || null,
+            };
         }),  appId);
     }
 
