@@ -3,9 +3,9 @@ export interface IOnetimeSchedule {
     /** The schedule's identifier */
     id: string;
     /**
-     * When the job will be run. Can be a
-     * [human-interval](https://github.com/agenda/human-interval) or
-     * a `Date` object
+     * The time at which the job will be run.
+     * Values can be a [human-interval](https://github.com/agenda/human-interval) string
+     * or a `Date` object.
      */
     when: string;
     /** An object that can be passed to the processor with custom data */

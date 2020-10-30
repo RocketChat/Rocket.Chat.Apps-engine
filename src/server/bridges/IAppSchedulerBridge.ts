@@ -18,9 +18,7 @@ export interface IAppSchedulerBridge {
     registerProcessors(processor: Array<IProcessor>, appId: string): void;
 
     /**
-     * Schedules a registered processor to run _once_. The date can be
-     * in the [human-interval](https://github.com/agenda/human-interval) format
-     * or a `Date` object.
+     * Schedules a registered processor to run _once_.
      *
      * @param {IOnetimeSchedule} job
      * @param appId the id of the app calling this
@@ -28,7 +26,6 @@ export interface IAppSchedulerBridge {
     scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
     /**
      * Schedules a registered processor to run in recurrencly acording to a given interval
-     * The interval must follow [human-interval](https://github.com/agenda/human-interval) format
      *
      * @param {IRecurringSchedule} job
      * @param appId the id of the app calling this

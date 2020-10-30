@@ -8,16 +8,13 @@ import {
  */
 export interface ISchedulerModify {
     /**
-     * Schedules a registered processor to run _once_. The date can be
-     * in the [human-interval](https://github.com/agenda/human-interval) format
-     * or a `Date` object.
+     * Schedules a registered processor to run _once_.
      *
      * @param {IOnetimeSchedule} job
      */
     scheduleOnce(job: IOnetimeSchedule): Promise<void>;
     /**
-     * Schedules a registered processor to run in recurrencly acording to a given interval
-     * The interval must follow [human-interval](https://github.com/agenda/human-interval) format
+     * Schedules a registered processor to run in recurrencly according to a given interval
      *
      * @param {IRecurringSchedule} job
      */
