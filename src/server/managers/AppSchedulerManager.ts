@@ -25,7 +25,7 @@ export class AppSchedulerManager {
         this.registeredProcessors = new Map();
     }
 
-    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
+    public registerProcessors(processors: Array<IProcessor> = [], appId: string): void {
         if (!this.registeredProcessors.get(appId)) {
             this.registeredProcessors.set(appId, {});
         }
