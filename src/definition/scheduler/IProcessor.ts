@@ -17,16 +17,25 @@ export interface IJobContext {
 
 type StartupSetting = IOnetimeStartup | IRecurringStartup | null;
 
+/**
+ * Processor setting for running once after being registered
+ */
 export interface IOnetimeStartup {
     type: StartupType.ONETIME;
     when: string;
 }
 
+/**
+ * Processor setting for running recurringly after being registered
+ */
 export interface IRecurringStartup {
     type: StartupType.RECURRING;
     cron: string;
 }
 
+/**
+ * Jobs' startup types
+ */
 export enum StartupType {
     ONETIME = 'onetime',
     RECURRING = 'recurring',
