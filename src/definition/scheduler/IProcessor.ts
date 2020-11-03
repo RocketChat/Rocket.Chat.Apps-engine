@@ -15,7 +15,7 @@ export interface IJobContext {
     [key: string]: any;
 }
 
-type StartupSetting = IOnetimeStartup | IRecurringStartup | null;
+type StartupSetting = IOnetimeStartup | IRecurringStartup;
 
 /**
  * Processor setting for running once after being registered

@@ -38,7 +38,7 @@ export class AppSchedulerManager {
             return {
                 id: processorId,
                 processor: this.wrapProcessor(appId, processorId).bind(this),
-                startupSetting: processor.startupSetting || null,
+                startupSetting: processor.startupSetting,
             };
         }),  appId);
     }
