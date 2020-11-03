@@ -15,7 +15,7 @@ export interface IAppSchedulerBridge {
      * @param {Array<IProcessor>} processors An array of processors
      * @param appId the id of the app calling this
      */
-    registerProcessors(processor: Array<IProcessor>, appId: string): void;
+    registerProcessors(processor: Array<IProcessor>, appId: string): Promise<void>;
 
     /**
      * Schedules a registered processor to run _once_.

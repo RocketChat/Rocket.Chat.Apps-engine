@@ -6,5 +6,5 @@ export interface ISchedulerExtend {
      *
      * @param {Array<IProcessor>} processors An array of processors
      */
-    registerProcessors(processors: Array<IProcessor>): void;
+    registerProcessors(processors: Array<IProcessor>): Promise<void>;
 }
