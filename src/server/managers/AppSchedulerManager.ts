@@ -25,12 +25,12 @@ export class AppSchedulerManager {
         this.registeredProcessors = new Map();
     }
 
-    public registerProcessors(processors: Array<IProcessor> = [], appId: string): void {
+    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
         if (!this.registeredProcessors.get(appId)) {
             this.registeredProcessors.set(appId, {});
         }
 
-        this.bridge.registerProcessors(processors.map((processor) => {
+        await this.bridge.registerProcessors(processors.map((processor) => {
             const processorId = createProcessorId(processor.id, appId);
 
             this.registeredProcessors.get(appId)[processorId] = processor;

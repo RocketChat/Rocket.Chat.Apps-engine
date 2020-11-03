@@ -1,3 +1,3 @@
 export { IOnetimeSchedule } from './IOnetimeSchedule';
-export { IProcessor, IJobContext, StartupType } from './IProcessor';
+export { IProcessor, IJobContext, IOnetimeStartup, IRecurringStartup, StartupType } from './IProcessor';
 export { IRecurringSchedule } from './IRecurringSchedule';

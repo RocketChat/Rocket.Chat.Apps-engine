@@ -17,12 +17,12 @@ export interface IJobContext {
 
 type StartupSetting = IOnetimeStartup | IRecurringStartup | null;
 
-interface IOnetimeStartup {
+export interface IOnetimeStartup {
     type: StartupType.ONETIME;
     when: string;
 }
 
-interface IRecurringStartup {
+export interface IRecurringStartup {
     type: StartupType.RECURRING;
     cron: string;
 }
