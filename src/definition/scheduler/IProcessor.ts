@@ -4,10 +4,10 @@ import {IHttp, IModify, IPersistence, IRead} from '../accessors';
 export interface IProcessor {
     /** The processor's identifier */
     id: string;
-    /** The function that will be run on a given scheudle */
-    processor: (jobContext: IJobContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => Promise<void>;
     /** If provided, the processor will be configured with the setting as soon as it gets registered */
     startupSetting?: StartupSetting;
+    /** The function that will be run on a given scheudle */
+    processor(jobContext: IJobContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
 }
 
 /** The `data` object provided to the processor during the registering process */
