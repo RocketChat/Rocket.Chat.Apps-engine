@@ -7,7 +7,7 @@ export interface IOnetimeSchedule {
      * Values can be a [human-interval](https://github.com/agenda/human-interval) string
      * or a `Date` object.
      */
-    when: string;
+    when: string | Date;
     /** An object that can be passed to the processor with custom data */
     data?: object;
 }

@@ -22,7 +22,7 @@ type StartupSetting = IOnetimeStartup | IRecurringStartup;
  */
 export interface IOnetimeStartup {
     type: StartupType.ONETIME;
-    when: string;
+    when: string | Date;
     data?: object;
 }
 
@@ -31,7 +31,7 @@ export interface IOnetimeStartup {
  */
 export interface IRecurringStartup {
     type: StartupType.RECURRING;
-    cron: string;
+    interval: string | number;
     data?: object;
 }
 

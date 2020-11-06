@@ -7,7 +7,7 @@ export interface IRecurringSchedule {
      * Values can be a cron string, a [human-interval](https://github.com/agenda/human-interval) string
      * or a number.
      */
-    cron: string;
+    interval: string | number;
     /** An object that can be passed to the processor with custom data */
     data?: object;
 }
