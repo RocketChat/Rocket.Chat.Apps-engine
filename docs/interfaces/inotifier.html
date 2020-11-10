@@ -84,6 +84,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="inotifier.html#getmessagebuilder" class="tsd-kind-icon">get<wbr>Message<wbr>Builder</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="inotifier.html#notifyroom" class="tsd-kind-icon">notify<wbr>Room</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="inotifier.html#notifyuser" class="tsd-kind-icon">notify<wbr>User</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="inotifier.html#typing" class="tsd-kind-icon">typing</a></li>
 							</ul>
 						</section>
 					</div>
@@ -101,7 +102,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/INotifier.ts#L30">definition/accessors/INotifier.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/INotifier.ts#L62">definition/accessors/INotifier.ts:62</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -123,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/INotifier.ts#L27">definition/accessors/INotifier.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/INotifier.ts#L52">definition/accessors/INotifier.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -162,7 +163,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/INotifier.ts#L16">definition/accessors/INotifier.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/INotifier.ts#L41">definition/accessors/INotifier.ts:41</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -191,6 +192,35 @@
 						</li>
 					</ul>
 				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="typing" class="tsd-anchor"></a>
+					<h3>typing</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">typing<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span><a href="itypingoptions.html" class="tsd-signature-type">ITypingOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/INotifier.ts#L59">definition/accessors/INotifier.ts:59</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Notifies all of the users a typing indicator in the provided scope.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>options: <a href="itypingoptions.html" class="tsd-signature-type">ITypingOptions</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">function</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>a cancellation function to stop typing</p>
+						</li>
+					</ul>
+				</section>
 			</section>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -216,6 +246,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="inotifier.html#notifyuser" class="tsd-kind-icon">notify<wbr>User</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="inotifier.html#typing" class="tsd-kind-icon">typing</a>
 							</li>
 						</ul>
 					</li>

@@ -7,6 +7,7 @@ import {
     AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
+    AppSchedulerManager,
     AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
@@ -38,6 +39,7 @@ export class AppManager {
     private readonly externalComponentManager: AppExternalComponentManager;
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
+    private readonly schedulerManager: AppSchedulerManager;
 
     private isLoaded: boolean;
 
@@ -76,6 +78,7 @@ export class AppManager {
         this.externalComponentManager = new AppExternalComponentManager();
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
+        this.schedulerManager = new AppSchedulerManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -140,6 +143,10 @@ export class AppManager {
         return this.settingsManager;
     }
 
+    public getSchedulerManager(): AppSchedulerManager {
+        return this.schedulerManager;
+    }
+
     /** Gets whether the Apps have been loaded or not. */
     public areAppsLoaded(): boolean {
         return this.isLoaded;
@@ -164,19 +171,8 @@ export class AppManager {
             const aff = new AppFabricationFulfillment();
 
             try {
-                const result = await this.getParser().parseZip(this.getCompiler(), item.zip);
-
-                aff.setAppInfo(result.info);
-                aff.setImplementedInterfaces(result.implemented.getValues());
-                aff.setCompilerErrors(result.compilerErrors);
-
-                if (result.compilerErrors.length > 0) {
-                    const errors = result.compilerErrors.map(({ message }) => message).join('\n');
-
-                    throw new Error(`Failed to compile due to ${ result.compilerErrors.length } errors:\n${ errors }`);
-                }
-
-                item.compiled = result.compiledFiles;
+                aff.setAppInfo(item.info);
+                aff.setImplementedInterfaces(item.implemented);
 
                 const app = this.getCompiler().toSandBox(this, item);
                 this.apps.set(item.id, app);
@@ -248,6 +244,7 @@ export class AppManager {
                 this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
                 this.accessorManager.purifyApp(app.getID());
+                await this.schedulerManager.cancelAllJobs(app.getID());
             } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
                 await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
@@ -366,6 +363,7 @@ export class AppManager {
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
+        await this.schedulerManager.cancelAllJobs(app.getID());
 
         await app.setStatus(status, silent);
 
@@ -382,24 +380,23 @@ export class AppManager {
         return true;
     }
 
-    public async add(zipContentsBase64d: string, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(appPackage: Buffer, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
+        const result = await this.getParser().unpackageApp(appPackage);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
-        aff.setCompilerErrors(result.compilerErrors);
-
-        if (result.compilerErrors.length > 0) {
-            return aff;
-        }
 
         const compiled = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
-            zip: zipContentsBase64d,
-            compiled: result.compiledFiles,
+            zip: appPackage.toString('base64'),
+            // tslint:disable-next-line: max-line-length
+            compiled: Object.entries(result.files).reduce(
+                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
+                {} as {[key: string]: string},
+            ),
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
@@ -470,6 +467,7 @@ export class AppManager {
         await this.removeAppUser(app);
         await this.bridges.getPersistenceBridge().purge(app.getID());
         await this.storage.remove(app.getID());
+        await this.schedulerManager.cancelAllJobs(app.getID());
 
         // Let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().appRemoved(app);
@@ -479,17 +477,12 @@ export class AppManager {
         return app;
     }
 
-    public async update(zipContentsBase64d: string): Promise<AppFabricationFulfillment> {
+    public async update(appPackage: Buffer): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
-        const result = await this.getParser().parseZip(this.getCompiler(), zipContentsBase64d);
+        const result = await this.getParser().unpackageApp(appPackage);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
-        aff.setCompilerErrors(result.compilerErrors);
-
-        if (result.compilerErrors.length > 0) {
-            return aff;
-        }
 
         const old = await this.storage.retrieveOne(result.info.id);
 
@@ -506,8 +499,8 @@ export class AppManager {
             id: result.info.id,
             info: result.info,
             status: this.apps.get(old.id).getStatus(),
-            zip: zipContentsBase64d,
-            compiled: result.compiledFiles,
+            zip: appPackage.toString('base64'),
+            compiled: result.files,
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
@@ -726,6 +719,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
+            await this.schedulerManager.cancelAllJobs(storageItem.id);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -803,6 +797,7 @@ export class AppManager {
             this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
             this.listenerManager.lockEssentialEvents(app);
+            await this.schedulerManager.cancelAllJobs(app.getID());
         }
 
         if (saveToDb) {
