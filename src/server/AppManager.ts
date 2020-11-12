@@ -106,14 +106,14 @@ export class AppManager {
     /** Gets the instance of the Bridge manager. */
     public getBridges(): AppBridges {
         const handler = {
-            get(target: AppBridges & { [key: string]: any }, prop, receiver) {
+            get(target: AppBridges, prop, receiver) {
                 const reflection = Reflect.get(target, prop, receiver);
 
                 if (typeof prop === 'symbol' || typeof prop === 'number') {
                     return reflection;
                 }
 
-                if (typeof target[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
+                if (typeof (target as any)[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
                     return (...args: Array<any>) => {
                         const bridge = reflection.apply(target, args);
 
