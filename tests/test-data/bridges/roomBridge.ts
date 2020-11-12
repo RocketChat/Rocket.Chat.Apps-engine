@@ -4,6 +4,7 @@ import { IUser } from '../../../src/definition/users';
 import { IRoomBridge } from '../../../src/server/bridges';
 
 export class TestsRoomBridge implements IRoomBridge {
+    public name: 'TestsRoomBridge';
     public create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

@@ -5,6 +5,7 @@ import { AppApi } from '../managers/AppApi';
  * registered and unregistered.
  */
 export interface IAppApiBridge {
+    name: string;
     /**
      * Registers an api with the system which is being bridged.
      *

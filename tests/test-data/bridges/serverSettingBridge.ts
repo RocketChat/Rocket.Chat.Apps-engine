@@ -3,6 +3,7 @@ import { ISetting } from '../../../src/definition/settings';
 import { IServerSettingBridge } from '../../../src/server/bridges';
 
 export class TestsServerSettingBridge implements IServerSettingBridge {
+    public name: 'TestsServerSettingBridge';
     public getAll(appId: string): Promise<Array<ISetting>> {
         throw new Error('Method not implemented.');
     }

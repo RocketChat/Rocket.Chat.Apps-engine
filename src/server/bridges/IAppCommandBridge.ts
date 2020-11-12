@@ -5,6 +5,7 @@ import { ISlashCommand } from '../../definition/slashcommands';
  * registered, unregistered, and a check to see if a command exists.
  */
 export interface IAppCommandBridge {
+    name: string;
     /**
      * Checks if the provided command already exists inside of the
      * system which is being bridged. This does not check if the app

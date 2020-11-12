@@ -1,6 +1,7 @@
 import { IUser, IUserCreationOptions } from '../../definition/users';
 
 export interface IUserBridge {
+    name: string;
     getById(id: string, appId: string): Promise<IUser>;
 
     getByUsername(username: string, appId: string): Promise<IUser>;

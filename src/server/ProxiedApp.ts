@@ -11,6 +11,8 @@ import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
 import { IAppStorageItem } from './storage';
 
+export const ROCKETCHAT_APP_EXECUTION_PREFIX = '$RocketChat_App$';
+
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
 
@@ -62,7 +64,10 @@ export class ProxiedApp implements IApp {
     }
 
     public runInContext(codeToRun: string, context: vm.Context): any {
-        return vm.runInContext(codeToRun, context, { timeout: 1000 });
+        return vm.runInContext(codeToRun, context, {
+            timeout: 1000,
+            filename: `${ ROCKETCHAT_APP_EXECUTION_PREFIX }_${ this.getName() }.ts`,
+        });
     }
 
     public async call(method: AppMethod, ...args: Array<any>): Promise<any> {

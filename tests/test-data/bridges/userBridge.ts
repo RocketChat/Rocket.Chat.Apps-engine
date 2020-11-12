@@ -3,6 +3,7 @@ import { IUser } from '../../../src/definition/users';
 import { IUserBridge } from '../../../src/server/bridges';
 
 export class TestsUserBridge implements IUserBridge {
+    public name: 'TestsUserBridge';
     public getById(id: string, appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }

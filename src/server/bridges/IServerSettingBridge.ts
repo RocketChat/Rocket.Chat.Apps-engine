@@ -1,6 +1,7 @@
 import { ISetting } from '../../definition/settings';
 
 export interface IServerSettingBridge {
+    name: string;
     getAll(appId: string): Promise<Array<ISetting>>;
 
     getOneById(id: string, appId: string): Promise<ISetting>;

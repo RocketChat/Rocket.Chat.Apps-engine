@@ -4,6 +4,7 @@ import { AppApi } from '../../../src/server/managers/AppApi';
 import { TestData } from '../utilities';
 
 export class TestsApiBridge implements IAppApiBridge {
+    public name: 'TestApiBridge';
     public apis: Map<string, Map<string, IApi>>;
 
     constructor() {

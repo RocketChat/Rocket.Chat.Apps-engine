@@ -1,25 +1,19 @@
-import { AppBridges } from './bridges';
-import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
-import { IGetAppsFilter } from './IGetAppsFilter';
-import {
-    AppAccessorManager,
-    AppApiManager,
-    AppExternalComponentManager,
-    AppLicenseManager,
-    AppListenerManager,
-    AppSchedulerManager,
-    AppSettingsManager,
-    AppSlashCommandManager,
-} from './managers';
-import { DisabledApp } from './misc/DisabledApp';
-import { ProxiedApp } from './ProxiedApp';
-import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
-
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IUser, UserType } from '../definition/users';
+import { AppBridges } from './bridges';
+import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
+import { IGetAppsFilter } from './IGetAppsFilter';
+import {
+    AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
+    AppSlashCommandManager,
+} from './managers';
+import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
+import { DisabledApp } from './misc/DisabledApp';
+import { ProxiedApp } from './ProxiedApp';
+import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
 export class AppManager {
     public static Instance: AppManager;
@@ -111,7 +105,27 @@ export class AppManager {
 
     /** Gets the instance of the Bridge manager. */
     public getBridges(): AppBridges {
-        return this.bridges;
+        const handler = {
+            get(target: AppBridges & { [key: string]: any }, prop, receiver) {
+                const reflection = Reflect.get(target, prop, receiver);
+
+                if (typeof prop === 'symbol' || typeof prop === 'number') {
+                    return reflection;
+                }
+
+                if (typeof target[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
+                    return (...args: Array<any>) => {
+                        const bridge = reflection.apply(target, args);
+
+                        return AppPermissionManager.proxy(bridge);
+                    };
+                }
+
+                return reflection;
+            },
+        } as ProxyHandler<AppBridges>;
+
+        return new Proxy(this.bridges, handler);
     }
 
     /** Gets the instance of the listener manager. */
@@ -314,7 +328,7 @@ export class AppManager {
         const rl = this.apps.get(id);
 
         if (!rl) {
-            throw new Error(`No App by the id "${id}" exists.`);
+            throw new Error(`No App by the id "${ id }" exists.`);
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
@@ -327,7 +341,7 @@ export class AppManager {
 
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
-            throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
+            throw new Error(`Could not enable an App with the id of "${ id }" as it doesn't exist.`);
         }
 
         const isSetup = await this.runStartUpProcess(storageItem, rl, true, false);
@@ -349,7 +363,7 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (!app) {
-            throw new Error(`No App by the id "${id}" exists.`);
+            throw new Error(`No App by the id "${ id }" exists.`);
         }
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
@@ -395,7 +409,7 @@ export class AppManager {
             // tslint:disable-next-line: max-line-length
             compiled: Object.entries(result.files).reduce(
                 (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as {[key: string]: string},
+                {} as { [key: string]: string },
             ),
             languageContent: result.languageContent,
             settings: {},
@@ -537,7 +551,7 @@ export class AppManager {
     }
 
     public getLanguageContent(): { [key: string]: object } {
-        const langs: { [key: string]: object } = { };
+        const langs: { [key: string]: object } = {};
 
         this.apps.forEach((rl) => {
             const content = rl.getStorageItem().languageContent;

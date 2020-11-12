@@ -5,6 +5,7 @@ import { IAppCommandBridge } from '../../../src/server/bridges';
 import { TestData } from '../utilities';
 
 export class TestsCommandBridge implements IAppCommandBridge {
+    public name: 'TestCommandBridge';
     // tslint:disable-next-line:max-line-length
     public commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
 

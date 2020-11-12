@@ -3,6 +3,7 @@ import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
 export interface IRoomBridge {
+    name: string;
     create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
     getById(roomId: string, appId: string): Promise<IRoom>;
     getByName(roomName: string, appId: string): Promise<IRoom>;

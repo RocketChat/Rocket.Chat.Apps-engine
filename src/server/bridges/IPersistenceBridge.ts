@@ -1,6 +1,7 @@
 import { RocketChatAssociationRecord } from '../../definition/metadata';
 
 export interface IPersistenceBridge {
+    name: string;
     /**
      * Purges the App's persistant storage data from the persistent storage.
      *

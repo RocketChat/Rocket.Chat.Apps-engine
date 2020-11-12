@@ -5,6 +5,7 @@ import { IMessageBridge } from '../../../src/server/bridges';
 import { ITypingDescriptor } from '../../../src/server/bridges/IMessageBridge';
 
 export class TestsMessageBridge implements IMessageBridge {
+    public name: 'TestMessageBridge';
     public create(message: IMessage, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
