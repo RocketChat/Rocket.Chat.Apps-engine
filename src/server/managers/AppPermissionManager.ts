@@ -12,7 +12,7 @@ interface IBridgeCallDescriptor {
 
 const permissionCheckers: IPermissionCheckers = {
     AppMessageBridge: {
-        getById(messageId: string, appId: string) {
+        getById(messageId: string, appId: string): void {
             throw new PermissionDeniedError(appId, [
                 AppPermission.MessageRead,
                 AppPermission.MessageWrite,
