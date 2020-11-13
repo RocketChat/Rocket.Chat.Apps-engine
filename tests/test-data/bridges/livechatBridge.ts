@@ -3,7 +3,6 @@ import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
 export class TestLivechatBridge implements ILivechatBridge {
-    public name: 'TestLivechatBridge';
     public isOnline(departmentId?: string): boolean {
         throw new Error('Method not implemented');
     }

@@ -3,7 +3,6 @@ import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 import { IPersistenceBridge } from '../../../src/server/bridges';
 
 export class TestsPersisBridge implements IPersistenceBridge {
-    public name: 'TestsPersisBridge';
     public purge(appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }

@@ -8,7 +8,6 @@ export interface ITypingDescriptor extends ITypingOptions {
 }
 
 export interface IMessageBridge {
-    name: string;
     create(message: IMessage, appId: string): Promise<string>;
     getById(messageId: string, appId: string): Promise<IMessage>;
     update(message: IMessage, appId: string): Promise<void>;

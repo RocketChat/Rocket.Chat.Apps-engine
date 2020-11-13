@@ -22,7 +22,7 @@ export class AppPermissionManager {
                 if (typeof target[prop] === 'function') {
                     return (...args: Array<any>) => {
                         const hasPermission = AppPermissionManager.checkPermission({
-                            bridge: bridge.name,
+                            bridge: bridge.constructor.name,
                             method: prop,
                             args,
                         });
@@ -45,10 +45,11 @@ export class AppPermissionManager {
 
         if (!permissionCheckers[bridge] || !permissionCheckers[bridge][method]) {
             throw new Error(`No permission checker found for the bridge method "${bridge}.${method}"\n`
-            + 'Please create a new cheker under permissionChekers folder to fix the issue.');
+            + 'Please create a new cheker one under the permissionChekers folder to fix the issue.');
         }
 
         try {
+            console.log(bridge, method, permissionCheckers[bridge][method](...args));
             permissionCheckers[bridge][method](...args);
         } catch (err) {
             if (err instanceof PermissionDeniedError) {

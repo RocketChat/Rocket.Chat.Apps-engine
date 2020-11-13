@@ -3,7 +3,6 @@ import { IUploadDetails } from '../../../src/definition/uploads/IUploadDetails';
 import { IUploadBridge } from '../../../src/server/bridges/IUploadBridge';
 
 export class TestUploadBridge implements IUploadBridge {
-    public name: 'TestUploadBridge';
     public getById(id: string, appId: string): Promise<IUpload> {
         throw new Error('Method not implemented');
     }

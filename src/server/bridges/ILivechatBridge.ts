@@ -2,7 +2,6 @@ import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IV
 import { IUser } from '../../definition/users';
 
 export interface ILivechatBridge {
-    name: string;
     /**
      * @deprecated please use the `isOnlineAsync` method instead.
      * In the next major, this method will be `async`

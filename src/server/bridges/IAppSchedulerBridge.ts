@@ -5,7 +5,6 @@ import {
 } from '../../definition/scheduler';
 
 export interface IAppSchedulerBridge {
-    name: string;
     registerProcessors(processor: Array<IProcessor>, appId: string): void;
     scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
     scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void>;

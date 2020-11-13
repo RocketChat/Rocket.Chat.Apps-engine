@@ -1,6 +1,6 @@
 import { AppApi } from '../managers/AppApi';
 
-export const AppApiBridge = {
+export const AppApisBridge = {
     registerApi(api: AppApi, appId: string): void {
         return;
     },

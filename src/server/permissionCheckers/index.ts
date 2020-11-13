@@ -1,6 +1,6 @@
 import { IPermissionCheckers } from '../../definition/permission/IPermissionCheckers';
 import { AppActivationBridge } from './AppActivationBridge';
-import { AppApiBridge } from './AppApiBridge';
+import { AppApisBridge } from './AppApisBridge';
 import { AppCommandBridge } from './AppCommandBridge';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
 import { AppEnvironmentalVariableBridge } from './AppEnvironmentalVariableBridge';
@@ -18,7 +18,7 @@ import { AppUserBridge } from './AppUserBridge';
 
 export const permissionCheckers = {
     AppActivationBridge,
-    AppApiBridge,
+    AppApisBridge,
     AppCommandBridge,
     AppDetailChangesBridge,
     AppEnvironmentalVariableBridge,

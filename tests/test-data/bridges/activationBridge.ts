@@ -3,7 +3,6 @@ import { IAppActivationBridge } from '../../../src/server/bridges';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class TestsActivationBridge implements IAppActivationBridge {
-    public name: 'TestActivationBridge';
     public async appAdded(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been added.`);
     }
