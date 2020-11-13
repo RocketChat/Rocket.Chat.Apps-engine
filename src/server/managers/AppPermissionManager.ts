@@ -1,7 +1,6 @@
-import { AppPermission } from '../../definition/permission/AppPermission';
-import { IPermissionCheckers } from '../../definition/permission/IPermissionCheckers';
 import { Bridge } from '../bridges/AppBridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+import { permissionCheckers } from '../permissionCheckers';
 import { ROCKETCHAT_APP_EXECUTION_PREFIX } from '../ProxiedApp';
 
 interface IBridgeCallDescriptor {
@@ -9,17 +8,6 @@ interface IBridgeCallDescriptor {
     method: string;
     args: Array<any>;
 }
-
-const permissionCheckers: IPermissionCheckers = {
-    AppMessageBridge: {
-        getById(messageId: string, appId: string): void {
-            throw new PermissionDeniedError(appId, [
-                AppPermission.MessageRead,
-                AppPermission.MessageWrite,
-            ]);
-        },
-    },
-};
 
 export class AppPermissionManager {
     public static proxy<T extends Bridge & { [key: string]: any }>(bridge: T): T {
@@ -55,9 +43,9 @@ export class AppPermissionManager {
     public static checkPermission(call: IBridgeCallDescriptor): boolean {
         const { bridge, method, args } = call;
 
-        // allow bridge calls by default to keep forward compatibility
         if (!permissionCheckers[bridge] || !permissionCheckers[bridge][method]) {
-            return;
+            throw new Error(`No permission checker found for the bridge method "${bridge}.${method}"\n`
+            + 'Please create a new cheker under permissionChekers folder to fix the issue.');
         }
 
         try {

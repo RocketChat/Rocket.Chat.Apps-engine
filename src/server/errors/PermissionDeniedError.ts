@@ -8,7 +8,7 @@ export class PermissionDeniedError implements Error {
         const permissions =  missingPermissions
             .map((permission) => `"${ permission }"`)
             .join(', ');
-        this.message = `The app (${ appId }) failed to call the Api as it lacks the following permissions:\n`
+        this.message = `Failed to call the Api as the app (${ appId }) lacks the following permissions:\n`
             + `[${ permissions }]. Declare them in your app.json to fix the issue.\n`
             + `details: ${ details }`;
     }
