@@ -92,6 +92,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#api" class="tsd-kind-icon">api</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#externalcomponents" class="tsd-kind-icon">external<wbr>Components</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#http" class="tsd-kind-icon">http</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#scheduler" class="tsd-kind-icon">scheduler</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#settings" class="tsd-kind-icon">settings</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="iconfigurationextend.html#slashcommands" class="tsd-kind-icon">slash<wbr>Commands</a></li>
 							</ul>
@@ -107,9 +108,14 @@
 					<div class="tsd-signature tsd-kind-icon">api<span class="tsd-signature-symbol">:</span> <a href="iapiextend.html" class="tsd-signature-type">IApiExtend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/IConfigurationExtend.ts#L20">definition/accessors/IConfigurationExtend.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L23">definition/accessors/IConfigurationExtend.ts:23</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Accessor for declaring api endpoints.</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="externalcomponents" class="tsd-anchor"></a>
@@ -117,7 +123,7 @@
 					<div class="tsd-signature tsd-kind-icon">external<wbr>Components<span class="tsd-signature-symbol">:</span> <a href="iexternalcomponentsextend.html" class="tsd-signature-type">IExternalComponentsExtend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/IConfigurationExtend.ts#L22">definition/accessors/IConfigurationExtend.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L25">definition/accessors/IConfigurationExtend.ts:25</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -127,7 +133,7 @@
 					<div class="tsd-signature tsd-kind-icon">http<span class="tsd-signature-symbol">:</span> <a href="ihttpextend.html" class="tsd-signature-type">IHttpExtend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/IConfigurationExtend.ts#L13">definition/accessors/IConfigurationExtend.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L14">definition/accessors/IConfigurationExtend.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -137,12 +143,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="scheduler" class="tsd-anchor"></a>
+					<h3>scheduler</h3>
+					<div class="tsd-signature tsd-kind-icon">scheduler<span class="tsd-signature-symbol">:</span> <a href="ischedulerextend.html" class="tsd-signature-type">ISchedulerExtend</a></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L28">definition/accessors/IConfigurationExtend.ts:28</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Accessor for declaring tasks that can be scheduled (like cron)</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="settings" class="tsd-anchor"></a>
 					<h3>settings</h3>
 					<div class="tsd-signature tsd-kind-icon">settings<span class="tsd-signature-symbol">:</span> <a href="isettingsextend.html" class="tsd-signature-type">ISettingsExtend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/IConfigurationExtend.ts#L16">definition/accessors/IConfigurationExtend.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L17">definition/accessors/IConfigurationExtend.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -157,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">slash<wbr>Commands<span class="tsd-signature-symbol">:</span> <a href="islashcommandsextend.html" class="tsd-signature-type">ISlashCommandsExtend</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/86086fc/src/definition/accessors/IConfigurationExtend.ts#L19">definition/accessors/IConfigurationExtend.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/ac53c9b/src/definition/accessors/IConfigurationExtend.ts#L20">definition/accessors/IConfigurationExtend.ts:20</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -191,6 +212,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="iconfigurationextend.html#http" class="tsd-kind-icon">http</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="iconfigurationextend.html#scheduler" class="tsd-kind-icon">scheduler</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="iconfigurationextend.html#settings" class="tsd-kind-icon">settings</a>

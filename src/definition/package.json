@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-ts-definition",
-  "version": "1.19.0-alpha",
+  "version": "1.19.0",
   "description": "Contains the TypeScript definitions for the Rocket.Chat Applications.",
   "main": "index.js",
   "typings": "index",
