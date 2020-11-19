@@ -740,6 +740,7 @@ export class AppListenerManager {
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
                 );
             }
         }
