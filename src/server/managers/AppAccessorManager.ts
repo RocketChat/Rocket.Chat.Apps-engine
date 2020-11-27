@@ -26,6 +26,7 @@ import {
     Reader,
     RoomRead,
     SchedulerExtend,
+    SchedulerModify,
     ServerSettingRead,
     ServerSettingsModify,
     SettingRead,
@@ -115,10 +116,11 @@ export class AppAccessorManager {
 
     public getConfigurationModify(appId: string): IConfigurationModify {
         if (!this.configModifiers.has(appId)) {
-            const sets = new ServerSettingsModify(this.bridges.getServerSettingBridge(), appId);
-            const cmds = new SlashCommandsModify(this.manager.getCommandManager(), appId);
-
-            this.configModifiers.set(appId, new ConfigurationModify(sets, cmds));
+            this.configModifiers.set(appId, new ConfigurationModify(
+                new ServerSettingsModify(this.bridges.getServerSettingBridge(), appId),
+                new SlashCommandsModify(this.manager.getCommandManager(), appId),
+                new SchedulerModify(this.bridges.getSchedulerBridge(), appId),
+            ));
         }
 
         return this.configModifiers.get(appId);
