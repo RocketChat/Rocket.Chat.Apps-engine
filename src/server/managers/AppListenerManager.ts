@@ -740,6 +740,7 @@ export class AppListenerManager {
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
                 );
             }
         }
@@ -1045,12 +1046,12 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
-                           cfLivechatRoom,
-                           this.am.getReader(appId),
-                           this.am.getHttp(appId),
-                           this.am.getPersistence(appId),
-                           this.am.getModifier(appId),
-                          );
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
         }
     }
 
@@ -1065,12 +1066,12 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
-                           cfLivechatRoom,
-                           this.am.getReader(appId),
-                           this.am.getHttp(appId),
-                           this.am.getPersistence(appId),
-                           this.am.getModifier(appId),
-                          );
+                cfLivechatRoom,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
         }
     }
 }
