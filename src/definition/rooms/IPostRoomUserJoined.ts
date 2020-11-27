@@ -1,4 +1,4 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
 
 /**
@@ -15,5 +15,5 @@ import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
  * - IPreRoomUserJoined
  */
 export interface IPostRoomUserJoined {
-    executePostRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    executePostRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence, modify?: IModify): Promise<void>;
 }

@@ -500,7 +500,10 @@ export class AppManager {
             info: result.info,
             status: this.apps.get(old.id).getStatus(),
             zip: appPackage.toString('base64'),
-            compiled: result.files,
+            compiled: Object.entries(result.files).reduce(
+                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
+                {} as {[key: string]: string},
+            ),
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
