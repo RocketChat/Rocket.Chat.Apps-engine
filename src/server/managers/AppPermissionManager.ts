@@ -1,6 +1,6 @@
 import { Bridge } from '../bridges/AppBridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
-import { permissionCheckers } from '../permissionCheckers';
+import { permissionCheckers } from '../permissions';
 import { ROCKETCHAT_APP_EXECUTION_PREFIX } from '../ProxiedApp';
 
 interface IBridgeCallDescriptor {

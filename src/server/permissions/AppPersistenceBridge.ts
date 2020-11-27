@@ -1,4 +1,12 @@
 import { RocketChatAssociationRecord } from '../../definition/metadata';
+import { IPermission } from '../../definition/permission/AppPermission';
+
+export const PersistencePermissions: { [permission: string]: IPermission } = {
+    // getById, getByName, getCreatorById, getCreatorByName, getDirectByUsernames, getMembers
+    persistence: {
+        name: 'persistence',
+    },
+};
 
 export const AppPersistenceBridge = {
     purge(appId: string): void {

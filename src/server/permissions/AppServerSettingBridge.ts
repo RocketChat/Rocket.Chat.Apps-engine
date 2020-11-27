@@ -1,4 +1,16 @@
+import { IPermission } from '../../definition/permission/AppPermission';
 import { ISetting } from '../../definition/settings';
+
+export const ServerSettingPermissions: { [permission: string]: IPermission } = {
+    // getAll, getOneById, isReadableById
+    'server-setting.read': {
+        name: 'server-setting.read',
+    },
+    // hideGroup, hideSetting, updateOne
+    'server-setting.write': {
+        name: 'server-setting.write',
+    },
+};
 
 export const AppServerSettingBridge = {
     getAll(appId: string): void {

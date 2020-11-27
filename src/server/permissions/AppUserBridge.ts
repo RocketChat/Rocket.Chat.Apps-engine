@@ -1,4 +1,16 @@
+import { IPermission } from '../../definition/permission/AppPermission';
 import { IUser } from '../../definition/users';
+
+export const UserPermissions: { [permission: string]: IPermission } = {
+    // getById, getByUsername, getAppUser, getActiveUserCount
+    'user.read': {
+        name: 'user.read',
+    },
+    // create, update, remove
+    'user.write': {
+        name: 'user.write',
+    },
+};
 
 export const AppUserBridge = {
     getById(id: string, appId: string): void {

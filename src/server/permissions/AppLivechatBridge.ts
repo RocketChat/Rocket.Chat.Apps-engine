@@ -1,5 +1,22 @@
 import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../definition/livechat';
+import { IPermission } from '../../definition/permission/AppPermission';
 import { IUser } from '../../definition/users';
+
+export const LivechatPermissions: { [permission: string]: IPermission } = {
+    // isOnline, isOnlineAsync
+    // getMessageById, findVisitors, findVisitorsById
+    // findVisitorsByEamil, findVisitorsByToken
+    // findRooms, findDepartmentByIdOrName
+    'livechat.read': {
+        name: 'livechat.read',
+    },
+    // createMessage, updateMessage
+    // creaetVisitor, transferVisitor
+    // createRoom, closeRoom, setCustomFields
+    'livechat.write': {
+        name: 'livechat.write',
+    },
+};
 
 export const AppLivechatBridge = {
     isOnline(departmentId?: string): void {

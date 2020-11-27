@@ -1,5 +1,17 @@
 import { IMessage } from '../../definition/messages';
+import { IPermission } from '../../definition/permission/AppPermission';
 import { IRoom } from '../../definition/rooms/IRoom';
+
+export const RoomPermissions: { [permission: string]: IPermission } = {
+    // getById, getByName, getCreatorById, getCreatorByName, getDirectByUsernames, getMembers
+    'room.read': {
+        name: 'room.read',
+    },
+    // create, update, createDsicussions
+    'room.write': {
+        name: 'room.write',
+    },
+};
 
 export const AppRoomBridge = {
     create(room: IRoom, members: Array<string>, appId: string): void {

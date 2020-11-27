@@ -1,16 +1,27 @@
 import { IMessage } from '../../definition/messages';
-import { AppPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/AppPermission';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { ITypingDescriptor } from '../bridges/IMessageBridge';
-import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+
+export const MessagePermissions: { [permission: string]: IPermission } = {
+    // getById
+    'message.read': {
+        name: 'message.read',
+    },
+    // create, update
+    'message.write': {
+        name: 'message.write',
+    },
+    // notifyUser, notifyRoom, typing
+    'message.notification': {
+        name: 'message.notification',
+    },
+};
 
 export const AppMessageBridge = {
     getById(messageId: string, appId: string): void {
-        throw new PermissionDeniedError(appId, [
-            AppPermission.MessageRead,
-            AppPermission.MessageWrite,
-        ]);
+        return;
     },
     create(message: IMessage, appId: string): void {
         return;
