@@ -202,7 +202,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.initializeApp(items.get(rl.getID()), rl, true).catch(console.error);
+            await this.initializeApp(items.get(rl.getID()), rl, false, true).catch(console.error);
         }
 
         // Let's ensure the required settings are all set
