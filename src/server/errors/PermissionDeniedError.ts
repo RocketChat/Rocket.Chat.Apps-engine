@@ -1,10 +1,10 @@
-import { AppPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/AppPermission';
 
 export class PermissionDeniedError implements Error {
     public name: string = 'Permission_Denied_Error';
     public message: string;
 
-    constructor(appId: string, missingPermissions: Array<AppPermission>, details?: string) {
+    constructor(appId: string, missingPermissions: Array<IPermission>, details?: string) {
         const permissions =  missingPermissions
             .map((permission) => `"${ permission }"`)
             .join(', ');
