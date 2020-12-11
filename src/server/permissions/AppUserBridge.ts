@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IUser } from '../../definition/users';
 
 export const UserPermissions: { [permission: string]: IPermission } = {

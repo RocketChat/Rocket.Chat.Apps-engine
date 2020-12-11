@@ -1,5 +1,5 @@
 import { ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../definition/livechat';
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IUser } from '../../definition/users';
 
 export const LivechatPermissions: { [permission: string]: IPermission } = {

@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { AppApi } from '../managers/AppApi';
 
 export const ApisPermissions: { [permission: string]: IPermission } = {

@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../definition/scheduler';
 
 export const SchedulerPermissions: { [permission: string]: IPermission } = {

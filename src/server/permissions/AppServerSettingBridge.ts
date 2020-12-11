@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { ISetting } from '../../definition/settings';
 
 export const ServerSettingPermissions: { [permission: string]: IPermission } = {

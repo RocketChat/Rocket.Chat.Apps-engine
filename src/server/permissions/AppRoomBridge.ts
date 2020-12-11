@@ -1,5 +1,5 @@
 import { IMessage } from '../../definition/messages';
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IRoom } from '../../definition/rooms/IRoom';
 
 export const RoomPermissions: { [permission: string]: IPermission } = {

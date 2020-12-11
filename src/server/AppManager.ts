@@ -1,5 +1,6 @@
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
+import { IPermission } from '../definition/permission/IPermission';
 import { IUser, UserType } from '../definition/users';
 import { AppBridges } from './bridges';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
@@ -322,6 +323,17 @@ export class AppManager {
     /** Gets a single App by the id passed in. */
     public getOneById(appId: string): ProxiedApp {
         return this.apps.get(appId);
+    }
+
+    public getPermissionsById(appId: string): Array<IPermission> {
+        const app = this.apps.get(appId);
+
+        if (!app) {
+            return [];
+        }
+        const { info: { permissions } } = app.getStorageItem();
+
+        return permissions || [];
     }
 
     public async enable(id: string): Promise<boolean> {

@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IUpload } from '../../definition/uploads';
 import { IUploadDetails } from '../../definition/uploads/IUploadDetails';
 

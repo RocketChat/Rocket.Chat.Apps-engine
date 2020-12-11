@@ -1,5 +1,5 @@
 import { RocketChatAssociationRecord } from '../../definition/metadata';
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 
 export const PersistencePermissions: { [permission: string]: IPermission } = {
     // getById, getByName, getCreatorById, getCreatorByName, getDirectByUsernames, getMembers

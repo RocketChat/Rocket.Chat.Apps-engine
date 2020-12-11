@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { IUIKitInteraction } from '../../definition/uikit';
 import { IUser } from '../../definition/users';
 

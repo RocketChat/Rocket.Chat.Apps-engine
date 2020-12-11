@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 
 export class PermissionDeniedError implements Error {
     public name: string = 'Permission_Denied_Error';

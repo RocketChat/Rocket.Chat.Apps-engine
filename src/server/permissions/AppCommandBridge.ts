@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/AppPermission';
+import { IPermission } from '../../definition/permission/IPermission';
 import { ISlashCommand } from '../../definition/slashcommands';
 
 export const CommndPermissions: { [permission: string]: IPermission } = {

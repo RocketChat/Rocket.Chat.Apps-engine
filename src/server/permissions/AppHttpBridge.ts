@@ -1,4 +1,4 @@
-import { IHttpPermission } from '../../definition/permission/AppPermission';
+import { IHttpPermission } from '../../definition/permission/IPermission';
 import { IHttpBridgeRequestInfo } from '../bridges';
 
 export const HttpPermissions: { [permission: string]: IHttpPermission } = {
