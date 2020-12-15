@@ -4,22 +4,22 @@ import { IUser } from '../../../definition/users';
 import { ITypingDescriptor } from '../../bridges/IMessageBridge';
 import { PermissionDeniedError } from '../../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../../managers/AppPermissionManager';
-import { Permission } from '../AppPermissions';
+import { AppPermissions } from '../AppPermissions';
 
 export const AppMessageBridge = {
     getById(messageId: string, appId: string): void {
-        if (!AppPermissionManager.hasPermission(appId, Permission.message.read)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [Permission.message.read],
+                missingPermissions: [AppPermissions.message.read],
             });
         }
     },
     create(message: IMessage, appId: string): void {
-        if (!AppPermissionManager.hasPermission(appId, Permission.message.write)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.message.write)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [Permission.message.write],
+                missingPermissions: [AppPermissions.message.write],
             });
         }
         return;

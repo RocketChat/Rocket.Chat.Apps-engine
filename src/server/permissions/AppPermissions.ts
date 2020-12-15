@@ -150,7 +150,7 @@ const UserPermissions: { [permission: string]: IPermission } = {
     },
 };
 
-export const Permission = {
+export const AppPermissions = {
     'user': UserPermissions,
     'upload': UploadPermissions,
     'ui': UiInteractionPermissions,
