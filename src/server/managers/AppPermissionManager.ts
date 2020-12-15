@@ -1,3 +1,5 @@
+import { IPermission } from '../../definition/permission/IPermission';
+import { getPermissionsByAppId } from '../AppManager';
 import { Bridge } from '../bridges/AppBridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { permissionCheckers } from '../permissions';
@@ -40,12 +42,21 @@ export class AppPermissionManager {
         return new Proxy(bridge, handler);
     }
 
-    public static checkPermission(call: IBridgeCallDescriptor): boolean {
+    /**
+     * It returns the declaration of the permission if the app declared, or it returns `undefined`.
+     */
+    public static hasPermission(appId: string, permission: IPermission): undefined | IPermission {
+        const permissions = getPermissionsByAppId(appId);
+
+        return permissions.find(({ name = '' }) => name === permission.name);
+    }
+
+    private static checkPermission(call: IBridgeCallDescriptor): boolean {
         const { bridge, method, args } = call; // 'AppMessageBridge', 'getById', ['mockMessageId', 'mockAppId']
 
         if (!permissionCheckers[bridge] || !permissionCheckers[bridge][method]) {
-            throw new Error(`No permission checker found for the bridge method "${bridge}.${method}"\n`
-            + 'Please create a new cheker one under the permissionChekers folder to fix the issue.');
+            throw new Error(`No permission checker found for the bridge method "${ bridge }.${ method }"\n`
+                + 'Please create a new cheker one under the permissionChekers folder to fix the issue.');
         }
 
         try {

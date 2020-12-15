@@ -8,7 +8,7 @@ import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager,
+    AppSlashCommandManager
 } from './managers';
 import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -880,3 +880,11 @@ export class AppManager {
         return !!this.createAppUser(app);
     }
 }
+
+export const getPermissionsByAppId = (appId: string) => {
+    if (!AppManager.Instance) {
+        console.error('AppManager should be instantiated first');
+        return [];
+    }
+    return AppManager.Instance.getPermissionsById(appId);
+};

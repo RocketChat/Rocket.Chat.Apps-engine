@@ -3,6 +3,9 @@ import { IPermission } from '../../definition/permission/IPermission';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { ITypingDescriptor } from '../bridges/IMessageBridge';
+import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+import { AppPermissionManager } from '../managers/AppPermissionManager';
+import { AppPermissions as Permissions } from './AppPermissions';
 
 export const MessagePermissions: { [permission: string]: IPermission } = {
     // getById
@@ -21,9 +24,20 @@ export const MessagePermissions: { [permission: string]: IPermission } = {
 
 export const AppMessageBridge = {
     getById(messageId: string, appId: string): void {
-        return;
+        if (!AppPermissionManager.hasPermission(appId, Permissions.message.read)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [Permissions.message.read],
+            });
+        }
     },
     create(message: IMessage, appId: string): void {
+        if (!AppPermissionManager.hasPermission(appId, Permissions.message.write)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [Permissions.message.write],
+            });
+        }
         return;
     },
     update(message: IMessage, appId: string): void {
