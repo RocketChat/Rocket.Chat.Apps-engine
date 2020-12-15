@@ -8,7 +8,7 @@ import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager
+    AppSlashCommandManager,
 } from './managers';
 import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
