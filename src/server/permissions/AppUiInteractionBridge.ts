@@ -4,7 +4,7 @@ import { IUser } from '../../definition/users';
 
 export const UiInteractionPermissions: { [permission: string]: IPermission } = {
     // notifyUser
-    'ui.interaction': {
+    interaction: {
         name: 'ui.interaction',
     },
 };

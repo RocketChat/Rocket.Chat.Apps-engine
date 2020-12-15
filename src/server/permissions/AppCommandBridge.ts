@@ -1,14 +1,14 @@
 import { IPermission } from '../../definition/permission/IPermission';
 import { ISlashCommand } from '../../definition/slashcommands';
 
-export const CommndPermissions: { [permission: string]: IPermission } = {
+export const CommandPermissions: { [permission: string]: IPermission } = {
     // doesCommandExist
-    'command.read': {
+    read: {
         name: 'command.read',
     },
     // enableCommand, disableCommand, modifyCommand, restoreCommand, registerCommand
     // unregisterCommand
-    'command.write': {
+    write: {
         name: 'command.write',
     },
 };

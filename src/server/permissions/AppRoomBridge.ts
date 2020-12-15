@@ -4,11 +4,11 @@ import { IRoom } from '../../definition/rooms/IRoom';
 
 export const RoomPermissions: { [permission: string]: IPermission } = {
     // getById, getByName, getCreatorById, getCreatorByName, getDirectByUsernames, getMembers
-    'room.read': {
+    read: {
         name: 'room.read',
     },
     // create, update, createDsicussions
-    'room.write': {
+    write: {
         name: 'room.write',
     },
 };

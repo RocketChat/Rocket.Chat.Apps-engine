@@ -3,8 +3,8 @@ import { ISetting } from '../../definition/settings';
 
 export const AppDetailChangesPermissions: { [permission: string]: IPermission } = {
     // onAppSettingsChnages
-    'app-detail-changes.settings': {
-        name: 'app-detail-changes.settings',
+    settings: {
+        name: 'app-details.settings',
     },
 };
 

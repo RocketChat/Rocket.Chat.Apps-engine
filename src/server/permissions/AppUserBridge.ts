@@ -3,11 +3,11 @@ import { IUser } from '../../definition/users';
 
 export const UserPermissions: { [permission: string]: IPermission } = {
     // getById, getByUsername, getAppUser, getActiveUserCount
-    'user.read': {
+    read: {
         name: 'user.read',
     },
     // create, update, remove
-    'user.write': {
+    write: {
         name: 'user.write',
     },
 };

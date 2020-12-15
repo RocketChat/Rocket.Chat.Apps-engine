@@ -3,8 +3,8 @@ import { IPermission } from '../../definition/permission/IPermission';
 
 export const PersistencePermissions: { [permission: string]: IPermission } = {
     // getById, getByName, getCreatorById, getCreatorByName, getDirectByUsernames, getMembers
-    persistence: {
-        name: 'persistence',
+    general: {
+        name: 'persistence.general',
     },
 };
 

@@ -4,11 +4,11 @@ import { IUploadDetails } from '../../definition/uploads/IUploadDetails';
 
 export const UploadPermissions: { [permission: string]: IPermission } = {
     // getById, getBuffer
-    'upload.read': {
+    read: {
         name: 'upload.read',
     },
     // createUpload
-    'upload.write': {
+    write: {
         name: 'upload.write',
     },
 };

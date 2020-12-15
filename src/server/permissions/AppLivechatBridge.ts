@@ -7,13 +7,13 @@ export const LivechatPermissions: { [permission: string]: IPermission } = {
     // getMessageById, findVisitors, findVisitorsById
     // findVisitorsByEamil, findVisitorsByToken
     // findRooms, findDepartmentByIdOrName
-    'livechat.read': {
+    read: {
         name: 'livechat.read',
     },
     // createMessage, updateMessage
     // creaetVisitor, transferVisitor
     // createRoom, closeRoom, setCustomFields
-    'livechat.write': {
+    write: {
         name: 'livechat.write',
     },
 };

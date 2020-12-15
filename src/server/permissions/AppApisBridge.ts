@@ -3,8 +3,8 @@ import { AppApi } from '../managers/AppApi';
 
 export const ApisPermissions: { [permission: string]: IPermission } = {
     // registerApi, unregisterApis
-    apis: {
-        name: 'apis',
+    general: {
+        name: 'apis.general',
     },
 };
 

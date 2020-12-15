@@ -41,7 +41,7 @@ export class AppPermissionManager {
     }
 
     public static checkPermission(call: IBridgeCallDescriptor): boolean {
-        const { bridge, method, args } = call;
+        const { bridge, method, args } = call; // 'AppMessageBridge', 'getById', ['mockMessageId', 'mockAppId']
 
         if (!permissionCheckers[bridge] || !permissionCheckers[bridge][method]) {
             throw new Error(`No permission checker found for the bridge method "${bridge}.${method}"\n`
@@ -50,7 +50,7 @@ export class AppPermissionManager {
 
         try {
             console.log(bridge, method, permissionCheckers[bridge][method](...args));
-            permissionCheckers[bridge][method](...args);
+            permissionCheckers[bridge][method](...args); // permissionCheckers['AppMessageBridge']['getById']('mockMessageId', 'mockAppId');
         } catch (err) {
             if (err instanceof PermissionDeniedError) {
                 const { name, message } = err;

@@ -3,11 +3,11 @@ import { ISetting } from '../../definition/settings';
 
 export const ServerSettingPermissions: { [permission: string]: IPermission } = {
     // getAll, getOneById, isReadableById
-    'server-setting.read': {
+    read: {
         name: 'server-setting.read',
     },
     // hideGroup, hideSetting, updateOne
-    'server-setting.write': {
+    write: {
         name: 'server-setting.write',
     },
 };

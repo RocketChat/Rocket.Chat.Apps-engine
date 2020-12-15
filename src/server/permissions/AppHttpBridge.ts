@@ -3,8 +3,8 @@ import { IHttpBridgeRequestInfo } from '../bridges';
 
 export const HttpPermissions: { [permission: string]: IHttpPermission } = {
     // call
-    http: {
-        name: 'http',
+    general: {
+        name: 'http.general',
         domains: [],
     },
 };

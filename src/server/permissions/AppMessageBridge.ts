@@ -6,15 +6,15 @@ import { ITypingDescriptor } from '../bridges/IMessageBridge';
 
 export const MessagePermissions: { [permission: string]: IPermission } = {
     // getById
-    'message.read': {
+    read: {
         name: 'message.read',
     },
     // create, update
-    'message.write': {
+    write: {
         name: 'message.write',
     },
     // notifyUser, notifyRoom, typing
-    'message.notification': {
+    notification: {
         name: 'message.notification',
     },
 };
