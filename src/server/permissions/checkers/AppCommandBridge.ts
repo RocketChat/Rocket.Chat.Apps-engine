@@ -1,17 +1,4 @@
-import { IPermission } from '../../definition/permission/IPermission';
-import { ISlashCommand } from '../../definition/slashcommands';
-
-export const CommandPermissions: { [permission: string]: IPermission } = {
-    // doesCommandExist
-    read: {
-        name: 'command.read',
-    },
-    // enableCommand, disableCommand, modifyCommand, restoreCommand, registerCommand
-    // unregisterCommand
-    write: {
-        name: 'command.write',
-    },
-};
+import { ISlashCommand } from '../../../definition/slashcommands';
 
 export const AppCommandBridge = {
     doesCommandExist(command: string, appId: string): void {

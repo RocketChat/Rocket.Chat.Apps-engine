@@ -1,11 +1,4 @@
-import { IPermission } from '../../definition/permission/IPermission';
-import { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../definition/scheduler';
-
-export const SchedulerPermissions: { [permission: string]: IPermission } = {
-    general: {
-        name: 'scheduler.general',
-    },
-};
+import { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../../definition/scheduler';
 
 export const AppSchedulerBridge = {
     registerProcessors(processor: Array<IProcessor>, appId: string): void {

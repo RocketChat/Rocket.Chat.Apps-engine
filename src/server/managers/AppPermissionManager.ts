@@ -2,7 +2,7 @@ import { IPermission } from '../../definition/permission/IPermission';
 import { getPermissionsByAppId } from '../AppManager';
 import { Bridge } from '../bridges/AppBridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
-import { permissionCheckers } from '../permissions';
+import { permissionCheckers } from '../permissions/checkers';
 import { ROCKETCHAT_APP_EXECUTION_PREFIX } from '../ProxiedApp';
 
 interface IBridgeCallDescriptor {
