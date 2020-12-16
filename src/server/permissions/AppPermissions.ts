@@ -184,7 +184,7 @@ export const defaultPermissions: Array<IPermission> = [
     { name: 'message.notification' },
     { name: 'livechat.read' },
     { name: 'livechat.write' },
-    { name: 'http.general', domains: [] } as IHttpPermission,
+    { name: 'http.general', domains: ['*'] } as IHttpPermission,
     { name: 'env.read' },
     { name: 'app-details.settings' },
     { name: 'command.read' },
