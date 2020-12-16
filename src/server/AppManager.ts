@@ -13,6 +13,7 @@ import {
 import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
+import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
@@ -337,9 +338,9 @@ export class AppManager {
         if (!app) {
             return [];
         }
-        const { info: { permissions } } = app.getStorageItem();
+        const { permissionsGranted } = app.getStorageItem();
 
-        return permissions || [];
+        return permissionsGranted || defaultPermissions;
     }
 
     public async enable(id: string): Promise<boolean> {

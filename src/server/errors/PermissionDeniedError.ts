@@ -12,7 +12,7 @@ export class PermissionDeniedError implements Error {
 
     constructor({ appId, missingPermissions, reason }: IPermissionDeniedErrorParams) {
         const permissions = missingPermissions
-            .map((permission) => `"${ permission }"`)
+            .map((permission) => `"${ JSON.stringify(permission) }"`)
             .join(', ');
         this.message = `Failed to call the method as the app (${ appId }) lacks the following permissions:\n`
             + `[${ permissions }]. Declare them in your app.json to fix the issue.\n`

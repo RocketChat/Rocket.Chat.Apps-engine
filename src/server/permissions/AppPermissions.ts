@@ -166,3 +166,28 @@ export const AppPermissions = {
     'command': CommandPermissions,
     'apis': ApisPermissions,
 };
+
+export const defaultPermissions: Array<IPermission> = [
+    { name: 'user.read' },
+    { name: 'user.write' },
+    { name: 'upload.read' },
+    { name: 'upload.write' },
+    { name: 'ui.interaction' },
+    { name: 'server-setting.read' },
+    { name: 'server-setting.write' },
+    { name: 'scheduler.general' },
+    { name: 'room.read' },
+    { name: 'room.write' },
+    { name: 'persistence.general' },
+    { name: 'message.read' },
+    { name: 'message.write' },
+    { name: 'message.notification' },
+    { name: 'livechat.read' },
+    { name: 'livechat.write' },
+    { name: 'http.general', domains: [] } as IHttpPermission,
+    { name: 'env.read' },
+    { name: 'app-details.settings' },
+    { name: 'command.read' },
+    { name: 'command.write' },
+    { name: 'apis.general' },
+];
