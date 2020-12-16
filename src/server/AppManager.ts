@@ -16,6 +16,12 @@ import { DisabledApp } from './misc/DisabledApp';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
+export interface IAppInstallParameters {
+    enable: boolean;
+    marketplaceInfo?: IMarketplaceInfo;
+    permissionsGranted?: Array<IPermission>;
+}
+
 export class AppManager {
     public static Instance: AppManager;
 
@@ -406,7 +412,9 @@ export class AppManager {
         return true;
     }
 
-    public async add(appPackage: Buffer, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
+        const { enable, marketplaceInfo, permissionsGranted } = installationParameters;
+
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -427,6 +435,7 @@ export class AppManager {
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
+            permissionsGranted,
         };
 
         // Now that is has all been compiled, let's get the
@@ -503,7 +512,7 @@ export class AppManager {
         return app;
     }
 
-    public async update(appPackage: Buffer): Promise<AppFabricationFulfillment> {
+    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -531,6 +540,7 @@ export class AppManager {
             settings: old.settings,
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
+            permissionsGranted,
         });
 
         // Now that is has all been compiled, let's get the

@@ -25,6 +25,7 @@ export class AppFabricationFulfillmentTestFixture {
             classFile: 'TestingApp.ts',
             iconFile: 'testing.jpg',
             implements: [],
+            permissions: [],
         };
 
         Expect(() => new AppFabricationFulfillment()).not.toThrow();
