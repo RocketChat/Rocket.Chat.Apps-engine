@@ -1,4 +1,4 @@
-import { IHttpPermission, IPermission } from '../../definition/permission/IPermission';
+import { IHttpPermission, IPermission } from '../../definition/permissions/IPermission';
 
 // Apis
 const ApisPermissions: { [permission: string]: IPermission } = {

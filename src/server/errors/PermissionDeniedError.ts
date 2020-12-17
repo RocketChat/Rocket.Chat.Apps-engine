@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/IPermission';
+import { IPermission } from '../../definition/permissions/IPermission';
 
 interface IPermissionDeniedErrorParams {
     appId: string;

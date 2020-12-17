@@ -1,6 +1,6 @@
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
-import { IPermission } from '../definition/permission/IPermission';
+import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
 import { AppBridges } from './bridges';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';

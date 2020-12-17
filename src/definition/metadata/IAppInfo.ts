@@ -1,4 +1,4 @@
-import { IPermission } from '../permission/IPermission';
+import { IPermission } from '../permissions/IPermission';
 import { AppInterface } from './AppInterface';
 import { IAppAuthorInfo } from './IAppAuthorInfo';
 

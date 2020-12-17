@@ -1,4 +1,4 @@
-import { IPermissionCheckers } from '../../../definition/permission/IPermissionCheckers';
+import { IPermissionCheckers } from '../IPermissionCheckers';
 import { AppActivationBridge } from './AppActivationBridge';
 import { AppApisBridge } from './AppApisBridge';
 import { AppCommandBridge } from './AppCommandBridge';

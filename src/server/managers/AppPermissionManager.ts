@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permission/IPermission';
+import { IPermission } from '../../definition/permissions/IPermission';
 import { getPermissionsByAppId } from '../AppManager';
 import { Bridge } from '../bridges/AppBridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
