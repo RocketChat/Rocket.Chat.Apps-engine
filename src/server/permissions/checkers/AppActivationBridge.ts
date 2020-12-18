@@ -1,8 +1,8 @@
 import { AppStatus } from '../../../definition/AppStatus';
 import { ProxiedApp } from '../../ProxiedApp';
 
-// It seems its an internal bridge and doesn't have
-// exposed Api endpoint, might need to remove it later
+// It seems that it's an internal bridge that wasn't exposed.
+// Pass all bridge methods by default.
 export const AppActivationBridge = {
     appAdded(app: ProxiedApp): void {
         return;

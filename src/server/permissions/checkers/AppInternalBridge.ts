@@ -1,5 +1,5 @@
-// It seems its the internal bridge that wasn't exposed.
-// might need to remove it later
+// It seems that it's an internal bridge that wasn't exposed.
+// Pass all bridge methods by default.
 export const AppInternalBridge = {
     getUsernamesOfRoomById(roomId: string): void {
         return;
