@@ -2,7 +2,7 @@ import { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../../src/d
 import { IAppSchedulerBridge } from '../../../src/server/bridges';
 
 export class TestSchedulerBridge implements IAppSchedulerBridge {
-    public registerProcessors(processor: Array<IProcessor>, appId: string): void {
+    public async registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
     public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
