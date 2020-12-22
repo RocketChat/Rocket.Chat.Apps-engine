@@ -340,7 +340,7 @@ export class AppManager {
         }
         const { permissionsGranted } = app.getStorageItem();
 
-        return (permissionsGranted && permissionsGranted.length) ? permissionsGranted : defaultPermissions;
+        return permissionsGranted || defaultPermissions;
     }
 
     public async enable(id: string): Promise<boolean> {
