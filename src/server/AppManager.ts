@@ -340,7 +340,7 @@ export class AppManager {
         }
         const { permissionsGranted } = app.getStorageItem();
 
-        return permissionsGranted || defaultPermissions;
+        return (permissionsGranted && permissionsGranted.length) ? permissionsGranted : defaultPermissions;
     }
 
     public async enable(id: string): Promise<boolean> {
@@ -414,7 +414,7 @@ export class AppManager {
     }
 
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
-        const { enable, marketplaceInfo, permissionsGranted } = installationParameters;
+        const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
@@ -752,7 +752,6 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
-            console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
             this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);

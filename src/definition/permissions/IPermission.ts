@@ -1,6 +1,6 @@
 export interface IPermission {
     name: string;
-    requierd?: boolean;
+    required?: boolean;
 }
 
 export interface IHttpPermission extends IPermission {
