@@ -3,7 +3,7 @@ import { PermissionDeniedError } from '../../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
-export const AppCommandBridge = {
+export const AppCommandsBridge = {
     hasReadPermission(appId: string) {
         if (!AppPermissionManager.hasPermission(appId, AppPermissions.command.read)) {
             throw new PermissionDeniedError({
