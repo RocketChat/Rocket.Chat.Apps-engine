@@ -7,9 +7,9 @@ export abstract class AppStorage {
         return this.engine;
     }
 
-    public abstract async create(item: IAppStorageItem): Promise<IAppStorageItem>;
-    public abstract async retrieveOne(id: string): Promise<IAppStorageItem>;
-    public abstract async retrieveAll(): Promise<Map<string, IAppStorageItem>>;
-    public abstract async update(item: IAppStorageItem): Promise<IAppStorageItem>;
-    public abstract async remove(id: string): Promise<{ success: boolean }>;
+    public abstract create(item: IAppStorageItem): Promise<IAppStorageItem>;
+    public abstract retrieveOne(id: string): Promise<IAppStorageItem>;
+    public abstract retrieveAll(): Promise<Map<string, IAppStorageItem>>;
+    public abstract update(item: IAppStorageItem): Promise<IAppStorageItem>;
+    public abstract remove(id: string): Promise<{ success: boolean }>;
 }
