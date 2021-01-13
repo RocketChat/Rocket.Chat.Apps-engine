@@ -1,7 +1,7 @@
 import { Expect, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
-import { TestData } from '../../test-data/utilities';
 import { IUser } from '../../../src/definition/users';
+import { TestData } from '../../test-data/utilities';
 
 import { MessageBuilder, UserBuilder } from '../../../src/server/accessors';
 
