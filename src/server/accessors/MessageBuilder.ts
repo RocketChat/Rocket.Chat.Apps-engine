@@ -21,6 +21,13 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
+    public setUpdateData(data: IMessage, editor: IUser): IMessageBuilder {
+        this.msg = data;
+        this.msg.editor = editor;
+
+        return this;
+    }
+
     public setThreadId(threadId: string): IMessageBuilder {
         this.msg.threadId = threadId;
 
