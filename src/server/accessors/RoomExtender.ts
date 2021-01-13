@@ -23,6 +23,10 @@ export class RoomExtender implements IRoomExtender {
             throw new Error(`The room already contains a custom field by the key: ${ key }`);
         }
 
+        if (key.includes('.')) {
+            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
+        }
+
         this.room.customFields[key] = value;
 
         return this;
