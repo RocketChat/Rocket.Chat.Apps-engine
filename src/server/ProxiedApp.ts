@@ -62,7 +62,14 @@ export class ProxiedApp implements IApp {
     }
 
     public runInContext(codeToRun: string, context: vm.Context): any {
-        return vm.runInContext(codeToRun, context, { timeout: 1000 });
+        const argv = process.execArgv.join('');
+
+        let timeout = 1000;
+        if (argv.includes('inspect') || argv.includes('debug')) {
+            timeout = 1000 * 3600;
+        }
+
+        return vm.runInContext(codeToRun, context, { timeout });
     }
 
     public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
