@@ -27,7 +27,6 @@ jobs:
       - run: meteor npm install
         working-directory: ./Rocket.Chat
       - run: rm -r ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
-      - run: ls ./apps-engine/.github/scripts
-      - run: mv ./apps-engine ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
       - run: mv ./apps-engine/.github/scripts/start-e2e-testing.js ./
+      - run: mv ./apps-engine ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
       - run: node ./start-e2e-testing.js
