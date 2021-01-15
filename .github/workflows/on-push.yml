@@ -32,3 +32,5 @@ jobs:
         working-directory: ./Rocket.Chat
       - run: echo "The Rocket.Chat instance has been started."
       - run: ls ./apps-engine/.github/scripts
+      - run: mv ./apps-engine/.github/scripts/start-e2e-testing.js ./
+      - run: node ./start-e2e-testing.js
