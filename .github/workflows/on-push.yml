@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Apps-Engine
         uses: actions/checkout@v2
         with:
-          repository: RocketChat/Rocket.Chat.Apps-engine
+          repository: lolimay/Rocket.Chat.Apps-engine
           ref: 'e2e-testing'
           token: ${{ secrets.GTHUB_PAT }}
           path: apps-engine
