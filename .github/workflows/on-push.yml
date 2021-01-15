@@ -20,13 +20,19 @@ jobs:
           ref: 'e2e-testing'
           token: ${{ secrets.GTHUB_PAT }}
           path: apps-engine
-      - run: npm install
+      - run: |
+        npm install
+        npm run compile
+        name: "Setup Apps-Engine"
         working-directory: ./apps-engine
-      - run: npm run compile
-        working-directory: ./apps-engine
-      - run: meteor npm install
+      - run: |
+        meteor npm install
+        name: "Setup Rocket.Chat"
         working-directory: ./Rocket.Chat
-      - run: rm -r ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
-      - run: mv ./apps-engine/.github/scripts/start-e2e-testing.js ./
-      - run: mv ./apps-engine ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
-      - run: node ./start-e2e-testing.js
+      - run: |
+        rm -r ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
+        mv ./apps-engine/.github/scripts/start-e2e-testing.js ./
+        mv ./apps-engine ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
+        name: "Link Apps-Engine to Rocket.Chat"
+      - run: "Start Apps-Engine End-to-End Testing"
+        node ./start-e2e-testing.js
