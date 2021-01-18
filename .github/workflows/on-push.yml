@@ -10,14 +10,14 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: RocketChat/Rocket.Chat
-          ref: 'apps/e2e-testing'
+          ref: 'develop'
           token: ${{ secrets.GTHUB_PAT }}
           path: Rocket.Chat
       - name: Checkout Apps-Engine
         uses: actions/checkout@v2
         with:
-          repository: lolimay/Rocket.Chat.Apps-engine
-          ref: 'e2e-testing'
+          repository: RocketChat/Rocket.Chat.Apps-engine
+          ref: 'alpha'
           token: ${{ secrets.GTHUB_PAT }}
           path: apps-engine
       - name: "Setup Apps-Engine"
