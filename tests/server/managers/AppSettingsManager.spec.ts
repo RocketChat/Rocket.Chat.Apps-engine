@@ -120,6 +120,11 @@ export class AppSettingsManagerTestFixture {
         const set = TestData.getSetting('testing');
         await Expect(async () => await asm.updateAppSetting('testing', set)).not.toThrowAsync();
 
+        const setRequired = set;
+        setRequired.value = null;
+        setRequired.required = true;
+        await Expect(async () => await asm.updateAppSetting('testing', setRequired)).toThrowErrorAsync(Error, 'No value given to required field.');
+
         Expect(this.mockStorage.update).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockApp.setStorageItem).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockBridges.getAppDetailChangesBridge().onAppSettingsChange).toHaveBeenCalledWith('testing', set).exactly(1);

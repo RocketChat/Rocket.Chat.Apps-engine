@@ -37,6 +37,10 @@ export class AppSettingsManager {
             throw new Error('No setting found for the App by the provided id.');
         }
 
+        if (setting.value == null && rl.getStorageItem().settings[setting.id].required) {
+            throw new Error('No value given to required field.');
+        }
+
         setting.updatedAt = new Date();
         rl.getStorageItem().settings[setting.id] = setting;
 
