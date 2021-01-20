@@ -29,7 +29,7 @@ export abstract class AppsEngineUIHost {
                 return;
             }
 
-            this.responseDestination = source;
+            this.responseDestination = source as Window;
 
             const { [MESSAGE_ID]: { action, id } } = data;
 
@@ -44,11 +44,11 @@ export abstract class AppsEngineUIHost {
     /**
      * Get the current user's information.
      */
-    public abstract async getClientUserInfo(): Promise<IExternalComponentUserInfo>;
+    public abstract getClientUserInfo(): Promise<IExternalComponentUserInfo>;
     /**
      * Get the opened room's information.
      */
-    public abstract async getClientRoomInfo(): Promise<IExternalComponentRoomInfo>;
+    public abstract getClientRoomInfo(): Promise<IExternalComponentRoomInfo>;
     /**
      * Handle the action sent from the external component.
      * @param action the name of the action
