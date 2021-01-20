@@ -1086,14 +1086,12 @@ export class AppListenerManager {
 
     // FileUpload
     private async executePreFileUpload(data: IFileUpload): Promise<IUploadCheckResponse> {
-        const cfFileUpload = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPreFileUpload)) {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
                 const response = await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
-                    cfFileUpload,
+                    data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
