@@ -5,10 +5,8 @@ export interface IUploadCheckResponse {
     prevent: boolean;
     /**
      * The reason to prevent the file upload
-     *
-     * NOTE: This reason should provide i18n support.
      */
-    i18nReason?: string;
+    reason?: string;
     /**
      * The appId of the app who handles file upload event
      */
