@@ -1099,7 +1099,7 @@ export class AppListenerManager {
                 ) as IUploadCheckResponse;
 
                 if (response.prevent) {
-                    return response;
+                    return { ...response, appId };
                 }
             }
         }
