@@ -52,8 +52,8 @@ export const AppPermissions = {
         read: { name: 'livechat.read' },
         write: { name: 'livechat.write' },
     },
-    'http': {
-        general: { name: 'http.general', domains: [] },
+    'networking': {
+        general: { name: 'networking.general', domains: [] },
     },
     'env': {
         read: { name: 'env.read' },
