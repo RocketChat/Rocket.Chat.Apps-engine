@@ -5,10 +5,10 @@ import { AppPermissions } from '../AppPermissions';
 
 export const AppHttpBridge = {
     call(info: IHttpBridgeRequestInfo): void {
-        if (!AppPermissionManager.hasPermission(info.appId, AppPermissions.http.general)) {
+        if (!AppPermissionManager.hasPermission(info.appId, AppPermissions.networking.general)) {
             throw new PermissionDeniedError({
                 appId: info.appId,
-                missingPermissions: [AppPermissions.http.general],
+                missingPermissions: [AppPermissions.networking.general],
             });
         }
     },

@@ -3,7 +3,7 @@ export interface IPermission {
     required?: boolean;
 }
 
-export interface IHttpPermission extends IPermission {
+export interface INetworkingPermission extends IPermission {
     name: string;
     domains: Array<string>;
 }

@@ -1,4 +1,4 @@
-import { IHttpPermission, IPermission } from '../../definition/permissions/IPermission';
+import { INetworkingPermission, IPermission } from '../../definition/permissions/IPermission';
 
 /**
  * @description
@@ -53,13 +53,10 @@ export const AppPermissions = {
         write: { name: 'livechat.write' },
     },
     'networking': {
-        general: { name: 'networking.general', domains: [] },
+        general: { name: 'networking.general', domains: [] } as INetworkingPermission,
     },
     'env': {
         read: { name: 'env.read' },
-    },
-    'app-details-change': {
-        settings: { name: 'app-details.settings' },
     },
     'command': {
         read: { name: 'command.read' },
@@ -68,29 +65,29 @@ export const AppPermissions = {
     'apis': {
         general: { name: 'apis.general' },
     },
-} as { [scope: string]: { [name: string]: IPermission } };
+};
 
 export const defaultPermissions: Array<IPermission> = [
-    { name: 'user.read' },
-    { name: 'user.write' },
-    { name: 'upload.read' },
-    { name: 'upload.write' },
-    { name: 'ui.interaction' },
-    { name: 'server-setting.read' },
-    { name: 'server-setting.write' },
-    { name: 'scheduler.general' },
-    { name: 'room.read' },
-    { name: 'room.write' },
-    { name: 'persistence.general' },
-    { name: 'message.read' },
-    { name: 'message.write' },
-    { name: 'message.notification' },
-    { name: 'livechat.read' },
-    { name: 'livechat.write' },
-    { name: 'http.general', domains: ['*'] } as IHttpPermission,
-    { name: 'env.read' },
-    { name: 'app-details.settings' },
-    { name: 'command.read' },
-    { name: 'command.write' },
-    { name: 'apis.general' },
+    AppPermissions.user.read,
+    AppPermissions.user.write,
+    AppPermissions.upload.read,
+    AppPermissions.upload.write,
+    AppPermissions.ui.interaction,
+    AppPermissions['server-setting'].read,
+    AppPermissions['server-setting'].write,
+    AppPermissions.scheduler.general,
+    AppPermissions.room.read,
+    AppPermissions.room.write,
+    AppPermissions.persistence.read,
+    AppPermissions.persistence.write,
+    AppPermissions.message.read,
+    AppPermissions.message.write,
+    AppPermissions.message.notification,
+    AppPermissions.livechat.read,
+    AppPermissions.livechat.write,
+    AppPermissions.networking.general,
+    AppPermissions.env.read,
+    AppPermissions.command.read,
+    AppPermissions.command.write,
+    AppPermissions.apis.general,
 ];
