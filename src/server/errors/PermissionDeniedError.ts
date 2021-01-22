@@ -3,19 +3,18 @@ import { IPermission } from '../../definition/permissions/IPermission';
 interface IPermissionDeniedErrorParams {
     appId: string;
     missingPermissions: Array<IPermission>;
+    methodName?: string;
     reason?: string;
 }
 
-export class PermissionDeniedError implements Error {
-    public name: string = 'Permission_Denied_Error';
-    public message: string;
-
-    constructor({ appId, missingPermissions, reason }: IPermissionDeniedErrorParams) {
+export class PermissionDeniedError extends Error {
+    constructor({ appId, missingPermissions,  methodName, reason }: IPermissionDeniedErrorParams) {
         const permissions = missingPermissions
             .map((permission) => `"${ JSON.stringify(permission) }"`)
             .join(', ');
-        this.message = `Failed to call the method as the app (${ appId }) lacks the following permissions:\n`
-            + `[${ permissions }]. Declare them in your app.json to fix the issue.\n`
-            + `reason: ${ reason }`;
+
+        super(`Failed to call the method ${ methodName  ? `"${ methodName }"` : '' } as the app (${ appId }) lacks the following permissions:\n`
+        + `[${ permissions }]. Declare them in your app.json to fix the issue.\n`
+        + `reason: ${ reason }`);
     }
 }

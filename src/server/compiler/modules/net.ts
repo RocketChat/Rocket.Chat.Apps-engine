@@ -19,6 +19,7 @@ export const netModuleHandler = (appId: string): ProxyHandler<typeof net> => ({
             throw new PermissionDeniedError({
                 appId,
                 missingPermissions: [AppPermissions.networking.general],
+                methodName: `net.${prop}`,
             });
         }
 
