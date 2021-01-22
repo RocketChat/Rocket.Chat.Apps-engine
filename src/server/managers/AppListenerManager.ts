@@ -1091,17 +1091,13 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
-                const response = await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
+                await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
                     this.am.getModifier(appId),
                 );
-
-                if (response.prevent) {
-                    return { ...response, appId };
-                }
             }
         }
     }
