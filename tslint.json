@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "no-empty": false,
     "array-type": [true, "generic"],
     "no-console": [false],
     "no-duplicate-variable": true,

@@ -1,25 +1,27 @@
+import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
+import { AppMethod } from '../definition/metadata';
+import { IPermission } from '../definition/permissions/IPermission';
+import { IUser, UserType } from '../definition/users';
 import { AppBridges } from './bridges';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
+import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
-    AppAccessorManager,
-    AppApiManager,
-    AppExternalComponentManager,
-    AppLicenseManager,
-    AppListenerManager,
-    AppSchedulerManager,
-    AppSettingsManager,
+    AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
+import { AppPermissionManager } from './managers/AppPermissionManager';
+import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
+import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
 import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
 
-import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
-import { AppMethod } from '../definition/metadata';
-import { IUser, UserType } from '../definition/users';
-import { InvalidLicenseError } from './errors';
-import { IMarketplaceInfo } from './marketplace';
+export interface IAppInstallParameters {
+    enable: boolean;
+    marketplaceInfo?: IMarketplaceInfo;
+    permissionsGranted?: Array<IPermission>;
+}
 
 export class AppManager {
     public static Instance: AppManager;
@@ -111,7 +113,27 @@ export class AppManager {
 
     /** Gets the instance of the Bridge manager. */
     public getBridges(): AppBridges {
-        return this.bridges;
+        const handler = {
+            get(target: AppBridges, prop, receiver) {
+                const reflection = Reflect.get(target, prop, receiver);
+
+                if (typeof prop === 'symbol' || typeof prop === 'number') {
+                    return reflection;
+                }
+
+                if (typeof (target as any)[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
+                    return (...args: Array<any>) => {
+                        const bridge = reflection.apply(target, args);
+
+                        return AppPermissionManager.proxy(bridge);
+                    };
+                }
+
+                return reflection;
+            },
+        } as ProxyHandler<AppBridges>;
+
+        return new Proxy(this.bridges, handler);
     }
 
     /** Gets the instance of the listener manager. */
@@ -310,11 +332,22 @@ export class AppManager {
         return this.apps.get(appId);
     }
 
+    public getPermissionsById(appId: string): Array<IPermission> {
+        const app = this.apps.get(appId);
+
+        if (!app) {
+            return [];
+        }
+        const { permissionsGranted } = app.getStorageItem();
+
+        return permissionsGranted || defaultPermissions;
+    }
+
     public async enable(id: string): Promise<boolean> {
         const rl = this.apps.get(id);
 
         if (!rl) {
-            throw new Error(`No App by the id "${id}" exists.`);
+            throw new Error(`No App by the id "${ id }" exists.`);
         }
 
         if (AppStatusUtils.isEnabled(rl.getStatus())) {
@@ -327,7 +360,7 @@ export class AppManager {
 
         const storageItem = await this.storage.retrieveOne(id);
         if (!storageItem) {
-            throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
+            throw new Error(`Could not enable an App with the id of "${ id }" as it doesn't exist.`);
         }
 
         const isSetup = await this.runStartUpProcess(storageItem, rl, true, false);
@@ -349,7 +382,7 @@ export class AppManager {
         const app = this.apps.get(id);
 
         if (!app) {
-            throw new Error(`No App by the id "${id}" exists.`);
+            throw new Error(`No App by the id "${ id }" exists.`);
         }
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
@@ -380,7 +413,9 @@ export class AppManager {
         return true;
     }
 
-    public async add(appPackage: Buffer, enable = true, marketplaceInfo?: IMarketplaceInfo): Promise<AppFabricationFulfillment> {
+    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
+        const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
+
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -395,12 +430,13 @@ export class AppManager {
             // tslint:disable-next-line: max-line-length
             compiled: Object.entries(result.files).reduce(
                 (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as {[key: string]: string},
+                {} as { [key: string]: string },
             ),
             languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
+            permissionsGranted,
         };
 
         // Now that is has all been compiled, let's get the
@@ -477,7 +513,7 @@ export class AppManager {
         return app;
     }
 
-    public async update(appPackage: Buffer): Promise<AppFabricationFulfillment> {
+    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -508,6 +544,7 @@ export class AppManager {
             settings: old.settings,
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
+            permissionsGranted,
         });
 
         // Now that is has all been compiled, let's get the
@@ -540,7 +577,7 @@ export class AppManager {
     }
 
     public getLanguageContent(): { [key: string]: object } {
-        const langs: { [key: string]: object } = { };
+        const langs: { [key: string]: object } = {};
 
         this.apps.forEach((rl) => {
             const content = rl.getStorageItem().languageContent;
@@ -718,7 +755,6 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
-            console.error(e);
             this.commandManager.unregisterCommands(storageItem.id);
             this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
@@ -857,3 +893,11 @@ export class AppManager {
         return !!this.createAppUser(app);
     }
 }
+
+export const getPermissionsByAppId = (appId: string) => {
+    if (!AppManager.Instance) {
+        console.error('AppManager should be instantiated first');
+        return [];
+    }
+    return AppManager.Instance.getPermissionsById(appId);
+};

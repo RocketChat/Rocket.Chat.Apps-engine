@@ -2,12 +2,7 @@ import cloneDeep = require('lodash.clonedeep');
 import * as path from 'path';
 import * as vm from 'vm';
 
-enum AllowedInternalModules {
-    path,
-    url,
-    crypto,
-    buffer,
-}
+import { AllowedInternalModules, requireNativeModule } from '../compiler/modules';
 
 export class Utilities {
     public static deepClone<T>(item: T): T {
@@ -43,11 +38,11 @@ export class Utilities {
         return path.normalize(moduleName).replace(/\.\.?\//g, '').replace(/^\//, '') + '.js';
     }
 
-    public static allowedInternalModuleRequire(moduleName: string): boolean {
+    public static allowedInternalModuleRequire(moduleName: string): moduleName is AllowedInternalModules {
         return moduleName in AllowedInternalModules;
     }
 
-    public static buildCustomRequire(files: { [s: string]: string }, currentPath: string = '.'): (mod: string) => {} {
+    public static buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath: string = '.'): (mod: string) => {} {
         return function _requirer(mod: string): any {
             // Keep compatibility with apps importing apps-ts-definition
             if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
@@ -63,7 +58,7 @@ export class Utilities {
             }
 
             if (Utilities.allowedInternalModuleRequire(mod)) {
-                return require(mod);
+                return requireNativeModule(mod, appId);
             }
 
             if (currentPath !== '.') {
@@ -80,7 +75,7 @@ export class Utilities {
                 fileExport = {};
 
                 const context = vm.createContext({
-                    require: Utilities.buildCustomRequire(files, path.dirname(filename) + '/'),
+                    require: Utilities.buildCustomRequire(files, appId, path.dirname(filename) + '/'),
                     console,
                     exports: fileExport,
                     process: {},
