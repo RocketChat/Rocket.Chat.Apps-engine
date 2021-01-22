@@ -27,7 +27,8 @@ export class AppManagerTestFixture {
 
         Expect(manager.getStorage()).toBe(this.testingInfastructure.getAppStorage());
         Expect(manager.getLogStorage()).toBe(this.testingInfastructure.getLogStorage());
-        Expect(manager.getBridges()).toBe(this.testingInfastructure.getAppBridges());
+        // NOTE: manager.getBridges() returns a proxy, so they are vlaue equality instead of reference equality
+        Expect(manager.getBridges()).toEqual(this.testingInfastructure.getAppBridges());
         Expect(manager.areAppsLoaded()).toBe(false);
 
         Expect(() => new AppManager({} as AppStorage, {} as AppLogStorage, {} as AppBridges)).toThrowError(Error, 'There is already a valid AppManager instance.');
