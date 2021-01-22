@@ -10,8 +10,7 @@ import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionMod
 import {
     UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
-import { IFileUpload } from '../../definition/uploads/IFileUpload';
-import { IUploadCheckResponse } from '../../definition/uploads/IUploadCheckResponse';
+import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
@@ -33,7 +32,7 @@ type EventData = (
     ILivechatEventContext |
     IRoomUserJoinedContext |
     ILivechatTransferEventContext |
-    IFileUpload
+    IFileUploadContext
 );
 
 type EventReturn = (
@@ -43,8 +42,7 @@ type EventReturn = (
     IRoom |
     IUser |
     IUIKitResponse |
-    ILivechatRoom |
-    IUploadCheckResponse
+    ILivechatRoom
 );
 
 export class AppListenerManager {
@@ -220,7 +218,7 @@ export class AppListenerManager {
                 return this.executePostLivechatGuestSaved(data as IVisitor);
             // FileUpload
             case AppInterface.IPreFileUpload:
-                return this.executePreFileUpload(data as IFileUpload);
+                return this.executePreFileUpload(data as IFileUploadContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1086,25 +1084,25 @@ export class AppListenerManager {
     }
 
     // FileUpload
-    private async executePreFileUpload(data: IFileUpload): Promise<IUploadCheckResponse> {
+    private async executePreFileUpload(data: IFileUploadContext): Promise<void> {
+        const context = Object.freeze(data);
+
         for (const appId of this.listeners.get(AppInterface.IPreFileUpload)) {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
                 const response = await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
-                    data,
+                    context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
                     this.am.getModifier(appId),
-                ) as IUploadCheckResponse;
+                );
 
                 if (response.prevent) {
                     return { ...response, appId };
                 }
             }
         }
-
-        return { prevent: false } as IUploadCheckResponse;
     }
 }

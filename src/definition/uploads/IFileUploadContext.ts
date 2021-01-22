@@ -1,6 +1,6 @@
 import { IUploadDetails } from './IUploadDetails';
 
-export interface IFileUpload {
+export interface IFileUploadContext {
     file: IUploadDetails;
-    stream: Buffer;
+    stream: ReadableStream;
 }
