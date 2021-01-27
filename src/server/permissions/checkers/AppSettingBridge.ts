@@ -3,17 +3,17 @@ import { PermissionDeniedError } from '../../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
-export const AppServerSettingBridge = {
+export const AppSettingBridge = {
     hasReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions['server-setting'].read)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.setting.read)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions['server-setting'].read],
+                missingPermissions: [AppPermissions.setting.read],
             });
         }
     },
     hasWritePermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions['server-setting'].write)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.setting.write)) {
             throw new PermissionDeniedError({
                 appId,
                 missingPermissions: [AppPermissions.message.write],

@@ -24,6 +24,10 @@ export class AppPermissionManager {
                 if (typeof target[prop] === 'function') {
                     return (...args: Array<any>) => {
                         const hasPermission = AppPermissionManager.checkPermission({
+                            // TODO: (shiqi.mei@lolimay.cn) 2021-01-27
+                            // The permission checker's bridge name currently "hard" depends on the
+                            // bridge name on the Rocket.Chat side (app/apps/server/bridges). We need
+                            // to find a better implementation later to remove this unnecessary dependency.
                             bridge: bridge.constructor.name,
                             method: prop,
                             args,
