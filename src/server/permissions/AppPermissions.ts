@@ -17,52 +17,52 @@ import { INetworkingPermission, IPermission } from '../../definition/permissions
  * AppPermissions.http.general // { name: 'http.general', domains: [] }
  */
 export const AppPermissions = {
-    'user': {
+    user: {
         read: { name: 'user.read' },
         write: { name: 'user.write' },
     },
-    'upload': {
+    upload: {
         read: { name: 'upload.read' },
         write: { name: 'upload.write' },
     },
-    'ui': {
+    ui: {
         interaction: { name: 'ui.interaction' },
     },
-    'server-setting': {
+    setting: {
         read: { name: 'server-setting.read' },
         write: { name: 'server-setting.write' },
     },
-    'scheduler': {
+    scheduler: {
         general: { name: 'scheduler.general' },
     },
-    'room': {
+    room: {
         read: { name: 'room.read' },
         write: { name: 'room.write' },
     },
-    'persistence': {
+    persistence: {
         read: { name: 'persistence.read' },
         write: { name: 'persistence.write' },
     },
-    'message': {
+    message: {
         read: { name: 'message.read' },
         write: { name: 'message.write' },
         notification: { name: 'message.notification' },
     },
-    'livechat': {
+    livechat: {
         read: { name: 'livechat.read' },
         write: { name: 'livechat.write' },
     },
-    'networking': {
+    networking: {
         general: { name: 'networking.general', domains: [] } as INetworkingPermission,
     },
-    'env': {
+    env: {
         read: { name: 'env.read' },
     },
-    'command': {
+    command: {
         read: { name: 'command.read' },
         write: { name: 'command.write' },
     },
-    'apis': {
+    apis: {
         general: { name: 'apis.general' },
     },
 };
@@ -73,8 +73,8 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.upload.read,
     AppPermissions.upload.write,
     AppPermissions.ui.interaction,
-    AppPermissions['server-setting'].read,
-    AppPermissions['server-setting'].write,
+    AppPermissions.setting.read,
+    AppPermissions.setting.write,
     AppPermissions.scheduler.general,
     AppPermissions.room.read,
     AppPermissions.room.write,
