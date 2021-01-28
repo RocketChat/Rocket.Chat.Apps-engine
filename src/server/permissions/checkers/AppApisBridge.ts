@@ -5,10 +5,10 @@ import { AppPermissions } from '../AppPermissions';
 
 export const AppApisBridge = {
     hasGeneralPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.apis.general)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.apis.general],
+                missingPermissions: [AppPermissions.apis.default],
             });
         }
     },

@@ -23,14 +23,6 @@ export const AppMessageBridge = {
             });
         }
     },
-    hasNotificationPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.message.notification)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.message.notification],
-            });
-        }
-    },
     getById(messageId: string, appId: string): void {
         return this.hasReadPermission(appId);
     },
@@ -41,12 +33,12 @@ export const AppMessageBridge = {
         return this.hasWritePermission(appId);
     },
     notifyUser(user: IUser, message: IMessage, appId: string): void {
-        return this.hasNotificationPermission(appId);
+        return this.hasWritePermission(appId);
     },
     notifyRoom(room: IRoom, message: IMessage, appId: string): void {
-        return this.hasNotificationPermission(appId);
+        return this.hasWritePermission(appId);
     },
     typing(options: ITypingDescriptor, appId: string): void {
-        return this.hasNotificationPermission(appId);
+        return this.hasWritePermission(appId);
     },
 };

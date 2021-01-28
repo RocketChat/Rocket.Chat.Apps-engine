@@ -5,10 +5,10 @@ import { AppPermissions } from '../AppPermissions';
 
 export const AppSchedulerBridge = {
     hasGeneralPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.scheduler.general)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.scheduler.default)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.scheduler.general],
+                missingPermissions: [AppPermissions.scheduler.default],
             });
         }
     },
