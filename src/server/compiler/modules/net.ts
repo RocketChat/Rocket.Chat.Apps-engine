@@ -15,10 +15,10 @@ export const netModuleHandler = (appId: string): ProxyHandler<typeof net> => ({
             throw new ForbiddenNativeModuleAccess('net', prop);
         }
 
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.networking.general)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.networking.default)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.networking.general],
+                missingPermissions: [AppPermissions.networking.default],
                 methodName: `net.${prop}`,
             });
         }

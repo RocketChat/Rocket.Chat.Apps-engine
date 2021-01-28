@@ -14,56 +14,72 @@ import { INetworkingPermission, IPermission } from '../../definition/permissions
  *
  * @example
  *
- * AppPermissions.http.general // { name: 'http.general', domains: [] }
+ * AppPermissions.upload.read // { name: 'upload.read', domains: [] }
  */
 export const AppPermissions = {
-    user: {
+    'user': {
         read: { name: 'user.read' },
         write: { name: 'user.write' },
     },
-    upload: {
+    'upload': {
         read: { name: 'upload.read' },
         write: { name: 'upload.write' },
     },
-    ui: {
-        interaction: { name: 'ui.interaction' },
+    'ui': {
+        interaction: { name: 'ui.interact' },
     },
-    setting: {
+    'setting': {
         read: { name: 'server-setting.read' },
         write: { name: 'server-setting.write' },
     },
-    scheduler: {
-        general: { name: 'scheduler.general' },
-    },
-    room: {
+    'room': {
         read: { name: 'room.read' },
         write: { name: 'room.write' },
     },
-    persistence: {
-        read: { name: 'persistence.read' },
-        write: { name: 'persistence.write' },
-    },
-    message: {
+    'message': {
         read: { name: 'message.read' },
         write: { name: 'message.write' },
-        notification: { name: 'message.notification' },
     },
-    livechat: {
-        read: { name: 'livechat.read' },
-        write: { name: 'livechat.write' },
+    'livechat-status': {
+        read: { name: 'livechat-status.read' },
     },
-    networking: {
-        general: { name: 'networking.general', domains: [] } as INetworkingPermission,
+    'livechat-custom-fields': {
+        write: { name: 'livechat-custom-fields.write' },
     },
-    env: {
+    'livechat-visitor': {
+        read: { name: 'livechat-visitor.read' },
+        write: { name: 'livechat-visitor.write' },
+    },
+    'livechat-message': {
+        read: { name: 'livechat-message.read' },
+        write: { name: 'livechat-message.write' },
+    },
+    'livechat-room': {
+        read: { name: 'livechat-room.read' },
+        write: { name: 'livechat-room.write' },
+    },
+    'livechat-department': {
+        read: { name: 'livechat-department.read' },
+        write: { name: 'livechat-department.write' },
+    },
+    'env': {
         read: { name: 'env.read' },
     },
-    command: {
-        read: { name: 'command.read' },
-        write: { name: 'command.write' },
+    // Internal permissions
+    'scheduler': {
+        default: { name: 'scheduler' },
     },
-    apis: {
-        general: { name: 'apis.general' },
+    'networking': {
+        default: { name: 'networking', domains: [] } as INetworkingPermission,
+    },
+    'persistence': {
+        default: { name: 'persistence' },
+    },
+    'command': {
+        default: { name: 'slashcommand' },
+    },
+    'apis': {
+        default: { name: 'api' },
     },
 };
 
@@ -75,19 +91,24 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.ui.interaction,
     AppPermissions.setting.read,
     AppPermissions.setting.write,
-    AppPermissions.scheduler.general,
     AppPermissions.room.read,
     AppPermissions.room.write,
-    AppPermissions.persistence.read,
-    AppPermissions.persistence.write,
     AppPermissions.message.read,
     AppPermissions.message.write,
-    AppPermissions.message.notification,
-    AppPermissions.livechat.read,
-    AppPermissions.livechat.write,
-    AppPermissions.networking.general,
+    AppPermissions['livechat-department'].read,
+    AppPermissions['livechat-department'].write,
+    AppPermissions['livechat-room'].read,
+    AppPermissions['livechat-room'].write,
+    AppPermissions['livechat-message'].read,
+    AppPermissions['livechat-message'].write,
+    AppPermissions['livechat-visitor'].read,
+    AppPermissions['livechat-visitor'].write,
+    AppPermissions['livechat-status'].read,
+    AppPermissions['livechat-custom-fields'].write,
+    AppPermissions.scheduler.default,
+    AppPermissions.networking.default,
+    AppPermissions.persistence.default,
     AppPermissions.env.read,
-    AppPermissions.command.read,
-    AppPermissions.command.write,
-    AppPermissions.apis.general,
+    AppPermissions.command.default,
+    AppPermissions.apis.default,
 ];

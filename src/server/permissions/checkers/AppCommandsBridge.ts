@@ -4,41 +4,33 @@ import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
 export const AppCommandsBridge = {
-    hasReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.command.read)) {
+    hasPermission(appId: string) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.command.default)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.command.read],
-            });
-        }
-    },
-    hasWritePermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.command.write)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.command.write],
+                missingPermissions: [AppPermissions.command.default],
             });
         }
     },
     doesCommandExist(command: string, appId: string): void {
-        return this.hasReadPermission(appId);
+        return this.hasPermission(appId);
     },
     enableCommand(command: string, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     disableCommand(command: string, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     modifyCommand(command: ISlashCommand, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     restoreCommand(command: string, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     registerCommand(command: ISlashCommand, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     unregisterCommand(command: string, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
 };

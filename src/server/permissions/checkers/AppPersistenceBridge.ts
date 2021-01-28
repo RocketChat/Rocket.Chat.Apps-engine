@@ -4,19 +4,11 @@ import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
 export const AppPersistenceBridge = {
-    hasReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.persistence.read)) {
+    hasPermission(appId: string) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.persistence.default)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.persistence.read],
-            });
-        }
-    },
-    hasWritePermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.persistence.write)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.persistence.write],
+                missingPermissions: [AppPermissions.persistence.default],
             });
         }
     },
