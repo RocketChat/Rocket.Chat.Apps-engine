@@ -13,30 +13,30 @@ export const AppPersistenceBridge = {
         }
     },
     purge(appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     create(data: object, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     readById(id: string, appId: string): void {
-        return this.hasReadPermission(appId);
+        return this.hasPermission(appId);
     },
     readByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): void {
-        return this.hasReadPermission(appId);
+        return this.hasPermission(appId);
     },
     remove(id: string, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     removeByAssociation(associations: Array<RocketChatAssociationRecord>, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     update(id: string, data: object, upsert: boolean, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
     updateByAssociation(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): void {
-        return this.hasWritePermission(appId);
+        return this.hasPermission(appId);
     },
 };
