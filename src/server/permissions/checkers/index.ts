@@ -12,7 +12,7 @@ import { AppPersistenceBridge } from './AppPersistenceBridge';
 import { AppRoomBridge } from './AppRoomBridge';
 import { AppSchedulerBridge } from './AppSchedulerBridge';
 import { AppSettingBridge } from './AppSettingBridge';
-import { AppUiInteractionBridge } from './AppUiInteractionBridge';
+import { AppUiInteractionBridge as UiInteractionBridge } from './AppUiInteractionBridge';
 import { AppUploadBridge } from './AppUploadBridge';
 import { AppUserBridge } from './AppUserBridge';
 
@@ -30,7 +30,7 @@ export const permissionCheckers = {
     AppRoomBridge,
     AppSchedulerBridge,
     AppSettingBridge,
-    AppUiInteractionBridge,
+    UiInteractionBridge,
     AppUploadBridge,
     AppUserBridge,
 } as IPermissionCheckers;

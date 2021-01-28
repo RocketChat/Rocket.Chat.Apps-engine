@@ -30,13 +30,13 @@ export const AppPersistenceBridge = {
     remove(id: string, appId: string): void {
         return this.hasPermission(appId);
     },
-    removeByAssociation(associations: Array<RocketChatAssociationRecord>, appId: string): void {
+    removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): void {
         return this.hasPermission(appId);
     },
     update(id: string, data: object, upsert: boolean, appId: string): void {
         return this.hasPermission(appId);
     },
-    updateByAssociation(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): void {
+    updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): void {
         return this.hasPermission(appId);
     },
 };
