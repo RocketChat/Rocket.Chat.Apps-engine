@@ -66,4 +66,6 @@ export enum AppMethod {
     EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED = 'executePostLivechatRoomTransferred',
     EXECUTE_POST_LIVECHAT_GUEST_SAVED = 'executePostLivechatGuestSaved',
     EXECUTE_POST_LIVECHAT_ROOM_SAVED = 'executePostLivechatRoomSaved',
+    // FileUpload
+    EXECUTE_PRE_FILE_UPLOAD = 'executePreFileUpload',
 }

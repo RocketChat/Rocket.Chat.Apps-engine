@@ -6,15 +6,11 @@ import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
+import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
-    IUIKitIncomingInteractionMessageContainer,
-    IUIKitIncomingInteractionModalContainer,
-} from '../../definition/uikit/UIKitIncomingInteractionContainer';
-import {
-    UIKitBlockInteractionContext,
-    UIKitViewCloseInteractionContext,
-    UIKitViewSubmitInteractionContext,
+    UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
+import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
 import { IUser } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
@@ -35,10 +31,19 @@ type EventData = (
     IExternalComponent |
     ILivechatEventContext |
     IRoomUserJoinedContext |
-    ILivechatTransferEventContext
+    ILivechatTransferEventContext |
+    IFileUploadContext
 );
 
-type EventReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom;
+type EventReturn = (
+    void |
+    boolean |
+    IMessage |
+    IRoom |
+    IUser |
+    IUIKitResponse |
+    ILivechatRoom
+);
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -211,6 +216,9 @@ export class AppListenerManager {
                 return this.executePostLivechatRoomTransferred(data as ILivechatTransferEventContext);
             case AppInterface.IPostLivechatGuestSaved:
                 return this.executePostLivechatGuestSaved(data as IVisitor);
+            // FileUpload
+            case AppInterface.IPreFileUpload:
+                return this.executePreFileUpload(data as IFileUploadContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -264,7 +272,7 @@ export class AppListenerManager {
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
-                    ) as boolean;
+                ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTEXTEND)) {
@@ -444,7 +452,7 @@ export class AppListenerManager {
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
-                    ) as boolean;
+                ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND)) {
@@ -1072,6 +1080,25 @@ export class AppListenerManager {
                 this.am.getPersistence(appId),
                 this.am.getModifier(appId),
             );
+        }
+    }
+
+    // FileUpload
+    private async executePreFileUpload(data: IFileUploadContext): Promise<void> {
+        const context = Object.freeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPreFileUpload)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
+                await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
         }
     }
 }

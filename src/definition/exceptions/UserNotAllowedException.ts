@@ -10,5 +10,4 @@ import { AppsEngineException } from '.';
  * - IPreRoomCreatePrevent
  * - IPreRoomUserJoined
  */
-export class UserNotAllowedException extends AppsEngineException {
-}
+export class UserNotAllowedException extends AppsEngineException {}

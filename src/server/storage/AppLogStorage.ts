@@ -15,10 +15,12 @@ export abstract class AppLogStorage {
         return this.engine;
     }
 
-    public abstract async find(query: { [field: string]: any },
-                               options?: IAppLogStorageFindOptions): Promise<Array<ILoggerStorageEntry>>;
+    public abstract find(
+        query: { [field: string]: any },
+        options?: IAppLogStorageFindOptions,
+    ): Promise<Array<ILoggerStorageEntry>>;
 
-    public abstract async storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry>;
-    public abstract async getEntriesFor(appId: string): Promise<Array<ILoggerStorageEntry>>;
-    public abstract async removeEntriesFor(appId: string): Promise<void>;
+    public abstract storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry>;
+    public abstract getEntriesFor(appId: string): Promise<Array<ILoggerStorageEntry>>;
+    public abstract removeEntriesFor(appId: string): Promise<void>;
 }

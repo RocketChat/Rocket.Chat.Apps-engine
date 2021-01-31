@@ -15,6 +15,23 @@ import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
 import { IUserBridge } from './IUserBridge';
+export type Bridge = IAppCommandBridge
+            | IAppApiBridge
+            | IAppDetailChangesBridge
+            | IEnvironmentalVariableBridge
+            | IHttpBridge
+            | IListenerBridge
+            | ILivechatBridge
+            | IMessageBridge
+            | IPersistenceBridge
+            | IAppActivationBridge
+            | IRoomBridge
+            | IInternalBridge
+            | IServerSettingBridge
+            | IUploadBridge
+            | IUserBridge
+            | IUiInteractionBridge
+            | IAppSchedulerBridge;
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): IAppCommandBridge;

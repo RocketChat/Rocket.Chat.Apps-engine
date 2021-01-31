@@ -30,6 +30,9 @@ export interface IApp {
      * Gets the username of this App's app user.
      *
      * @return {string} the username of the app user
+     *
+     * @deprecated This method will be removed in the next major version.
+     * Please use read.getAppUser instead.
      */
     getAppUserUsername(): string;
 
