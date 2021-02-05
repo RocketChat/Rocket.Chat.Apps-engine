@@ -1,6 +1,6 @@
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
 import { IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
-import { UIKitViewType } from './IUIKitView';
+import { IUIKitView, UIKitViewType } from './IUIKitView';
 import { IUIKitModalViewParam } from './UIKitInteractionResponder';
 
 import uuid = require('uuid/v1');
@@ -21,7 +21,8 @@ export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIK
             type: UIKitViewType.MODAL,
             id: view.id ? view.id : uuid(),
             ...view,
-        },
+            showIcon: true,
+        } as IUIKitView,
     };
 }
 
