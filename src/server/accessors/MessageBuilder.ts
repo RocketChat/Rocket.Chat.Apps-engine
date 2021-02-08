@@ -24,8 +24,7 @@ export class MessageBuilder implements IMessageBuilder {
     public setUpdateData(data: IMessage, editor: IUser): IMessageBuilder {
         this.msg = data;
         this.msg.editor = editor;
-        this.msg.updatedAt = new Date();
-        this.msg.editedAt = this.msg.updatedAt;
+        this.msg.editedAt = new Date();
 
         return this;
     }
