@@ -13,11 +13,11 @@ export class LivechatRead implements ILivechatRead {
     public isOnline(departmentId?: string): boolean {
         console.warn('The `LivechatRead.isOnline` method is deprecated and won\'t behave as intended. Please use `LivechatRead.isOnlineAsync` instead');
 
-        return this.livechatBridge.isOnline(departmentId);
+        return this.livechatBridge.isOnline(departmentId, this.appId);
     }
 
     public isOnlineAsync(departmentId?: string): Promise<boolean> {
-        return this.livechatBridge.isOnlineAsync(departmentId);
+        return this.livechatBridge.isOnlineAsync(departmentId, this.appId);
     }
 
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {

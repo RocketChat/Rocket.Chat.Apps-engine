@@ -5,7 +5,31 @@ import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
 export const AppLivechatBridge = {
+    isOnline(departmentId?: string, appId?: string): void {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-status'].read)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['livechat-status'].read],
+            });
+        }
+    },
+    isOnlineAsync(departmentId?: string, appId?: string): void {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-status'].read)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['livechat-status'].read],
+            });
+        }
+    },
     updateMessage(message: ILivechatMessage, appId: string): void {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-message'].write)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['livechat-message'].write],
+            });
+        }
+    },
+    createMessage(message: ILivechatMessage, appId: string): void {
         if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-message'].write)) {
             throw new PermissionDeniedError({
                 appId,
