@@ -1,8 +1,9 @@
 import { Expect, Test } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
+import { IUser } from '../../../src/definition/users';
 import { TestData } from '../../test-data/utilities';
 
-import { MessageBuilder } from '../../../src/server/accessors';
+import { MessageBuilder, UserBuilder } from '../../../src/server/accessors';
 
 export class MessageBuilderAccessorTestFixture {
     @Test()
@@ -18,6 +19,16 @@ export class MessageBuilderAccessorTestFixture {
         // setData just replaces the passed in object, so let's treat it differently
         Expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
         Expect((mbOnce as any).msg.text).toBe('hello');
+
+        const mbUpdate = new MessageBuilder();
+        const editor = new UserBuilder();
+        editor.setUsername('username');
+        editor.setDisplayName('name');
+
+        // setUpdateData keeps the ID passed in the message object, so let's treat it differently
+        Expect(mbUpdate.setUpdateData({text: 'hello', id: 'messageID' } as IMessage, editor.getUser() as IUser)).toBe(mbUpdate);
+        Expect((mbUpdate as any).msg.text).toBe('hello');
+        Expect((mbUpdate as any).msg.id).toBe('messageID');
 
         const msg: IMessage = {} as IMessage;
         const mb = new MessageBuilder(msg);
