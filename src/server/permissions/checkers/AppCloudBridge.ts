@@ -3,14 +3,15 @@ import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../AppPermissions';
 
 export const AppCloudBridge = {
-    getWorkspaceAccessToken(scope: string, appId: string): void {
+    getWorkspaceToken(scope: string, appId: string): void {
         const grantedPermission = AppPermissionManager.hasPermission(appId, AppPermissions.cloud['workspace-token']);
+        const isMissingScope = grantedPermission.scopes?.includes(scope) === false;
 
-        if (!grantedPermission || grantedPermission.scopes?.includes(scope) === false) {
+        if (!grantedPermission || isMissingScope) {
             throw new PermissionDeniedError({
                 appId,
                 missingPermissions: [AppPermissions.cloud['workspace-token']],
-                reason: `Missing scope "${scope}" in permission`,
+                ...isMissingScope && { reason: `Missing scope "${scope}" in permission` },
             });
         }
     },
