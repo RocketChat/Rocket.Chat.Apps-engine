@@ -4,6 +4,7 @@ import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IAppSchedulerBridge } from './IAppSchedulerBridge';
+import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
@@ -18,6 +19,7 @@ import { IUploadBridge } from './IUploadBridge';
 import { IUserBridge } from './IUserBridge';
 
 export {
+    ICloudWorkspaceBridge,
     IEnvironmentalVariableBridge,
     IHttpBridge,
     IHttpBridgeRequestInfo,

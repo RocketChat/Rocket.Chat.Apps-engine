@@ -1,3 +1,4 @@
+import { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
 import { IEnvironmentRead } from './IEnvironmentRead';
 import { ILivechatRead } from './ILivechatRead';
 import { IMessageRead } from './IMessageRead';
@@ -33,4 +34,5 @@ export interface IRead {
 
     getLivechatReader(): ILivechatRead;
     getUploadReader(): IUploadRead;
+    getCloudWorkspaceReader(): ICloudWorkspaceRead;
 }
