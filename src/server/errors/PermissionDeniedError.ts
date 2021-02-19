@@ -10,7 +10,7 @@ interface IPermissionDeniedErrorParams {
 export class PermissionDeniedError extends Error {
     constructor({ appId, missingPermissions,  methodName, reason }: IPermissionDeniedErrorParams) {
         const permissions = missingPermissions
-            .map((permission) => `"${ JSON.stringify(permission) }"`)
+            .map((permission) => `"${ permission.name }"`)
             .join(', ');
 
         super(`Failed to call the method ${ methodName  ? `"${ methodName }"` : '' } as the app (${ appId }) lacks the following permissions:\n`
