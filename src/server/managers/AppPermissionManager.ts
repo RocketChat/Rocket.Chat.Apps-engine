@@ -49,10 +49,14 @@ export class AppPermissionManager {
     /**
      * It returns the declaration of the permission if the app declared, or it returns `undefined`.
      */
-    public static hasPermission(appId: string, permission: IPermission): undefined | IPermission {
-        const permissions = getPermissionsByAppId(appId);
+    public static hasPermission<P extends IPermission>(appId: string, permission: P): undefined | P {
+        const grantedPermission = getPermissionsByAppId(appId).find(({ name = '' }) => name === permission.name);
 
-        return permissions.find(({ name = '' }) => name === permission.name);
+        if (!grantedPermission) {
+            return undefined;
+        }
+
+        return grantedPermission as P;
     }
 
     private static checkPermission(call: IBridgeCallDescriptor): boolean {
@@ -60,7 +64,7 @@ export class AppPermissionManager {
 
         if (!permissionCheckers[bridge] || !permissionCheckers[bridge][method]) {
             throw new Error(`No permission checker found for the bridge method "${ bridge }.${ method }"\n`
-                + 'Please create a new cheker one under the permissionChekers folder to fix the issue.');
+                + 'Please create a new checker one under the permissionCheckers folder to fix the issue.');
         }
 
         try {

@@ -1,5 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
+import { ICloudWorkspaceRead, IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUploadRead, IUserRead } from '../../../src/definition/accessors';
 
 import { Reader } from '../../../src/server/accessors';
 
@@ -12,6 +12,7 @@ export class ReaderAccessorTestFixture {
     private ni: INotifier;
     private livechat: ILivechatRead;
     private upload: IUploadRead;
+    private cloud: ICloudWorkspaceRead;
 
     @SetupFixture
     public setupFixture() {
@@ -23,13 +24,14 @@ export class ReaderAccessorTestFixture {
         this.ni = {} as INotifier;
         this.livechat = {} as ILivechatRead;
         this.upload = {} as IUploadRead;
+        this.cloud = {} as ICloudWorkspaceRead;
     }
 
     @Test()
     public useReader() {
-        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload)).not.toThrow();
+        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload, this.cloud)).not.toThrow();
 
-        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload);
+        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload, this.cloud);
         Expect(rd.getEnvironmentReader()).toBeDefined();
         Expect(rd.getMessageReader()).toBeDefined();
         Expect(rd.getNotifier()).toBeDefined();

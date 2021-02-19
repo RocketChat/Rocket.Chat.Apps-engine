@@ -1,4 +1,5 @@
 import {
+    ICloudWorkspaceRead,
     IEnvironmentRead,
     ILivechatRead,
     IMessageRead,
@@ -20,6 +21,7 @@ export class Reader implements IRead {
         private noti: INotifier,
         private livechat: ILivechatRead,
         private upload: IUploadRead,
+        private cloud: ICloudWorkspaceRead,
     ) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
@@ -52,5 +54,9 @@ export class Reader implements IRead {
 
     public getUploadReader(): IUploadRead {
         return this.upload;
+    }
+
+    public getCloudWorkspaceReader(): ICloudWorkspaceRead {
+        return this.cloud;
     }
 }

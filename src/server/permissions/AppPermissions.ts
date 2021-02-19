@@ -1,4 +1,4 @@
-import { INetworkingPermission, IPermission } from '../../definition/permissions/IPermission';
+import { INetworkingPermission, IPermission, IWorkspaceTokenPermission } from '../../definition/permissions/IPermission';
 
 /**
  * @description
@@ -64,6 +64,9 @@ export const AppPermissions = {
     },
     'env': {
         read: { name: 'env.read' },
+    },
+    'cloud': {
+        'workspace-token': { name: 'cloud.workspace-token', scopes: [] } as IWorkspaceTokenPermission,
     },
     // Internal permissions
     'scheduler': {
