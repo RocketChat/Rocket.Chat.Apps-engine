@@ -16,9 +16,11 @@ import {
     IUploadBridge,
     IUserBridge,
 } from '../../../src/server/bridges';
+import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
+import { TestAppCloudWorkspaceBridge } from './cloudBridge';
 import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
@@ -50,6 +52,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly uploadBridge: TestUploadBridge;
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
     private readonly schedulerBridge: TestSchedulerBridge;
+    private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
 
     constructor() {
         super();
@@ -69,6 +72,7 @@ export class TestsAppBridges extends AppBridges {
         this.uploadBridge = new TestUploadBridge();
         this.uiIntegrationBridge = new TestsUiIntegrationBridge();
         this.schedulerBridge = new TestSchedulerBridge();
+        this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -137,5 +141,9 @@ export class TestsAppBridges extends AppBridges {
 
     public getSchedulerBridge(): IAppSchedulerBridge {
         return this.schedulerBridge;
+    }
+
+    public getCloudWorkspaceBridge(): ICloudWorkspaceBridge {
+        return this.cloudWorkspaceBridge;
     }
 }
