@@ -21,3 +21,6 @@ export {
 export * from './IPreRoomUserJoined';
 export * from './IPostRoomUserJoined';
 export * from './IRoomUserJoinedContext';
+export * from './IPreRoomUserLeave';
+export * from './IPostRoomUserLeave';
+export * from './IRoomUserLeaveContext';
