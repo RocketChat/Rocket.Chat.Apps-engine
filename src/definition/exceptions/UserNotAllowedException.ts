@@ -10,6 +10,5 @@ import { AppsEngineException } from '.';
  * - IPreRoomCreatePrevent
  * - IPreRoomUserJoined
  * - IPreRoomUserLeave
- * - IPostRoomUserLeave
  */
 export class UserNotAllowedException extends AppsEngineException {}
