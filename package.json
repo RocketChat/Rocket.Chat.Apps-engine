@@ -18,7 +18,7 @@
     "test-and-coverage": "nyc npm run unit-tests && nyc report",
     "view-coverage": "npm run test-and-coverage && http-server coverage -p 9082 -c-1",
     "submit-codecov": "codecov --file=coverage/coverage-final.json",
-    "gen-doc": "typedoc --mode file --excludePrivate --target ES6 --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
+    "gen-doc": "typedoc --excludePrivate --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
   },
   "repository": {
     "type": "git",
