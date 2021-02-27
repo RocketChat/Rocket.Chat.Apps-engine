@@ -4,6 +4,9 @@ export interface IPermission {
 }
 
 export interface INetworkingPermission extends IPermission {
-    name: string;
     domains: Array<string>;
+}
+
+export interface IWorkspaceTokenPermission extends IPermission {
+    scopes: Array<string>;
 }

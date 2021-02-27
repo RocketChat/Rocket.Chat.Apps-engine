@@ -13,12 +13,21 @@ export interface IMessageBuilder {
     kind: RocketChatAssociationModel.MESSAGE;
 
     /**
-     * Provides a convient way to set the data for the message.
+     * Provides a convenient way to set the data for the message.
      * Note: Providing an "id" field here will be ignored.
      *
      * @param message the message data to set
      */
     setData(message: IMessage): IMessageBuilder;
+
+    /**
+     * Provides a convenient way to set the data for the message
+     * keeping the "id" field so as to update the message later.
+     *
+     * @param message the message data to set
+     * @param editor the user who edited the updated message
+     */
+    setUpdateData(message: IMessage, editor: IUser): IMessageBuilder;
 
     /**
      * Sets the thread to which this message belongs, if any.

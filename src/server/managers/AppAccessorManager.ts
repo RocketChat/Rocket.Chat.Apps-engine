@@ -36,6 +36,7 @@ import {
     UploadRead,
     UserRead,
 } from '../accessors';
+import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
 
@@ -136,8 +137,9 @@ export class AppAccessorManager {
             const noti = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), appId);
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
+            const cloud = new CloudWorkspaceRead(this.bridges.getCloudWorkspaceBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud));
         }
 
         return this.readers.get(appId);
