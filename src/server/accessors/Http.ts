@@ -14,27 +14,27 @@ export class Http implements IHttp {
                 private readonly httpExtender: IHttpExtend,
                 private readonly appId: string) { }
 
-    public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+    public get<TResult>(url: string, options?: IHttpRequest<never>): Promise<IHttpResponse<TResult>> {
         return this._processHandler(url, RequestMethod.GET, options);
     }
 
-    public put(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+    public put<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>> {
         return this._processHandler(url, RequestMethod.PUT, options);
     }
 
-    public post(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+    public post<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>> {
         return this._processHandler(url, RequestMethod.POST, options);
     }
 
-    public del(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+    public del<TResult>(url: string, options?: IHttpRequest<never>): Promise<IHttpResponse<TResult>> {
         return this._processHandler(url, RequestMethod.DELETE, options);
     }
 
-    public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse>  {
+    public patch<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>> {
         return this._processHandler(url, RequestMethod.PATCH, options);
     }
 
-    private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
+    private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest<any>): Promise<IHttpResponse<any>> {
         let request = options || { };
 
         if (typeof request.headers === 'undefined') {

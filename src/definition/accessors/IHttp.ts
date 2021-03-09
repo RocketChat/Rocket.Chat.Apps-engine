@@ -6,15 +6,15 @@ import { IRead } from './IRead';
  * Based off of: https://github.com/meteor-typings/meteor/blob/master/1.4/main.d.ts#L869
  */
 export interface IHttp {
-    get(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+    get<TResult>(url: string, options?: IHttpRequest<void>): Promise<IHttpResponse<TResult>>;
 
-    post(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+    post<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>>;
 
-    put(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+    put<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>>;
 
-    del(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+    del<TResult>(url: string, options?: IHttpRequest<void>): Promise<IHttpResponse<TResult>>;
 
-    patch(url: string, options?: IHttpRequest): Promise<IHttpResponse>;
+    patch<TBody, TResult>(url: string, options?: IHttpRequest<TBody>): Promise<IHttpResponse<TResult>>;
 }
 
 export enum RequestMethod {
@@ -27,9 +27,9 @@ export enum RequestMethod {
     PATCH = 'patch',
 }
 
-export interface IHttpRequest {
+export interface IHttpRequest<TData> {
     content?: string;
-    data?: any;
+    data?: TData;
     query?: string;
     params?: {
         [key: string]: string,
@@ -63,7 +63,7 @@ export interface IHttpRequest {
     rejectUnauthorized?: boolean;
 }
 
-export interface IHttpResponse {
+export interface IHttpResponse<TResult> {
     url: string;
     method: RequestMethod;
     statusCode: number;
@@ -71,7 +71,7 @@ export interface IHttpResponse {
         [key: string]: string,
     };
     content?: string;
-    data?: any;
+    data?: TResult;
 }
 
 export interface IHttpExtend {
@@ -112,7 +112,7 @@ export interface IHttpExtend {
      *
      * @param handler the instance of the IHttpPreRequestHandler
      */
-    providePreRequestHandler(handler: IHttpPreRequestHandler): void;
+    providePreRequestHandler<TBody, TResult>(handler: IHttpPreRequestHandler<TBody, TResult>): void;
 
     /**
      * Method for providing a function which is called after every response is got from the url and before the result is returned.
@@ -121,7 +121,7 @@ export interface IHttpExtend {
      *
      * @param handler the instance of the IHttpPreResponseHandler
      */
-    providePreResponseHandler(handler: IHttpPreResponseHandler): void;
+    providePreResponseHandler<TResult1, TResult2>(handler: IHttpPreResponseHandler<TResult1, TResult2>): void;
 
     /**
      * A method for getting all of the default headers provided, the value is a readonly and any modifications done will be ignored.
@@ -139,21 +139,21 @@ export interface IHttpExtend {
      * A method for getting all of the pre-request handlers provided, the value is a readonly and any modifications done will be ignored.
      * Please use the provider methods for adding them.
      */
-    getPreRequestHandlers(): Array<IHttpPreRequestHandler>;
+    getPreRequestHandlers(): Array<IHttpPreRequestHandler<any, any>>;
 
     /**
      * A method for getting all of the pre-response handlers provided, the value is a readonly and any modifications done will be ignored.
      * Please use the provider methods for adding them.
      */
-    getPreResponseHandlers(): Array<IHttpPreResponseHandler>;
+    getPreResponseHandlers(): Array<IHttpPreResponseHandler<any, any>>;
 }
 
-export interface IHttpPreRequestHandler {
-    executePreHttpRequest(url: string, request: IHttpRequest, read: IRead, persistence: IPersistence): Promise<IHttpRequest>;
+export interface IHttpPreRequestHandler<TBody, TResult> {
+    executePreHttpRequest(url: string, request: IHttpRequest<TBody>, read: IRead, persistence: IPersistence): Promise<IHttpRequest<TResult>>;
 }
 
-export interface IHttpPreResponseHandler {
-    executePreHttpResponse(response: IHttpResponse, read: IRead, persistence: IPersistence): Promise<IHttpResponse>;
+export interface IHttpPreResponseHandler<TResult1, TResult2> {
+    executePreHttpResponse(response: IHttpResponse<TResult1>, read: IRead, persistence: IPersistence): Promise<IHttpResponse<TResult2>>;
 }
 
 export enum HttpStatusCode {

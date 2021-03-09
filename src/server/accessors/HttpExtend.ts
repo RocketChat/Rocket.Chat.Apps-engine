@@ -7,14 +7,14 @@ import {
 export class HttpExtend implements IHttpExtend {
     private headers: Map<string, string>;
     private params: Map<string, string>;
-    private requests: Array<IHttpPreRequestHandler>;
-    private responses: Array<IHttpPreResponseHandler>;
+    private requests: Array<IHttpPreRequestHandler<any, any>>;
+    private responses: Array<IHttpPreResponseHandler<any, any>>;
 
     constructor() {
         this.headers = new Map<string, string>();
         this.params = new Map<string, string>();
-        this.requests = new Array<IHttpPreRequestHandler>();
-        this.responses = new Array<IHttpPreResponseHandler>();
+        this.requests = new Array<IHttpPreRequestHandler<any, any>>();
+        this.responses = new Array<IHttpPreResponseHandler<any, any>>();
     }
 
     public provideDefaultHeader(key: string, value: string): void {
@@ -33,11 +33,11 @@ export class HttpExtend implements IHttpExtend {
         Object.keys(params).forEach((key) => this.params.set(key, params[key]));
     }
 
-    public providePreRequestHandler(handler: IHttpPreRequestHandler): void {
+    public providePreRequestHandler<TBody, TResult>(handler: IHttpPreRequestHandler<TBody, TResult>): void {
         this.requests.push(handler);
     }
 
-    public providePreResponseHandler(handler: IHttpPreResponseHandler): void {
+    public providePreResponseHandler<TResult1, TResult2>(handler: IHttpPreResponseHandler<TResult1, TResult2>): void {
         this.responses.push(handler);
     }
 
@@ -49,11 +49,11 @@ export class HttpExtend implements IHttpExtend {
         return new Map<string, string>(this.params);
     }
 
-    public getPreRequestHandlers(): Array<IHttpPreRequestHandler> {
+    public getPreRequestHandlers(): Array<IHttpPreRequestHandler<any, any>> {
         return Array.from(this.requests);
     }
 
-    public getPreResponseHandlers(): Array<IHttpPreResponseHandler> {
+    public getPreResponseHandlers(): Array<IHttpPreResponseHandler<any, any>> {
         return Array.from(this.responses);
     }
 }

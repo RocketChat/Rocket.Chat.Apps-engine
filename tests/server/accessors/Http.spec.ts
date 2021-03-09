@@ -13,18 +13,18 @@ export class HttpAccessorTestFixture {
     private mockReader: IRead;
     private mockPersis: IPersistence;
     private mockAccessorManager: AppAccessorManager;
-    private mockPreRequestHandler: IHttpPreRequestHandler;
-    private mockPreResponseHandler: IHttpPreResponseHandler;
-    private mockResponse: IHttpResponse;
+    private mockPreRequestHandler: IHttpPreRequestHandler<any, any>;
+    private mockPreResponseHandler: IHttpPreResponseHandler<any, any>;
+    private mockResponse: IHttpResponse<any>;
 
     @SetupFixture
     public setupFixture() {
         this.mockAppId = 'testing-app';
 
-        this.mockResponse = { statusCode: 200 } as IHttpResponse;
+        this.mockResponse = { statusCode: 200 } as IHttpResponse<any>;
         const res = this.mockResponse;
         this.mockHttpBridge = {
-            call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
+            call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse<any>> {
                 return Promise.resolve(res);
             },
         } as IHttpBridge;
@@ -52,16 +52,16 @@ export class HttpAccessorTestFixture {
         } as AppAccessorManager;
 
         this.mockPreRequestHandler = {
-            executePreHttpRequest(url: string, request: IHttpRequest, read: IRead, persistence: IPersistence): Promise<IHttpRequest> {
+            executePreHttpRequest(url: string, request: IHttpRequest<any>, read: IRead, persistence: IPersistence): Promise<IHttpRequest<any>> {
                 return Promise.resolve(request);
             },
-        } as IHttpPreRequestHandler;
+        } as IHttpPreRequestHandler<any, any>;
 
         this.mockPreResponseHandler = {
-            executePreHttpResponse(response: IHttpResponse, read: IRead, persistence: IPersistence): Promise<IHttpResponse> {
+            executePreHttpResponse(response: IHttpResponse<any>, read: IRead, persistence: IPersistence): Promise<IHttpResponse<any>> {
                 return Promise.resolve(response);
             },
-        } as IHttpPreResponseHandler;
+        } as IHttpPreResponseHandler<any, any>;
     }
 
     @AsyncTest()
@@ -80,7 +80,7 @@ export class HttpAccessorTestFixture {
         Expect(await http.del('url-here')).toBeDefined();
         Expect(await http.get('url-here', { headers: {}, params: {} })).toBeDefined();
 
-        const request1 = {} as IHttpRequest;
+        const request1 = {} as IHttpRequest<any>;
         this.mockHttpExtender.provideDefaultHeader('Auth-Token', 'Bearer asdfasdf');
         Expect(await http.post('url-here', request1)).toBeDefined();
         Expect(request1.headers['Auth-Token']).toBe('Bearer asdfasdf');
@@ -88,16 +88,16 @@ export class HttpAccessorTestFixture {
         Expect(await http.put('url-here', request1)).toBeDefined(); // Check it the default doesn't override provided
         Expect(request1.headers['Auth-Token']).toBe('mine');
 
-        const request2 = {} as IHttpRequest;
+        const request2 = {} as IHttpRequest<never>;
         this.mockHttpExtender.provideDefaultParam('count', '20');
         Expect(await http.del('url-here', request2)).toBeDefined();
         Expect(request2.params.count).toBe('20');
         request2.params.count = '50';
-        Expect(await http.get('url-here', request2)).toBeDefined(); // Check it the default doesn't override provided
+        Expect(await http.get<any>('url-here', request2)).toBeDefined(); // Check it the default doesn't override provided
         Expect(request2.params.count).toBe('50');
 
         this.mockHttpExtender.providePreRequestHandler(this.mockPreRequestHandler);
-        const request3 = {} as IHttpRequest;
+        const request3 = {} as IHttpRequest<any>;
         Expect(await http.post('url-here', request3)).toBeDefined();
         Expect(this.mockPreRequestHandler.executePreHttpRequest).toHaveBeenCalledWith('url-here', request3, this.mockReader, this.mockPersis);
         (this.mockHttpExtender as any).requests = [];

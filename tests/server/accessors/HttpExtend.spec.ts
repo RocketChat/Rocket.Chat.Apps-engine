@@ -53,7 +53,7 @@ export class HttpExtendAccessorTestFixture {
     public preRequestHandlersInHttpExtend() {
         const he = new HttpExtend();
 
-        const preRequestHandler: IHttpPreRequestHandler = {
+        const preRequestHandler: IHttpPreRequestHandler<any, any> = {
             executePreHttpRequest: function _thing(url, req) {
                 return new Promise((resolve) => resolve(req));
             },
@@ -67,7 +67,7 @@ export class HttpExtendAccessorTestFixture {
     public preResponseHandlersInHttpExtend() {
         const he = new HttpExtend();
 
-        const preResponseHandler: IHttpPreResponseHandler = {
+        const preResponseHandler: IHttpPreResponseHandler<any, any> = {
             executePreHttpResponse: function _thing(res) {
                 return new Promise((resolve) => resolve(res));
             },

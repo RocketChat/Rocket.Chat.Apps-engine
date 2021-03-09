@@ -1,12 +1,12 @@
 import { IHttpRequest, IHttpResponse, RequestMethod } from '../../definition/accessors';
 
 export interface IHttpBridge {
-    call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse>;
+    call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse<any>>;
 }
 
 export interface IHttpBridgeRequestInfo {
     appId: string;
     method: RequestMethod;
     url: string;
-    request: IHttpRequest;
+    request: IHttpRequest<any>;
 }
