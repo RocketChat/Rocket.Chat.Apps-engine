@@ -1,11 +1,11 @@
-const gulp = require('gulp');
-const del = require('del');
-const sourcemaps = require('gulp-sourcemaps');
-const tsc = require('gulp-typescript');
-const tslint = require('gulp-tslint');
-const shell = require('gulp-shell');
-const bump = require('gulp-bump');
-const fs = require('fs');
+import * as gulp from 'gulp'
+import * as del from 'del';
+import * as sourcemaps from 'gulp-sourcemaps'
+import * as tsc from 'gulp-typescript'
+import tslint from 'gulp-tslint';
+import * as shell from 'gulp-shell'
+import * as bump from 'gulp-bump'
+import * as fs from 'fs'
 
 const tsp = tsc.createProject('tsconfig.json');
 
@@ -50,7 +50,7 @@ function compile_ts() {
 }
 
 function update_ts_definition_version() {
-    const { version } = JSON.parse(fs.readFileSync('./package.json'));
+    const { version } = JSON.parse(fs.readFileSync('./package.json').toString());
 
     return gulp.src('src/definition/package.json')
             .pipe(bump({ version }))

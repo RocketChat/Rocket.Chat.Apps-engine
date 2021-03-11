@@ -25,7 +25,8 @@
     ],
     "include": [
         "src",
-        "tests"
+        "tests",
+        "gulpfile.d.ts"
     ],
     "atom": {
         "rewriteTsconfig": false
