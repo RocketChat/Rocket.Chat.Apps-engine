@@ -60,6 +60,9 @@
   "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
   "devDependencies": {
     "@types/adm-zip": "^0.4.31",
+    "@types/gulp": "^4.0.8",
+    "@types/gulp-bump": "^2.8.1",
+    "@types/gulp-sourcemaps": "^0.0.34",
     "@types/lodash.clonedeep": "^4.5.3",
     "@types/nedb": "^1.8.5",
     "@types/node": "^12.7.12",
