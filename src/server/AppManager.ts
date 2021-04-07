@@ -10,7 +10,6 @@ import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
-import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
@@ -113,27 +112,7 @@ export class AppManager {
 
     /** Gets the instance of the Bridge manager. */
     public getBridges(): AppBridges {
-        const handler = {
-            get(target: AppBridges, prop, receiver) {
-                const reflection = Reflect.get(target, prop, receiver);
-
-                if (typeof prop === 'symbol' || typeof prop === 'number') {
-                    return reflection;
-                }
-
-                if (typeof (target as any)[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
-                    return (...args: Array<any>) => {
-                        const bridge = reflection.apply(target, args);
-
-                        return AppPermissionManager.proxy(bridge);
-                    };
-                }
-
-                return reflection;
-            },
-        } as ProxyHandler<AppBridges>;
-
-        return new Proxy(this.bridges, handler);
+        return this.bridges;
     }
 
     /** Gets the instance of the listener manager. */
