@@ -8,6 +8,7 @@ export enum AppMethod {
     INITIALIZE = 'initialize',
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',
+    ONINSTALL = 'onInstall',
     ONSETTINGUPDATED = 'onSettingUpdated',
     SETSTATUS = 'setStatus',
     // Message handlers
