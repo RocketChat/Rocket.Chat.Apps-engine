@@ -474,6 +474,9 @@ export class AppManager {
             // If an error occurs during this, oh well.
         });
 
+        // Add this inside a more suitable function
+        await app.call(AppMethod.ONINSTALL);
+
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
         if (enable) {
