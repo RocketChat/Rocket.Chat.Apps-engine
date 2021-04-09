@@ -8,7 +8,7 @@ import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager,
+    AppSlashCommandManager
 } from './managers';
 import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -539,7 +539,7 @@ export class AppManager {
             zip: appPackage.toString('base64'),
             compiled: Object.entries(result.files).reduce(
                 (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as {[key: string]: string},
+                {} as { [key: string]: string },
             ),
             languageContent: result.languageContent,
             settings: old.settings,
@@ -814,7 +814,10 @@ export class AppManager {
                 status = isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED;
             } else {
                 status = AppStatus.DISABLED;
-                console.warn(`The App (${ app.getID() }) is disabled by itslef. Check its "onEnable" implementation for details.`);
+                app.getLogger().warn(
+                    `The App (${ app.getID() }) is disabled by itslef. \n` +
+                    `Check its "onEnable" implementation for the details.`,
+                );
             }
         } catch (e) {
             enable = false;
