@@ -8,6 +8,10 @@ export interface IRecurringSchedule {
      * or a number.
      */
     interval: string | number;
+    /**
+     * Whether to let the first iteration to execute as soon as the task is registered
+     */
+    skipImmediate?: boolean;
     /** An object that can be passed to the processor with custom data */
     data?: object;
 }
