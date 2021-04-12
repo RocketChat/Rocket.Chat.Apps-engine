@@ -474,8 +474,7 @@ export class AppManager {
             // If an error occurs during this, oh well.
         });
 
-        // Add this inside a more suitable function
-        await app.call(AppMethod.ONINSTALL);
+        await this.installApp(created, app);
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -734,6 +733,34 @@ export class AppManager {
         }
 
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
+    }
+
+    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp): Promise<boolean> {
+        let result: boolean;
+        const read = this.getAccessorManager().getReader(storageItem.id);
+        const http = this.getAccessorManager().getHttp(storageItem.id);
+        const persistence = this.getAccessorManager().getPersistence(storageItem.id);
+
+        try {
+            await app.call(AppMethod.ONINSTALL, read, http, persistence);
+
+            // Change AppStatus to installed?
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                console.warn('Please report the following error:');
+            }
+
+            result = false;
+
+            // silenceStatus?
+            await app.setStatus(status);
+        }
+
+        return result;
     }
 
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
