@@ -6,9 +6,9 @@ export interface IRoomBridge {
     create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
     getById(roomId: string, appId: string): Promise<IRoom>;
     getByName(roomName: string, appId: string): Promise<IRoom>;
-    getCreatorById(roomId: string, appId: string): Promise<IUser>;
-    getCreatorByName(roomName: string, appId: string): Promise<IUser>;
-    getDirectByUsernames(username: Array<string>, appId: string): Promise<IRoom>;
+    getCreatorById(roomId: string, appId: string): Promise<IUser | undefined>;
+    getCreatorByName(roomName: string, appId: string): Promise<IUser | undefined>;
+    getDirectByUsernames(username: Array<string>, appId: string): Promise<IRoom | undefined>;
     getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
     createDiscussion(room: IRoom, parentMessage: IMessage | undefined, reply: string | undefined, members: Array<string>, appId: string): Promise<string>;

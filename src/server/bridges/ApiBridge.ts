@@ -14,7 +14,7 @@ export abstract class ApiBridge extends BaseBridge {
    public doUnregisterApis(appId: string): void {
        this.checkDefaultPermission(appId);
 
-       return this.runregisterApis(appId);
+       return this.unregisterApis(appId);
     }
 
     /**
@@ -30,7 +30,7 @@ export abstract class ApiBridge extends BaseBridge {
      *
      * @param appId the id of the app calling this
      */
-    protected abstract runregisterApis(appId: string): void;
+    protected abstract unregisterApis(appId: string): void;
 
     private checkDefaultPermission(appId: string) {
         if (!AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {

@@ -25,19 +25,19 @@ export abstract class RoomBridge extends BaseBridge {
         return this.getByName(roomName, appId);
     }
 
-    public async doGetCreatorById(roomId: string, appId: string): Promise<IUser> {
+    public async doGetCreatorById(roomId: string, appId: string): Promise<IUser | undefined> {
         this.checkReadPermission(appId);
 
         return this.getCreatorById(roomId, appId);
     }
 
-    public async doGetCreatorByName(roomName: string, appId: string): Promise<IUser> {
+    public async doGetCreatorByName(roomName: string, appId: string): Promise<IUser | undefined> {
         this.checkReadPermission(appId);
 
         return this.getCreatorByName(roomName, appId);
     }
 
-    public async doGetDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom> {
+    public async doGetDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined> {
         this.checkReadPermission(appId);
 
         return this.getDirectByUsernames(usernames, appId);
@@ -65,9 +65,9 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
     protected abstract getById(roomId: string, appId: string): Promise<IRoom>;
     protected abstract getByName(roomName: string, appId: string): Promise<IRoom>;
-    protected abstract getCreatorById(roomId: string, appId: string): Promise<IUser>;
-    protected abstract getCreatorByName(roomName: string, appId: string): Promise<IUser>;
-    protected abstract getDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom>;
+    protected abstract getCreatorById(roomId: string, appId: string): Promise<IUser | undefined>;
+    protected abstract getCreatorByName(roomName: string, appId: string): Promise<IUser | undefined>;
+    protected abstract getDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined>;
     protected abstract getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     protected abstract update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
     protected abstract createDiscussion(room: IRoom, parentMessage: IMessage | undefined,
