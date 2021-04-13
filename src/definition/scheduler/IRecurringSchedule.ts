@@ -9,7 +9,7 @@ export interface IRecurringSchedule {
      */
     interval: string | number;
     /**
-     * Whether to let the first iteration to execute as soon as the task is registered
+     * Whether the recurring job should start immediately or wait for the interval
      */
     skipImmediate?: boolean;
     /** An object that can be passed to the processor with custom data */
