@@ -13,6 +13,7 @@ import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 import { ISetting } from './settings';
+import { IUser } from './users';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -169,8 +170,9 @@ export abstract class App implements IApp {
      * @param read
      * @param http an accessor to the outside world
      * @param persistence
+     * @param user that installed the app
      */
-    public async onInstall(read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
+    public async onInstall(read: IRead, http: IHttp, persistence: IPersistence, user: IUser): Promise<void> {
         return;
     }
 

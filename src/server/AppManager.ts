@@ -414,7 +414,7 @@ export class AppManager {
         return true;
     }
 
-    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
+    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters, user: IUser): Promise<AppFabricationFulfillment> {
         const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
 
         const aff = new AppFabricationFulfillment();
@@ -474,7 +474,7 @@ export class AppManager {
             // If an error occurs during this, oh well.
         });
 
-        await this.installApp(created, app);
+        await this.installApp(created, app, user);
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -735,16 +735,14 @@ export class AppManager {
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 
-    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp): Promise<boolean> {
+    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
         let result: boolean;
         const read = this.getAccessorManager().getReader(storageItem.id);
         const http = this.getAccessorManager().getHttp(storageItem.id);
         const persistence = this.getAccessorManager().getPersistence(storageItem.id);
 
         try {
-            await app.call(AppMethod.ONINSTALL, read, http, persistence);
-
-            // Change AppStatus to installed?
+            await app.call(AppMethod.ONINSTALL, read, http, persistence, user);
 
             result = true;
         } catch (e) {
@@ -756,7 +754,6 @@ export class AppManager {
 
             result = false;
 
-            // silenceStatus?
             await app.setStatus(status);
         }
 
