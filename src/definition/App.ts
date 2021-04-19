@@ -1,5 +1,6 @@
 import {
     IAppAccessors,
+    IAppInstallationContext,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
@@ -13,7 +14,6 @@ import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 import { ISetting } from './settings';
-import { IUser } from './users';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -167,12 +167,12 @@ export abstract class App implements IApp {
      * Method which is called when the App is installed and it is called one single time.
      * If the App is updated this method will NOT be called.
      *
+     * @param context
      * @param read
-     * @param http an accessor to the outside world
+     * @param http
      * @param persistence
-     * @param user that installed the app
      */
-    public async onInstall(read: IRead, http: IHttp, persistence: IPersistence, user: IUser): Promise<void> {
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
         return;
     }
 

@@ -21,6 +21,7 @@ export interface IAppInstallParameters {
     enable: boolean;
     marketplaceInfo?: IMarketplaceInfo;
     permissionsGranted?: Array<IPermission>;
+    user: IUser;
 }
 
 export class AppManager {
@@ -414,8 +415,8 @@ export class AppManager {
         return true;
     }
 
-    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters, user: IUser): Promise<AppFabricationFulfillment> {
-        const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
+    public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
+        const { enable = true, marketplaceInfo, permissionsGranted, user } = installationParameters;
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
@@ -740,9 +741,11 @@ export class AppManager {
         const read = this.getAccessorManager().getReader(storageItem.id);
         const http = this.getAccessorManager().getHttp(storageItem.id);
         const persistence = this.getAccessorManager().getPersistence(storageItem.id);
+        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
+        const context = { user, configurationModify: configExtend };
 
         try {
-            await app.call(AppMethod.ONINSTALL, read, http, persistence, user);
+            await app.call(AppMethod.ONINSTALL, context, read, http, persistence);
 
             result = true;
         } catch (e) {
