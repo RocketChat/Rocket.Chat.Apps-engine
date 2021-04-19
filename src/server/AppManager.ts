@@ -741,8 +741,8 @@ export class AppManager {
         const read = this.getAccessorManager().getReader(storageItem.id);
         const http = this.getAccessorManager().getHttp(storageItem.id);
         const persistence = this.getAccessorManager().getPersistence(storageItem.id);
-        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
-        const context = { user, configurationModify: configExtend };
+        const modifier = this.getAccessorManager().getModifier(storageItem.id);
+        const context = { user, modify: modifier };
 
         try {
             await app.call(AppMethod.ONINSTALL, context, read, http, persistence);
