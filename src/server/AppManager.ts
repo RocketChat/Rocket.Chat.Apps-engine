@@ -752,7 +752,7 @@ export class AppManager {
             const status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
-                console.warn('Please report the following error:');
+                app.getLogger().warn('Please report the following error:');
             }
 
             result = false;
