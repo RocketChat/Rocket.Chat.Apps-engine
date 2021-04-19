@@ -1,7 +1,7 @@
 import { IUser } from '../users';
-import { IConfigurationModify } from './IConfigurationModify';
+import { IModify } from './IModify';
 
 export interface IAppInstallationContext {
     user: IUser;
-    configurationModify: IConfigurationModify;
+    modify: IModify;
 }
