@@ -23,6 +23,10 @@ export interface IAppInstallParameters {
     permissionsGranted?: Array<IPermission>;
 }
 
+export interface IAppUninstallParameters {
+    user: IUser;
+}
+
 export class AppManager {
     public static Instance: AppManager;
 
@@ -485,9 +489,9 @@ export class AppManager {
 
         return aff;
     }
-
-    public async remove(id: string, user: IUser): Promise<ProxiedApp> {
+    public async remove(id: string, uninstallationParameters: IAppUninstallParameters): Promise<ProxiedApp> {
         const app = this.apps.get(id);
+        const { user } = uninstallationParameters;
 
         await this.uninstallApp(app, user);
 
@@ -902,9 +906,11 @@ export class AppManager {
         const read = this.getAccessorManager().getReader(app.getID());
         const http = this.getAccessorManager().getHttp(app.getID());
         const persistence = this.getAccessorManager().getPersistence(app.getID());
+        const modifier = this.getAccessorManager().getModifier(app.getID());
+        const context = { user, modify: modifier };
 
         try {
-            await app.call(AppMethod.ONUNINSTALL, read, http, persistence, user);
+            await app.call(AppMethod.ONUNINSTALL, context, read, http, persistence);
 
             result = true;
         } catch (e) {

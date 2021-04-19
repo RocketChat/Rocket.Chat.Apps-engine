@@ -1,5 +1,6 @@
 import {
     IAppAccessors,
+    IAppUninstallationContext,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
@@ -13,7 +14,6 @@ import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 import { ISetting } from './settings';
-import { IUser } from './users';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -167,12 +167,12 @@ export abstract class App implements IApp {
      * Method which is called when the App is uninstalled and it is called one single time.
      * If the App is disabled this method will NOT be called.
      *
+     * @param context
      * @param read
-     * @param http an accessor to the outside world
+     * @param http
      * @param persistence
-     * @param user that uninstalled the app
      */
-    public async onUninstall(read: IRead, http: IHttp, persistence: IPersistence, user: IUser): Promise<void> {
+    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
         return;
     }
 
