@@ -1,5 +1,7 @@
 import { IPermission } from '../../definition/permissions/IPermission';
 import { getPermissionsByAppId } from '../AppManager';
+import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+import { ROCKETCHAT_APP_EXECUTION_PREFIX } from '../ProxiedApp';
 
 export class AppPermissionManager {
     /**
@@ -13,5 +15,22 @@ export class AppPermissionManager {
         }
 
         return grantedPermission as P;
+    }
+
+    public static notifyAboutError(err: Error): void {
+        if (err instanceof PermissionDeniedError) {
+            const { name, message } = err;
+
+            console.error(`${ name }: ${ message }\n${ this.getCallStack() }`);
+        } else {
+            console.error(err);
+        }
+    }
+
+    private static getCallStack(): string {
+        const stack = new Error().stack.toString().split('\n');
+        const appStackIndex = stack.findIndex((position) => position.includes(ROCKETCHAT_APP_EXECUTION_PREFIX));
+
+        return stack.slice(4, appStackIndex).join('\n');
     }
 }

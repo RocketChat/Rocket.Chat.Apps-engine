@@ -6,57 +6,57 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class PersistenceBridge extends BaseBridge {
     public async doPurge(appId: string): Promise<void> {
-        this.checkDefaultPermission(appId);
-
-        return this.purge(appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.purge(appId);
+        }
     }
 
     public async doCreate(data: object, appId: string): Promise<string> {
-        this.checkDefaultPermission(appId);
-
-        return this.create(data, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.create(data, appId);
+        }
     }
 
     public async doCreateWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
-        this.checkDefaultPermission(appId);
-
-        return this.createWithAssociations(data, associations, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.createWithAssociations(data, associations, appId);
+        }
     }
 
     public async doReadById(id: string, appId: string): Promise<object> {
-        this.checkDefaultPermission(appId);
-
-        return this.readById(id, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.readById(id, appId);
+        }
     }
 
     public async doReadByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
-        this.checkDefaultPermission(appId);
-
-        return this.readByAssociations(associations, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.readByAssociations(associations, appId);
+        }
     }
 
     public async doRemove(id: string, appId: string): Promise<object|undefined> {
-        this.checkDefaultPermission(appId);
-
-        return this.remove(id, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.remove(id, appId);
+        }
     }
 
     public async doRemoveByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>|undefined> {
-        this.checkDefaultPermission(appId);
-
-        return this.removeByAssociations(associations, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.removeByAssociations(associations, appId);
+        }
     }
 
     public async doUpdate(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
-        this.checkDefaultPermission(appId);
-
-        return this.update(id, data, upsert, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.update(id, data, upsert, appId);
+        }
     }
 
     public async doUpdateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
-        this.checkDefaultPermission(appId);
-
-        return this.updateByAssociations(associations, data, upsert, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.updateByAssociations(associations, data, upsert, appId);
+        }
     }
 
     /**
@@ -145,12 +145,16 @@ export abstract class PersistenceBridge extends BaseBridge {
      */
     protected abstract updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string>;
 
-    private checkDefaultPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.persistence.default)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.persistence.default],
-            });
+    private checkDefaultPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.persistence.default)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.persistence.default],
+        }));
+
+        return false;
     }
 }

@@ -6,39 +6,39 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class SettingBridge extends BaseBridge {
    public async doGetAll(appId: string): Promise<Array<ISetting>> {
-        this.checkReadPermission(appId);
-
-        return this.getAll(appId);
+       if (this.checkReadPermission(appId)) {
+           return this.getAll(appId);
+       }
     }
 
    public async doGetOneById(id: string, appId: string): Promise<ISetting> {
-        this.checkReadPermission(appId);
-
-        return this.getOneById(id, appId);
+       if (this.checkReadPermission(appId)) {
+           return this.getOneById(id, appId);
+       }
     }
 
    public async doHideGroup(name: string, appId: string): Promise<void> {
-        this.checkWritePermission(appId);
-
-        return this.hideGroup(name, appId);
+       if (this.checkWritePermission(appId)) {
+           return this.hideGroup(name, appId);
+       }
     }
 
    public async doHideSetting(id: string, appId: string): Promise<void> {
-        this.checkWritePermission(appId);
-
-        return this.hideSetting(id, appId);
+       if (this.checkWritePermission(appId)) {
+           return this.hideSetting(id, appId);
+       }
     }
 
    public async doIsReadableById(id: string, appId: string): Promise<boolean> {
-        this.checkReadPermission(appId);
-
-        return this.isReadableById(id, appId);
+       if (this.checkReadPermission(appId)) {
+           return this.isReadableById(id, appId);
+       }
     }
 
    public async doUpdateOne(setting: ISetting, appId: string): Promise<void> {
-        this.checkWritePermission(appId);
-
-        return this.updateOne(setting, appId);
+       if (this.checkWritePermission(appId)) {
+           return this.updateOne(setting, appId);
+       }
     }
 
    protected abstract getAll(appId: string): Promise<Array<ISetting>>;
@@ -48,21 +48,29 @@ export abstract class SettingBridge extends BaseBridge {
    protected abstract isReadableById(id: string, appId: string): Promise<boolean>;
    protected abstract updateOne(setting: ISetting, appId: string): Promise<void>;
 
-    private checkWritePermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.setting.write)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.setting.write],
-            });
+    private checkWritePermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.setting.write)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.setting.write],
+        }));
+
+        return false;
     }
 
-    private checkReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.setting.read)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.setting.read],
-            });
+    private checkReadPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.setting.read)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.setting.read],
+        }));
+
+        return false;
     }
 }

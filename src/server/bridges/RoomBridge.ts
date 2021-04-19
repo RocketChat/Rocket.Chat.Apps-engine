@@ -8,58 +8,58 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class RoomBridge extends BaseBridge {
     public async doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
-        this.checkWritePermission(appId);
-
-        return this.create(room, members, appId);
+        if (this.checkWritePermission(appId)) {
+            return this.create(room, members, appId);
+        }
     }
 
     public async doGetById(roomId: string, appId: string): Promise<IRoom> {
-        this.checkReadPermission(appId);
-
-        return this.getById(roomId, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getById(roomId, appId);
+        }
     }
 
     public async doGetByName(roomName: string, appId: string): Promise<IRoom> {
-        this.checkReadPermission(appId);
-
-        return this.getByName(roomName, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getByName(roomName, appId);
+        }
     }
 
     public async doGetCreatorById(roomId: string, appId: string): Promise<IUser | undefined> {
-        this.checkReadPermission(appId);
-
-        return this.getCreatorById(roomId, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getCreatorById(roomId, appId);
+        }
     }
 
     public async doGetCreatorByName(roomName: string, appId: string): Promise<IUser | undefined> {
-        this.checkReadPermission(appId);
-
-        return this.getCreatorByName(roomName, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getCreatorByName(roomName, appId);
+        }
     }
 
     public async doGetDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined> {
-        this.checkReadPermission(appId);
-
-        return this.getDirectByUsernames(usernames, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getDirectByUsernames(usernames, appId);
+        }
     }
 
     public async doGetMembers(roomId: string, appId: string): Promise<Array<IUser>> {
-        this.checkReadPermission(appId);
-
-        return this.getMembers(roomId, appId);
+        if (this.checkReadPermission(appId)) {
+            return this.getMembers(roomId, appId);
+        }
     }
 
     public async doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
-        this.checkWritePermission(appId);
-
-        return this.update(room, members, appId);
+        if (this.checkWritePermission(appId)) {
+            return this.update(room, members, appId);
+        }
     }
 
     public async doCreateDiscussion(room: IRoom, parentMessage: IMessage | undefined,
                                     reply: string | undefined, members: Array<string>, appId: string): Promise<string> {
-        this.checkWritePermission(appId);
-
-        return this.createDiscussion(room, parentMessage, reply, members, appId);
+                                        if (this.checkWritePermission(appId)) {
+                                            return this.createDiscussion(room, parentMessage, reply, members, appId);
+                                        }
     }
 
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
@@ -73,21 +73,29 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract createDiscussion(room: IRoom, parentMessage: IMessage | undefined,
                                         reply: string | undefined, members: Array<string>, appId: string): Promise<string>;
 
-    private checkWritePermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.room.write],
-            });
+    private checkWritePermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.scheduler.default],
+        }));
+
+        return false;
     }
 
-    private checkReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.room.read)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.room.read],
-            });
+    private checkReadPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.room.read)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.room.read],
+        }));
+
+        return false;
     }
 }

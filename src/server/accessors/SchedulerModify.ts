@@ -13,18 +13,18 @@ export class SchedulerModify implements ISchedulerModify {
     constructor(private readonly bridge: IAppSchedulerBridge, private readonly appId: string) {}
 
     public async scheduleOnce(job: IOnetimeSchedule): Promise<void> {
-        this.bridge.scheduleOnce({ ...job, id: createProcessorId(job.id, this.appId) }, this.appId);
+        this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, this.appId) }, this.appId);
     }
 
     public async scheduleRecurring(job: IRecurringSchedule): Promise<void> {
-        this.bridge.scheduleRecurring({ ...job, id: createProcessorId(job.id, this.appId) }, this.appId);
+        this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, this.appId) }, this.appId);
     }
 
     public async cancelJob(jobId: string): Promise<void> {
-        this.bridge.cancelJob(createProcessorId(jobId, this.appId), this.appId);
+        this.bridge.doCancelJob(createProcessorId(jobId, this.appId), this.appId);
     }
 
     public async cancelAllJobs(): Promise<void> {
-        this.bridge.cancelAllJobs(this.appId);
+        this.bridge.doCancelAllJobs(this.appId);
     }
 }

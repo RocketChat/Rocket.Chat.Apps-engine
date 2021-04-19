@@ -5,33 +5,37 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class EnvironmentalVariableBridge extends BaseBridge {
    public async doGetValueByName(envVarName: string, appId: string): Promise<string | undefined> {
-       this.checkReadPermission(appId);
-
-       return this.getValueByName(envVarName, appId);
+       if (this.checkReadPermission(appId)) {
+           return this.getValueByName(envVarName, appId);
+       }
     }
 
    public async doIsReadable(envVarName: string, appId: string): Promise<boolean> {
-       this.checkReadPermission(appId);
-
-       return this.isReadable(envVarName, appId);
+       if (this.checkReadPermission(appId)) {
+           return this.isReadable(envVarName, appId);
+       }
     }
 
    public async doIsSet(envVarName: string, appId: string): Promise<boolean> {
-       this.checkReadPermission(appId);
-
-       return this.isSet(envVarName, appId);
+       if (this.checkReadPermission(appId)) {
+           return this.isSet(envVarName, appId);
+       }
     }
 
    protected abstract getValueByName(envVarName: string, appId: string): Promise<string | undefined>;
    protected abstract isReadable(envVarName: string, appId: string): Promise<boolean>;
    protected abstract isSet(envVarName: string, appId: string): Promise<boolean>;
 
-    private checkReadPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.env.read)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.env.read],
-            });
+    private checkReadPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.env.read)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.env.read],
+        }));
+
+        return false;
     }
 }

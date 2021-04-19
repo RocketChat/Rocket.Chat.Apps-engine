@@ -29,7 +29,7 @@ export class Room implements IRoom {
     public get usernames(): Array<string> {
         // Get usernames
         if (!this._USERNAMES) {
-            this._USERNAMES = this[PrivateManager].getBridges().getInternalBridge().getUsernamesOfRoomById(this.id);
+            this._USERNAMES = this[PrivateManager].getBridges().getInternalBridge().doGetUsernamesOfRoomById(this.id);
         }
 
         return this._USERNAMES;

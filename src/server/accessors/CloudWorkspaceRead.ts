@@ -5,6 +5,6 @@ import { ICloudWorkspaceBridge } from '../bridges/ICloudWorkspaceBridge';
 export class CloudWorkspaceRead implements ICloudWorkspaceRead {
     constructor(private readonly cloudBridge: ICloudWorkspaceBridge, private readonly appId: string) { }
     public async getWorkspaceToken(scope: string): Promise<IWorkspaceToken> {
-        return this.cloudBridge.getWorkspaceToken(scope, this.appId);
+        return this.cloudBridge.doGetWorkspaceToken(scope, this.appId);
     }
 }

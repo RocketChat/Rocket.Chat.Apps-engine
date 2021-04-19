@@ -15,35 +15,35 @@ export class Notifier implements INotifier {
 
     public async notifyUser(user: IUser, message: IMessage): Promise<void> {
         if (!message.sender || !message.sender.id) {
-            const appUser = await this.userBridge.getAppUser(this.appId);
+            const appUser = await this.userBridge.doGetAppUser(this.appId);
 
             message.sender = appUser;
         }
 
-        await this.msgBridge.notifyUser(user, message, this.appId);
+        await this.msgBridge.doNotifyUser(user, message, this.appId);
     }
 
     public async notifyRoom(room: IRoom, message: IMessage): Promise<void> {
         if (!message.sender || !message.sender.id) {
-            const appUser = await this.userBridge.getAppUser(this.appId);
+            const appUser = await this.userBridge.doGetAppUser(this.appId);
 
             message.sender = appUser;
         }
 
-        await this.msgBridge.notifyRoom(room, message, this.appId);
+        await this.msgBridge.doNotifyRoom(room, message, this.appId);
     }
 
     public async typing(options: ITypingOptions): Promise<() => Promise<void>> {
         options.scope = options.scope || TypingScope.Room;
 
         if (!options.username) {
-            const appUser = await this.userBridge.getAppUser(this.appId);
+            const appUser = await this.userBridge.doGetAppUser(this.appId);
             options.username = appUser && appUser.name || '';
         }
 
-        this.msgBridge.typing({ ...options, isTyping: true }, this.appId);
+        this.msgBridge.doTyping({ ...options, isTyping: true }, this.appId);
 
-        return () => this.msgBridge.typing({ ...options, isTyping: false }, this.appId);
+        return () => this.msgBridge.doTyping({ ...options, isTyping: false }, this.appId);
     }
 
     public getMessageBuilder(): IMessageBuilder {

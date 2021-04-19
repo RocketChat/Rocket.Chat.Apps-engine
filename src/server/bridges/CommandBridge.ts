@@ -6,39 +6,39 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class CommandBridge extends BaseBridge {
     public doDoesCommandExist(command: string, appId: string): boolean {
-        this.checkDefaultPermission(appId);
-
-        return this.doesCommandExist(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.doesCommandExist(command, appId);
+        }
     }
 
     public doEnableCommand(command: string, appId: string): void {
-        this.checkDefaultPermission(appId);
-
-        return this.enableCommand(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.enableCommand(command, appId);
+        }
     }
 
     public doDisableCommand(command: string, appId: string): void {
-        this.checkDefaultPermission(appId);
-
-        return this.disableCommand(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.disableCommand(command, appId);
+        }
     }
 
     public doModifyCommand(command: ISlashCommand, appId: string): void {
-        this.checkDefaultPermission(appId);
-
-        return this.modifyCommand(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.modifyCommand(command, appId);
+        }
     }
 
     public doRegisterCommand(command: ISlashCommand, appId: string): void {
-        this.checkDefaultPermission(appId);
-
-        return this.registerCommand(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.registerCommand(command, appId);
+        }
     }
 
     public doUnregisterCommand(command: string, appId: string): void {
-        this.checkDefaultPermission(appId);
-
-        return this.unregisterCommand(command, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.unregisterCommand(command, appId);
+        }
     }
 
     /**
@@ -100,12 +100,16 @@ export abstract class CommandBridge extends BaseBridge {
      */
     protected abstract unregisterCommand(command: string, appId: string): void;
 
-    private checkDefaultPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.command.default)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.command.default],
-            });
+    private checkDefaultPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.command.default)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.command.default],
+        }));
+
+        return false;
     }
 }

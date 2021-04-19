@@ -10,33 +10,33 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class SchedulerBridge extends BaseBridge {
     public async doRegisterProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
-        this.checDefaultPermission(appId);
-
-        return this.registerProcessors(processors, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.registerProcessors(processors, appId);
+        }
     }
 
     public async doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
-        this.checDefaultPermission(appId);
-
-        return this.scheduleOnce(job, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.scheduleOnce(job, appId);
+        }
     }
 
     public async doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
-        this.checDefaultPermission(appId);
-
-        return this.scheduleRecurring(job, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.scheduleRecurring(job, appId);
+        }
     }
 
     public async doCancelJob(jobId: string, appId: string): Promise<void> {
-        this.checDefaultPermission(appId);
-
-        return this.cancelJob(jobId, appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.cancelJob(jobId, appId);
+        }
     }
 
     public async doCancelAllJobs(appId: string): Promise<void> {
-        this.checDefaultPermission(appId);
-
-        return this.cancelAllJobs(appId);
+        if (this.checkDefaultPermission(appId)) {
+            return this.cancelAllJobs(appId);
+        }
     }
 
     protected abstract registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void>;
@@ -45,13 +45,16 @@ export abstract class SchedulerBridge extends BaseBridge {
     protected abstract cancelJob(jobId: string, appId: string): Promise<void>;
     protected abstract cancelAllJobs(appId: string): Promise<void>;
 
-    private checDefaultPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.scheduler.default)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.scheduler.default],
-            });
+    private checkDefaultPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.scheduler.default)) {
+            return true;
         }
-    }
 
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.scheduler.default],
+        }));
+
+        return false;
+    }
 }

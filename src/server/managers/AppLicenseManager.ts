@@ -64,7 +64,7 @@ export class AppLicenseManager {
             validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
         }
 
-        const currentActiveUsers = await this.userBridge.getActiveUserCount();
+        const currentActiveUsers = await this.userBridge.doGetActiveUserCount();
 
         if (license.maxSeats < currentActiveUsers) {
             validationResult.addError('maxSeats', 'License does not accomodate the current amount of active users. Please increase the number of seats');

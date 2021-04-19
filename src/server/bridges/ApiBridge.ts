@@ -6,15 +6,15 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class ApiBridge extends BaseBridge {
    public doRegisterApi(api: AppApi, appId: string): void {
-       this.checkDefaultPermission(appId);
-
-       return this.registerApi(api, appId);
+       if (this.checkDefaultPermission(appId)) {
+           return this.registerApi(api, appId);
+       }
     }
 
    public doUnregisterApis(appId: string): void {
-       this.checkDefaultPermission(appId);
-
-       return this.unregisterApis(appId);
+       if (this.checkDefaultPermission(appId)) {
+           return this.unregisterApis(appId);
+       }
     }
 
     /**
@@ -32,12 +32,16 @@ export abstract class ApiBridge extends BaseBridge {
      */
     protected abstract unregisterApis(appId: string): void;
 
-    private checkDefaultPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.apis.default],
-            });
+    private checkDefaultPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {
+            return true;
         }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.apis.default],
+        }));
+
+        return false;
     }
 }

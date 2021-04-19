@@ -44,7 +44,7 @@ export class AppSettingsManager {
 
         rl.setStorageItem(item);
 
-        this.manager.getBridges().getAppDetailChangesBridge().onAppSettingsChange(appId, setting);
+        this.manager.getBridges().getAppDetailChangesBridge().doOnAppSettingsChange(appId, setting);
 
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
         const reader = this.manager.getAccessorManager().getReader(rl.getID());

@@ -9,11 +9,11 @@ export class LivechatCreator implements ILivechatCreator {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
     public createRoom(visitor: IVisitor, agent: IUser): Promise<ILivechatRoom> {
-        return this.bridges.getLivechatBridge().createRoom(visitor, agent, this.appId);
+        return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId);
     }
 
     public createVisitor(visitor: IVisitor): Promise<string> {
-        return this.bridges.getLivechatBridge().createVisitor(visitor, this.appId);
+        return this.bridges.getLivechatBridge().doCreateVisitor(visitor, this.appId);
     }
 
     public createToken(): string {

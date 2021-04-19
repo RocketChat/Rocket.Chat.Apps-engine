@@ -22,7 +22,7 @@ export class UIController implements IUIController {
             appId: this.appId,
         };
 
-        return this.uiInteractionBridge.notifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+        return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
 
     public updateModalView(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser) {
@@ -32,7 +32,7 @@ export class UIController implements IUIController {
             appId: this.appId,
         };
 
-        return this.uiInteractionBridge.notifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+        return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
 
     public setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser) {
@@ -42,6 +42,6 @@ export class UIController implements IUIController {
             appId: this.appId,
         };
 
-        return this.uiInteractionBridge.notifyUser(user, formatErrorInteraction(errorInteraction, interactionContext), this.appId);
+        return this.uiInteractionBridge.doNotifyUser(user, formatErrorInteraction(errorInteraction, interactionContext), this.appId);
     }
 }

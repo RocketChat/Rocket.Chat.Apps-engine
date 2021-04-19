@@ -12,6 +12,7 @@ export interface IAppApiBridge {
      * @param appId the id of the app calling this
      */
     registerApi(api: AppApi, appId: string): void;
+    doRegisterApi(api: AppApi, appId: string): void;
 
     /**
      * Unregisters all provided api's of an app from the bridged system.
@@ -19,4 +20,5 @@ export interface IAppApiBridge {
      * @param appId the id of the app calling this
      */
     unregisterApis(appId: string): void;
+    doUnregisterApis(appId: string): void;
 }

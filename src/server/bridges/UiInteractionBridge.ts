@@ -7,20 +7,23 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class UiInteractionBridge extends BaseBridge {
     public async doNotifyUser(user: IUser, interaction: IUIKitInteraction, appId: string): Promise<void> {
-        this.checkInteractionPermission(appId);
-
-        return this.notifyUser(user, interaction, appId);
+        if (this.checkInteractionPermission(appId)) {
+            return this.notifyUser(user, interaction, appId);
+        }
     }
 
     protected abstract notifyUser(user: IUser, interaction: IUIKitInteraction, appId: string): Promise<void>;
 
-    private checkInteractionPermission(appId: string) {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.ui.interaction)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.ui.interaction],
-            });
+    private checkInteractionPermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.ui.interaction)) {
+            return true;
         }
-    }
 
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.ui.interaction],
+        }));
+
+        return false;
+    }
 }
