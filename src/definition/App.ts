@@ -1,5 +1,6 @@
 import {
     IAppAccessors,
+    IAppInstallationContext,
     IAppUninstallationContext,
     IConfigurationExtend,
     IConfigurationModify,
@@ -165,14 +166,20 @@ export abstract class App implements IApp {
 
     /**
      * Method which is called when the App is uninstalled and it is called one single time.
-     * This method will NOT be called when an App is getting disabled. This method will only be called whenever the App is being uninstalled and removed from Rocket.Chat. This method will be called when an App is getting uninstalled and the App was disabled. 
      *
-     * @param context
-     * @param read
-     * @param http
-     * @param persistence
+     * This method will NOT be called when an App is getting disabled manually, ONLY when
+     * it's being uninstalled from Rocket.Chat.
      */
     public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
+        return;
+    }
+
+    /**
+     * Method which is called when the App is installed and it is called one single time.
+     *
+     * This method is NOT called when the App is updated.
+     */
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
         return;
     }
 

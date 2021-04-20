@@ -21,6 +21,7 @@ export interface IAppInstallParameters {
     enable: boolean;
     marketplaceInfo?: IMarketplaceInfo;
     permissionsGranted?: Array<IPermission>;
+    user: IUser;
 }
 
 export interface IAppUninstallParameters {
@@ -419,7 +420,7 @@ export class AppManager {
     }
 
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
-        const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
+        const { enable = true, marketplaceInfo, permissionsGranted, user } = installationParameters;
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
@@ -477,6 +478,8 @@ export class AppManager {
         await this.bridges.getAppActivationBridge().appAdded(app).catch(() => {
             // If an error occurs during this, oh well.
         });
+
+        await this.installApp(created, app, user);
 
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
@@ -738,6 +741,33 @@ export class AppManager {
         }
 
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
+    }
+
+    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
+        let result: boolean;
+        const read = this.getAccessorManager().getReader(storageItem.id);
+        const http = this.getAccessorManager().getHttp(storageItem.id);
+        const persistence = this.getAccessorManager().getPersistence(storageItem.id);
+        const modifier = this.getAccessorManager().getModifier(storageItem.id);
+        const context = { user, modify: modifier };
+
+        try {
+            await app.call(AppMethod.ONINSTALL, context, read, http, persistence);
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                app.getLogger().warn('Please report the following error:');
+            }
+
+            result = false;
+
+            await app.setStatus(status);
+        }
+
+        return result;
     }
 
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
