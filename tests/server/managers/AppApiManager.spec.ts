@@ -94,8 +94,8 @@ export class AppApiManagerTestFixture {
         };
 
         this.spies = new Array<RestorableFunctionSpy>();
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'registerApi'));
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'unregisterApis'));
+        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doRegisterApi'));
+        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doUnregisterApis'));
     }
 
     @Teardown

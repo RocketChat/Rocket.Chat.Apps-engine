@@ -85,7 +85,7 @@ export class ModifyCreatorTestFixture {
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'create');
+        const msgBriSpy = SpyOn(this.mockMessageBridge, 'doCreate');
         Expect(await mc.finish(msgBd)).toBe('msgId');
         Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
         msgBriSpy.restore();
@@ -113,7 +113,7 @@ export class ModifyCreatorTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doCreate');
         Expect(await mc.finish(roomBd)).toBe('roomId');
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();

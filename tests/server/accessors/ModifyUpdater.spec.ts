@@ -73,7 +73,7 @@ export class ModifyUpdaterTestFixture {
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'update');
+        const msgBriSpy = SpyOn(this.mockMessageBridge, 'doUpdate');
         Expect(await mc.finish(msgBd)).not.toBeDefined();
         Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
         msgBriSpy.restore();
@@ -104,7 +104,7 @@ export class ModifyUpdaterTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'update');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
         Expect(await mc.finish(roomBd)).not.toBeDefined();
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();
@@ -127,7 +127,7 @@ export class ModifyUpdaterTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'update');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
         Expect(await mc.finish(roomBd)).not.toBeDefined();
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();

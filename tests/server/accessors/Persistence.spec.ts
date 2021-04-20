@@ -43,12 +43,12 @@ export class PersistenceAccessorTestFixture {
     public async usePersistenceAccessor() {
         Expect(() => new Persistence(this.mockPersisBridge, this.mockAppId)).not.toThrow();
 
-        const sp1 = SpyOn(this.mockPersisBridge, 'create');
-        const sp2 = SpyOn(this.mockPersisBridge, 'createWithAssociations');
-        const sp3 = SpyOn(this.mockPersisBridge, 'update');
-        const sp4 = SpyOn(this.mockPersisBridge, 'remove');
-        const sp5 = SpyOn(this.mockPersisBridge, 'removeByAssociations');
-        const sp6 = SpyOn(this.mockPersisBridge, 'updateByAssociations');
+        const sp1 = SpyOn(this.mockPersisBridge, 'doCreate');
+        const sp2 = SpyOn(this.mockPersisBridge, 'doCreateWithAssociations');
+        const sp3 = SpyOn(this.mockPersisBridge, 'doUpdate');
+        const sp4 = SpyOn(this.mockPersisBridge, 'doRemove');
+        const sp5 = SpyOn(this.mockPersisBridge, 'doRemoveByAssociations');
+        const sp6 = SpyOn(this.mockPersisBridge, 'doUpdateByAssociations');
 
         const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
 

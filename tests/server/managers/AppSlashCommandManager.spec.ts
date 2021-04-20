@@ -95,12 +95,12 @@ export class AppSlashCommandManagerTestFixture {
         };
 
         this.spies = new Array<RestorableFunctionSpy>();
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doesCommandExist'));
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'registerCommand'));
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'unregisterCommand'));
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'restoreCommand'));
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'enableCommand'));
-        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'disableCommand'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doDoesCommandExist'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doRegisterCommand'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doUnregisterCommand'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doRestoreCommand'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doEnableCommand'));
+        this.spies.push(SpyOn(this.mockBridges.getCommandBridge(), 'doDisableCommand'));
     }
 
     @Teardown

@@ -70,7 +70,7 @@ export class HttpAccessorTestFixture {
 
         const http = new Http(this.mockAccessorManager, this.mockAppBridge, this.mockHttpExtender, this.mockAppId);
 
-        SpyOn(this.mockHttpBridge, 'call');
+        SpyOn(this.mockHttpBridge, 'doCall');
         SpyOn(this.mockPreRequestHandler, 'executePreHttpRequest');
         SpyOn(this.mockPreResponseHandler, 'executePreHttpResponse');
 

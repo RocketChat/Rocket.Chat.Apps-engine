@@ -109,7 +109,7 @@ export class AppSettingsManagerTestFixture {
         SpyOn(this.mockStorage, 'update');
         SpyOn(this.mockApp, 'call');
         SpyOn(this.mockApp, 'setStorageItem');
-        SpyOn(this.mockBridges.getAppDetailChangesBridge(), 'onAppSettingsChange');
+        SpyOn(this.mockBridges.getAppDetailChangesBridge(), 'doOnAppSettingsChange');
         SpyOn(this.mockAccessors, 'getConfigurationModify');
         SpyOn(this.mockAccessors, 'getReader');
         SpyOn(this.mockAccessors, 'getHttp');

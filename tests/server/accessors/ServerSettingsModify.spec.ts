@@ -31,9 +31,9 @@ export class ServerSettingsModifyTestFixture {
     public async useServerSettingsModify() {
         Expect(() => new ServerSettingsModify(this.mockServerSettingBridge, this.mockAppId)).not.toThrow();
 
-        const sp1 = SpyOn(this.mockServerSettingBridge, 'hideGroup');
-        const sp2 = SpyOn(this.mockServerSettingBridge, 'hideSetting');
-        const sp3 = SpyOn(this.mockServerSettingBridge, 'updateOne');
+        const sp1 = SpyOn(this.mockServerSettingBridge, 'doHideGroup');
+        const sp2 = SpyOn(this.mockServerSettingBridge, 'doHideSetting');
+        const sp3 = SpyOn(this.mockServerSettingBridge, 'doUpdateOne');
 
         const ssm = new ServerSettingsModify(this.mockServerSettingBridge, this.mockAppId);
 

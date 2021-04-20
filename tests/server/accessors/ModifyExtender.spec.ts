@@ -52,10 +52,10 @@ export class ModifyExtenderTestFixture {
 
         const me = new ModifyExtender(this.mockAppBridge, this.mockAppId);
 
-        SpyOn(this.mockRoomBridge, 'getById');
-        SpyOn(this.mockRoomBridge, 'update');
-        SpyOn(this.mockMessageBridge, 'getById');
-        SpyOn(this.mockMessageBridge, 'update');
+        SpyOn(this.mockRoomBridge, 'doGetById');
+        SpyOn(this.mockRoomBridge, 'doUpdate');
+        SpyOn(this.mockMessageBridge, 'doGetById');
+        SpyOn(this.mockMessageBridge, 'doUpdate');
 
         Expect(await me.extendRoom('roomId', TestData.getUser())).toBeDefined();
         Expect(this.mockRoomBridge.doGetById).toHaveBeenCalledWith('roomId', this.mockAppId);
