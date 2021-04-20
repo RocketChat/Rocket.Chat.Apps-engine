@@ -2,7 +2,8 @@ import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
-import { AppBridges } from './bridges';
+import { AppBridges, IPersistenceBridge } from './bridges';
+import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
@@ -481,7 +482,7 @@ export class AppManager {
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.removeAppUser(app);
-        await this.bridges.getPersistenceBridge().purge(app.getID());
+        await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & IPersistenceBridge).purge(app.getID());
         await this.storage.remove(app.getID());
         await this.schedulerManager.cleanUp(app.getID());
 

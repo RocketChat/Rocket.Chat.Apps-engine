@@ -7,6 +7,7 @@ import {
 } from '../../definition/scheduler';
 import { AppManager } from '../AppManager';
 import { IAppSchedulerBridge } from '../bridges/IAppSchedulerBridge';
+import { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
 import { AppAccessorManager } from './';
 
 function createProcessorId(jobId: string, appId: string): string {
@@ -99,6 +100,6 @@ export class AppSchedulerManager {
     }
 
     public async cleanUp(appId: string): Promise<void> {
-        this.bridge.cancelAllJobs(appId);
+        (this.bridge as IInternalSchedulerBridge & IAppSchedulerBridge).cancelAllJobs(appId);
     }
 }
