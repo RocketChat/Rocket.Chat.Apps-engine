@@ -165,7 +165,7 @@ export abstract class App implements IApp {
 
     /**
      * Method which is called when the App is uninstalled and it is called one single time.
-     * If the App is disabled this method will NOT be called.
+     * This method will NOT be called when an App is getting disabled. This method will only be called whenever the App is being uninstalled and removed from Rocket.Chat. This method will be called when an App is getting uninstalled and the App was disabled. 
      *
      * @param context
      * @param read
