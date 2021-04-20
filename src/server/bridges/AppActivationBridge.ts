@@ -16,7 +16,7 @@ export abstract class AppActivationBridge extends BaseBridge {
     }
 
    public async doAppStatusChanged(app: ProxiedApp, status: AppStatus): Promise<void> {
-       return this.doAppStatusChanged(app, status);
+       return this.appStatusChanged(app, status);
     }
 
    protected abstract appAdded(app: ProxiedApp): Promise<void>;

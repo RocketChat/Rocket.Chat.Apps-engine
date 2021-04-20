@@ -17,22 +17,22 @@ export class PersistenceAccessorTestFixture {
 
         const theData = this.data;
         this.mockPersisBridge = {
-            create(data: any, appId: string): Promise<string> {
+            doCreate(data: any, appId: string): Promise<string> {
                 return Promise.resolve('id');
             },
-            createWithAssociations(data: any, assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
+            doCreateWithAssociations(data: any, assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
                 return Promise.resolve('id2');
             },
-            update(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
+            doUpdate(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
                 return Promise.resolve('id3');
             },
-            remove(id: string, appId: string): Promise<object> {
+            doRemove(id: string, appId: string): Promise<object> {
                 return Promise.resolve(theData);
             },
-            removeByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+            doRemoveByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
                 return Promise.resolve([theData]);
             },
-            updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
+            doUpdateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
                 return Promise.resolve('id4');
             },
         } as IPersistenceBridge;
@@ -53,21 +53,21 @@ export class PersistenceAccessorTestFixture {
         const ps = new Persistence(this.mockPersisBridge, this.mockAppId);
 
         Expect(await ps.create(this.data)).toBe('id');
-        Expect(this.mockPersisBridge.create).toHaveBeenCalledWith(this.data, this.mockAppId);
+        Expect(this.mockPersisBridge.doCreate).toHaveBeenCalledWith(this.data, this.mockAppId);
         Expect(await ps.createWithAssociation(this.data, this.mockAssoc)).toBe('id2');
         Expect(await ps.createWithAssociations(this.data, [this.mockAssoc])).toBe('id2');
-        Expect(this.mockPersisBridge.createWithAssociations).toHaveBeenCalled().exactly(2);
+        Expect(this.mockPersisBridge.doCreateWithAssociations).toHaveBeenCalled().exactly(2);
         Expect(await ps.update('id', this.data)).toBe('id3');
-        Expect(this.mockPersisBridge.update).toHaveBeenCalledWith('id', this.data, false, this.mockAppId);
+        Expect(this.mockPersisBridge.doUpdate).toHaveBeenCalledWith('id', this.data, false, this.mockAppId);
         Expect(await ps.remove('id')).toEqual(this.data);
-        Expect(this.mockPersisBridge.remove).toHaveBeenCalledWith('id', this.mockAppId);
+        Expect(this.mockPersisBridge.doRemove).toHaveBeenCalledWith('id', this.mockAppId);
         Expect(await ps.removeByAssociation(this.mockAssoc)).toBeDefined();
         Expect(await ps.removeByAssociations([this.mockAssoc])).toBeDefined();
-        Expect(this.mockPersisBridge.removeByAssociations).toHaveBeenCalled().exactly(2);
+        Expect(this.mockPersisBridge.doRemoveByAssociations).toHaveBeenCalled().exactly(2);
 
         Expect(await ps.updateByAssociation(this.mockAssoc, this.data)).toBeDefined();
         Expect(await ps.updateByAssociations([this.mockAssoc], this.data)).toBeDefined();
-        Expect(this.mockPersisBridge.updateByAssociations).toHaveBeenCalled().exactly(2);
+        Expect(this.mockPersisBridge.doUpdateByAssociations).toHaveBeenCalled().exactly(2);
 
         sp1.restore();
         sp2.restore();

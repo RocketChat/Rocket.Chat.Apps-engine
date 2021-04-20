@@ -12,7 +12,7 @@ export class TestsApiBridge implements IAppApiBridge {
         this.apis.get('appId').set('it-exists', TestData.getApi('it-exists'));
     }
 
-    public registerApi(api: AppApi, appId: string): void {
+    public doRegisterApi(api: AppApi, appId: string): void {
         if (!this.apis.has(appId)) {
             this.apis.set(appId, new Map<string, IApi>());
         }
@@ -30,7 +30,7 @@ export class TestsApiBridge implements IAppApiBridge {
         }
     }
 
-    public unregisterApis(appId: string): void {
+    public doUnregisterApis(appId: string): void {
         this.apis.delete(appId);
     }
 }

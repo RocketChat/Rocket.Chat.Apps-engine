@@ -15,13 +15,13 @@ export class ServerSettingsModifyTestFixture {
         this.setting = TestData.getSetting();
         this.mockAppId = 'testing-app';
         this.mockServerSettingBridge = {
-            hideGroup(name: string, appId: string): Promise<void> {
+            doHideGroup(name: string, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-            hideSetting(id: string, appId: string): Promise<void> {
+            doHideSetting(id: string, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-            updateOne(setting: ISetting, appId: string): Promise<void> {
+            doUpdateOne(setting: ISetting, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IServerSettingBridge;
@@ -38,11 +38,11 @@ export class ServerSettingsModifyTestFixture {
         const ssm = new ServerSettingsModify(this.mockServerSettingBridge, this.mockAppId);
 
         Expect(await ssm.hideGroup('api')).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.hideGroup).toHaveBeenCalledWith('api', this.mockAppId);
+        Expect(this.mockServerSettingBridge.doHideGroup).toHaveBeenCalledWith('api', this.mockAppId);
         Expect(await ssm.hideSetting('api')).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.hideSetting).toHaveBeenCalledWith('api', this.mockAppId);
+        Expect(this.mockServerSettingBridge.doHideSetting).toHaveBeenCalledWith('api', this.mockAppId);
         Expect(await ssm.modifySetting(this.setting)).not.toBeDefined();
-        Expect(this.mockServerSettingBridge.updateOne).toHaveBeenCalledWith(this.setting, this.mockAppId);
+        Expect(this.mockServerSettingBridge.doUpdateOne).toHaveBeenCalledWith(this.setting, this.mockAppId);
 
         sp1.restore();
         sp2.restore();

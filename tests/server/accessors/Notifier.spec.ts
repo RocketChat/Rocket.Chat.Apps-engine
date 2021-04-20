@@ -14,11 +14,11 @@ export class NotifierAccessorTestFixture {
     @SetupFixture
     public setupFixture() {
         this.mockMsgBridge = {
-            notifyUser(user: IUser, msg: IMessage, appId: string): Promise<void> {
+            doNotifyUser(user: IUser, msg: IMessage, appId: string): Promise<void> {
                 // TODO: Spy on these and ensure they're called with the right parameters
                 return Promise.resolve();
             },
-            notifyRoom(room: IRoom, msg: IMessage, appId: string): Promise<void> {
+            doNotifyRoom(room: IRoom, msg: IMessage, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IMessageBridge;

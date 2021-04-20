@@ -11,7 +11,6 @@ export interface IAppApiBridge {
      * @param api the api to register
      * @param appId the id of the app calling this
      */
-    registerApi(api: AppApi, appId: string): void;
     doRegisterApi(api: AppApi, appId: string): void;
 
     /**
@@ -19,6 +18,5 @@ export interface IAppApiBridge {
      *
      * @param appId the id of the app calling this
      */
-    unregisterApis(appId: string): void;
     doUnregisterApis(appId: string): void;
 }

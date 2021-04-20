@@ -14,27 +14,27 @@ export class TestsCommandBridge implements IAppCommandBridge {
         this.commands.set('it-exists', TestData.getSlashCommand('it-exists').executor);
     }
 
-    public doesCommandExist(command: string, appId: string): boolean {
+    public doDoesCommandExist(command: string, appId: string): boolean {
         return this.commands.has(command);
     }
 
-    public enableCommand(command: string, appId: string): void {
+    public doEnableCommand(command: string, appId: string): void {
         return;
     }
 
-    public disableCommand(command: string, appId: string): void {
+    public doDisableCommand(command: string, appId: string): void {
         return;
     }
 
-    public modifyCommand(command: ISlashCommand, appId: string): void {
+    public doModifyCommand(command: ISlashCommand, appId: string): void {
         return;
     }
 
-    public restoreCommand(comand: string, appId: string): void {
+    public doRestoreCommand(comand: string, appId: string): void {
         return;
     }
 
-    public registerCommand(command: ISlashCommand, appId: string): void {
+    public doRegisterCommand(command: ISlashCommand, appId: string): void {
         if (this.commands.has(command.command)) {
             throw new Error(`Command "${command.command}" has already been registered.`);
         }
@@ -42,7 +42,7 @@ export class TestsCommandBridge implements IAppCommandBridge {
         this.commands.set(command.command, command.executor);
     }
 
-    public unregisterCommand(command: string, appId: string): void {
+    public doUnregisterCommand(command: string, appId: string): void {
         this.commands.delete(command);
     }
 }

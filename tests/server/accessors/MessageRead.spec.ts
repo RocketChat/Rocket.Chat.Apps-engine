@@ -16,13 +16,13 @@ export class MessageReadAccessorTestFixture {
 
         const theMsg = this.msg;
         this.mockMsgBridgeWithMsg = {
-            getById(id, appId): Promise<IMessage> {
+            doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(theMsg);
             },
         } as IMessageBridge;
 
         this.mockMsgBridgeNoMsg = {
-            getById(id, appId): Promise<IMessage> {
+            doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(undefined);
             },
         } as IMessageBridge;

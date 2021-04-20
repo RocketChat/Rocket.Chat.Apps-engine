@@ -9,13 +9,13 @@ export class EnvironmentalVariableReadAccessorTestFixture {
     @SetupFixture
     public setupFixture() {
         this.mockEnvVarBridge = {
-            getValueByName(name: string, appId: string): Promise<string> {
+            doGetValueByName(name: string, appId: string): Promise<string> {
                 return Promise.resolve('value');
             },
-            isReadable(name: string, appId: string): Promise<boolean> {
+            doIsReadable(name: string, appId: string): Promise<boolean> {
                 return Promise.resolve(true);
             },
-            isSet(name: string, appId: string): Promise<boolean> {
+            doIsSet(name: string, appId: string): Promise<boolean> {
                 return Promise.resolve(false);
             },
         } as IEnvironmentalVariableBridge;

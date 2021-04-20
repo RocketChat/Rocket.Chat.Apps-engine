@@ -19,22 +19,22 @@ export class RoomReadAccessorTestFixture {
         const theRoom = this.room;
         const theUser = this.user;
         this.mockRoomBridgeWithRoom = {
-            getById(id, appId): Promise<IRoom> {
+            doGetById(id, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getByName(name, appId): Promise<IRoom> {
+            doGetByName(name, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getCreatorById(id, appId): Promise<IUser> {
+            doGetCreatorById(id, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getCreatorByName(name, appId): Promise<IUser> {
+            doGetCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getDirectByUsernames(usernames, appId): Promise<IRoom> {
+            doGetDirectByUsernames(usernames, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getMembers(name, appId): Promise<Array<IUser>> {
+            doGetMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
         } as IRoomBridge;

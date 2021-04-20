@@ -172,7 +172,7 @@ export class AppSlashCommandManagerTestFixture {
         const regInfo = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('command'));
 
         Expect(() => (ascm as any).registerCommand('testing', regInfo)).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().registerCommand).toHaveBeenCalledWith(regInfo.slashCommand, 'testing');
+        Expect(this.mockBridges.getCommandBridge().doRegisterCommand).toHaveBeenCalledWith(regInfo.slashCommand, 'testing');
         Expect(regInfo.isRegistered).toBe(true);
         Expect(regInfo.isDisabled).toBe(false);
         Expect(regInfo.isEnabled).toBe(true);
@@ -243,7 +243,7 @@ export class AppSlashCommandManagerTestFixture {
         ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
         (ascm as any).providedCommands.get('testing').get('another-command').isRegistered = true;
         Expect(() => ascm.enableCommand('testing', 'another-command')).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().doesCommandExist).toHaveBeenCalled().exactly(3);
+        Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(3);
     }
 
     @Test()
@@ -251,8 +251,8 @@ export class AppSlashCommandManagerTestFixture {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
         Expect(() => ascm.enableCommand('testing', 'it-exists')).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().enableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
-        Expect(this.mockBridges.getCommandBridge().doesCommandExist).toHaveBeenCalled().exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doEnableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(1);
     }
 
     @Test()
@@ -275,7 +275,7 @@ export class AppSlashCommandManagerTestFixture {
         ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
         (ascm as any).providedCommands.get('testing').get('another-command').isRegistered = true;
         Expect(() => ascm.disableCommand('testing', 'another-command')).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().doesCommandExist).toHaveBeenCalled().exactly(3);
+        Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(3);
     }
 
     @Test()
@@ -283,8 +283,8 @@ export class AppSlashCommandManagerTestFixture {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
         Expect(() => ascm.disableCommand('testing', 'it-exists')).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().disableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
-        Expect(this.mockBridges.getCommandBridge().doesCommandExist).toHaveBeenCalled().exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doDisableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(1);
     }
 
     @Test()
@@ -312,7 +312,7 @@ export class AppSlashCommandManagerTestFixture {
         Expect(enabledRegInfo.isRegistered).toBe(true);
         Expect(disabledRegInfo.isRegistered).toBe(false);
         Expect((ascm as any).registerCommand as FunctionSpy).toHaveBeenCalledWith('testing', enabledRegInfo).exactly(1);
-        Expect(this.mockBridges.getCommandBridge().registerCommand).toHaveBeenCalledWith(enabledRegInfo.slashCommand, 'testing').exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doRegisterCommand).toHaveBeenCalledWith(enabledRegInfo.slashCommand, 'testing').exactly(1);
     }
 
     @Test()
@@ -324,8 +324,8 @@ export class AppSlashCommandManagerTestFixture {
 
         Expect(() => ascm.unregisterCommands('non-existant')).not.toThrow();
         Expect(() => ascm.unregisterCommands('testing')).not.toThrow();
-        Expect(this.mockBridges.getCommandBridge().unregisterCommand).toHaveBeenCalled().exactly(1);
-        Expect(this.mockBridges.getCommandBridge().restoreCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doUnregisterCommand).toHaveBeenCalled().exactly(1);
+        Expect(this.mockBridges.getCommandBridge().doRestoreCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
     }
 
     @AsyncTest()

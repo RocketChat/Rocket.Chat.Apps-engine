@@ -15,7 +15,6 @@ export interface IAppSchedulerBridge {
      * @param {Array<IProcessor>} processors An array of processors
      * @param appId the id of the app calling this
      */
-    registerProcessors(processor: Array<IProcessor>, appId: string): Promise<void>;
     doRegisterProcessors(processor: Array<IProcessor>, appId: string): Promise<void>;
 
     /**
@@ -24,7 +23,6 @@ export interface IAppSchedulerBridge {
      * @param {IOnetimeSchedule} job
      * @param appId the id of the app calling this
      */
-    scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
     doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
     /**
      * Schedules a registered processor to run in recurrencly acording to a given interval
@@ -32,7 +30,6 @@ export interface IAppSchedulerBridge {
      * @param {IRecurringSchedule} job
      * @param appId the id of the app calling this
      */
-    scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void>;
     doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void>;
     /**
      * Cancels a running job given its jobId
@@ -40,13 +37,11 @@ export interface IAppSchedulerBridge {
      * @param {string} jobId
      * @param appId the id of the app calling this
      */
-    cancelJob(jobId: string, appId: string): Promise<void>;
     doCancelJob(jobId: string, appId: string): Promise<void>;
     /**
      * Cancels all the running jobs from the app
      *
      * @param appId the id of the app calling this
      */
-    cancelAllJobs(appId: string): Promise<void>;
     doCancelAllJobs(appId: string): Promise<void>;
 }

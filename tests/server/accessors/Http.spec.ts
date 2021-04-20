@@ -24,7 +24,7 @@ export class HttpAccessorTestFixture {
         this.mockResponse = { statusCode: 200 } as IHttpResponse;
         const res = this.mockResponse;
         this.mockHttpBridge = {
-            call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
+            doCall(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
                 return Promise.resolve(res);
             },
         } as IHttpBridge;
@@ -106,6 +106,6 @@ export class HttpAccessorTestFixture {
         Expect(await http.post('url-here')).toBeDefined();
         Expect(this.mockPreResponseHandler.executePreHttpResponse).toHaveBeenCalledWith(this.mockResponse, this.mockReader, this.mockPersis);
 
-        Expect(this.mockHttpBridge.call).toHaveBeenCalled().exactly(11);
+        Expect(this.mockHttpBridge.doCall).toHaveBeenCalled().exactly(11);
     }
 }

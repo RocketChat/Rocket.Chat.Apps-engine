@@ -2,19 +2,19 @@ import { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../../src/d
 import { IAppSchedulerBridge } from '../../../src/server/bridges';
 
 export class TestSchedulerBridge implements IAppSchedulerBridge {
-    public async registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void> {
+    public async doRegisterProcessors(processors: Array<IProcessor>, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
+    public async doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
+    public async doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    public async cancelJob(jobId: string, appId: string): Promise<void> {
+    public async doCancelJob(jobId: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
-    public async cancelAllJobs(appId: string): Promise<void> {
+    public async doCancelAllJobs(appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 

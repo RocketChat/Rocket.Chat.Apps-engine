@@ -16,13 +16,13 @@ export class UserReadAccessorTestFixture {
 
         const theUser = this.user;
         this.mockUserBridge = {
-            getById(id, appId): Promise<IUser> {
+            doGetById(id, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getByUsername(id, appId): Promise<IUser> {
+            doGetByUsername(id, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getAppUser(appId?: string): Promise<IUser> {
+            doGetAppUser(appId?: string): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
         } as IUserBridge;

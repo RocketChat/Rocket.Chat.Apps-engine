@@ -10,10 +10,10 @@ export class PersistenceReadTestFixture {
     @SetupFixture
     public setupFixture() {
         this.mockPersisBridge = {
-            readById(id: string, appId: string): Promise<object> {
+            doReadById(id: string, appId: string): Promise<object> {
                 return Promise.resolve({ id, appId });
             },
-            readByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+            doReadByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
                 return Promise.resolve([{ appId }]);
             },
         } as IPersistenceBridge;

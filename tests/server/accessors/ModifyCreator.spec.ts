@@ -35,19 +35,19 @@ export class ModifyCreatorTestFixture {
         };
 
         this.mockRoomBridge = {
-            create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
+            doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
                 return Promise.resolve('roomId');
             },
         } as IRoomBridge;
 
         this.mockMessageBridge = {
-            create(msg: IMessage, appId: string): Promise<string> {
+            doCreate(msg: IMessage, appId: string): Promise<string> {
                 return Promise.resolve('msgId');
             },
         } as IMessageBridge;
 
         this.mockUserBridge = {
-            getAppUser: (appId: string) => {
+            doGetAppUser: (appId: string) => {
                 return Promise.resolve(this.mockAppUser);
             },
         } as IUserBridge;

@@ -3,39 +3,39 @@ import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 import { IPersistenceBridge } from '../../../src/server/bridges';
 
 export class TestsPersisBridge implements IPersistenceBridge {
-    public purge(appId: string): Promise<void> {
+    public doPurge(appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    public create(data: any, appId: string): Promise<string> {
+    public doCreate(data: any, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
 
-    public createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
+    public doCreateWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
 
-    public readById(id: string, appId: string): Promise<object> {
+    public doReadById(id: string, appId: string): Promise<object> {
         throw new Error('Method not implemented.');
     }
 
-    public readByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+    public doReadByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
         throw new Error('Method not implemented.');
     }
 
-    public remove(id: string, appId: string): Promise<object> {
+    public doRemove(id: string, appId: string): Promise<object> {
         throw new Error('Method not implemented.');
     }
 
-    public removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
+    public doRemoveByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
         throw new Error('Method not implemented.');
     }
 
-    public update(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
+    public doUpdate(id: string, data: object, upsert: boolean, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
 
-    public updateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
+    public doUpdateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
         throw new Error('Method not implemented');
     }
 }

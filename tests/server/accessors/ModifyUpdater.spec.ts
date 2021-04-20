@@ -18,19 +18,19 @@ export class ModifyUpdaterTestFixture {
         this.mockAppId = 'testing-app';
 
         this.mockRoomBridge = {
-            getById(roomId: string, appId: string): Promise<IRoom> {
+            doGetById(roomId: string, appId: string): Promise<IRoom> {
                 return Promise.resolve(TestData.getRoom());
             },
-            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
+            doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IRoomBridge;
 
         this.mockMessageBridge = {
-            getById(msgId: string, appId: string): Promise<IMessage> {
+            doGetById(msgId: string, appId: string): Promise<IMessage> {
                 return Promise.resolve(TestData.getMessage());
             },
-            update(msg: IMessage, appId: string): Promise<void> {
+            doUpdate(msg: IMessage, appId: string): Promise<void> {
                 return Promise.resolve();
             },
         } as IMessageBridge;

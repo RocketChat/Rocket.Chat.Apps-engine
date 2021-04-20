@@ -1,16 +1,9 @@
 import { IUser, IUserCreationOptions } from '../../definition/users';
 
 export interface IUserBridge {
-    getById(id: string, appId: string): Promise<IUser>;
     doGetById(id: string, appId: string): Promise<IUser>;
-
-    getByUsername(username: string, appId: string): Promise<IUser>;
     doGetByUsername(username: string, appId: string): Promise<IUser>;
-
-    getAppUser(appId?: string): Promise<IUser | undefined>;
     doGetAppUser(appId?: string): Promise<IUser | undefined>;
-
-    getActiveUserCount(): Promise<number>;
     doGetActiveUserCount(): Promise<number>;
 
     /**
@@ -19,7 +12,6 @@ export interface IUserBridge {
      * @param appId the id of the app calling this
      * @param options options for passing extra data
      */
-    create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
     doCreate(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
 
     /**
@@ -28,7 +20,6 @@ export interface IUserBridge {
      * @param user the user object to be removed
      * @param appId the id of the app executing the call
      */
-    remove(user: IUser, appId: string): Promise<boolean>;
     doRemove(user: IUser, appId: string): Promise<boolean>;
 
     /**
@@ -43,6 +34,5 @@ export interface IUserBridge {
      * @param updates a map of properties to be updated
      * @param appId the id of the app executing the call
      */
-    update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean>;
     doUpdate(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean>;
 }

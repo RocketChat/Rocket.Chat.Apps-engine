@@ -15,7 +15,6 @@ export interface IAppCommandBridge {
      * @param appId the id of the app calling this
      * @returns whether the command is already in the system
      */
-    doesCommandExist(command: string, appId: string): boolean;
     doDoesCommandExist(command: string, appId: string): boolean;
 
     /**
@@ -27,7 +26,6 @@ export interface IAppCommandBridge {
      * @param command the command to enable
      * @param appId the id of the app calling this
      */
-    enableCommand(command: string, appId: string): void;
     doEnableCommand(command: string, appId: string): void;
 
     /**
@@ -38,7 +36,6 @@ export interface IAppCommandBridge {
      * @param command the command which to disable
      * @param appId the id of the app calling this
      */
-    disableCommand(command: string, appId: string): void;
     doDisableCommand(command: string, appId: string): void;
 
     /**
@@ -48,7 +45,6 @@ export interface IAppCommandBridge {
      * @param command the modified slash command
      * @param appId the id of the app calling this
      */
-    modifyCommand(command: ISlashCommand, appId: string): void;
     doModifyCommand(command: ISlashCommand, appId: string): void;
 
     /**
@@ -59,7 +55,6 @@ export interface IAppCommandBridge {
      * @param command the command to restore
      * @param appId the id of the app which modified it
      */
-    restoreCommand(command: string, appId: string): void;
     doRestoreCommand(command: string, appId: string): void;
 
     /**
@@ -69,7 +64,6 @@ export interface IAppCommandBridge {
      * @param appId the id of the app calling this
      * @param toRun the executor which is called when the command is ran
      */
-    registerCommand(command: ISlashCommand, appId: string): void;
     doRegisterCommand(command: ISlashCommand, appId: string): void;
 
     /**
@@ -78,6 +72,5 @@ export interface IAppCommandBridge {
      * @param command the command to unregister
      * @param appId the id of the app calling this
      */
-    unregisterCommand(command: string, appId: string): void;
     doUnregisterCommand(command: string, appId: string): void;
 }

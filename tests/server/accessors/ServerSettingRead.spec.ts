@@ -15,10 +15,10 @@ export class ServerSettingReadAccessorTestFixture {
 
         const theSetting = this.setting;
         this.mockServerSettingBridge = {
-            getOneById(id: string, appId: string): Promise<ISetting> {
+            doGetOneById(id: string, appId: string): Promise<ISetting> {
                 return Promise.resolve(id === 'testing' ? theSetting : undefined);
             },
-            isReadableById(id: string, appId: string): Promise<boolean> {
+            doIsReadableById(id: string, appId: string): Promise<boolean> {
                 return Promise.resolve(true);
             },
         } as IServerSettingBridge;

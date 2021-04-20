@@ -7,6 +7,5 @@ import { ISetting } from '../../definition/settings';
  * changes.
  */
 export interface IAppDetailChangesBridge {
-    onAppSettingsChange(appId: string, setting: ISetting): void;
     doOnAppSettingsChange(appId: string, setting: ISetting): void;
 }
