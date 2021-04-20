@@ -1,10 +1,12 @@
 import {
     IAppAccessors,
+    IAppInstallationContext,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
     IHttp,
     ILogger,
+    IPersistence,
     IRead,
 } from './accessors';
 import { AppStatus } from './AppStatus';
@@ -158,6 +160,19 @@ export abstract class App implements IApp {
      * If this App was enabled and then the user disabled it, this method will be called.
      */
     public async onDisable(configurationModify: IConfigurationModify): Promise<void> {
+        return;
+    }
+
+    /**
+     * Method which is called when the App is installed and it is called one single time.
+     * If the App is updated this method will NOT be called.
+     *
+     * @param context
+     * @param read
+     * @param http
+     * @param persistence
+     */
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
         return;
     }
 

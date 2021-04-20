@@ -1,5 +1,6 @@
 import { IApiExtend } from './IApiExtend';
 import { IAppAccessors } from './IAppAccessors';
+import { IAppInstallationContext } from './IAppInstallationContext';
 import { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
 import { IConfigurationExtend } from './IConfigurationExtend';
 import { IConfigurationModify } from './IConfigurationModify';
@@ -45,6 +46,7 @@ import { IUserRead } from './IUserRead';
 export {
     HttpStatusCode,
     IAppAccessors,
+    IAppInstallationContext,
     ICloudWorkspaceRead,
     IConfigurationExtend,
     IConfigurationModify,
