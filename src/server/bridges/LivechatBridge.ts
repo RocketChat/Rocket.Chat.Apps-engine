@@ -104,8 +104,14 @@ export abstract class LivechatBridge extends BaseBridge {
     }
 
    public async doFindDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
-       if (this.checkReadPermission(appId, 'department')) {
+       if (this.checkReadPermission(appId, 'department') && this.checkMultiplePermission(appId, 'department')) {
            return this.findDepartmentByIdOrName(value, appId);
+       }
+    }
+
+    public async doFindDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>> {
+       if (this.checkMultiplePermission(appId, 'department')) {
+           return this.findDepartmentsEnabledWithAgents(appId);
        }
     }
 
@@ -140,6 +146,7 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
     protected abstract findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined>;
+    protected abstract findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>>;
 
     protected abstract setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<number>;
 
@@ -164,6 +171,19 @@ export abstract class LivechatBridge extends BaseBridge {
         AppPermissionManager.notifyAboutError(new PermissionDeniedError({
             appId,
             missingPermissions: [(AppPermissions as any)[`livechat-${ feature }`].write],
+        }));
+
+        return false;
+    }
+
+    private checkMultiplePermission(appId: string, feature: string): boolean {
+        if (!AppPermissionManager.hasPermission(appId, (AppPermissions as any)[`livechat-${ feature }`].multiple)) {
+            return true;
+        }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [(AppPermissions as any)[`livechat-${ feature }`].multiple],
         }));
 
         return false;

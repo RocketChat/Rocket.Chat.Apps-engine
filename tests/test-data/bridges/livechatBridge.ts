@@ -3,6 +3,9 @@ import { IUser } from '../../../src/definition/users';
 import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
 
 export class TestLivechatBridge implements ILivechatBridge {
+    public doFindDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>> {
+        throw new Error('Method not implemented.');
+    }
     public doIsOnline(departmentId?: string): boolean {
         throw new Error('Method not implemented');
     }

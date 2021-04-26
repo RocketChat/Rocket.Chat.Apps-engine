@@ -26,7 +26,7 @@ export interface ILivechatBridge {
     doCreateRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom>;
     doCloseRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;
     doFindRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
+    doFindDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>>;
     doFindDepartmentByIdOrName(value: string, appdId: string): Promise<IDepartment | undefined>;
-
     doSetCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<number>;
 }

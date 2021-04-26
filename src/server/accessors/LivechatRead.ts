@@ -20,6 +20,10 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.doIsOnlineAsync(departmentId, this.appId);
     }
 
+    public getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>> {
+        return this.livechatBridge.doFindDepartmentsEnabledWithAgents(this.appId);
+    }
+
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {
         return this.livechatBridge.doFindRooms(visitor, departmentId, this.appId);
     }
