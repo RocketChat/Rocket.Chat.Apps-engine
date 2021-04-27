@@ -7,6 +7,7 @@ import {
     IEnvironmentRead,
     IHttp,
     ILogger,
+    IModify,
     IPersistence,
     IRead,
 } from './accessors';
@@ -170,7 +171,7 @@ export abstract class App implements IApp {
      * This method will NOT be called when an App is getting disabled manually, ONLY when
      * it's being uninstalled from Rocket.Chat.
      */
-    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
+    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
         return;
     }
 
@@ -179,7 +180,7 @@ export abstract class App implements IApp {
      *
      * This method is NOT called when the App is updated.
      */
-    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void> {
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
         return;
     }
 

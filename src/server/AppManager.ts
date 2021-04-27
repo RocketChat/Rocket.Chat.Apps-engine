@@ -749,10 +749,10 @@ export class AppManager {
         const http = this.getAccessorManager().getHttp(storageItem.id);
         const persistence = this.getAccessorManager().getPersistence(storageItem.id);
         const modifier = this.getAccessorManager().getModifier(storageItem.id);
-        const context = { user, modify: modifier };
+        const context = { user };
 
         try {
-            await app.call(AppMethod.ONINSTALL, context, read, http, persistence);
+            await app.call(AppMethod.ONINSTALL, context, read, http, persistence, modifier);
 
             result = true;
         } catch (e) {
@@ -937,10 +937,10 @@ export class AppManager {
         const http = this.getAccessorManager().getHttp(app.getID());
         const persistence = this.getAccessorManager().getPersistence(app.getID());
         const modifier = this.getAccessorManager().getModifier(app.getID());
-        const context = { user, modify: modifier };
+        const context = { user };
 
         try {
-            await app.call(AppMethod.ONUNINSTALL, context, read, http, persistence);
+            await app.call(AppMethod.ONUNINSTALL, context, read, http, persistence, modifier);
 
             result = true;
         } catch (e) {
