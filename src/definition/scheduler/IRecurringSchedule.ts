@@ -8,6 +8,10 @@ export interface IRecurringSchedule {
      * or a number.
      */
     interval: string | number;
+    /**
+     * Whether the recurring job should start immediately or wait for the interval
+     */
+    skipImmediate?: boolean;
     /** An object that can be passed to the processor with custom data */
     data?: object;
 }

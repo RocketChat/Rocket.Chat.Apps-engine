@@ -32,6 +32,7 @@ export interface IOnetimeStartup {
 export interface IRecurringStartup {
     type: StartupType.RECURRING;
     interval: string | number;
+    skipImmediate?: boolean;
     data?: object;
 }
 

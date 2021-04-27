@@ -117,8 +117,19 @@ export const AppLivechatBridge = {
             });
         }
     },
+    findDepartmentsEnabledWithAgents(appId: string) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-department'].multiple)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['livechat-department'].multiple],
+            });
+        }
+    },
     findDepartmentByIdOrName(value: string, appId: string): void {
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions['livechat-department'].read)) {
+        if (
+            !AppPermissionManager.hasPermission(appId, AppPermissions['livechat-department'].read)
+         && !AppPermissionManager.hasPermission(appId, AppPermissions['livechat-department'].multiple)
+        ) {
             throw new PermissionDeniedError({
                 appId,
                 missingPermissions: [AppPermissions['livechat-department'].read],

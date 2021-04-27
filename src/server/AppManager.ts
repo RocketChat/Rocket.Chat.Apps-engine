@@ -21,6 +21,11 @@ export interface IAppInstallParameters {
     enable: boolean;
     marketplaceInfo?: IMarketplaceInfo;
     permissionsGranted?: Array<IPermission>;
+    user: IUser;
+}
+
+export interface IAppUninstallParameters {
+    user: IUser;
 }
 
 export class AppManager {
@@ -415,7 +420,7 @@ export class AppManager {
     }
 
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
-        const { enable = true, marketplaceInfo, permissionsGranted } = installationParameters;
+        const { enable = true, marketplaceInfo, permissionsGranted, user } = installationParameters;
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
@@ -474,6 +479,8 @@ export class AppManager {
             // If an error occurs during this, oh well.
         });
 
+        await this.installApp(created, app, user);
+
         // Should enable === true, then we go through the entire start up process
         // Otherwise, we only initialize it.
         if (enable) {
@@ -485,8 +492,11 @@ export class AppManager {
 
         return aff;
     }
-    public async remove(id: string): Promise<ProxiedApp> {
+    public async remove(id: string, uninstallationParameters: IAppUninstallParameters): Promise<ProxiedApp> {
         const app = this.apps.get(id);
+        const { user } = uninstallationParameters;
+
+        await this.uninstallApp(app, user);
 
         // Let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().appRemoved(app).catch();
@@ -733,6 +743,33 @@ export class AppManager {
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 
+    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
+        let result: boolean;
+        const read = this.getAccessorManager().getReader(storageItem.id);
+        const http = this.getAccessorManager().getHttp(storageItem.id);
+        const persistence = this.getAccessorManager().getPersistence(storageItem.id);
+        const modifier = this.getAccessorManager().getModifier(storageItem.id);
+        const context = { user };
+
+        try {
+            await app.call(AppMethod.ONINSTALL, context, read, http, persistence, modifier);
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                app.getLogger().warn('Please report the following error:');
+            }
+
+            result = false;
+
+            await app.setStatus(status);
+        }
+
+        return result;
+    }
+
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
         let result: boolean;
         const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
@@ -892,6 +929,33 @@ export class AppManager {
         }
 
         return !!this.createAppUser(app);
+    }
+
+    private async uninstallApp(app: ProxiedApp, user: IUser): Promise<boolean> {
+        let result: boolean;
+        const read = this.getAccessorManager().getReader(app.getID());
+        const http = this.getAccessorManager().getHttp(app.getID());
+        const persistence = this.getAccessorManager().getPersistence(app.getID());
+        const modifier = this.getAccessorManager().getModifier(app.getID());
+        const context = { user };
+
+        try {
+            await app.call(AppMethod.ONUNINSTALL, context, read, http, persistence, modifier);
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            if (e.name === 'NotEnoughMethodArgumentsError') {
+                app.getLogger().warn('Please report the following error:');
+            }
+
+            result = false;
+
+            await app.setStatus(status);
+        }
+
+        return result;
     }
 }
 
