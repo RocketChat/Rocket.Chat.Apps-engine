@@ -93,6 +93,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="scheduler_irecurringschedule.irecurringschedule.html#data" class="tsd-kind-icon">data</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="scheduler_irecurringschedule.irecurringschedule.html#id" class="tsd-kind-icon">id</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="scheduler_irecurringschedule.irecurringschedule.html#interval" class="tsd-kind-icon">interval</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="scheduler_irecurringschedule.irecurringschedule.html#skipimmediate" class="tsd-kind-icon">skip<wbr>Immediate</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,7 +107,7 @@
 					<div class="tsd-signature tsd-kind-icon">data<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/48903fe/src/definition/scheduler/IRecurringSchedule.ts#L12">src/definition/scheduler/IRecurringSchedule.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/d0a58de/src/definition/scheduler/IRecurringSchedule.ts#L16">src/definition/scheduler/IRecurringSchedule.ts:16</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -121,7 +122,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/48903fe/src/definition/scheduler/IRecurringSchedule.ts#L4">src/definition/scheduler/IRecurringSchedule.ts:4</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/d0a58de/src/definition/scheduler/IRecurringSchedule.ts#L4">src/definition/scheduler/IRecurringSchedule.ts:4</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -136,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">interval<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/48903fe/src/definition/scheduler/IRecurringSchedule.ts#L10">src/definition/scheduler/IRecurringSchedule.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/d0a58de/src/definition/scheduler/IRecurringSchedule.ts#L10">src/definition/scheduler/IRecurringSchedule.ts:10</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -144,6 +145,21 @@
 							<p>The interval at which the job will be run.
 								Values can be a cron string, a <a href="https://github.com/agenda/human-interval">human-interval</a> string
 							or a number.</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="skipimmediate" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> skip<wbr>Immediate</h3>
+					<div class="tsd-signature tsd-kind-icon">skip<wbr>Immediate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/d0a58de/src/definition/scheduler/IRecurringSchedule.ts#L14">src/definition/scheduler/IRecurringSchedule.ts:14</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Whether the recurring job should start immediately or wait for the interval</p>
 						</div>
 					</div>
 				</section>
@@ -175,6 +191,9 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="scheduler_irecurringschedule.irecurringschedule.html#interval" class="tsd-kind-icon">interval</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="scheduler_irecurringschedule.irecurringschedule.html#skipimmediate" class="tsd-kind-icon">skip<wbr>Immediate</a>
 							</li>
 						</ul>
 					</li>
