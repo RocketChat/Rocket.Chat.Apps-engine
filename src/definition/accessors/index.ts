@@ -21,6 +21,7 @@ import { IMessageExtender } from './IMessageExtender';
 import { IMessageRead } from './IMessageRead';
 import { IModify } from './IModify';
 import { IModifyCreator } from './IModifyCreator';
+import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
 import { INotifier } from './INotifier';
@@ -73,6 +74,7 @@ export {
     IMessageRead,
     IModify,
     IModifyCreator,
+    IModifyDeleter,
     IModifyExtender,
     IModifyUpdater,
     INotifier,
