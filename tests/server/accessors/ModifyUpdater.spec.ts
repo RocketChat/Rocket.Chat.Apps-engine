@@ -4,12 +4,12 @@ import { IRoom, RoomType } from '../../../src/definition/rooms';
 
 import { ILivechatRoom } from '../../../src/definition/livechat/ILivechatRoom';
 import { MessageBuilder, ModifyUpdater, RoomBuilder } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
+import { AppBridges, IMessageBridge, RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyUpdaterTestFixture {
     private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
+    private mockRoomBridge: RoomBridge;
     private mockMessageBridge: IMessageBridge;
     private mockAppBridge: AppBridges;
 
@@ -24,7 +24,7 @@ export class ModifyUpdaterTestFixture {
             doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-        } as IRoomBridge;
+        } as RoomBridge;
 
         this.mockMessageBridge = {
             doGetById(msgId: string, appId: string): Promise<IMessage> {

@@ -3,13 +3,13 @@ import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
 import { RoomRead } from '../../../src/server/accessors';
-import { IRoomBridge } from '../../../src/server/bridges';
+import { RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
     private user: IUser;
-    private mockRoomBridgeWithRoom: IRoomBridge;
+    private mockRoomBridgeWithRoom: RoomBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -37,7 +37,7 @@ export class RoomReadAccessorTestFixture {
             doGetMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
-        } as IRoomBridge;
+        } as RoomBridge;
     }
 
     @AsyncTest()

@@ -12,7 +12,7 @@ import { IListenerBridge } from './IListenerBridge';
 import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { IPersistenceBridge } from './IPersistenceBridge';
-import { IRoomBridge } from './IRoomBridge';
+import { RoomBridge } from './RoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
@@ -31,7 +31,7 @@ export {
     IAppDetailChangesBridge,
     IAppCommandBridge,
     IAppApiBridge,
-    IRoomBridge,
+    RoomBridge,
     IInternalBridge,
     IServerSettingBridge,
     UserBridge,

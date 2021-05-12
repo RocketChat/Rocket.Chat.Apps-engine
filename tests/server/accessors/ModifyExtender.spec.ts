@@ -3,12 +3,12 @@ import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 
 import { ModifyExtender } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
+import { AppBridges, IMessageBridge, RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyExtenderTestFixture {
     private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
+    private mockRoomBridge: RoomBridge;
     private mockMessageBridge: IMessageBridge;
     private mockAppBridge: AppBridges;
 
@@ -23,7 +23,7 @@ export class ModifyExtenderTestFixture {
             doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-        } as IRoomBridge;
+        } as RoomBridge;
 
         this.mockMessageBridge = {
             doGetById(msgId: string, appId: string): Promise<IMessage> {

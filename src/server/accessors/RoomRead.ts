@@ -3,10 +3,10 @@ import { IMessage } from '../../definition/messages';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 
-import { IRoomBridge } from '../bridges';
+import { RoomBridge } from '../bridges';
 
 export class RoomRead implements IRoomRead {
-    constructor(private roomBridge: IRoomBridge, private appId: string) { }
+    constructor(private roomBridge: RoomBridge, private appId: string) { }
 
     public getById(id: string): Promise<IRoom> {
         return this.roomBridge.doGetById(id, this.appId);

@@ -3,12 +3,12 @@ import { IMessage } from '../../../src/definition/messages';
 import { IRoom, RoomType } from '../../../src/definition/rooms';
 import { IUser, UserStatusConnection, UserType } from '../../../src/definition/users';
 import { ModifyCreator } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge, UserBridge } from '../../../src/server/bridges';
+import { AppBridges, IMessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyCreatorTestFixture {
     private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
+    private mockRoomBridge: RoomBridge;
     private mockMessageBridge: IMessageBridge;
     private mockAppBridge: AppBridges;
     private mockAppUser: IUser;
@@ -38,7 +38,7 @@ export class ModifyCreatorTestFixture {
             doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
                 return Promise.resolve('roomId');
             },
-        } as IRoomBridge;
+        } as RoomBridge;
 
         this.mockMessageBridge = {
             doCreate(msg: IMessage, appId: string): Promise<string> {

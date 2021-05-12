@@ -10,7 +10,7 @@ import {
     ILivechatBridge,
     IMessageBridge,
     IPersistenceBridge,
-    IRoomBridge,
+    RoomBridge,
     IServerSettingBridge,
     IUiInteractionBridge,
     IUploadBridge,
@@ -115,7 +115,7 @@ export class TestsAppBridges extends AppBridges {
         return this.rlActBridge;
     }
 
-    public getRoomBridge(): IRoomBridge {
+    public getRoomBridge(): RoomBridge {
         return this.roomBridge;
     }
 
