@@ -7,7 +7,7 @@ import {
     IHttpBridge,
     IInternalBridge,
     IListenerBridge,
-    ILivechatBridge,
+    LivechatBridge,
     IMessageBridge,
     PersistenceBridge,
     RoomBridge,
@@ -127,7 +127,7 @@ export class TestsAppBridges extends AppBridges {
         return this.userBridge;
     }
 
-    public getLivechatBridge(): ILivechatBridge {
+    public getLivechatBridge(): LivechatBridge {
         return this.livechatBridge;
     }
 

@@ -2,9 +2,9 @@ import { ILivechatRead } from '../../definition/accessors/ILivechatRead';
 import { IDepartment } from '../../definition/livechat';
 import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { IVisitor } from '../../definition/livechat/IVisitor';
-import { ILivechatBridge } from '../bridges/ILivechatBridge';
+import { LivechatBridge } from '../bridges/LivechatBridge';
 export class LivechatRead implements ILivechatRead {
-    constructor(private readonly livechatBridge: ILivechatBridge, private readonly appId: string) { }
+    constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) { }
 
     /**
      * @deprecated please use the `isOnlineAsync` method instead.

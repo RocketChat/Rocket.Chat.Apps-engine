@@ -9,7 +9,7 @@ import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
 import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { ILivechatBridge } from './ILivechatBridge';
+import { LivechatBridge } from './LivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
@@ -24,7 +24,7 @@ export {
     IHttpBridge,
     IHttpBridgeRequestInfo,
     IListenerBridge,
-    ILivechatBridge,
+    LivechatBridge,
     IMessageBridge,
     PersistenceBridge,
     IAppActivationBridge,
