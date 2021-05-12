@@ -1,4 +1,5 @@
 import { IModifyCreator } from './IModifyCreator';
+import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
 import { INotifier } from './INotifier';
@@ -7,6 +8,8 @@ import { IUIController } from './IUIController';
 
 export interface IModify {
     getCreator(): IModifyCreator;
+
+    getDeleter(): IModifyDeleter;
 
     getExtender(): IModifyExtender;
 
