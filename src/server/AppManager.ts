@@ -2,7 +2,7 @@ import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
-import { AppBridges, IPersistenceBridge, UserBridge } from './bridges';
+import { AppBridges, PersistenceBridge, UserBridge } from './bridges';
 import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge';
 import {IInternalUserBridge} from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
@@ -493,7 +493,7 @@ export class AppManager {
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.removeAppUser(app);
-        await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & IPersistenceBridge).purge(app.getID());
+        await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & PersistenceBridge).purge(app.getID());
         await this.storage.remove(app.getID());
         await this.schedulerManager.cleanUp(app.getID());
 

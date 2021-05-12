@@ -10,7 +10,7 @@ import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
-import { IPersistenceBridge } from './IPersistenceBridge';
+import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
@@ -24,7 +24,7 @@ export type Bridge = IAppCommandBridge
             | IListenerBridge
             | ILivechatBridge
             | IMessageBridge
-            | IPersistenceBridge
+            | PersistenceBridge
             | IAppActivationBridge
             | RoomBridge
             | IInternalBridge
@@ -43,7 +43,7 @@ export abstract class AppBridges {
     public abstract getListenerBridge(): IListenerBridge;
     public abstract getLivechatBridge(): ILivechatBridge;
     public abstract getMessageBridge(): IMessageBridge;
-    public abstract getPersistenceBridge(): IPersistenceBridge;
+    public abstract getPersistenceBridge(): PersistenceBridge;
     public abstract getAppActivationBridge(): IAppActivationBridge;
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;

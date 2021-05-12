@@ -11,7 +11,7 @@ import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { ILivechatBridge } from './ILivechatBridge';
 import { IMessageBridge } from './IMessageBridge';
-import { IPersistenceBridge } from './IPersistenceBridge';
+import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
@@ -26,7 +26,7 @@ export {
     IListenerBridge,
     ILivechatBridge,
     IMessageBridge,
-    IPersistenceBridge,
+    PersistenceBridge,
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppCommandBridge,

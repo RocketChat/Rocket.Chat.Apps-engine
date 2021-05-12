@@ -2,10 +2,10 @@ import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { PersistenceRead } from '../../../src/server/accessors';
-import { IPersistenceBridge } from '../../../src/server/bridges';
+import { PersistenceBridge } from '../../../src/server/bridges';
 
 export class PersistenceReadTestFixture {
-    private mockPersisBridge: IPersistenceBridge;
+    private mockPersisBridge: PersistenceBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -16,7 +16,7 @@ export class PersistenceReadTestFixture {
             doReadByAssociations(assocs: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>> {
                 return Promise.resolve([{ appId }]);
             },
-        } as IPersistenceBridge;
+        } as PersistenceBridge;
     }
 
     @AsyncTest()

@@ -9,7 +9,7 @@ import {
     IListenerBridge,
     ILivechatBridge,
     IMessageBridge,
-    IPersistenceBridge,
+    PersistenceBridge,
     RoomBridge,
     IServerSettingBridge,
     IUiInteractionBridge,
@@ -107,7 +107,7 @@ export class TestsAppBridges extends AppBridges {
         return this.msgBridge;
     }
 
-    public getPersistenceBridge(): IPersistenceBridge {
+    public getPersistenceBridge(): PersistenceBridge {
         return this.persisBridge;
     }
 

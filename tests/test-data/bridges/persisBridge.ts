@@ -1,8 +1,8 @@
 import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
-import { IPersistenceBridge } from '../../../src/server/bridges';
+import { PersistenceBridge } from '../../../src/server/bridges';
 
-export class TestsPersisBridge implements IPersistenceBridge {
+export class TestsPersisBridge {
     public doPurge(appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }

@@ -2,11 +2,11 @@ import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
 import { Persistence } from '../../../src/server/accessors';
-import { IPersistenceBridge } from '../../../src/server/bridges';
+import { PersistenceBridge } from '../../../src/server/bridges';
 
 export class PersistenceAccessorTestFixture {
     private mockAppId: string;
-    private mockPersisBridge: IPersistenceBridge;
+    private mockPersisBridge: PersistenceBridge;
     private mockAssoc: RocketChatAssociationRecord;
     private data: object;
 
@@ -35,7 +35,7 @@ export class PersistenceAccessorTestFixture {
             doUpdateByAssociations(associations: Array<RocketChatAssociationRecord>, data: object, upsert: boolean, appId: string): Promise<string> {
                 return Promise.resolve('id4');
             },
-        } as IPersistenceBridge;
+        } as PersistenceBridge;
         this.mockAssoc = new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'fake-id');
     }
 
