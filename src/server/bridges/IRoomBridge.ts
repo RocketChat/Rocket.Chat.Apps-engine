@@ -12,5 +12,5 @@ export interface IRoomBridge {
     doGetMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void>;
     doCreateDiscussion(room: IRoom, parentMessage: IMessage | undefined, reply: string | undefined, members: Array<string>, appId: string): Promise<string>;
-    delete(roomId: string, appId: string): Promise<void>;
+    doDelete(roomId: string, appId: string): Promise<void>;
 }

@@ -40,7 +40,7 @@ export class TestsRoomBridge implements IRoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    public delete(roomId: string, appId: string): Promise<void> {
+    public doDelete(roomId: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }
