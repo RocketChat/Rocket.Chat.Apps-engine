@@ -33,23 +33,24 @@ export class AppSettingsManager {
             throw new Error('No App found by the provided id.');
         }
 
-        if (!rl.getStorageItem().settings[setting.id]) {
+        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
+        const reader = this.manager.getAccessorManager().getReader(rl.getID());
+        const http = this.manager.getAccessorManager().getHttp(rl.getID());
+        const decoratedSetting = await rl.call(AppMethod.ON_PRE_SETTING_UPDATE, setting, configModify, reader, http);
+
+        if (!rl.getStorageItem().settings[decoratedSetting.id]) {
             throw new Error('No setting found for the App by the provided id.');
         }
 
-        setting.updatedAt = new Date();
-        rl.getStorageItem().settings[setting.id] = setting;
+        decoratedSetting.updatedAt = new Date();
+        rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;
 
         const item = await this.manager.getStorage().update(rl.getStorageItem());
 
         rl.setStorageItem(item);
 
-        this.manager.getBridges().getAppDetailChangesBridge().onAppSettingsChange(appId, setting);
+        this.manager.getBridges().getAppDetailChangesBridge().onAppSettingsChange(appId, decoratedSetting);
 
-        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
-        const reader = this.manager.getAccessorManager().getReader(rl.getID());
-        const http = this.manager.getAccessorManager().getHttp(rl.getID());
-
-        rl.call(AppMethod.ONSETTINGUPDATED, setting, configModify, reader, http);
+        await rl.call(AppMethod.ONSETTINGUPDATED, decoratedSetting, configModify, reader, http);
     }
 }
