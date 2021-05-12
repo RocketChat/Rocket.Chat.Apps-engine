@@ -14,7 +14,7 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
-import { IUploadBridge } from './IUploadBridge';
+import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 export type Bridge = IAppCommandBridge
             | IAppApiBridge
@@ -29,7 +29,7 @@ export type Bridge = IAppCommandBridge
             | RoomBridge
             | IInternalBridge
             | IServerSettingBridge
-            | IUploadBridge
+            | UploadBridge
             | UserBridge
             | IUiInteractionBridge
             | IAppSchedulerBridge;
@@ -48,7 +48,7 @@ export abstract class AppBridges {
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): IServerSettingBridge;
-    public abstract getUploadBridge(): IUploadBridge;
+    public abstract getUploadBridge(): UploadBridge;
     public abstract getUserBridge(): UserBridge;
     public abstract getUiInteractionBridge(): IUiInteractionBridge;
     public abstract getSchedulerBridge(): IAppSchedulerBridge;

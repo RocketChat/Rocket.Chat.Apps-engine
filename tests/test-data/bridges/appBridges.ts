@@ -13,7 +13,7 @@ import {
     RoomBridge,
     IServerSettingBridge,
     IUiInteractionBridge,
-    IUploadBridge,
+    UploadBridge,
     UserBridge,
 } from '../../../src/server/bridges';
 import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
@@ -131,7 +131,7 @@ export class TestsAppBridges extends AppBridges {
         return this.livechatBridge;
     }
 
-    public getUploadBridge(): IUploadBridge {
+    public getUploadBridge(): UploadBridge {
         return this.uploadBridge;
     }
 

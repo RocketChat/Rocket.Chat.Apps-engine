@@ -15,7 +15,7 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
-import { IUploadBridge } from './IUploadBridge';
+import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 
 export {
@@ -35,7 +35,7 @@ export {
     IInternalBridge,
     IServerSettingBridge,
     UserBridge,
-    IUploadBridge,
+    UploadBridge,
     IUiInteractionBridge,
     IAppSchedulerBridge,
     AppBridges,
