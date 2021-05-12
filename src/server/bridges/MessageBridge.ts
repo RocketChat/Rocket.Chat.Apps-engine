@@ -1,3 +1,4 @@
+import { ITypingOptions } from '../../definition/accessors/INotifier';
 import { IMessage } from '../../definition/messages';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
@@ -5,7 +6,10 @@ import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
-import { ITypingDescriptor } from './IMessageBridge';
+
+export interface ITypingDescriptor extends ITypingOptions {
+    isTyping: boolean;
+}
 
 export abstract class MessageBridge extends BaseBridge {
     public async doCreate(message: IMessage, appId: string): Promise<string> {

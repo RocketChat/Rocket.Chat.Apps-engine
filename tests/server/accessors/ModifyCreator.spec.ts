@@ -3,13 +3,13 @@ import { IMessage } from '../../../src/definition/messages';
 import { IRoom, RoomType } from '../../../src/definition/rooms';
 import { IUser, UserStatusConnection, UserType } from '../../../src/definition/users';
 import { ModifyCreator } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
+import { AppBridges, MessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyCreatorTestFixture {
     private mockAppId: string;
     private mockRoomBridge: RoomBridge;
-    private mockMessageBridge: IMessageBridge;
+    private mockMessageBridge: MessageBridge;
     private mockAppBridge: AppBridges;
     private mockAppUser: IUser;
     private mockUserBridge: UserBridge;
@@ -44,7 +44,7 @@ export class ModifyCreatorTestFixture {
             doCreate(msg: IMessage, appId: string): Promise<string> {
                 return Promise.resolve('msgId');
             },
-        } as IMessageBridge;
+        } as MessageBridge;
 
         this.mockUserBridge = {
             doGetAppUser: (appId: string) => {

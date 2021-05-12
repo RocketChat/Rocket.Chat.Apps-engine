@@ -8,7 +8,7 @@ import {
     IInternalBridge,
     IListenerBridge,
     LivechatBridge,
-    IMessageBridge,
+    MessageBridge,
     PersistenceBridge,
     RoomBridge,
     IServerSettingBridge,
@@ -103,7 +103,7 @@ export class TestsAppBridges extends AppBridges {
         throw new Error('Method not implemented.');
     }
 
-    public getMessageBridge(): IMessageBridge {
+    public getMessageBridge(): MessageBridge {
         return this.msgBridge;
     }
 
