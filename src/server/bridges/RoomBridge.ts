@@ -57,9 +57,9 @@ export abstract class RoomBridge extends BaseBridge {
 
     public async doCreateDiscussion(room: IRoom, parentMessage: IMessage | undefined,
                                     reply: string | undefined, members: Array<string>, appId: string): Promise<string> {
-                                        if (this.checkWritePermission(appId)) {
-                                            return this.createDiscussion(room, parentMessage, reply, members, appId);
-                                        }
+        if (this.checkWritePermission(appId)) {
+            return this.createDiscussion(room, parentMessage, reply, members, appId);
+        }
     }
 
     public async doDelete(room: IRoom, appId: string): Promise<void> {

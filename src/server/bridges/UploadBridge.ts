@@ -14,7 +14,7 @@ export abstract class UploadBridge extends BaseBridge {
 
     public async doGetBuffer(upload: IUpload, appId: string): Promise<Buffer> {
         if (this.checkReadPermission(appId)) {
-        return this.getBuffer(upload, appId);
+            return this.getBuffer(upload, appId);
         }
     }
 
