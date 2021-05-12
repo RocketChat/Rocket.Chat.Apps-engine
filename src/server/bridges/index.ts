@@ -16,7 +16,7 @@ import { IRoomBridge } from './IRoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
-import { IUserBridge } from './IUserBridge';
+import { UserBridge } from './UserBridge';
 
 export {
     ICloudWorkspaceBridge,
@@ -34,7 +34,7 @@ export {
     IRoomBridge,
     IInternalBridge,
     IServerSettingBridge,
-    IUserBridge,
+    UserBridge,
     IUploadBridge,
     IUiInteractionBridge,
     IAppSchedulerBridge,

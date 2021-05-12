@@ -2,12 +2,12 @@ import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { IUser } from '../../../src/definition/users';
 
 import { UserRead } from '../../../src/server/accessors';
-import { IUserBridge } from '../../../src/server/bridges';
+import { UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class UserReadAccessorTestFixture {
     private user: IUser;
-    private mockUserBridge: IUserBridge;
+    private mockUserBridge: UserBridge;
     private mockAppId: 'test-appId';
 
     @SetupFixture
@@ -25,7 +25,7 @@ export class UserReadAccessorTestFixture {
             doGetAppUser(appId?: string): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-        } as IUserBridge;
+        } as UserBridge;
     }
 
     @AsyncTest()

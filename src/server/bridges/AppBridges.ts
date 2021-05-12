@@ -15,7 +15,7 @@ import { IRoomBridge } from './IRoomBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { IUploadBridge } from './IUploadBridge';
-import { IUserBridge } from './IUserBridge';
+import { UserBridge } from './UserBridge';
 export type Bridge = IAppCommandBridge
             | IAppApiBridge
             | IAppDetailChangesBridge
@@ -30,7 +30,7 @@ export type Bridge = IAppCommandBridge
             | IInternalBridge
             | IServerSettingBridge
             | IUploadBridge
-            | IUserBridge
+            | UserBridge
             | IUiInteractionBridge
             | IAppSchedulerBridge;
 
@@ -49,7 +49,7 @@ export abstract class AppBridges {
     public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): IServerSettingBridge;
     public abstract getUploadBridge(): IUploadBridge;
-    public abstract getUserBridge(): IUserBridge;
+    public abstract getUserBridge(): UserBridge;
     public abstract getUiInteractionBridge(): IUiInteractionBridge;
     public abstract getSchedulerBridge(): IAppSchedulerBridge;
     public abstract getCloudWorkspaceBridge(): ICloudWorkspaceBridge;

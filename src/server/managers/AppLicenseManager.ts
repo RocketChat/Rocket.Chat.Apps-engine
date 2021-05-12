@@ -1,5 +1,5 @@
 import { AppManager } from '../AppManager';
-import { IUserBridge } from '../bridges';
+import { UserBridge } from '../bridges';
 import { InvalidLicenseError } from '../errors';
 import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
@@ -12,7 +12,7 @@ enum LicenseVersion {
 
 export class AppLicenseManager {
     private readonly crypto: Crypto;
-    private readonly userBridge: IUserBridge;
+    private readonly userBridge: UserBridge;
     constructor(private readonly manager: AppManager) {
         this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
         this.userBridge = this.manager.getBridges().getUserBridge();

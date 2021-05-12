@@ -14,7 +14,7 @@ import {
     IServerSettingBridge,
     IUiInteractionBridge,
     IUploadBridge,
-    IUserBridge,
+    UserBridge,
 } from '../../../src/server/bridges';
 import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
 import { TestsActivationBridge } from './activationBridge';
@@ -123,7 +123,7 @@ export class TestsAppBridges extends AppBridges {
         return this.internalBridge;
     }
 
-    public getUserBridge(): IUserBridge {
+    public getUserBridge(): UserBridge {
         return this.userBridge;
     }
 

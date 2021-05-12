@@ -1,9 +1,9 @@
 import { IUserRead } from '../../definition/accessors';
 import { IUser } from '../../definition/users';
-import { IUserBridge } from '../bridges/IUserBridge';
+import { UserBridge } from '../bridges/UserBridge';
 
 export class UserRead implements IUserRead {
-    constructor(private userBridge: IUserBridge, private appId: string) { }
+    constructor(private userBridge: UserBridge, private appId: string) { }
 
     public getById(id: string): Promise<IUser> {
         return this.userBridge.doGetById(id, this.appId);

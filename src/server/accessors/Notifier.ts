@@ -3,12 +3,12 @@ import { ITypingOptions, TypingScope } from '../../definition/accessors/INotifie
 import { IMessage } from '../../definition/messages';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
-import { IMessageBridge, IUserBridge } from '../bridges';
+import { IMessageBridge, UserBridge } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 
 export class Notifier implements INotifier {
     constructor(
-        private readonly userBridge: IUserBridge,
+        private readonly userBridge: UserBridge,
         private readonly msgBridge: IMessageBridge,
         private readonly appId: string,
     ) { }

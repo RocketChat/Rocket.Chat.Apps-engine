@@ -2,7 +2,7 @@ import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
-import { AppBridges, IPersistenceBridge, IUserBridge } from './bridges';
+import { AppBridges, IPersistenceBridge, UserBridge } from './bridges';
 import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge';
 import {IInternalUserBridge} from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
@@ -869,7 +869,7 @@ export class AppManager {
     }
 
     private async createAppUser(app: ProxiedApp): Promise<string> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & IUserBridge).getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (appUser) {
             return appUser.id;
@@ -885,7 +885,7 @@ export class AppManager {
             isEnabled: true,
         };
 
-        return (this.bridges.getUserBridge() as IInternalUserBridge & IUserBridge).create(userData, app.getID(), {
+        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).create(userData, app.getID(), {
             avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
@@ -893,17 +893,17 @@ export class AppManager {
     }
 
     private async removeAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & IUserBridge).getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (!appUser) {
             return true;
         }
 
-        return (this.bridges.getUserBridge() as IInternalUserBridge & IUserBridge).remove(appUser, app.getID());
+        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).remove(appUser, app.getID());
     }
 
     private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & IUserBridge).getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (appUser) {
             return true;

@@ -4,11 +4,11 @@ import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
 import { MessageBuilder, Notifier } from '../../../src/server/accessors';
-import { IMessageBridge, IUserBridge } from '../../../src/server/bridges';
+import { IMessageBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class NotifierAccessorTestFixture {
-    private mockUserBridge: IUserBridge;
+    private mockUserBridge: UserBridge;
     private mockMsgBridge: IMessageBridge;
 
     @SetupFixture
