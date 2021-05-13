@@ -1,7 +1,7 @@
 import { HttpBridge } from './HttpBridge';
 import { IAppActivationBridge } from './IAppActivationBridge';
 import { ApiBridge } from './ApiBridge';
-import { IAppCommandBridge } from './IAppCommandBridge';
+import { CommandBridge } from './CommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
@@ -16,7 +16,7 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
-export type Bridge = IAppCommandBridge
+export type Bridge = CommandBridge
             | ApiBridge
             | IAppDetailChangesBridge
             | EnvironmentalVariableBridge
@@ -35,7 +35,7 @@ export type Bridge = IAppCommandBridge
             | SchedulerBridge;
 
 export abstract class AppBridges {
-    public abstract getCommandBridge(): IAppCommandBridge;
+    public abstract getCommandBridge(): CommandBridge;
     public abstract getApiBridge(): ApiBridge;
     public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
     public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;

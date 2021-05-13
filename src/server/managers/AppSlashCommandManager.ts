@@ -3,7 +3,7 @@ import { AppMethod } from '../../definition/metadata';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 
 import { AppManager } from '../AppManager';
-import { IAppCommandBridge } from '../bridges';
+import { CommandBridge } from '../bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../errors';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
@@ -19,7 +19,7 @@ import { AppSlashCommand } from './AppSlashCommand';
  * Registered means the command has been provided to the bridged system.
  */
 export class AppSlashCommandManager {
-    private readonly bridge: IAppCommandBridge;
+    private readonly bridge: CommandBridge;
     private readonly accessors: AppAccessorManager;
     /**
      * Variable that contains the commands which have been provided by apps.
