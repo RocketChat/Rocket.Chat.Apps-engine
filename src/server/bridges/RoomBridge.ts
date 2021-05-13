@@ -62,7 +62,7 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
-    public async doDelete(room: IRoom, appId: string): Promise<void> {
+    public async doDelete(room: string, appId: string): Promise<void> {
         if (this.checkWritePermission(appId)) {
             return this.delete(room, appId);
         }
@@ -78,7 +78,7 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
     protected abstract createDiscussion(room: IRoom, parentMessage: IMessage | undefined,
                                         reply: string | undefined, members: Array<string>, appId: string): Promise<string>;
-    protected abstract delete(room: IRoom, appId: string): Promise<void>;
+    protected abstract delete(room: string, appId: string): Promise<void>;
 
     private checkWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
