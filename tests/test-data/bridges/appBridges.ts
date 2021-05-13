@@ -8,7 +8,7 @@ import {
     IInternalBridge,
     IListenerBridge,
     ServerSettingBridge,
-    IUiInteractionBridge,
+    UiInteractionBridge,
     LivechatBridge,
     MessageBridge,
     PersistenceBridge,
@@ -135,7 +135,7 @@ export class TestsAppBridges extends AppBridges {
         return this.uploadBridge;
     }
 
-    public getUiInteractionBridge(): IUiInteractionBridge {
+    public getUiInteractionBridge(): UiInteractionBridge {
         return this.uiIntegrationBridge;
     }
 

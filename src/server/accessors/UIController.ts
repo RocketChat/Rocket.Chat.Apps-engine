@@ -4,10 +4,10 @@ import { UIKitInteractionType } from '../../definition/uikit';
 import { formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
-import { AppBridges, IUiInteractionBridge } from '../bridges';
+import { AppBridges, UiInteractionBridge } from '../bridges';
 
 export class UIController implements IUIController {
-    private readonly uiInteractionBridge: IUiInteractionBridge;
+    private readonly uiInteractionBridge: UiInteractionBridge;
     constructor(
         private readonly appId: string,
         bridges: AppBridges,
