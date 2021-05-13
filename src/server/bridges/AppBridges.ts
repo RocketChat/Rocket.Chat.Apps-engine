@@ -1,5 +1,5 @@
 import { HttpBridge } from './HttpBridge';
-import { IAppActivationBridge } from './IAppActivationBridge';
+import { AppActivationBridge } from './AppActivationBridge';
 import { ApiBridge } from './ApiBridge';
 import { CommandBridge } from './CommandBridge';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
@@ -25,7 +25,7 @@ export type Bridge = CommandBridge
             | LivechatBridge
             | MessageBridge
             | PersistenceBridge
-            | IAppActivationBridge
+            | AppActivationBridge
             | RoomBridge
             | IInternalBridge
             | ServerSettingBridge
@@ -44,7 +44,7 @@ export abstract class AppBridges {
     public abstract getLivechatBridge(): LivechatBridge;
     public abstract getMessageBridge(): MessageBridge;
     public abstract getPersistenceBridge(): PersistenceBridge;
-    public abstract getAppActivationBridge(): IAppActivationBridge;
+    public abstract getAppActivationBridge(): AppActivationBridge;
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): ServerSettingBridge;

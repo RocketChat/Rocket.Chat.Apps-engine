@@ -1,7 +1,7 @@
 import {
     AppBridges,
     HttpBridge,
-    IAppActivationBridge,
+    AppActivationBridge,
     AppDetailChangesBridge,
     SchedulerBridge,
     EnvironmentalVariableBridge,
@@ -111,7 +111,7 @@ export class TestsAppBridges extends AppBridges {
         return this.persisBridge;
     }
 
-    public getAppActivationBridge(): IAppActivationBridge {
+    public getAppActivationBridge(): AppActivationBridge {
         return this.rlActBridge;
     }
 

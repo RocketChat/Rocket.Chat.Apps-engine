@@ -1,6 +1,6 @@
 import { AppBridges } from './AppBridges';
 import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
-import { IAppActivationBridge } from './IAppActivationBridge';
+import { AppActivationBridge } from './AppActivationBridge';
 import { ApiBridge } from './ApiBridge';
 import { CommandBridge } from './CommandBridge';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
@@ -27,7 +27,7 @@ export {
     LivechatBridge,
     MessageBridge,
     PersistenceBridge,
-    IAppActivationBridge,
+    AppActivationBridge,
     AppDetailChangesBridge,
     CommandBridge,
     ApiBridge,
