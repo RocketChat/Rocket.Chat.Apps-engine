@@ -5,7 +5,7 @@ import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IAppSchedulerBridge } from './IAppSchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
-import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
+import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
@@ -19,7 +19,7 @@ import { UserBridge } from './UserBridge';
 export type Bridge = IAppCommandBridge
             | IAppApiBridge
             | IAppDetailChangesBridge
-            | IEnvironmentalVariableBridge
+            | EnvironmentalVariableBridge
             | HttpBridge
             | IListenerBridge
             | LivechatBridge
@@ -38,7 +38,7 @@ export abstract class AppBridges {
     public abstract getCommandBridge(): IAppCommandBridge;
     public abstract getApiBridge(): IAppApiBridge;
     public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
-    public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
+    public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;
     public abstract getHttpBridge(): HttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
     public abstract getLivechatBridge(): LivechatBridge;

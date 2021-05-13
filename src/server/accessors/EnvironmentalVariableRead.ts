@@ -1,9 +1,9 @@
-import { IEnvironmentalVariableBridge } from '../bridges';
+import { EnvironmentalVariableBridge } from '../bridges';
 
 import { IEnvironmentalVariableRead } from '../../definition/accessors';
 
 export class EnvironmentalVariableRead implements IEnvironmentalVariableRead {
-    constructor(private readonly bridge: IEnvironmentalVariableBridge, private readonly appId: string) {}
+    constructor(private readonly bridge: EnvironmentalVariableBridge, private readonly appId: string) {}
 
     public getValueByName(envVarName: string): Promise<string> {
         return this.bridge.doGetValueByName(envVarName, this.appId);

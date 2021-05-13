@@ -4,7 +4,7 @@ import {
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppSchedulerBridge,
-    IEnvironmentalVariableBridge,
+    EnvironmentalVariableBridge,
     IInternalBridge,
     IListenerBridge,
     IServerSettingBridge,
@@ -87,7 +87,7 @@ export class TestsAppBridges extends AppBridges {
         return this.setsBridge;
     }
 
-    public getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge {
+    public getEnvironmentalVariableBridge(): EnvironmentalVariableBridge {
         return this.envBridge;
     }
 

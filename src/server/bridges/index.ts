@@ -6,7 +6,7 @@ import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IAppSchedulerBridge } from './IAppSchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
-import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
+import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { IServerSettingBridge } from './IServerSettingBridge';
@@ -20,7 +20,7 @@ import { UserBridge } from './UserBridge';
 
 export {
     ICloudWorkspaceBridge,
-    IEnvironmentalVariableBridge,
+    EnvironmentalVariableBridge,
     HttpBridge,
     IHttpBridgeRequestInfo,
     IListenerBridge,

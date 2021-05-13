@@ -1,10 +1,10 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
 import { EnvironmentalVariableRead } from '../../../src/server/accessors';
-import { IEnvironmentalVariableBridge } from '../../../src/server/bridges';
+import { EnvironmentalVariableBridge } from '../../../src/server/bridges';
 
 export class EnvironmentalVariableReadAccessorTestFixture {
-    private mockEnvVarBridge: IEnvironmentalVariableBridge;
+    private mockEnvVarBridge: EnvironmentalVariableBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -18,7 +18,7 @@ export class EnvironmentalVariableReadAccessorTestFixture {
             doIsSet(name: string, appId: string): Promise<boolean> {
                 return Promise.resolve(false);
             },
-        } as IEnvironmentalVariableBridge;
+        } as EnvironmentalVariableBridge;
     }
 
     @AsyncTest()
