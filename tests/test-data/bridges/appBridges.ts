@@ -3,7 +3,7 @@ import {
     HttpBridge,
     IAppActivationBridge,
     IAppDetailChangesBridge,
-    IAppSchedulerBridge,
+    SchedulerBridge,
     EnvironmentalVariableBridge,
     IInternalBridge,
     IListenerBridge,
@@ -139,7 +139,7 @@ export class TestsAppBridges extends AppBridges {
         return this.uiIntegrationBridge;
     }
 
-    public getSchedulerBridge(): IAppSchedulerBridge {
+    public getSchedulerBridge(): SchedulerBridge {
         return this.schedulerBridge;
     }
 

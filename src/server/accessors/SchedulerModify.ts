@@ -3,14 +3,14 @@ import {
     IOnetimeSchedule,
     IRecurringSchedule,
 } from '../../definition/scheduler';
-import { IAppSchedulerBridge } from '../bridges';
+import { SchedulerBridge } from '../bridges';
 
 function createProcessorId(jobId: string, appId: string): string {
     return jobId.includes(`_${appId}`) ? jobId : `${ jobId }_${ appId }`;
 }
 
 export class SchedulerModify implements ISchedulerModify {
-    constructor(private readonly bridge: IAppSchedulerBridge, private readonly appId: string) {}
+    constructor(private readonly bridge: SchedulerBridge, private readonly appId: string) {}
 
     public async scheduleOnce(job: IOnetimeSchedule): Promise<void> {
         this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, this.appId) }, this.appId);

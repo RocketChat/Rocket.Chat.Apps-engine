@@ -4,7 +4,7 @@ import { IAppActivationBridge } from './IAppActivationBridge';
 import { ApiBridge } from './ApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
-import { IAppSchedulerBridge } from './IAppSchedulerBridge';
+import { SchedulerBridge } from './SchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { IInternalBridge } from './IInternalBridge';
@@ -37,6 +37,6 @@ export {
     UserBridge,
     UploadBridge,
     IUiInteractionBridge,
-    IAppSchedulerBridge,
+    SchedulerBridge,
     AppBridges,
 };

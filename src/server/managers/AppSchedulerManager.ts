@@ -6,7 +6,7 @@ import {
     IRecurringSchedule,
 } from '../../definition/scheduler';
 import { AppManager } from '../AppManager';
-import { IAppSchedulerBridge } from '../bridges/IAppSchedulerBridge';
+import { SchedulerBridge } from '../bridges/SchedulerBridge';
 import { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
 import { AppAccessorManager } from './';
 
@@ -15,7 +15,7 @@ function createProcessorId(jobId: string, appId: string): string {
 }
 
 export class AppSchedulerManager {
-    private readonly bridge: IAppSchedulerBridge;
+    private readonly bridge: SchedulerBridge;
     private readonly accessors: AppAccessorManager;
 
     private registeredProcessors: Map<string, {[processorId: string]: IProcessor}>;
@@ -100,6 +100,6 @@ export class AppSchedulerManager {
     }
 
     public async cleanUp(appId: string): Promise<void> {
-        (this.bridge as IInternalSchedulerBridge & IAppSchedulerBridge).cancelAllJobs(appId);
+        (this.bridge as IInternalSchedulerBridge & SchedulerBridge).cancelAllJobs(appId);
     }
 }
