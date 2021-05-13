@@ -2,7 +2,7 @@ import {
     AppBridges,
     HttpBridge,
     IAppActivationBridge,
-    IAppDetailChangesBridge,
+    AppDetailChangesBridge,
     SchedulerBridge,
     EnvironmentalVariableBridge,
     IInternalBridge,
@@ -91,7 +91,7 @@ export class TestsAppBridges extends AppBridges {
         return this.envBridge;
     }
 
-    public getAppDetailChangesBridge(): IAppDetailChangesBridge {
+    public getAppDetailChangesBridge(): AppDetailChangesBridge {
         return this.appDetails;
     }
 

@@ -3,7 +3,7 @@ import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
 import { IAppActivationBridge } from './IAppActivationBridge';
 import { ApiBridge } from './ApiBridge';
 import { CommandBridge } from './CommandBridge';
-import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
+import { AppDetailChangesBridge } from './AppDetailChangesBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
@@ -28,7 +28,7 @@ export {
     MessageBridge,
     PersistenceBridge,
     IAppActivationBridge,
-    IAppDetailChangesBridge,
+    AppDetailChangesBridge,
     CommandBridge,
     ApiBridge,
     RoomBridge,

@@ -2,7 +2,7 @@ import { HttpBridge } from './HttpBridge';
 import { IAppActivationBridge } from './IAppActivationBridge';
 import { ApiBridge } from './ApiBridge';
 import { CommandBridge } from './CommandBridge';
-import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
+import { AppDetailChangesBridge } from './AppDetailChangesBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
@@ -18,7 +18,7 @@ import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 export type Bridge = CommandBridge
             | ApiBridge
-            | IAppDetailChangesBridge
+            | AppDetailChangesBridge
             | EnvironmentalVariableBridge
             | HttpBridge
             | IListenerBridge
@@ -37,7 +37,7 @@ export type Bridge = CommandBridge
 export abstract class AppBridges {
     public abstract getCommandBridge(): CommandBridge;
     public abstract getApiBridge(): ApiBridge;
-    public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
+    public abstract getAppDetailChangesBridge(): AppDetailChangesBridge;
     public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;
     public abstract getHttpBridge(): HttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
