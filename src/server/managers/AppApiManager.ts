@@ -2,7 +2,7 @@ import { HttpStatusCode } from '../../definition/accessors';
 import { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
 import { AppStatusUtils } from '../../definition/AppStatus';
 import { AppManager } from '../AppManager';
-import { IAppApiBridge } from '../bridges';
+import { ApiBridge } from '../bridges';
 import { PathAlreadyExistsError } from '../errors';
 import { AppAccessorManager } from './AppAccessorManager';
 import { AppApi } from './AppApi';
@@ -15,7 +15,7 @@ import { AppApi } from './AppApi';
  * only then will that App's api's be enabled.
  */
 export class AppApiManager {
-    private readonly bridge: IAppApiBridge;
+    private readonly bridge: ApiBridge;
     private readonly accessors: AppAccessorManager;
     // Variable that contains the api's which have been provided by apps.
     // The key of the top map is app id and the key of the inner map is the path

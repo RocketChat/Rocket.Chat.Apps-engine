@@ -1,7 +1,7 @@
 import { AppBridges } from './AppBridges';
 import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
 import { IAppActivationBridge } from './IAppActivationBridge';
-import { IAppApiBridge } from './IAppApiBridge';
+import { ApiBridge } from './ApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
 import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IAppSchedulerBridge } from './IAppSchedulerBridge';
@@ -30,7 +30,7 @@ export {
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppCommandBridge,
-    IAppApiBridge,
+    ApiBridge,
     RoomBridge,
     IInternalBridge,
     IServerSettingBridge,

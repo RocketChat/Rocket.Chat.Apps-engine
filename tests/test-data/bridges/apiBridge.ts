@@ -1,9 +1,9 @@
 import { IApi } from '../../../src/definition/api';
-import { IAppApiBridge } from '../../../src/server/bridges';
+import { ApiBridge } from '../../../src/server/bridges';
 import { AppApi } from '../../../src/server/managers/AppApi';
 import { TestData } from '../utilities';
 
-export class TestsApiBridge implements IAppApiBridge {
+export class TestsApiBridge {
     public apis: Map<string, Map<string, IApi>>;
 
     constructor() {
