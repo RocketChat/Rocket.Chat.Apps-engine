@@ -8,7 +8,7 @@ import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { IServerSettingBridge } from './IServerSettingBridge';
+import { ServerSettingBridge } from './ServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
@@ -28,7 +28,7 @@ export type Bridge = CommandBridge
             | IAppActivationBridge
             | RoomBridge
             | IInternalBridge
-            | IServerSettingBridge
+            | ServerSettingBridge
             | UploadBridge
             | UserBridge
             | IUiInteractionBridge
@@ -47,7 +47,7 @@ export abstract class AppBridges {
     public abstract getAppActivationBridge(): IAppActivationBridge;
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
-    public abstract getServerSettingBridge(): IServerSettingBridge;
+    public abstract getServerSettingBridge(): ServerSettingBridge;
     public abstract getUploadBridge(): UploadBridge;
     public abstract getUserBridge(): UserBridge;
     public abstract getUiInteractionBridge(): IUiInteractionBridge;

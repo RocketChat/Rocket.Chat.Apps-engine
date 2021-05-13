@@ -2,12 +2,12 @@ import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { ISetting } from '../../../src/definition/settings';
 
 import { ServerSettingRead } from '../../../src/server/accessors';
-import { IServerSettingBridge } from '../../../src/server/bridges';
+import { ServerSettingBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ServerSettingReadAccessorTestFixture {
     private setting: ISetting;
-    private mockServerSettingBridge: IServerSettingBridge;
+    private mockServerSettingBridge: ServerSettingBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -21,7 +21,7 @@ export class ServerSettingReadAccessorTestFixture {
             doIsReadableById(id: string, appId: string): Promise<boolean> {
                 return Promise.resolve(true);
             },
-        } as IServerSettingBridge;
+        } as ServerSettingBridge;
     }
 
     @AsyncTest()

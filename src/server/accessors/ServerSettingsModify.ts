@@ -1,10 +1,10 @@
-import { IServerSettingBridge } from '../bridges/IServerSettingBridge';
+import { ServerSettingBridge } from '../bridges/ServerSettingBridge';
 
 import { IServerSettingsModify } from '../../definition/accessors';
 import { ISetting } from '../../definition/settings';
 
 export class ServerSettingsModify implements IServerSettingsModify {
-    constructor(private readonly bridge: IServerSettingBridge, private readonly appId: string) { }
+    constructor(private readonly bridge: ServerSettingBridge, private readonly appId: string) { }
 
     public async hideGroup(name: string): Promise<void> {
         await this.bridge.doHideGroup(name, this.appId);

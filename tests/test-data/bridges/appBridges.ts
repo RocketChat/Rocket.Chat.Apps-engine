@@ -7,7 +7,7 @@ import {
     EnvironmentalVariableBridge,
     IInternalBridge,
     IListenerBridge,
-    IServerSettingBridge,
+    ServerSettingBridge,
     IUiInteractionBridge,
     LivechatBridge,
     MessageBridge,
@@ -83,7 +83,7 @@ export class TestsAppBridges extends AppBridges {
         return this.apiBridge;
     }
 
-    public getServerSettingBridge(): IServerSettingBridge {
+    public getServerSettingBridge(): ServerSettingBridge {
         return this.setsBridge;
     }
 

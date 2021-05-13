@@ -9,7 +9,7 @@ import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { IServerSettingBridge } from './IServerSettingBridge';
+import { ServerSettingBridge } from './ServerSettingBridge';
 import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
@@ -33,7 +33,7 @@ export {
     ApiBridge,
     RoomBridge,
     IInternalBridge,
-    IServerSettingBridge,
+    ServerSettingBridge,
     UserBridge,
     UploadBridge,
     IUiInteractionBridge,

@@ -1,10 +1,10 @@
-import { IServerSettingBridge } from '../bridges/IServerSettingBridge';
+import { ServerSettingBridge } from '../bridges/ServerSettingBridge';
 
 import { IServerSettingRead } from '../../definition/accessors';
 import { ISetting } from '../../definition/settings';
 
 export class ServerSettingRead implements IServerSettingRead {
-    constructor(private readonly settingBridge: IServerSettingBridge, private readonly appId: string) { }
+    constructor(private readonly settingBridge: ServerSettingBridge, private readonly appId: string) { }
 
     public getOneById(id: string): Promise<ISetting> {
         return this.settingBridge.doGetOneById(id, this.appId);
