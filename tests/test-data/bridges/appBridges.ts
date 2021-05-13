@@ -1,18 +1,18 @@
 import {
     AppBridges,
+    HttpBridge,
     IAppActivationBridge,
     IAppDetailChangesBridge,
     IAppSchedulerBridge,
     IEnvironmentalVariableBridge,
-    IHttpBridge,
     IInternalBridge,
     IListenerBridge,
+    IServerSettingBridge,
+    IUiInteractionBridge,
     LivechatBridge,
     MessageBridge,
     PersistenceBridge,
     RoomBridge,
-    IServerSettingBridge,
-    IUiInteractionBridge,
     UploadBridge,
     UserBridge,
 } from '../../../src/server/bridges';
@@ -95,7 +95,7 @@ export class TestsAppBridges extends AppBridges {
         return this.appDetails;
     }
 
-    public getHttpBridge(): IHttpBridge {
+    public getHttpBridge(): HttpBridge {
         return this.httpBridge;
     }
 

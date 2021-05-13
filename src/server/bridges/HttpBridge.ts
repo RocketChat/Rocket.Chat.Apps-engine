@@ -1,9 +1,15 @@
-import { IHttpResponse } from '../../definition/accessors';
+import { IHttpRequest, IHttpResponse, RequestMethod } from '../../definition/accessors';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
-import { IHttpBridgeRequestInfo } from './IHttpBridge';
+
+export interface IHttpBridgeRequestInfo {
+    appId: string;
+    method: RequestMethod;
+    url: string;
+    request: IHttpRequest;
+}
 
 export abstract class HttpBridge extends BaseBridge {
     public async doCall(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {

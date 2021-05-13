@@ -1,3 +1,4 @@
+import { HttpBridge } from './HttpBridge';
 import { IAppActivationBridge } from './IAppActivationBridge';
 import { IAppApiBridge } from './IAppApiBridge';
 import { IAppCommandBridge } from './IAppCommandBridge';
@@ -5,22 +6,21 @@ import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
 import { IAppSchedulerBridge } from './IAppSchedulerBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
-import { IHttpBridge } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
+import { IServerSettingBridge } from './IServerSettingBridge';
+import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
-import { IServerSettingBridge } from './IServerSettingBridge';
-import { IUiInteractionBridge } from './IUiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 export type Bridge = IAppCommandBridge
             | IAppApiBridge
             | IAppDetailChangesBridge
             | IEnvironmentalVariableBridge
-            | IHttpBridge
+            | HttpBridge
             | IListenerBridge
             | LivechatBridge
             | MessageBridge
@@ -39,7 +39,7 @@ export abstract class AppBridges {
     public abstract getApiBridge(): IAppApiBridge;
     public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
     public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
-    public abstract getHttpBridge(): IHttpBridge;
+    public abstract getHttpBridge(): HttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
     public abstract getLivechatBridge(): LivechatBridge;
     public abstract getMessageBridge(): MessageBridge;
