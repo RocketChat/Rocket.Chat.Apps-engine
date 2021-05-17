@@ -13,14 +13,14 @@ export interface IHttpBridgeRequestInfo {
 
 export abstract class HttpBridge extends BaseBridge {
     public async doCall(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
-        if (this.checkDefaultPermission(info.appId)) {
+        if (this.hasDefaultPermission(info.appId)) {
             return this.call(info);
         }
     }
 
     protected abstract call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse>;
 
-    private checkDefaultPermission(appId: string): boolean {
+    private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.networking.default)) {
             return true;
         }

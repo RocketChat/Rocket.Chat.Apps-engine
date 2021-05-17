@@ -5,19 +5,19 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class EnvironmentalVariableBridge extends BaseBridge {
    public async doGetValueByName(envVarName: string, appId: string): Promise<string | undefined> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.getValueByName(envVarName, appId);
        }
     }
 
    public async doIsReadable(envVarName: string, appId: string): Promise<boolean> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.isReadable(envVarName, appId);
        }
     }
 
    public async doIsSet(envVarName: string, appId: string): Promise<boolean> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.isSet(envVarName, appId);
        }
     }
@@ -26,7 +26,7 @@ export abstract class EnvironmentalVariableBridge extends BaseBridge {
    protected abstract isReadable(envVarName: string, appId: string): Promise<boolean>;
    protected abstract isSet(envVarName: string, appId: string): Promise<boolean>;
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.env.read)) {
             return true;
         }

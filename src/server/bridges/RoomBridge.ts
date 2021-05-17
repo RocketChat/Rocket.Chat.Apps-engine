@@ -8,62 +8,62 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class RoomBridge extends BaseBridge {
     public async doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.create(room, members, appId);
         }
     }
 
     public async doGetById(roomId: string, appId: string): Promise<IRoom> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getById(roomId, appId);
         }
     }
 
     public async doGetByName(roomName: string, appId: string): Promise<IRoom> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getByName(roomName, appId);
         }
     }
 
     public async doGetCreatorById(roomId: string, appId: string): Promise<IUser | undefined> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getCreatorById(roomId, appId);
         }
     }
 
     public async doGetCreatorByName(roomName: string, appId: string): Promise<IUser | undefined> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getCreatorByName(roomName, appId);
         }
     }
 
     public async doGetDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getDirectByUsernames(usernames, appId);
         }
     }
 
     public async doGetMembers(roomId: string, appId: string): Promise<Array<IUser>> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getMembers(roomId, appId);
         }
     }
 
     public async doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.update(room, members, appId);
         }
     }
 
     public async doCreateDiscussion(room: IRoom, parentMessage: IMessage | undefined,
                                     reply: string | undefined, members: Array<string>, appId: string): Promise<string> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.createDiscussion(room, parentMessage, reply, members, appId);
         }
     }
 
     public async doDelete(room: string, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.delete(room, appId);
         }
     }
@@ -80,7 +80,7 @@ export abstract class RoomBridge extends BaseBridge {
                                         reply: string | undefined, members: Array<string>, appId: string): Promise<string>;
     protected abstract delete(room: string, appId: string): Promise<void>;
 
-    private checkWritePermission(appId: string): boolean {
+    private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
             return true;
         }
@@ -93,7 +93,7 @@ export abstract class RoomBridge extends BaseBridge {
         return false;
     }
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.read)) {
             return true;
         }

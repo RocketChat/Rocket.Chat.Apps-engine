@@ -6,37 +6,37 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class CommandBridge extends BaseBridge {
     public doDoesCommandExist(command: string, appId: string): boolean {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.doesCommandExist(command, appId);
         }
     }
 
     public doEnableCommand(command: string, appId: string): void {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.enableCommand(command, appId);
         }
     }
 
     public doDisableCommand(command: string, appId: string): void {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.disableCommand(command, appId);
         }
     }
 
     public doModifyCommand(command: ISlashCommand, appId: string): void {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.modifyCommand(command, appId);
         }
     }
 
     public doRegisterCommand(command: ISlashCommand, appId: string): void {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.registerCommand(command, appId);
         }
     }
 
     public doUnregisterCommand(command: string, appId: string): void {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.unregisterCommand(command, appId);
         }
     }
@@ -100,7 +100,7 @@ export abstract class CommandBridge extends BaseBridge {
      */
     protected abstract unregisterCommand(command: string, appId: string): void;
 
-    private checkDefaultPermission(appId: string): boolean {
+    private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.command.default)) {
             return true;
         }

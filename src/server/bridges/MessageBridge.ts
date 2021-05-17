@@ -13,37 +13,37 @@ export interface ITypingDescriptor extends ITypingOptions {
 
 export abstract class MessageBridge extends BaseBridge {
     public async doCreate(message: IMessage, appId: string): Promise<string> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.create(message, appId);
         }
     }
 
     public async doUpdate(message: IMessage, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.update(message, appId);
         }
     }
 
     public async doNotifyUser(user: IUser, message: IMessage, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.notifyUser(user, message, appId);
         }
     }
 
     public async doNotifyRoom(room: IRoom, message: IMessage, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.notifyRoom(room, message, appId);
         }
     }
 
     public async doTyping(options: ITypingDescriptor, appId: string): Promise<void> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.typing(options, appId);
         }
     }
 
     public async doGetById(messageId: string, appId: string): Promise<IMessage> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getById(messageId, appId);
         }
     }
@@ -55,7 +55,7 @@ export abstract class MessageBridge extends BaseBridge {
     protected abstract typing(options: ITypingDescriptor, appId: string): Promise<void>;
     protected abstract getById(messageId: string, appId: string): Promise<IMessage>;
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {
             console.log('message read permissions has', appId);
             return true;
@@ -69,7 +69,7 @@ export abstract class MessageBridge extends BaseBridge {
         return false;
     }
 
-    private checkWritePermission(appId: string): boolean {
+    private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.write)) {
             return true;
         }

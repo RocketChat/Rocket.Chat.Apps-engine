@@ -7,19 +7,19 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class UploadBridge extends BaseBridge {
     public async doGetById(id: string, appId: string): Promise<IUpload> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getById(id, appId);
         }
     }
 
     public async doGetBuffer(upload: IUpload, appId: string): Promise<Buffer> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getBuffer(upload, appId);
         }
     }
 
     public async doCreateUpload(details: IUploadDetails, buffer: Buffer, appId: string): Promise<IUpload> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.createUpload(details, buffer, appId);
         }
     }
@@ -28,7 +28,7 @@ export abstract class UploadBridge extends BaseBridge {
     protected abstract getBuffer(upload: IUpload, appId: string): Promise<Buffer>;
     protected abstract createUpload(details: IUploadDetails, buffer: Buffer, appId: string): Promise<IUpload>;
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.upload.read)) {
             return true;
         }
@@ -41,7 +41,7 @@ export abstract class UploadBridge extends BaseBridge {
         return false;
     }
 
-    private checkWritePermission(appId: string): boolean {
+    private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.upload.write)) {
             return true;
         }

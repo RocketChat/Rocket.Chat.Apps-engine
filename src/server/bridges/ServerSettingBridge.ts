@@ -6,37 +6,37 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class ServerSettingBridge extends BaseBridge {
    public async doGetAll(appId: string): Promise<Array<ISetting>> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.getAll(appId);
        }
     }
 
    public async doGetOneById(id: string, appId: string): Promise<ISetting> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.getOneById(id, appId);
        }
     }
 
    public async doHideGroup(name: string, appId: string): Promise<void> {
-       if (this.checkWritePermission(appId)) {
+       if (this.hasWritePermission(appId)) {
            return this.hideGroup(name, appId);
        }
     }
 
    public async doHideSetting(id: string, appId: string): Promise<void> {
-       if (this.checkWritePermission(appId)) {
+       if (this.hasWritePermission(appId)) {
            return this.hideSetting(id, appId);
        }
     }
 
    public async doIsReadableById(id: string, appId: string): Promise<boolean> {
-       if (this.checkReadPermission(appId)) {
+       if (this.hasReadPermission(appId)) {
            return this.isReadableById(id, appId);
        }
     }
 
    public async doUpdateOne(setting: ISetting, appId: string): Promise<void> {
-       if (this.checkWritePermission(appId)) {
+       if (this.hasWritePermission(appId)) {
            return this.updateOne(setting, appId);
        }
     }
@@ -48,7 +48,7 @@ export abstract class ServerSettingBridge extends BaseBridge {
    protected abstract isReadableById(id: string, appId: string): Promise<boolean>;
    protected abstract updateOne(setting: ISetting, appId: string): Promise<void>;
 
-    private checkWritePermission(appId: string): boolean {
+    private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.setting.write)) {
             return true;
         }
@@ -61,7 +61,7 @@ export abstract class ServerSettingBridge extends BaseBridge {
         return false;
     }
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.setting.read)) {
             return true;
         }

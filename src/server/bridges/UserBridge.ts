@@ -6,43 +6,43 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class UserBridge extends BaseBridge {
     public async doGetById(id: string, appId: string): Promise<IUser> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getById(id, appId);
         }
     }
 
     public async doGetByUsername(username: string, appId: string): Promise<IUser> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getByUsername(username, appId);
         }
     }
 
     public async doGetAppUser(appId?: string): Promise<IUser | undefined> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getAppUser();
         }
     }
 
     public async doGetActiveUserCount(appId?: string): Promise<number> {
-        if (this.checkReadPermission(appId)) {
+        if (this.hasReadPermission(appId)) {
             return this.getActiveUserCount();
         }
     }
 
     public async doCreate(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.create(data, appId, options || {});
         }
     }
 
     public async doRemove(user: IUser, appId: string): Promise<boolean> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.remove(user, appId);
         }
     }
 
     public async doUpdate(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean> {
-        if (this.checkWritePermission(appId)) {
+        if (this.hasWritePermission(appId)) {
             return this.update(user, updates, appId);
         }
     }
@@ -79,7 +79,7 @@ export abstract class UserBridge extends BaseBridge {
      */
     protected abstract update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean>;
 
-    private checkReadPermission(appId: string): boolean {
+    private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.user.read)) {
             return true;
         }
@@ -92,7 +92,7 @@ export abstract class UserBridge extends BaseBridge {
         return false;
     }
 
-    private checkWritePermission(appId: string): boolean {
+    private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.user.write)) {
             return true;
         }

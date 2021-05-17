@@ -6,13 +6,13 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class ApiBridge extends BaseBridge {
    public doRegisterApi(api: AppApi, appId: string): void {
-       if (this.checkDefaultPermission(appId)) {
+       if (this.hasDefaultPermission(appId)) {
            return this.registerApi(api, appId);
        }
     }
 
    public doUnregisterApis(appId: string): void {
-       if (this.checkDefaultPermission(appId)) {
+       if (this.hasDefaultPermission(appId)) {
            return this.unregisterApis(appId);
        }
     }
@@ -32,7 +32,7 @@ export abstract class ApiBridge extends BaseBridge {
      */
     protected abstract unregisterApis(appId: string): void;
 
-    private checkDefaultPermission(appId: string): boolean {
+    private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {
             return true;
         }

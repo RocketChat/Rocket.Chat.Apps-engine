@@ -10,31 +10,31 @@ import { BaseBridge } from './BaseBridge';
 
 export abstract class SchedulerBridge extends BaseBridge {
     public async doRegisterProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.registerProcessors(processors, appId);
         }
     }
 
     public async doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.scheduleOnce(job, appId);
         }
     }
 
     public async doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.scheduleRecurring(job, appId);
         }
     }
 
     public async doCancelJob(jobId: string, appId: string): Promise<void> {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.cancelJob(jobId, appId);
         }
     }
 
     public async doCancelAllJobs(appId: string): Promise<void> {
-        if (this.checkDefaultPermission(appId)) {
+        if (this.hasDefaultPermission(appId)) {
             return this.cancelAllJobs(appId);
         }
     }
@@ -45,7 +45,7 @@ export abstract class SchedulerBridge extends BaseBridge {
     protected abstract cancelJob(jobId: string, appId: string): Promise<void>;
     protected abstract cancelAllJobs(appId: string): Promise<void>;
 
-    private checkDefaultPermission(appId: string): boolean {
+    private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.scheduler.default)) {
             return true;
         }
