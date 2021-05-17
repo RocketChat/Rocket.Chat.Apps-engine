@@ -4,7 +4,7 @@ import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
-export abstract class SettingBridge extends BaseBridge {
+export abstract class ServerSettingBridge extends BaseBridge {
    public async doGetAll(appId: string): Promise<Array<ISetting>> {
        if (this.checkReadPermission(appId)) {
            return this.getAll(appId);
