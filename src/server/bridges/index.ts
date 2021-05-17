@@ -1,20 +1,20 @@
-import { AppBridges } from './AppBridges';
-import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
-import { AppActivationBridge } from './AppActivationBridge';
 import { ApiBridge } from './ApiBridge';
-import { CommandBridge } from './CommandBridge';
+import { AppActivationBridge } from './AppActivationBridge';
+import { AppBridges } from './AppBridges';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
-import { SchedulerBridge } from './SchedulerBridge';
-import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
+import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
+import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
+import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { ServerSettingBridge } from './ServerSettingBridge';
-import { UiInteractionBridge } from './UiInteractionBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
+import { SchedulerBridge } from './SchedulerBridge';
+import { ServerSettingBridge } from './ServerSettingBridge';
+import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 
