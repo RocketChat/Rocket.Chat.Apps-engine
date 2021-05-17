@@ -2,8 +2,8 @@ import { ISetting } from '../../../src/definition/settings';
 
 import { AppDetailChangesBridge } from '../../../src/server/bridges';
 
-export class TestsAppDetailChangesBridge {
-    public doOnAppSettingsChange(appId: string, setting: ISetting): void {
+export class TestsAppDetailChangesBridge extends AppDetailChangesBridge {
+    public onAppSettingsChange(appId: string, setting: ISetting): void {
         return;
     }
 }

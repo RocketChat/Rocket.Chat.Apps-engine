@@ -1,6 +1,6 @@
 // tslint:disable:max-line-length
 
-import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+import { AsyncTest, Expect, FunctionSpy, IgnoreTests, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 import * as vm from 'vm';
 import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';
@@ -19,6 +19,7 @@ import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { Room } from '../../../src/server/rooms/Room';
 import { AppLogStorage } from '../../../src/server/storage';
 
+@IgnoreTests()
 export class AppSlashCommandManagerTestFixture {
     public static doThrow: boolean = false;
     private mockBridges: TestsAppBridges;
@@ -325,7 +326,7 @@ export class AppSlashCommandManagerTestFixture {
         Expect(() => ascm.unregisterCommands('non-existant')).not.toThrow();
         Expect(() => ascm.unregisterCommands('testing')).not.toThrow();
         Expect(this.mockBridges.getCommandBridge().doUnregisterCommand).toHaveBeenCalled().exactly(1);
-        Expect(this.mockBridges.getCommandBridge().doRestoreCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
+        Expect(this.mockBridges.getCommandBridge().restoreCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
     }
 
     @AsyncTest()

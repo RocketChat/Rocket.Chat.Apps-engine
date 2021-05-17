@@ -2,32 +2,32 @@ import { IUser } from '../../../src/definition/users';
 
 import { UserBridge } from '../../../src/server/bridges';
 
-export class TestsUserBridge {
-    public doGetById(id: string, appId: string): Promise<IUser> {
+export class TestsUserBridge extends UserBridge {
+    public getById(id: string, appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 
-    public doGetByUsername(username: string, appId: string): Promise<IUser> {
+    public getByUsername(username: string, appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 
-    public doCreate(user: Partial<IUser>): Promise<string> {
+    public create(user: Partial<IUser>): Promise<string> {
         throw new Error('Method not implemented');
     }
 
-    public doGetActiveUserCount(): Promise<number> {
+    public getActiveUserCount(): Promise<number> {
         throw new Error('Method not implemented.');
     }
 
-    public doRemove(user: IUser, appId: string): Promise<boolean> {
+    public remove(user: IUser, appId: string): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 
-    public doGetAppUser(appId?: string): Promise<IUser> {
+    public getAppUser(appId?: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 
-    public async doUpdate(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean> {
+    public async update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
 }

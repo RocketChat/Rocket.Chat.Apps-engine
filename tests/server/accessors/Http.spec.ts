@@ -2,7 +2,7 @@ import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, IPersistence, IRead } from '../../../src/definition/accessors';
 
 import { Http, HttpExtend } from '../../../src/server/accessors';
-import { AppBridges, HttpBridge, HttpBridgeRequestInfo } from '../../../src/server/bridges';
+import { AppBridges, HttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
 import { AppAccessorManager } from '../../../src/server/managers';
 
 export class HttpAccessorTestFixture {
@@ -24,7 +24,7 @@ export class HttpAccessorTestFixture {
         this.mockResponse = { statusCode: 200 } as IHttpResponse;
         const res = this.mockResponse;
         this.mockHttpBridge = {
-            doCall(info: HttpBridgeRequestInfo): Promise<IHttpResponse> {
+            doCall(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
                 return Promise.resolve(res);
             },
         } as HttpBridge;

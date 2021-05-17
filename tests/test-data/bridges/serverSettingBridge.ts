@@ -2,28 +2,28 @@ import { ISetting } from '../../../src/definition/settings';
 
 import { ServerSettingBridge } from '../../../src/server/bridges';
 
-export class TestsServerSettingBridge {
-    public doGetAll(appId: string): Promise<Array<ISetting>> {
+export class TestsServerSettingBridge extends ServerSettingBridge {
+    public getAll(appId: string): Promise<Array<ISetting>> {
         throw new Error('Method not implemented.');
     }
 
-    public doGetOneById(id: string, appId: string): Promise<ISetting> {
+    public getOneById(id: string, appId: string): Promise<ISetting> {
         throw new Error('Method not implemented.');
     }
 
-    public doHideGroup(name: string): Promise<void> {
+    public hideGroup(name: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    public doHideSetting(id: string): Promise<void> {
+    public hideSetting(id: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    public doIsReadableById(id: string, appId: string): Promise<boolean> {
+    public isReadableById(id: string, appId: string): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 
-    public doUpdateOne(setting: ISetting, appId: string): Promise<void> {
+    public updateOne(setting: ISetting, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

@@ -3,16 +3,17 @@ import { ApiBridge } from '../../../src/server/bridges';
 import { AppApi } from '../../../src/server/managers/AppApi';
 import { TestData } from '../utilities';
 
-export class TestsApiBridge {
+export class TestsApiBridge extends ApiBridge {
     public apis: Map<string, Map<string, IApi>>;
 
     constructor() {
+        super();
         this.apis = new Map<string, Map<string, IApi>>();
         this.apis.set('appId', new Map<string, IApi>());
         this.apis.get('appId').set('it-exists', TestData.getApi('it-exists'));
     }
 
-    public doRegisterApi(api: AppApi, appId: string): void {
+    public registerApi(api: AppApi, appId: string): void {
         if (!this.apis.has(appId)) {
             this.apis.set(appId, new Map<string, IApi>());
         }
@@ -30,7 +31,7 @@ export class TestsApiBridge {
         }
     }
 
-    public doUnregisterApis(appId: string): void {
+    public unregisterApis(appId: string): void {
         this.apis.delete(appId);
     }
 }

@@ -2,7 +2,7 @@ import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppActivationBridge } from '../../../src/server/bridges';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 
-export class TestsActivationBridge {
+export class TestsActivationBridge extends AppActivationBridge {
     public async appAdded(app: ProxiedApp): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) has been added.`);
     }
