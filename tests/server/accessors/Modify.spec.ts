@@ -1,7 +1,7 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
 import { Modify } from '../../../src/server/accessors';
-import { AppBridges, SchedulerBridge, UiInteractionBridge, MessageBridge, UserBridge } from '../../../src/server/bridges';
+import { AppBridges, MessageBridge, SchedulerBridge, UiInteractionBridge, UserBridge } from '../../../src/server/bridges';
 
 export class ModifyAccessorTestFixture {
     private mockAppBridges: AppBridges;

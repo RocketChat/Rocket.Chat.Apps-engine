@@ -1,4 +1,4 @@
-import { Expect, SetupFixture, Test, IgnoreTests } from 'alsatian';
+import { Expect, IgnoreTests, SetupFixture, Test } from 'alsatian';
 import { AppMethod } from '../../../src/definition/metadata';
 import { ISlashCommand } from '../../../src/definition/slashcommands';
 
