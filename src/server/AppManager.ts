@@ -456,7 +456,7 @@ export class AppManager {
         aff.setApp(app);
 
         // Let everyone know that the App has been added
-        await this.bridges.getAppActivationBridge().appAdded(app).catch(() => {
+        await this.bridges.getAppActivationBridge().doAppAdded(app).catch(() => {
             // If an error occurs during this, oh well.
         });
 
@@ -480,7 +480,7 @@ export class AppManager {
         await this.uninstallApp(app, user);
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
             await this.disable(id);
@@ -498,7 +498,7 @@ export class AppManager {
         await this.schedulerManager.cleanUp(app.getID());
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app);
+        await this.bridges.getAppActivationBridge().doAppRemoved(app);
 
         this.apps.delete(app.getID());
 
@@ -556,7 +556,7 @@ export class AppManager {
         }
 
         // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
+        await this.bridges.getAppActivationBridge().doAppUpdated(app).catch();
 
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);

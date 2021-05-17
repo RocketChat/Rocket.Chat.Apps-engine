@@ -297,7 +297,8 @@ export class AppSlashCommandManager {
             // We call restore to enable the commands provided by the bridged system
             // or unmodify the commands modified by the App
             this.appsTouchedCommands.get(appId).forEach((cmd) => {
-                this.bridge.doRestoreCommand(cmd, appId);
+                // @NOTE this "restore" method isn't present in the bridge
+                // this.bridge.doRestoreCommand(cmd, appId);
                 this.modifiedCommands.get(cmd).isRegistered = false;
                 this.modifiedCommands.delete(cmd);
                 this.touchedCommandsToApps.delete(cmd);

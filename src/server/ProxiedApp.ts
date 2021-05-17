@@ -112,7 +112,7 @@ export class ProxiedApp implements IApp {
         await this.call(AppMethod.SETSTATUS, status);
 
         if (!silent) {
-            await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, status);
+            await this.manager.getBridges().getAppActivationBridge().doAppStatusChanged(this, status);
         }
     }
 
