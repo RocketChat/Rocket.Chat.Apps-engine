@@ -1,4 +1,4 @@
-import {AppMethod} from '../../definition/metadata';
+import { AppMethod } from '../../definition/metadata';
 import {
     IJobContext,
     IOnetimeSchedule,
@@ -6,8 +6,8 @@ import {
     IRecurringSchedule,
 } from '../../definition/scheduler';
 import { AppManager } from '../AppManager';
-import { SchedulerBridge } from '../bridges/SchedulerBridge';
 import { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
+import { SchedulerBridge } from '../bridges/SchedulerBridge';
 import { AppAccessorManager } from './';
 
 function createProcessorId(jobId: string, appId: string): string {
