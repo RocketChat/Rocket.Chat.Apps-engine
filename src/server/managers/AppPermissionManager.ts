@@ -8,6 +8,10 @@ export class AppPermissionManager {
      * It returns the declaration of the permission if the app declared, or it returns `undefined`.
      */
     public static hasPermission<P extends IPermission>(appId: string, permission: P): P | undefined {
+        if (process.env.NODE_ENV === 'test') {
+            return permission;
+        }
+
         const grantedPermission = getPermissionsByAppId(appId).find(({ name }) => name === permission.name) as unknown;
 
         if (!grantedPermission) {
