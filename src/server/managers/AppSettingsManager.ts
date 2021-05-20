@@ -36,7 +36,9 @@ export class AppSettingsManager {
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
-        const decoratedSetting = await rl.call(AppMethod.ON_PRE_SETTING_UPDATE, setting, configModify, reader, http);
+        const decoratedSetting = (await rl.call(
+            AppMethod.ON_PRE_SETTING_UPDATE, setting, configModify, reader, http,
+        )) || setting;
 
         if (!rl.getStorageItem().settings[decoratedSetting.id]) {
             throw new Error('No setting found for the App by the provided id.');
