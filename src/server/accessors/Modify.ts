@@ -1,6 +1,7 @@
 import {
     IModify,
     IModifyCreator,
+    IModifyDeleter,
     IModifyExtender,
     IModifyUpdater,
     INotifier,
@@ -9,6 +10,7 @@ import {
 } from '../../definition/accessors';
 import { AppBridges } from '../bridges';
 import { ModifyCreator } from './ModifyCreator';
+import { ModifyDeleter } from './ModifyDeleter';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
 import { Notifier } from './Notifier';
@@ -17,6 +19,7 @@ import { UIController } from './UIController';
 
 export class Modify implements IModify {
     private creator: IModifyCreator;
+    private deleter: IModifyDeleter;
     private updater: IModifyUpdater;
     private extender: IModifyExtender;
     private notifier: INotifier;
@@ -25,6 +28,7 @@ export class Modify implements IModify {
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.creator = new ModifyCreator(this.bridges, this.appId);
+        this.deleter = new ModifyDeleter(this.bridges, this.appId);
         this.updater = new ModifyUpdater(this.bridges, this.appId);
         this.extender = new ModifyExtender(this.bridges, this.appId);
         this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
@@ -34,6 +38,10 @@ export class Modify implements IModify {
 
     public getCreator(): IModifyCreator {
         return this.creator;
+    }
+
+    public getDeleter(): IModifyDeleter {
+        return this.deleter;
     }
 
     public getUpdater(): IModifyUpdater {
