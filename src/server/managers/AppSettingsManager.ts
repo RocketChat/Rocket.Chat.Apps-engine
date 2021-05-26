@@ -29,12 +29,12 @@ export class AppSettingsManager {
 
     public async updateAppSetting(appId: string, setting: ISetting): Promise<void> {
         const rl = this.manager.getOneById(appId);
-        const oldSetting = rl.getStorageItem().settings[setting.id];
 
         if (!rl) {
             throw new Error('No App found by the provided id.');
         }
 
+        const oldSetting = rl.getStorageItem().settings[setting.id];
         if (!oldSetting) {
             throw new Error('No setting found for the App by the provided id.');
         }
