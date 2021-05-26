@@ -16,6 +16,7 @@ import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 import { ISetting } from './settings';
+import { ISettingUpdateContext } from './settings/ISettingUpdateContext';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -206,8 +207,8 @@ export abstract class App implements IApp {
      * @param reader the reader accessor
      * @param http an accessor to the outside world
      */
-    public async onPreSettingUpdate(setting: ISetting, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<ISetting> {
-        return setting;
+    public async onPreSettingUpdate(context: ISettingUpdateContext, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<ISetting> {
+        return context.newSetting;
     }
 
     /**
