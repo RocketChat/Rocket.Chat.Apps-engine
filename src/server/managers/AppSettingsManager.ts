@@ -28,21 +28,22 @@ export class AppSettingsManager {
 
     public async updateAppSetting(appId: string, setting: ISetting): Promise<void> {
         const rl = this.manager.getOneById(appId);
+        const oldSetting = rl.getStorageItem().settings[setting.id];
 
         if (!rl) {
             throw new Error('No App found by the provided id.');
+        }
+
+        if (!oldSetting) {
+            throw new Error('No setting found for the App by the provided id.');
         }
 
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
         const decoratedSetting = (await rl.call(
-            AppMethod.ON_PRE_SETTING_UPDATE, setting, configModify, reader, http,
+            AppMethod.ON_PRE_SETTING_UPDATE, { oldSetting, newSetting: setting }, configModify, reader, http,
         )) || setting;
-
-        if (!rl.getStorageItem().settings[decoratedSetting.id]) {
-            throw new Error('No setting found for the App by the provided id.');
-        }
 
         decoratedSetting.updatedAt = new Date();
         rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;

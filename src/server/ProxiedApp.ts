@@ -94,10 +94,6 @@ export class ProxiedApp implements IApp {
             logger.error(e);
             logger.debug(`'${method}' was unsuccessful.`);
 
-            if (e instanceof Toast.Error) {
-                throw e;
-            }
-
             if (e instanceof AppsEngineException) {
                 throw e;
             }
