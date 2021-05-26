@@ -43,9 +43,8 @@ export class AppSettingsManager {
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
         const decoratedSetting = (await rl.call(
-            AppMethod.ON_PRE_SETTING_UPDATE, {
-                oldSetting, newSetting: setting,
-            } as ISettingUpdateContext, configModify, reader, http,
+            AppMethod.ON_PRE_SETTING_UPDATE,
+            { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http,
         )) || setting;
 
         decoratedSetting.updatedAt = new Date();
