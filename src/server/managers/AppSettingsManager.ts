@@ -1,5 +1,6 @@
 import { AppMethod } from '../../definition/metadata';
 import { ISetting } from '../../definition/settings';
+import { ISettingUpdateContext } from '../../definition/settings/ISettingUpdateContext';
 import { AppManager } from '../AppManager';
 import { Utilities } from '../misc/Utilities';
 
@@ -42,7 +43,9 @@ export class AppSettingsManager {
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
         const decoratedSetting = (await rl.call(
-            AppMethod.ON_PRE_SETTING_UPDATE, { oldSetting, newSetting: setting }, configModify, reader, http,
+            AppMethod.ON_PRE_SETTING_UPDATE, {
+                oldSetting, newSetting: setting,
+            } as ISettingUpdateContext, configModify, reader, http,
         )) || setting;
 
         decoratedSetting.updatedAt = new Date();
