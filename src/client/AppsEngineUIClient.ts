@@ -36,7 +36,7 @@ export class AppsEngineUIClient {
      */
     public init(): void {
         this.listener = ({ data }) => {
-            if (!data.hasOwnProperty(MESSAGE_ID)) {
+            if (!data?.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
 
