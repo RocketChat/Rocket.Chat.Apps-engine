@@ -39,4 +39,8 @@ export class TestsRoomBridge implements IRoomBridge {
     public createDiscussion(room: IRoom, parentMessage: IMessage, reply: string, members: Array<string>, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }
+
+    public delete(roomId: string, appId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
 }
