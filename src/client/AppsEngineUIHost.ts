@@ -25,7 +25,7 @@ export abstract class AppsEngineUIHost {
      */
     public initialize() {
         window.addEventListener('message', async ({ data, source }) => {
-            if (!data.hasOwnProperty(MESSAGE_ID)) {
+            if (!data?.hasOwnProperty(MESSAGE_ID)) {
                 return;
             }
 
@@ -36,8 +36,10 @@ export abstract class AppsEngineUIHost {
             switch (action) {
                 case AppsEngineUIMethods.GET_USER_INFO:
                     this.handleAction(action, id, await this.getClientUserInfo());
+                    break;
                 case AppsEngineUIMethods.GET_ROOM_INFO:
                     this.handleAction(action, id, await this.getClientRoomInfo());
+                    break;
             }
         });
     }
