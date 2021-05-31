@@ -123,9 +123,12 @@ export class AppSettingsManagerTestFixture {
         Expect(this.mockStorage.update).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockApp.setStorageItem).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockBridges.getAppDetailChangesBridge().onAppSettingsChange).toHaveBeenCalledWith('testing', set).exactly(1);
+
+        // Accessors
         Expect(this.mockAccessors.getConfigurationModify).toHaveBeenCalledWith('testing').exactly(1);
         Expect(this.mockAccessors.getReader).toHaveBeenCalledWith('testing').exactly(1);
         Expect(this.mockAccessors.getHttp).toHaveBeenCalledWith('testing').exactly(1);
+
         Expect(this.mockApp.call).toHaveBeenCalledWith(AppMethod.ONSETTINGUPDATED, set,
             this.mockAccessors.getConfigurationModify('testing'),
             this.mockAccessors.getReader('testing'),
