@@ -1,14 +1,15 @@
 import { IHttp, IModify, IPersistence, IRead } from '../../../src/definition/accessors';
 import { ISlashCommand, SlashCommandContext } from '../../../src/definition/slashcommands';
 
-import { IAppCommandBridge } from '../../../src/server/bridges';
+import { CommandBridge } from '../../../src/server/bridges';
 import { TestData } from '../utilities';
 
-export class TestsCommandBridge implements IAppCommandBridge {
+export class TestsCommandBridge extends CommandBridge {
     // tslint:disable-next-line:max-line-length
     public commands: Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>;
 
     constructor() {
+        super();
         // tslint:disable-next-line:max-line-length
         this.commands = new Map<string, (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence) => void>();
         this.commands.set('it-exists', TestData.getSlashCommand('it-exists').executor);

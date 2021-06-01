@@ -4,13 +4,13 @@ import { IRoom, RoomType } from '../../../src/definition/rooms';
 
 import { ILivechatRoom } from '../../../src/definition/livechat/ILivechatRoom';
 import { MessageBuilder, ModifyUpdater, RoomBuilder } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge } from '../../../src/server/bridges';
+import { AppBridges, MessageBridge, RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyUpdaterTestFixture {
     private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
-    private mockMessageBridge: IMessageBridge;
+    private mockRoomBridge: RoomBridge;
+    private mockMessageBridge: MessageBridge;
     private mockAppBridge: AppBridges;
 
     @SetupFixture
@@ -18,22 +18,22 @@ export class ModifyUpdaterTestFixture {
         this.mockAppId = 'testing-app';
 
         this.mockRoomBridge = {
-            getById(roomId: string, appId: string): Promise<IRoom> {
+            doGetById(roomId: string, appId: string): Promise<IRoom> {
                 return Promise.resolve(TestData.getRoom());
             },
-            update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
+            doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-        } as IRoomBridge;
+        } as RoomBridge;
 
         this.mockMessageBridge = {
-            getById(msgId: string, appId: string): Promise<IMessage> {
+            doGetById(msgId: string, appId: string): Promise<IMessage> {
                 return Promise.resolve(TestData.getMessage());
             },
-            update(msg: IMessage, appId: string): Promise<void> {
+            doUpdate(msg: IMessage, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-        } as IMessageBridge;
+        } as MessageBridge;
 
         const rmBridge = this.mockRoomBridge;
         const msgBridge = this.mockMessageBridge;
@@ -73,7 +73,7 @@ export class ModifyUpdaterTestFixture {
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'update');
+        const msgBriSpy = SpyOn(this.mockMessageBridge, 'doUpdate');
         Expect(await mc.finish(msgBd)).not.toBeDefined();
         Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
         msgBriSpy.restore();
@@ -104,7 +104,7 @@ export class ModifyUpdaterTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'update');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
         Expect(await mc.finish(roomBd)).not.toBeDefined();
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();
@@ -127,7 +127,7 @@ export class ModifyUpdaterTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'update');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
         Expect(await mc.finish(roomBd)).not.toBeDefined();
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();

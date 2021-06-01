@@ -54,7 +54,7 @@ export class AppSettingsManager {
 
         rl.setStorageItem(item);
 
-        this.manager.getBridges().getAppDetailChangesBridge().onAppSettingsChange(appId, decoratedSetting);
+        this.manager.getBridges().getAppDetailChangesBridge().doOnAppSettingsChange(appId, decoratedSetting);
 
         await rl.call(AppMethod.ONSETTINGUPDATED, decoratedSetting, configModify, reader, http);
     }

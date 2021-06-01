@@ -13,7 +13,7 @@ export class UploadCreator implements IUploadCreator {
     public async uploadBuffer(buffer: Buffer, descriptor: IUploadDescriptor): Promise<IUpload> {
 
         if (!descriptor.hasOwnProperty('user') && !descriptor.visitorToken) {
-            descriptor.user = await this.bridges.getUserBridge().getAppUser(this.appId);
+            descriptor.user = await this.bridges.getUserBridge().doGetAppUser(this.appId);
         }
 
         const details = {
@@ -24,6 +24,6 @@ export class UploadCreator implements IUploadCreator {
             visitorToken: descriptor.visitorToken,
         } as IUploadDetails;
 
-        return this.bridges.getUploadBridge().createUpload(details, buffer, this.appId);
+        return this.bridges.getUploadBridge().doCreateUpload(details, buffer, this.appId);
     }
 }

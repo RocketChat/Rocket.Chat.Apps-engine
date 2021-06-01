@@ -1,56 +1,56 @@
-import { IAppActivationBridge } from './IAppActivationBridge';
-import { IAppApiBridge } from './IAppApiBridge';
-import { IAppCommandBridge } from './IAppCommandBridge';
-import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
-import { IAppSchedulerBridge } from './IAppSchedulerBridge';
+import { ApiBridge } from './ApiBridge';
+import { AppActivationBridge } from './AppActivationBridge';
+import { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import { CommandBridge } from './CommandBridge';
+import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
+import { HttpBridge } from './HttpBridge';
 import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
-import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
-import { IHttpBridge } from './IHttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { ILivechatBridge } from './ILivechatBridge';
-import { IMessageBridge } from './IMessageBridge';
-import { IPersistenceBridge } from './IPersistenceBridge';
-import { IRoomBridge } from './IRoomBridge';
-import { IServerSettingBridge } from './IServerSettingBridge';
-import { IUiInteractionBridge } from './IUiInteractionBridge';
-import { IUploadBridge } from './IUploadBridge';
-import { IUserBridge } from './IUserBridge';
-export type Bridge = IAppCommandBridge
-            | IAppApiBridge
-            | IAppDetailChangesBridge
-            | IEnvironmentalVariableBridge
-            | IHttpBridge
+import { LivechatBridge } from './LivechatBridge';
+import { MessageBridge } from './MessageBridge';
+import { PersistenceBridge } from './PersistenceBridge';
+import { RoomBridge } from './RoomBridge';
+import { SchedulerBridge } from './SchedulerBridge';
+import { ServerSettingBridge } from './ServerSettingBridge';
+import { UiInteractionBridge } from './UiInteractionBridge';
+import { UploadBridge } from './UploadBridge';
+import { UserBridge } from './UserBridge';
+export type Bridge = CommandBridge
+            | ApiBridge
+            | AppDetailChangesBridge
+            | EnvironmentalVariableBridge
+            | HttpBridge
             | IListenerBridge
-            | ILivechatBridge
-            | IMessageBridge
-            | IPersistenceBridge
-            | IAppActivationBridge
-            | IRoomBridge
+            | LivechatBridge
+            | MessageBridge
+            | PersistenceBridge
+            | AppActivationBridge
+            | RoomBridge
             | IInternalBridge
-            | IServerSettingBridge
-            | IUploadBridge
-            | IUserBridge
-            | IUiInteractionBridge
-            | IAppSchedulerBridge;
+            | ServerSettingBridge
+            | UploadBridge
+            | UserBridge
+            | UiInteractionBridge
+            | SchedulerBridge;
 
 export abstract class AppBridges {
-    public abstract getCommandBridge(): IAppCommandBridge;
-    public abstract getApiBridge(): IAppApiBridge;
-    public abstract getAppDetailChangesBridge(): IAppDetailChangesBridge;
-    public abstract getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge;
-    public abstract getHttpBridge(): IHttpBridge;
+    public abstract getCommandBridge(): CommandBridge;
+    public abstract getApiBridge(): ApiBridge;
+    public abstract getAppDetailChangesBridge(): AppDetailChangesBridge;
+    public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;
+    public abstract getHttpBridge(): HttpBridge;
     public abstract getListenerBridge(): IListenerBridge;
-    public abstract getLivechatBridge(): ILivechatBridge;
-    public abstract getMessageBridge(): IMessageBridge;
-    public abstract getPersistenceBridge(): IPersistenceBridge;
-    public abstract getAppActivationBridge(): IAppActivationBridge;
-    public abstract getRoomBridge(): IRoomBridge;
+    public abstract getLivechatBridge(): LivechatBridge;
+    public abstract getMessageBridge(): MessageBridge;
+    public abstract getPersistenceBridge(): PersistenceBridge;
+    public abstract getAppActivationBridge(): AppActivationBridge;
+    public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
-    public abstract getServerSettingBridge(): IServerSettingBridge;
-    public abstract getUploadBridge(): IUploadBridge;
-    public abstract getUserBridge(): IUserBridge;
-    public abstract getUiInteractionBridge(): IUiInteractionBridge;
-    public abstract getSchedulerBridge(): IAppSchedulerBridge;
+    public abstract getServerSettingBridge(): ServerSettingBridge;
+    public abstract getUploadBridge(): UploadBridge;
+    public abstract getUserBridge(): UserBridge;
+    public abstract getUiInteractionBridge(): UiInteractionBridge;
+    public abstract getSchedulerBridge(): SchedulerBridge;
     public abstract getCloudWorkspaceBridge(): ICloudWorkspaceBridge;
 }

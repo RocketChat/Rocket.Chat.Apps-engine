@@ -2,13 +2,13 @@ import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 import { IMessage } from '../../../src/definition/messages';
 
 import { MessageRead } from '../../../src/server/accessors';
-import { IMessageBridge } from '../../../src/server/bridges';
+import { MessageBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class MessageReadAccessorTestFixture {
     private msg: IMessage;
-    private mockMsgBridgeWithMsg: IMessageBridge;
-    private mockMsgBridgeNoMsg: IMessageBridge;
+    private mockMsgBridgeWithMsg: MessageBridge;
+    private mockMsgBridgeNoMsg: MessageBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -16,16 +16,16 @@ export class MessageReadAccessorTestFixture {
 
         const theMsg = this.msg;
         this.mockMsgBridgeWithMsg = {
-            getById(id, appId): Promise<IMessage> {
+            doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(theMsg);
             },
-        } as IMessageBridge;
+        } as MessageBridge;
 
         this.mockMsgBridgeNoMsg = {
-            getById(id, appId): Promise<IMessage> {
+            doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(undefined);
             },
-        } as IMessageBridge;
+        } as MessageBridge;
     }
 
     @AsyncTest()

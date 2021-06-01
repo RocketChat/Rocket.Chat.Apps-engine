@@ -1,20 +1,20 @@
 import {
+    AppActivationBridge,
     AppBridges,
-    IAppActivationBridge,
-    IAppDetailChangesBridge,
-    IAppSchedulerBridge,
-    IEnvironmentalVariableBridge,
-    IHttpBridge,
+    AppDetailChangesBridge,
+    EnvironmentalVariableBridge,
+    HttpBridge,
     IInternalBridge,
     IListenerBridge,
-    ILivechatBridge,
-    IMessageBridge,
-    IPersistenceBridge,
-    IRoomBridge,
-    IServerSettingBridge,
-    IUiInteractionBridge,
-    IUploadBridge,
-    IUserBridge,
+    LivechatBridge,
+    MessageBridge,
+    PersistenceBridge,
+    RoomBridge,
+    SchedulerBridge,
+    ServerSettingBridge,
+    UiInteractionBridge,
+    UploadBridge,
+    UserBridge,
 } from '../../../src/server/bridges';
 import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
 import { TestsActivationBridge } from './activationBridge';
@@ -83,19 +83,19 @@ export class TestsAppBridges extends AppBridges {
         return this.apiBridge;
     }
 
-    public getServerSettingBridge(): IServerSettingBridge {
+    public getServerSettingBridge(): ServerSettingBridge {
         return this.setsBridge;
     }
 
-    public getEnvironmentalVariableBridge(): IEnvironmentalVariableBridge {
+    public getEnvironmentalVariableBridge(): EnvironmentalVariableBridge {
         return this.envBridge;
     }
 
-    public getAppDetailChangesBridge(): IAppDetailChangesBridge {
+    public getAppDetailChangesBridge(): AppDetailChangesBridge {
         return this.appDetails;
     }
 
-    public getHttpBridge(): IHttpBridge {
+    public getHttpBridge(): HttpBridge {
         return this.httpBridge;
     }
 
@@ -103,19 +103,19 @@ export class TestsAppBridges extends AppBridges {
         throw new Error('Method not implemented.');
     }
 
-    public getMessageBridge(): IMessageBridge {
+    public getMessageBridge(): MessageBridge {
         return this.msgBridge;
     }
 
-    public getPersistenceBridge(): IPersistenceBridge {
+    public getPersistenceBridge(): PersistenceBridge {
         return this.persisBridge;
     }
 
-    public getAppActivationBridge(): IAppActivationBridge {
+    public getAppActivationBridge(): AppActivationBridge {
         return this.rlActBridge;
     }
 
-    public getRoomBridge(): IRoomBridge {
+    public getRoomBridge(): RoomBridge {
         return this.roomBridge;
     }
 
@@ -123,23 +123,23 @@ export class TestsAppBridges extends AppBridges {
         return this.internalBridge;
     }
 
-    public getUserBridge(): IUserBridge {
+    public getUserBridge(): UserBridge {
         return this.userBridge;
     }
 
-    public getLivechatBridge(): ILivechatBridge {
+    public getLivechatBridge(): LivechatBridge {
         return this.livechatBridge;
     }
 
-    public getUploadBridge(): IUploadBridge {
+    public getUploadBridge(): UploadBridge {
         return this.uploadBridge;
     }
 
-    public getUiInteractionBridge(): IUiInteractionBridge {
+    public getUiInteractionBridge(): UiInteractionBridge {
         return this.uiIntegrationBridge;
     }
 
-    public getSchedulerBridge(): IAppSchedulerBridge {
+    public getSchedulerBridge(): SchedulerBridge {
         return this.schedulerBridge;
     }
 

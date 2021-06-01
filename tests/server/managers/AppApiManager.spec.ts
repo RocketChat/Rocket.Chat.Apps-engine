@@ -94,8 +94,8 @@ export class AppApiManagerTestFixture {
         };
 
         this.spies = new Array<RestorableFunctionSpy>();
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'registerApi'));
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'unregisterApis'));
+        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doRegisterApi'));
+        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doUnregisterApis'));
     }
 
     @Teardown
@@ -124,7 +124,7 @@ export class AppApiManagerTestFixture {
         const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
 
         Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrow();
-        Expect(this.mockBridges.getApiBridge().registerApi).toHaveBeenCalledWith(regInfo, 'testing');
+        Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing');
     }
 
     @Test()
@@ -157,7 +157,7 @@ export class AppApiManagerTestFixture {
         Expect(() => ascm.registerApis('non-existant')).not.toThrow();
         Expect(() => ascm.registerApis('testing')).not.toThrow();
         Expect((ascm as any).registerApi as FunctionSpy).toHaveBeenCalledWith('testing', regInfo).exactly(1);
-        Expect(this.mockBridges.getApiBridge().registerApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
+        Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
     }
 
     @Test()
@@ -168,7 +168,7 @@ export class AppApiManagerTestFixture {
 
         Expect(() => ascm.unregisterApis('non-existant')).not.toThrow();
         Expect(() => ascm.unregisterApis('testing')).not.toThrow();
-        Expect(this.mockBridges.getApiBridge().unregisterApis).toHaveBeenCalled().exactly(1);
+        Expect(this.mockBridges.getApiBridge().doUnregisterApis).toHaveBeenCalled().exactly(1);
     }
 
     @AsyncTest()

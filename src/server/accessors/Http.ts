@@ -64,7 +64,7 @@ export class Http implements IHttp {
             request = await handler.executePreHttpRequest(url, request, reader, persis);
         }
 
-        let response = await this.bridges.getHttpBridge().call({
+        let response = await this.bridges.getHttpBridge().doCall({
             appId: this.appId,
             method,
             url,

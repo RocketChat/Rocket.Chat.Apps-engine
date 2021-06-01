@@ -1,9 +1,9 @@
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
-import { IRoomBridge } from '../../../src/server/bridges';
+import { RoomBridge } from '../../../src/server/bridges';
 
-export class TestsRoomBridge implements IRoomBridge {
+export class TestsRoomBridge extends RoomBridge {
     public create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

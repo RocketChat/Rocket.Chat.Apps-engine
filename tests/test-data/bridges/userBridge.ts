@@ -1,8 +1,8 @@
 import { IUser } from '../../../src/definition/users';
 
-import { IUserBridge } from '../../../src/server/bridges';
+import { UserBridge } from '../../../src/server/bridges';
 
-export class TestsUserBridge implements IUserBridge {
+export class TestsUserBridge extends UserBridge {
     public getById(id: string, appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
