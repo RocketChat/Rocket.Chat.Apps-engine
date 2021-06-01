@@ -1,5 +1,6 @@
 import { AppMethod } from '../../definition/metadata';
 import { ISetting } from '../../definition/settings';
+import { ISettingUpdateContext } from '../../definition/settings/ISettingUpdateContext';
 import { AppManager } from '../AppManager';
 import { Utilities } from '../misc/Utilities';
 
@@ -33,23 +34,28 @@ export class AppSettingsManager {
             throw new Error('No App found by the provided id.');
         }
 
-        if (!rl.getStorageItem().settings[setting.id]) {
+        const oldSetting = rl.getStorageItem().settings[setting.id];
+        if (!oldSetting) {
             throw new Error('No setting found for the App by the provided id.');
         }
 
-        setting.updatedAt = new Date();
-        rl.getStorageItem().settings[setting.id] = setting;
+        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
+        const reader = this.manager.getAccessorManager().getReader(rl.getID());
+        const http = this.manager.getAccessorManager().getHttp(rl.getID());
+        const decoratedSetting = (await rl.call(
+            AppMethod.ON_PRE_SETTING_UPDATE,
+            { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http,
+        )) || setting;
+
+        decoratedSetting.updatedAt = new Date();
+        rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;
 
         const item = await this.manager.getStorage().update(rl.getStorageItem());
 
         rl.setStorageItem(item);
 
-        this.manager.getBridges().getAppDetailChangesBridge().doOnAppSettingsChange(appId, setting);
+        this.manager.getBridges().getAppDetailChangesBridge().doOnAppSettingsChange(appId, decoratedSetting);
 
-        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
-        const reader = this.manager.getAccessorManager().getReader(rl.getID());
-        const http = this.manager.getAccessorManager().getHttp(rl.getID());
-
-        rl.call(AppMethod.ONSETTINGUPDATED, setting, configModify, reader, http);
+        await rl.call(AppMethod.ONSETTINGUPDATED, decoratedSetting, configModify, reader, http);
     }
 }
