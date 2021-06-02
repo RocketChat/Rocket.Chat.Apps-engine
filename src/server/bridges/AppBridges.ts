@@ -1,10 +1,10 @@
 import { ApiBridge } from './ApiBridge';
 import { AppActivationBridge } from './AppActivationBridge';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
 import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { HttpBridge } from './HttpBridge';
-import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
