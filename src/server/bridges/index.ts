@@ -2,10 +2,10 @@ import { ApiBridge } from './ApiBridge';
 import { AppActivationBridge } from './AppActivationBridge';
 import { AppBridges } from './AppBridges';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
 import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
-import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
@@ -19,7 +19,7 @@ import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 
 export {
-    ICloudWorkspaceBridge,
+    CloudWorkspaceBridge,
     EnvironmentalVariableBridge,
     HttpBridge,
     IHttpBridgeRequestInfo,

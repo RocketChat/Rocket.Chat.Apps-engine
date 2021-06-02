@@ -1,10 +1,10 @@
 import { ApiBridge } from './ApiBridge';
 import { AppActivationBridge } from './AppActivationBridge';
 import { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
 import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { HttpBridge } from './HttpBridge';
-import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
@@ -52,5 +52,5 @@ export abstract class AppBridges {
     public abstract getUserBridge(): UserBridge;
     public abstract getUiInteractionBridge(): UiInteractionBridge;
     public abstract getSchedulerBridge(): SchedulerBridge;
-    public abstract getCloudWorkspaceBridge(): ICloudWorkspaceBridge;
+    public abstract getCloudWorkspaceBridge(): CloudWorkspaceBridge;
 }

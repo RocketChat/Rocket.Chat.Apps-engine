@@ -16,7 +16,7 @@ import {
     UploadBridge,
     UserBridge,
 } from '../../../src/server/bridges';
-import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
+import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
@@ -143,7 +143,7 @@ export class TestsAppBridges extends AppBridges {
         return this.schedulerBridge;
     }
 
-    public getCloudWorkspaceBridge(): ICloudWorkspaceBridge {
+    public getCloudWorkspaceBridge(): CloudWorkspaceBridge {
         return this.cloudWorkspaceBridge;
     }
 }
