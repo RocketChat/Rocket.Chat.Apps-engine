@@ -18,15 +18,7 @@ export abstract class UserBridge extends BaseBridge {
     }
 
     public async doGetAppUser(appId?: string): Promise<IUser | undefined> {
-        if (this.hasReadPermission(appId)) {
-            return this.getAppUser();
-        }
-    }
-
-    public async doGetActiveUserCount(appId?: string): Promise<number> {
-        if (this.hasReadPermission(appId)) {
-            return this.getActiveUserCount();
-        }
+        return this.getAppUser(appId);
     }
 
     public async doCreate(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string> {

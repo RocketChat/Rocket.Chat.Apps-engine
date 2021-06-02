@@ -1,5 +1,6 @@
 import { AppManager } from '../AppManager';
 import { UserBridge } from '../bridges';
+import { IInternalUserBridge } from '../bridges/IInternalUserBridge';
 import { InvalidLicenseError } from '../errors';
 import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
@@ -64,7 +65,7 @@ export class AppLicenseManager {
             validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
         }
 
-        const currentActiveUsers = await this.userBridge.doGetActiveUserCount();
+        const currentActiveUsers = await (this.userBridge as UserBridge & IInternalUserBridge).getActiveUserCount();
 
         if (license.maxSeats < currentActiveUsers) {
             validationResult.addError('maxSeats', 'License does not accomodate the current amount of active users. Please increase the number of seats');
