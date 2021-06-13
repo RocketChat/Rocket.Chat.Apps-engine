@@ -17,6 +17,10 @@ export class SettingRead implements ISettingRead {
             throw new Error(`Setting "${id}" does not exist.`);
         }
 
-        return set.value || set.packageValue;
+        if (set.value === undefined || set.value === null) {
+            return set.packageValue;
+        }
+
+        return set.value;
     }
 }
