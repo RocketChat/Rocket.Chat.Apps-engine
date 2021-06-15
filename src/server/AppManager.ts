@@ -16,7 +16,7 @@ import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
-import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
+import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -34,7 +34,7 @@ export class AppManager {
 
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
-    private readonly storage: AppStorage;
+    private readonly storage: AppMetadataStorage;
     private readonly logStorage: AppLogStorage;
     private readonly bridges: AppBridges;
     private readonly parser: AppPackageParser;
@@ -51,16 +51,16 @@ export class AppManager {
 
     private isLoaded: boolean;
 
-    constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
+    constructor(rlStorage: AppMetadataStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
         // Singleton style. There can only ever be one AppManager instance
         if (typeof AppManager.Instance !== 'undefined') {
             throw new Error('There is already a valid AppManager instance.');
         }
 
-        if (rlStorage instanceof AppStorage) {
+        if (rlStorage instanceof AppMetadataStorage) {
             this.storage = rlStorage;
         } else {
-            throw new Error('Invalid instance of the AppStorage.');
+            throw new Error('Invalid instance of the AppMetadataStorage.');
         }
 
         if (logStorage instanceof AppLogStorage) {
@@ -93,7 +93,7 @@ export class AppManager {
     }
 
     /** Gets the instance of the storage connector. */
-    public getStorage(): AppStorage {
+    public getStorage(): AppMetadataStorage {
         return this.storage;
     }
 
