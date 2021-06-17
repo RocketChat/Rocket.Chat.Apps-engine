@@ -4,14 +4,17 @@ import { IPermission } from '../../definition/permissions/IPermission';
 import { ISetting } from '../../definition/settings';
 import { IMarketplaceInfo } from '../marketplace';
 
-export interface IAppStorageItem {
+export interface IAppMetadataItem {
     _id?: string;
     id: string;
     createdAt?: Date;
     updatedAt?: Date;
     status: AppStatus;
     info: IAppInfo;
-    zip: string;
+    /**
+     * The path that represents where the source of the app storaged.
+     */
+    path: string;
     compiled: { [s: string]: string };
     languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
