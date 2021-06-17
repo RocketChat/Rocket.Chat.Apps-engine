@@ -4,7 +4,7 @@ import { IPermission } from '../../definition/permissions/IPermission';
 import { ISetting } from '../../definition/settings';
 import { IMarketplaceInfo } from '../marketplace';
 
-export interface IAppMetadataItem {
+export interface IAppStrorageItem {
     _id?: string;
     id: string;
     createdAt?: Date;
