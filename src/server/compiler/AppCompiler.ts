@@ -9,7 +9,7 @@ import { MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
-import { IAppStorageItem } from '../storage/IAppStorageItem';
+import { IAppSourceItem } from '../storage';
 
 export class AppCompiler {
     public normalizeStorageFiles(files: { [key: string]: string }): { [key: string]: string } {
@@ -22,12 +22,12 @@ export class AppCompiler {
         return result;
     }
 
-    public toSandBox(manager: AppManager, storage: IAppStorageItem): ProxiedApp {
+    public toSandBox(manager: AppManager, storage: IAppSourceItem): ProxiedApp {
         const files = this.normalizeStorageFiles(storage.compiled);
 
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
-            throw new Error(`Invalid App package for "${storage.info.name}". ` +
-                `Could not find the classFile (${storage.info.classFile}) file.`);
+            throw new Error(`Invalid App package for "${ storage.info.name }". ` +
+                `Could not find the classFile (${ storage.info.classFile }) file.`);
         }
 
         const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
@@ -38,7 +38,7 @@ export class AppCompiler {
 
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
-            throw new Error(`The App's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
+            throw new Error(`The App's main class for ${ storage.info.name } is not valid ("${ storage.info.classFile }").`);
         }
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
@@ -49,7 +49,7 @@ export class AppCompiler {
             App: result,
             process: {},
             appAccessors,
-        }), { timeout: 1000, filename: `App_${storage.info.nameSlug}.js` });
+        }), { timeout: 1000, filename: `App_${ storage.info.nameSlug }.js` });
 
         if (!(rl instanceof App)) {
             throw new MustExtendAppError();

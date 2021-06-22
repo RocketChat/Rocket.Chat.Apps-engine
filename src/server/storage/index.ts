@@ -1,5 +1,6 @@
 import { AppLogStorage, IAppLogStorageFindOptions } from './AppLogStorage';
 import { AppMetadataStorage } from './AppMetadataStorage';
+import { IAppSourceItem } from './IAppSourceItem';
 import { IAppStorageItem } from './IAppStorageItem';
 
 export {
@@ -7,4 +8,5 @@ export {
     AppMetadataStorage,
     IAppStorageItem,
     IAppLogStorageFindOptions,
+    IAppSourceItem,
 };

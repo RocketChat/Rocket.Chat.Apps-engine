@@ -87,4 +87,12 @@ export class Utilities {
             return fileExport;
         };
     }
+
+    public static omit(object: { [key: string]: any }, keys: Array<string>) {
+        const cloned = this.deepClone(object);
+        for (const key of keys) {
+            delete cloned[key];
+        }
+        return cloned;
+    }
 }
