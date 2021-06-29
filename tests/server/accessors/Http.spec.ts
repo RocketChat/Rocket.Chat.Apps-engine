@@ -2,12 +2,12 @@ import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
 import { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, IPersistence, IRead } from '../../../src/definition/accessors';
 
 import { Http, HttpExtend } from '../../../src/server/accessors';
-import { AppBridges, IHttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
+import { AppBridges, HttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
 import { AppAccessorManager } from '../../../src/server/managers';
 
 export class HttpAccessorTestFixture {
     private mockAppId: string;
-    private mockHttpBridge: IHttpBridge;
+    private mockHttpBridge: HttpBridge;
     private mockAppBridge: AppBridges;
     private mockHttpExtender: IHttpExtend;
     private mockReader: IRead;
@@ -24,14 +24,14 @@ export class HttpAccessorTestFixture {
         this.mockResponse = { statusCode: 200 } as IHttpResponse;
         const res = this.mockResponse;
         this.mockHttpBridge = {
-            call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
+            doCall(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
                 return Promise.resolve(res);
             },
-        } as IHttpBridge;
+        } as HttpBridge;
 
         const httpBridge = this.mockHttpBridge;
         this.mockAppBridge = {
-            getHttpBridge(): IHttpBridge {
+            getHttpBridge(): HttpBridge {
                 return httpBridge;
             },
         } as AppBridges;
@@ -70,7 +70,7 @@ export class HttpAccessorTestFixture {
 
         const http = new Http(this.mockAccessorManager, this.mockAppBridge, this.mockHttpExtender, this.mockAppId);
 
-        SpyOn(this.mockHttpBridge, 'call');
+        SpyOn(this.mockHttpBridge, 'doCall');
         SpyOn(this.mockPreRequestHandler, 'executePreHttpRequest');
         SpyOn(this.mockPreResponseHandler, 'executePreHttpResponse');
 
@@ -106,6 +106,6 @@ export class HttpAccessorTestFixture {
         Expect(await http.post('url-here')).toBeDefined();
         Expect(this.mockPreResponseHandler.executePreHttpResponse).toHaveBeenCalledWith(this.mockResponse, this.mockReader, this.mockPersis);
 
-        Expect(this.mockHttpBridge.call).toHaveBeenCalled().exactly(11);
+        Expect(this.mockHttpBridge.doCall).toHaveBeenCalled().exactly(11);
     }
 }

@@ -5,7 +5,7 @@ export class Crypto {
     constructor(private readonly internalBridge: IInternalBridge) {}
 
     public async decryptLicense(content: string): Promise<object> {
-        const publicKeySetting = await this.internalBridge.getWorkspacePublicKey();
+        const publicKeySetting = await this.internalBridge.doGetWorkspacePublicKey();
 
         if (!publicKeySetting || !publicKeySetting.value) {
             throw new Error('Public key not available, cannot decrypt'); // TODO: add custom error?

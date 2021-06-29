@@ -1,4 +1,4 @@
-import {AppMethod} from '../../definition/metadata';
+import { AppMethod } from '../../definition/metadata';
 import {
     IJobContext,
     IOnetimeSchedule,
@@ -6,7 +6,8 @@ import {
     IRecurringSchedule,
 } from '../../definition/scheduler';
 import { AppManager } from '../AppManager';
-import { IAppSchedulerBridge } from '../bridges/IAppSchedulerBridge';
+import { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
+import { SchedulerBridge } from '../bridges/SchedulerBridge';
 import { AppAccessorManager } from './';
 
 function createProcessorId(jobId: string, appId: string): string {
@@ -14,7 +15,7 @@ function createProcessorId(jobId: string, appId: string): string {
 }
 
 export class AppSchedulerManager {
-    private readonly bridge: IAppSchedulerBridge;
+    private readonly bridge: SchedulerBridge;
     private readonly accessors: AppAccessorManager;
 
     private registeredProcessors: Map<string, {[processorId: string]: IProcessor}>;
@@ -30,7 +31,7 @@ export class AppSchedulerManager {
             this.registeredProcessors.set(appId, {});
         }
 
-        await this.bridge.registerProcessors(processors.map((processor) => {
+        await this.bridge.doRegisterProcessors(processors.map((processor) => {
             const processorId = createProcessorId(processor.id, appId);
 
             this.registeredProcessors.get(appId)[processorId] = processor;
@@ -83,18 +84,22 @@ export class AppSchedulerManager {
     }
 
     public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
-        this.bridge.scheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
+        this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
     public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
-        this.bridge.scheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
+        this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
     public async cancelJob(jobId: string, appId: string): Promise<void> {
-        this.bridge.cancelJob(createProcessorId(jobId, appId), appId);
+        this.bridge.doCancelJob(createProcessorId(jobId, appId), appId);
     }
 
     public async cancelAllJobs(appId: string): Promise<void> {
-        this.bridge.cancelAllJobs(appId);
+        this.bridge.doCancelAllJobs(appId);
+    }
+
+    public async cleanUp(appId: string): Promise<void> {
+        (this.bridge as IInternalSchedulerBridge & SchedulerBridge).cancelAllJobs(appId);
     }
 }

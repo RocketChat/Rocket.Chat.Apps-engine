@@ -1,8 +1,8 @@
 import { IHttpResponse } from '../../../src/definition/accessors';
 
-import { IHttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
+import { HttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
 
-export class TestsHttpBridge implements IHttpBridge {
+export class TestsHttpBridge extends HttpBridge {
     public call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
         throw new Error('Method not implemented.');
     }

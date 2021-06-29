@@ -1,10 +1,10 @@
 import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
-import { IMessageBridge } from '../../../src/server/bridges';
-import { ITypingDescriptor } from '../../../src/server/bridges/IMessageBridge';
+import { MessageBridge } from '../../../src/server/bridges';
+import { ITypingDescriptor } from '../../../src/server/bridges/MessageBridge';
 
-export class TestsMessageBridge implements IMessageBridge {
+export class TestsMessageBridge extends MessageBridge {
     public create(message: IMessage, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

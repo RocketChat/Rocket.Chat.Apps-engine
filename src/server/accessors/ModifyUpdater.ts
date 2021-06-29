@@ -27,13 +27,13 @@ export class ModifyUpdater implements IModifyUpdater {
     }
 
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
-        const msg = await this.bridges.getMessageBridge().getById(messageId, this.appId);
+        const msg = await this.bridges.getMessageBridge().doGetById(messageId, this.appId);
 
         return new MessageBuilder(msg);
     }
 
     public async room(roomId: string, updater: IUser): Promise<IRoomBuilder> {
-        const room = await this.bridges.getRoomBridge().getById(roomId, this.appId);
+        const room = await this.bridges.getRoomBridge().doGetById(roomId, this.appId);
 
         return new RoomBuilder(room);
     }
@@ -60,7 +60,7 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid sender assigned to the message.');
         }
 
-        return this.bridges.getMessageBridge().update(result, this.appId);
+        return this.bridges.getMessageBridge().doUpdate(result, this.appId);
     }
 
     private _finishRoom(builder: IRoomBuilder): Promise<void> {
@@ -88,6 +88,6 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid displayName assigned to the room.');
         }
 
-        return this.bridges.getRoomBridge().update(result, builder.getMembersToBeAddedUsernames(), this.appId);
+        return this.bridges.getRoomBridge().doUpdate(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
 }

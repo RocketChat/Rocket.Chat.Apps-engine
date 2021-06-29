@@ -3,7 +3,7 @@ import { AppMethod } from '../../definition/metadata';
 import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 
 import { AppManager } from '../AppManager';
-import { IAppCommandBridge } from '../bridges';
+import { CommandBridge } from '../bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../errors';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
@@ -19,7 +19,7 @@ import { AppSlashCommand } from './AppSlashCommand';
  * Registered means the command has been provided to the bridged system.
  */
 export class AppSlashCommandManager {
-    private readonly bridge: IAppCommandBridge;
+    private readonly bridge: CommandBridge;
     private readonly accessors: AppAccessorManager;
     /**
      * Variable that contains the commands which have been provided by apps.
@@ -110,7 +110,7 @@ export class AppSlashCommandManager {
         }
 
         // Verify the command doesn't exist already
-        if (this.bridge.doesCommandExist(command.command, appId) || this.isAlreadyDefined(command.command)) {
+        if (this.bridge.doDoesCommandExist(command.command, appId) || this.isAlreadyDefined(command.command)) {
             throw new CommandAlreadyExistsError(command.command);
         }
 
@@ -155,12 +155,12 @@ export class AppSlashCommandManager {
         const hasNotProvidedIt = !this.providedCommands.has(appId) || !this.providedCommands.get(appId).has(command.command);
 
         // They haven't provided (added) it and the bridged system doesn't have it, error out
-        if (hasNotProvidedIt && !this.bridge.doesCommandExist(command.command, appId)) {
+        if (hasNotProvidedIt && !this.bridge.doDoesCommandExist(command.command, appId)) {
             throw new Error('You must first register a command before you can modify it.');
         }
 
         if (hasNotProvidedIt) {
-            this.bridge.modifyCommand(command, appId);
+            this.bridge.doModifyCommand(command, appId);
             const regInfo = new AppSlashCommand(app, command);
             regInfo.isDisabled = false;
             regInfo.isEnabled = true;
@@ -204,11 +204,11 @@ export class AppSlashCommandManager {
             return;
         }
 
-        if (!this.bridge.doesCommandExist(cmd, appId)) {
+        if (!this.bridge.doDoesCommandExist(cmd, appId)) {
             throw new Error(`The command "${cmd}" does not exist to enable.`);
         }
 
-        this.bridge.enableCommand(cmd, appId);
+        this.bridge.doEnableCommand(cmd, appId);
         this.setAsTouched(appId, cmd);
     }
 
@@ -244,11 +244,11 @@ export class AppSlashCommandManager {
             return;
         }
 
-        if (!this.bridge.doesCommandExist(cmd, appId)) {
+        if (!this.bridge.doDoesCommandExist(cmd, appId)) {
             throw new Error(`The command "${cmd}" does not exist to disable.`);
         }
 
-        this.bridge.disableCommand(cmd, appId);
+        this.bridge.doDisableCommand(cmd, appId);
         this.setAsTouched(appId, cmd);
     }
 
@@ -281,7 +281,7 @@ export class AppSlashCommandManager {
     public unregisterCommands(appId: string): void {
         if (this.providedCommands.has(appId)) {
             this.providedCommands.get(appId).forEach((r) => {
-                this.bridge.unregisterCommand(r.slashCommand.command, appId);
+                this.bridge.doUnregisterCommand(r.slashCommand.command, appId);
                 this.touchedCommandsToApps.delete(r.slashCommand.command);
                 const ind = this.appsTouchedCommands.get(appId).indexOf(r.slashCommand.command);
                 this.appsTouchedCommands.get(appId).splice(ind, 1);
@@ -297,7 +297,8 @@ export class AppSlashCommandManager {
             // We call restore to enable the commands provided by the bridged system
             // or unmodify the commands modified by the App
             this.appsTouchedCommands.get(appId).forEach((cmd) => {
-                this.bridge.restoreCommand(cmd, appId);
+                // @NOTE this "restore" method isn't present in the bridge
+                // this.bridge.doRestoreCommand(cmd, appId);
                 this.modifiedCommands.get(cmd).isRegistered = false;
                 this.modifiedCommands.delete(cmd);
                 this.touchedCommandsToApps.delete(cmd);
@@ -453,7 +454,7 @@ export class AppSlashCommandManager {
      * @param info the command's registration information
      */
     private registerCommand(appId: string, info: AppSlashCommand): void {
-        this.bridge.registerCommand(info.slashCommand, appId);
+        this.bridge.doRegisterCommand(info.slashCommand, appId);
         info.hasBeenRegistered();
     }
 }

@@ -3,16 +3,16 @@ import { IMessage } from '../../../src/definition/messages';
 import { IRoom, RoomType } from '../../../src/definition/rooms';
 import { IUser, UserStatusConnection, UserType } from '../../../src/definition/users';
 import { ModifyCreator } from '../../../src/server/accessors';
-import { AppBridges, IMessageBridge, IRoomBridge, IUserBridge } from '../../../src/server/bridges';
+import { AppBridges, MessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyCreatorTestFixture {
     private mockAppId: string;
-    private mockRoomBridge: IRoomBridge;
-    private mockMessageBridge: IMessageBridge;
+    private mockRoomBridge: RoomBridge;
+    private mockMessageBridge: MessageBridge;
     private mockAppBridge: AppBridges;
     private mockAppUser: IUser;
-    private mockUserBridge: IUserBridge;
+    private mockUserBridge: UserBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -35,22 +35,22 @@ export class ModifyCreatorTestFixture {
         };
 
         this.mockRoomBridge = {
-            create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
+            doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
                 return Promise.resolve('roomId');
             },
-        } as IRoomBridge;
+        } as RoomBridge;
 
         this.mockMessageBridge = {
-            create(msg: IMessage, appId: string): Promise<string> {
+            doCreate(msg: IMessage, appId: string): Promise<string> {
                 return Promise.resolve('msgId');
             },
-        } as IMessageBridge;
+        } as MessageBridge;
 
         this.mockUserBridge = {
-            getAppUser: (appId: string) => {
+            doGetAppUser: (appId: string) => {
                 return Promise.resolve(this.mockAppUser);
             },
-        } as IUserBridge;
+        } as UserBridge;
 
         this.mockAppBridge = {
             getMessageBridge: () => this.mockMessageBridge,
@@ -85,7 +85,7 @@ export class ModifyCreatorTestFixture {
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'create');
+        const msgBriSpy = SpyOn(this.mockMessageBridge, 'doCreate');
         Expect(await mc.finish(msgBd)).toBe('msgId');
         Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
         msgBriSpy.restore();
@@ -113,7 +113,7 @@ export class ModifyCreatorTestFixture {
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'create');
+        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doCreate');
         Expect(await mc.finish(roomBd)).toBe('roomId');
         Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
         roomBriSpy.restore();

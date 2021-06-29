@@ -2,7 +2,7 @@ import { HttpStatusCode } from '../../definition/accessors';
 import { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
 import { AppStatusUtils } from '../../definition/AppStatus';
 import { AppManager } from '../AppManager';
-import { IAppApiBridge } from '../bridges';
+import { ApiBridge } from '../bridges';
 import { PathAlreadyExistsError } from '../errors';
 import { AppAccessorManager } from './AppAccessorManager';
 import { AppApi } from './AppApi';
@@ -15,7 +15,7 @@ import { AppApi } from './AppApi';
  * only then will that App's api's be enabled.
  */
 export class AppApiManager {
-    private readonly bridge: IAppApiBridge;
+    private readonly bridge: ApiBridge;
     private readonly accessors: AppAccessorManager;
     // Variable that contains the api's which have been provided by apps.
     // The key of the top map is app id and the key of the inner map is the path
@@ -75,7 +75,7 @@ export class AppApiManager {
             return;
         }
 
-        this.bridge.unregisterApis(appId);
+        this.bridge.doUnregisterApis(appId);
         for (const [, apiapp] of this.providedApis.get(appId).entries()) {
             this.registerApi(appId, apiapp);
         }
@@ -88,7 +88,7 @@ export class AppApiManager {
      */
     public unregisterApis(appId: string): void {
         if (this.providedApis.has(appId)) {
-            this.bridge.unregisterApis(appId);
+            this.bridge.doUnregisterApis(appId);
 
             this.providedApis.delete(appId);
         }
@@ -158,6 +158,6 @@ export class AppApiManager {
      * @param info the api's registration information
      */
     private registerApi(appId: string, api: AppApi): void {
-        this.bridge.registerApi(api, appId);
+        this.bridge.doRegisterApi(api, appId);
     }
 }

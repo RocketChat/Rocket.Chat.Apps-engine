@@ -1,8 +1,8 @@
 import { IUIKitInteractionParam } from '../../../src/definition/accessors/IUIController';
 import { IUser } from '../../../src/definition/users';
-import { IUiInteractionBridge } from '../../../src/server/bridges';
+import { UiInteractionBridge } from '../../../src/server/bridges';
 
-export class TestsUiIntegrationBridge implements IUiInteractionBridge {
+export class TestsUiIntegrationBridge extends UiInteractionBridge {
     public async notifyUser(user: IUser, interaction: IUIKitInteractionParam, appId: string) {
         throw new Error('Method not implemented.');
     }

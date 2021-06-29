@@ -2,7 +2,9 @@ import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
-import { AppBridges } from './bridges';
+import { AppBridges, PersistenceBridge, UserBridge } from './bridges';
+import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge';
+import {IInternalUserBridge} from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
@@ -10,7 +12,6 @@ import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
-import { AppPermissionManager } from './managers/AppPermissionManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
@@ -118,27 +119,7 @@ export class AppManager {
 
     /** Gets the instance of the Bridge manager. */
     public getBridges(): AppBridges {
-        const handler = {
-            get(target: AppBridges, prop, receiver) {
-                const reflection = Reflect.get(target, prop, receiver);
-
-                if (typeof prop === 'symbol' || typeof prop === 'number') {
-                    return reflection;
-                }
-
-                if (typeof (target as any)[prop] === 'function' && /^get.+Bridge$/.test(prop)) {
-                    return (...args: Array<any>) => {
-                        const bridge = reflection.apply(target, args);
-
-                        return AppPermissionManager.proxy(bridge);
-                    };
-                }
-
-                return reflection;
-            },
-        } as ProxyHandler<AppBridges>;
-
-        return new Proxy(this.bridges, handler);
+        return this.bridges;
     }
 
     /** Gets the instance of the listener manager. */
@@ -250,7 +231,7 @@ export class AppManager {
                 await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
-                await this.schedulerManager.cancelAllJobs(app.getID());
+                await this.schedulerManager.cleanUp(app.getID());
             }
         }
 
@@ -272,7 +253,7 @@ export class AppManager {
                 this.externalComponentManager.unregisterExternalComponents(app.getID());
                 this.apiManager.unregisterApis(app.getID());
                 this.accessorManager.purifyApp(app.getID());
-                await this.schedulerManager.cancelAllJobs(app.getID());
+                await this.schedulerManager.cleanUp(app.getID());
             } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
                 await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
@@ -402,7 +383,7 @@ export class AppManager {
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
-        await this.schedulerManager.cancelAllJobs(app.getID());
+        await this.schedulerManager.cleanUp(app.getID());
 
         await app.setStatus(status, silent);
 
@@ -475,7 +456,7 @@ export class AppManager {
         aff.setApp(app);
 
         // Let everyone know that the App has been added
-        await this.bridges.getAppActivationBridge().appAdded(app).catch(() => {
+        await this.bridges.getAppActivationBridge().doAppAdded(app).catch(() => {
             // If an error occurs during this, oh well.
         });
 
@@ -492,6 +473,12 @@ export class AppManager {
 
         return aff;
     }
+    /**
+     * Uninstalls specified app from the server and remove
+     * all database records regarding it
+     *
+     * @returns the instance of the removed ProxiedApp
+     */
     public async remove(id: string, uninstallationParameters: IAppUninstallParameters): Promise<ProxiedApp> {
         const app = this.apps.get(id);
         const { user } = uninstallationParameters;
@@ -499,7 +486,19 @@ export class AppManager {
         await this.uninstallApp(app, user);
 
         // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app).catch();
+        await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
+
+        await this.removeLocal(id);
+
+        return app;
+    }
+
+    /**
+     * Removes the app instance from the local Apps container
+     * and every type of data associated with it
+     */
+    public async removeLocal(id: string): Promise<void> {
+        const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
             await this.disable(id);
@@ -512,16 +511,11 @@ export class AppManager {
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.removeAppUser(app);
-        await this.bridges.getPersistenceBridge().purge(app.getID());
+        await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & PersistenceBridge).purge(app.getID());
         await this.storage.remove(app.getID());
-        await this.schedulerManager.cancelAllJobs(app.getID());
-
-        // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().appRemoved(app);
+        await this.schedulerManager.cleanUp(app.getID());
 
         this.apps.delete(app.getID());
-
-        return app;
     }
 
     public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
@@ -575,7 +569,7 @@ export class AppManager {
         }
 
         // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().appUpdated(app).catch();
+        await this.bridges.getAppActivationBridge().doAppUpdated(app).catch();
 
         // Store it temporarily so we can access it else where
         this.apps.set(app.getID(), app);
@@ -696,7 +690,7 @@ export class AppManager {
     }
 
     /**
-     * Goes through the entire loading up process. WARNING: Do not use. ;)
+     * Goes through the entire loading up process.
      *
      * @param appId the id of the application to load
      */
@@ -796,7 +790,7 @@ export class AppManager {
             this.commandManager.unregisterCommands(storageItem.id);
             this.externalComponentManager.unregisterExternalComponents(storageItem.id);
             this.apiManager.unregisterApis(storageItem.id);
-            await this.schedulerManager.cancelAllJobs(storageItem.id);
+            await this.schedulerManager.cleanUp(storageItem.id);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -874,7 +868,7 @@ export class AppManager {
             this.externalComponentManager.unregisterExternalComponents(app.getID());
             this.apiManager.unregisterApis(app.getID());
             this.listenerManager.lockEssentialEvents(app);
-            await this.schedulerManager.cancelAllJobs(app.getID());
+            await this.schedulerManager.cleanUp(app.getID());
         }
 
         if (saveToDb) {
@@ -888,7 +882,7 @@ export class AppManager {
     }
 
     private async createAppUser(app: ProxiedApp): Promise<string> {
-        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (appUser) {
             return appUser.id;
@@ -904,7 +898,7 @@ export class AppManager {
             isEnabled: true,
         };
 
-        return this.bridges.getUserBridge().create(userData, app.getID(), {
+        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).create(userData, app.getID(), {
             avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
@@ -912,17 +906,17 @@ export class AppManager {
     }
 
     private async removeAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (!appUser) {
             return true;
         }
 
-        return this.bridges.getUserBridge().remove(appUser, app.getID());
+        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).remove(appUser, app.getID());
     }
 
     private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await this.bridges.getUserBridge().getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
 
         if (appUser) {
             return true;

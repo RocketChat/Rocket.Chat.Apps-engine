@@ -1,8 +1,8 @@
 import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
 import { IUser } from '../../../src/definition/users';
-import { ILivechatBridge } from '../../../src/server/bridges/ILivechatBridge';
+import { LivechatBridge } from '../../../src/server/bridges/LivechatBridge';
 
-export class TestLivechatBridge implements ILivechatBridge {
+export class TestLivechatBridge extends LivechatBridge {
     public findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>> {
         throw new Error('Method not implemented.');
     }

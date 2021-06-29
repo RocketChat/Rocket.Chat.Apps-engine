@@ -1,42 +1,42 @@
+import { ApiBridge } from './ApiBridge';
+import { AppActivationBridge } from './AppActivationBridge';
 import { AppBridges } from './AppBridges';
-import { IAppActivationBridge } from './IAppActivationBridge';
-import { IAppApiBridge } from './IAppApiBridge';
-import { IAppCommandBridge } from './IAppCommandBridge';
-import { IAppDetailChangesBridge } from './IAppDetailChangesBridge';
-import { IAppSchedulerBridge } from './IAppSchedulerBridge';
-import { ICloudWorkspaceBridge } from './ICloudWorkspaceBridge';
-import { IEnvironmentalVariableBridge } from './IEnvironmentalVariableBridge';
-import { IHttpBridge, IHttpBridgeRequestInfo } from './IHttpBridge';
+import { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
+import { CommandBridge } from './CommandBridge';
+import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
+import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
 import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
-import { ILivechatBridge } from './ILivechatBridge';
-import { IMessageBridge } from './IMessageBridge';
-import { IPersistenceBridge } from './IPersistenceBridge';
-import { IRoomBridge } from './IRoomBridge';
-import { IServerSettingBridge } from './IServerSettingBridge';
-import { IUiInteractionBridge } from './IUiInteractionBridge';
-import { IUploadBridge } from './IUploadBridge';
-import { IUserBridge } from './IUserBridge';
+import { LivechatBridge } from './LivechatBridge';
+import { MessageBridge } from './MessageBridge';
+import { PersistenceBridge } from './PersistenceBridge';
+import { RoomBridge } from './RoomBridge';
+import { SchedulerBridge } from './SchedulerBridge';
+import { ServerSettingBridge } from './ServerSettingBridge';
+import { UiInteractionBridge } from './UiInteractionBridge';
+import { UploadBridge } from './UploadBridge';
+import { UserBridge } from './UserBridge';
 
 export {
-    ICloudWorkspaceBridge,
-    IEnvironmentalVariableBridge,
-    IHttpBridge,
+    CloudWorkspaceBridge,
+    EnvironmentalVariableBridge,
+    HttpBridge,
     IHttpBridgeRequestInfo,
     IListenerBridge,
-    ILivechatBridge,
-    IMessageBridge,
-    IPersistenceBridge,
-    IAppActivationBridge,
-    IAppDetailChangesBridge,
-    IAppCommandBridge,
-    IAppApiBridge,
-    IRoomBridge,
+    LivechatBridge,
+    MessageBridge,
+    PersistenceBridge,
+    AppActivationBridge,
+    AppDetailChangesBridge,
+    CommandBridge,
+    ApiBridge,
+    RoomBridge,
     IInternalBridge,
-    IServerSettingBridge,
-    IUserBridge,
-    IUploadBridge,
-    IUiInteractionBridge,
-    IAppSchedulerBridge,
+    ServerSettingBridge,
+    UserBridge,
+    UploadBridge,
+    UiInteractionBridge,
+    SchedulerBridge,
     AppBridges,
 };

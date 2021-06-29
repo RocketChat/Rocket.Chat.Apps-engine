@@ -1,6 +1,6 @@
-import { IEnvironmentalVariableBridge } from '../../../src/server/bridges/IEnvironmentalVariableBridge';
+import { EnvironmentalVariableBridge } from '../../../src/server/bridges/EnvironmentalVariableBridge';
 
-export class TestsEnvironmentalVariableBridge implements IEnvironmentalVariableBridge {
+export class TestsEnvironmentalVariableBridge extends EnvironmentalVariableBridge {
     public getValueByName(envVarName: string, appId: string): Promise<string> {
         throw new Error('Method not implemented.');
     }

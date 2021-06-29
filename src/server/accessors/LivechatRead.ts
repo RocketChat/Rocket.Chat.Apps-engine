@@ -2,9 +2,9 @@ import { ILivechatRead } from '../../definition/accessors/ILivechatRead';
 import { IDepartment } from '../../definition/livechat';
 import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { IVisitor } from '../../definition/livechat/IVisitor';
-import { ILivechatBridge } from '../bridges/ILivechatBridge';
+import { LivechatBridge } from '../bridges/LivechatBridge';
 export class LivechatRead implements ILivechatRead {
-    constructor(private readonly livechatBridge: ILivechatBridge, private readonly appId: string) { }
+    constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) { }
 
     /**
      * @deprecated please use the `isOnlineAsync` method instead.
@@ -13,19 +13,19 @@ export class LivechatRead implements ILivechatRead {
     public isOnline(departmentId?: string): boolean {
         console.warn('The `LivechatRead.isOnline` method is deprecated and won\'t behave as intended. Please use `LivechatRead.isOnlineAsync` instead');
 
-        return this.livechatBridge.isOnline(departmentId, this.appId);
+        return this.livechatBridge.doIsOnline(departmentId, this.appId);
     }
 
     public isOnlineAsync(departmentId?: string): Promise<boolean> {
-        return this.livechatBridge.isOnlineAsync(departmentId, this.appId);
+        return this.livechatBridge.doIsOnlineAsync(departmentId, this.appId);
     }
 
     public getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>> {
-        return this.livechatBridge.findDepartmentsEnabledWithAgents(this.appId);
+        return this.livechatBridge.doFindDepartmentsEnabledWithAgents(this.appId);
     }
 
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {
-        return this.livechatBridge.findRooms(visitor, departmentId, this.appId);
+        return this.livechatBridge.doFindRooms(visitor, departmentId, this.appId);
     }
 
     /**
@@ -34,26 +34,26 @@ export class LivechatRead implements ILivechatRead {
      * Prefer the alternative methods to fetch visitors.
      */
     public getLivechatVisitors(query: object): Promise<Array<IVisitor>> {
-        return this.livechatBridge.findVisitors(query, this.appId);
+        return this.livechatBridge.doFindVisitors(query, this.appId);
     }
 
     public getLivechatVisitorById(id: string): Promise<IVisitor | undefined> {
-        return this.livechatBridge.findVisitorById(id, this.appId);
+        return this.livechatBridge.doFindVisitorById(id, this.appId);
     }
 
     public getLivechatVisitorByEmail(email: string): Promise<IVisitor | undefined> {
-        return this.livechatBridge.findVisitorByEmail(email, this.appId);
+        return this.livechatBridge.doFindVisitorByEmail(email, this.appId);
     }
 
     public getLivechatVisitorByToken(token: string): Promise<IVisitor | undefined> {
-        return this.livechatBridge.findVisitorByToken(token, this.appId);
+        return this.livechatBridge.doFindVisitorByToken(token, this.appId);
     }
 
     public getLivechatVisitorByPhoneNumber(phoneNumber: string): Promise<IVisitor | undefined> {
-        return this.livechatBridge.findVisitorByPhoneNumber(phoneNumber, this.appId);
+        return this.livechatBridge.doFindVisitorByPhoneNumber(phoneNumber, this.appId);
     }
 
     public getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined> {
-        return this.livechatBridge.findDepartmentByIdOrName(value, this.appId);
+        return this.livechatBridge.doFindDepartmentByIdOrName(value, this.appId);
     }
 }

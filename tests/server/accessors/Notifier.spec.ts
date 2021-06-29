@@ -4,24 +4,24 @@ import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
 import { MessageBuilder, Notifier } from '../../../src/server/accessors';
-import { IMessageBridge, IUserBridge } from '../../../src/server/bridges';
+import { MessageBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class NotifierAccessorTestFixture {
-    private mockUserBridge: IUserBridge;
-    private mockMsgBridge: IMessageBridge;
+    private mockUserBridge: UserBridge;
+    private mockMsgBridge: MessageBridge;
 
     @SetupFixture
     public setupFixture() {
         this.mockMsgBridge = {
-            notifyUser(user: IUser, msg: IMessage, appId: string): Promise<void> {
+            doNotifyUser(user: IUser, msg: IMessage, appId: string): Promise<void> {
                 // TODO: Spy on these and ensure they're called with the right parameters
                 return Promise.resolve();
             },
-            notifyRoom(room: IRoom, msg: IMessage, appId: string): Promise<void> {
+            doNotifyRoom(room: IRoom, msg: IMessage, appId: string): Promise<void> {
                 return Promise.resolve();
             },
-        } as IMessageBridge;
+        } as MessageBridge;
     }
 
     @AsyncTest()
