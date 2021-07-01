@@ -122,7 +122,7 @@ export abstract class LivechatBridge extends BaseBridge {
     }
 
    public async doFindDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
-       if (this.hasReadPermission(appId, 'livechat-department') && this.hasMultiplePermission(appId)) {
+       if (this.hasReadPermission(appId, 'livechat-department') || this.hasMultiplePermission(appId)) {
            return this.findDepartmentByIdOrName(value, appId);
        }
     }
