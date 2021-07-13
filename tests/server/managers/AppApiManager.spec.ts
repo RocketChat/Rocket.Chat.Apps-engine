@@ -15,7 +15,7 @@ import { AppApi } from '../../../src/server/managers/AppApi';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
-import { TestsAppLogStorage } from '../../test-data/logStorage';
+import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 export class AppApiManagerTestFixture {

@@ -8,7 +8,7 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSettingsManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppStorage, IAppStorageItem } from '../../../src/server/storage';
+import { AppMetadataStorage, IAppStorageItem } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class AppSettingsManagerTestFixture {
@@ -16,7 +16,7 @@ export class AppSettingsManagerTestFixture {
     private mockApp: ProxiedApp;
     private mockBridges: AppBridges;
     private mockAccessors: AppAccessorManager;
-    private mockStorage: AppStorage;
+    private mockStorage: AppMetadataStorage;
     private mockManager: AppManager;
 
     @SetupFixture
@@ -49,7 +49,7 @@ export class AppSettingsManagerTestFixture {
             update(item: IAppStorageItem): Promise<IAppStorageItem> {
                 return Promise.resolve(item);
             },
-        } as AppStorage;
+        } as AppMetadataStorage;
 
         const st = this.mockStorage;
         const bri = this.mockBridges;
@@ -61,7 +61,7 @@ export class AppSettingsManagerTestFixture {
             getBridges(): AppBridges {
                 return bri;
             },
-            getStorage(): AppStorage {
+            getStorage(): AppMetadataStorage {
                 return st;
             },
             getCommandManager(): AppSlashCommandManager {

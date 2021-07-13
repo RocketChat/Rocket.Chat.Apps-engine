@@ -32,10 +32,10 @@ export interface IAppUninstallParameters {
 }
 
 export interface IAppManagerDeps {
-    rlStorage: AppMetadataStorage;
+    metadataStorage: AppMetadataStorage;
     logStorage: AppLogStorage;
-    rlBridges: AppBridges;
-    appSourceStorage: AppSourceStorage;
+    bridges: AppBridges;
+    sourceStorage: AppSourceStorage;
 }
 
 export class AppManager {
@@ -61,34 +61,34 @@ export class AppManager {
 
     private isLoaded: boolean;
 
-    constructor({ rlStorage, logStorage, rlBridges, appSourceStorage }: IAppManagerDeps) {
+    constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
         // Singleton style. There can only ever be one AppManager instance
         if (typeof AppManager.Instance !== 'undefined') {
-            throw new Error('There is already a valid AppManager instance.');
+            throw new Error('There is already a valid AppManager instance');
         }
 
-        if (rlStorage instanceof AppMetadataStorage) {
-            this.appMetadataStorage = rlStorage;
+        if (metadataStorage instanceof AppMetadataStorage) {
+            this.appMetadataStorage = metadataStorage;
         } else {
-            throw new Error('Invalid instance of the AppMetadataStorage.');
+            throw new Error('Invalid instance of the AppMetadataStorage');
         }
 
         if (logStorage instanceof AppLogStorage) {
             this.logStorage = logStorage;
         } else {
-            throw new Error('Invalid instance of the AppLogStorage.');
+            throw new Error('Invalid instance of the AppLogStorage');
         }
 
-        if (rlBridges instanceof AppBridges) {
-            this.bridges = rlBridges;
+        if (bridges instanceof AppBridges) {
+            this.bridges = bridges;
         } else {
             throw new Error('Invalid instance of the AppBridges');
         }
 
-        if (appSourceStorage instanceof AppSourceStorage) {
-            this.appSourceStorage = appSourceStorage;
+        if (sourceStorage instanceof AppSourceStorage) {
+            this.appSourceStorage = sourceStorage;
         } else {
-            throw new Error('Invalid instance of AppSourceStorage');
+            throw new Error('Invalid instance of the AppSourceStorage');
         }
 
         this.apps = new Map<string, ProxiedApp>();

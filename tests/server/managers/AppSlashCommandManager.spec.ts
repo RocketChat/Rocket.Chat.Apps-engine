@@ -6,7 +6,7 @@ import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';
 import { ISlashCommandPreviewItem, SlashCommandContext } from '../../../src/definition/slashcommands';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
-import { TestsAppLogStorage } from '../../test-data/logStorage';
+import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 import { AppManager } from '../../../src/server/AppManager';
