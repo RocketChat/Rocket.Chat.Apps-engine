@@ -31,6 +31,13 @@ export interface IAppUninstallParameters {
     user: IUser;
 }
 
+export interface IAppManagerDeps {
+    rlStorage: AppMetadataStorage;
+    logStorage: AppLogStorage;
+    rlBridges: AppBridges;
+    appSourceStorage: AppSourceStorage;
+}
+
 export class AppManager {
     public static Instance: AppManager;
 
@@ -54,7 +61,7 @@ export class AppManager {
 
     private isLoaded: boolean;
 
-    constructor(rlStorage: AppMetadataStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
+    constructor({ rlStorage, logStorage, rlBridges, appSourceStorage }: IAppManagerDeps) {
         // Singleton style. There can only ever be one AppManager instance
         if (typeof AppManager.Instance !== 'undefined') {
             throw new Error('There is already a valid AppManager instance.');
@@ -76,6 +83,12 @@ export class AppManager {
             this.bridges = rlBridges;
         } else {
             throw new Error('Invalid instance of the AppBridges');
+        }
+
+        if (appSourceStorage instanceof AppSourceStorage) {
+            this.appSourceStorage = appSourceStorage;
+        } else {
+            throw new Error('Invalid instance of AppSourceStorage');
         }
 
         this.apps = new Map<string, ProxiedApp>();
@@ -180,7 +193,7 @@ export class AppManager {
 
         for (const item of items.values()) {
             const aff = new AppFabricationFulfillment();
-            const appPackage = await this.appSourceStorage.retrieveOne(item.path);
+            const appPackage = await this.appSourceStorage.fetch(item);
             const appItem = { ...item, compiled: await this.getCompiledFromAppPackage(appPackage), zip: appPackage.toString('base64') };
 
             try {
@@ -459,6 +472,8 @@ export class AppManager {
             return aff;
         }
 
+        await this.appSourceStorage.store(created, appPackage);
+
         this.apps.set(app.getID(), app);
         aff.setApp(app);
 
@@ -539,7 +554,7 @@ export class AppManager {
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
             permissionsGranted,
-            path: '', // TODO: shiqi.mei append real path here
+            sourcePath: '', // TODO: shiqi.mei append real path here
         });
 
         // Now that is has all been compiled, let's get the
@@ -691,7 +706,7 @@ export class AppManager {
         }
 
         const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
-        const appPackage = await this.appSourceStorage.retrieveOne(item.path);
+        const appPackage = await this.appSourceStorage.fetch(item);
         const appItem = { ...item, compiled: await this.getCompiledFromAppPackage(appPackage), zip: appPackage.toString('base64') };
 
         if (!item) {
