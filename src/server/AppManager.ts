@@ -14,10 +14,9 @@ import {
 } from './managers';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
-import { Utilities } from './misc/Utilities';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
-import { AppLogStorage, AppMetadataStorage, IAppSourceItem, IAppStorageItem } from './storage';
+import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 
 export interface IAppInstallParameters {
@@ -193,14 +192,16 @@ export class AppManager {
 
         for (const item of items.values()) {
             const aff = new AppFabricationFulfillment();
-            const appPackage = await this.appSourceStorage.fetch(item);
-            const appItem = { ...item, compiled: await this.getCompiledFromAppPackage(appPackage), zip: appPackage.toString('base64') };
 
             try {
                 aff.setAppInfo(item.info);
                 aff.setImplementedInterfaces(item.implemented);
 
-                const app = this.getCompiler().toSandBox(this, appItem);
+                const appPackage = await this.appSourceStorage.fetch(item);
+                const unpackageResult = await this.getParser().unpackageApp(appPackage);
+
+                const app = this.getCompiler().toSandBox(this, item, unpackageResult);
+
                 this.apps.set(item.id, app);
                 aff.setApp(app);
             } catch (e) {
@@ -225,6 +226,9 @@ export class AppManager {
                 // Usually if an App is disabled before it's initialized,
                 // then something (such as an error) occured while
                 // it was compiled or something similar.
+                // We still have to validate its license, though
+                await rl.validateLicense();
+
                 continue;
             }
 
@@ -423,56 +427,61 @@ export class AppManager {
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
+        const undoSteps: Array<() => void> = [];
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
 
-        const compiled = {
+        const descriptor: IAppStorageItem = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
-            zip: appPackage.toString('base64'),
-            // tslint:disable-next-line: max-line-length
-            compiled: Object.entries(result.files).reduce(
-                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as { [key: string]: string },
-            ),
-            languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
             permissionsGranted,
+            languageContent: result.languageContent,
         };
+
+        try {
+            descriptor.sourcePath = await this.appSourceStorage.store(descriptor, appPackage);
+
+            undoSteps.push(() => this.appSourceStorage.remove(descriptor));
+        } catch (error) {
+            aff.setStorageError('Failed to store app package');
+
+            return aff;
+        }
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, compiled);
+        const app = this.getCompiler().toSandBox(this, descriptor, result);
 
         // Create a user for the app
         try {
             await this.createAppUser(app);
+
+            undoSteps.push(() => this.removeAppUser(app));
         } catch (err) {
             aff.setAppUserError({
                 username: app.getAppUserUsername(),
                 message: 'Failed to create an app user for this app.',
             });
 
+            await Promise.all(undoSteps.map((undoer) => undoer()));
+
             return aff;
         }
 
-        const appMetadataItem = Utilities.omit(compiled, ['zip', 'compiled']) as IAppStorageItem;
-        // TODO: append `path` to appMetadataItem here
-        const created = await this.appMetadataStorage.create(appMetadataItem);
+        const created = await this.appMetadataStorage.create(descriptor);
 
         if (!created) {
             aff.setStorageError('Failed to create the App, the storage did not return it.');
 
-            await this.removeAppUser(app);
+            await Promise.all(undoSteps.map((undoer) => undoer()));
 
             return aff;
         }
-
-        await this.appSourceStorage.store(created, appPackage);
 
         this.apps.set(app.getID(), app);
         aff.setApp(app);
@@ -542,9 +551,7 @@ export class AppManager {
 
         await this.disable(old.id).catch();
 
-        // TODO: We could show what new interfaces have been added
-
-        const stored = await this.appMetadataStorage.update({
+        const descriptor: IAppStorageItem = {
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
@@ -554,13 +561,21 @@ export class AppManager {
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
             permissionsGranted,
-            sourcePath: '', // TODO: shiqi.mei append real path here
-        });
+        };
+
+        try {
+            descriptor.sourcePath = await this.appSourceStorage.update(descriptor, appPackage);
+        } catch (error) {
+            aff.setStorageError('Failed to storage app package');
+
+            return aff;
+        }
+
+        const stored = await this.appMetadataStorage.update(descriptor);
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const appItem = { ...stored, compiled: await this.getCompiledFromAppPackage(appPackage), zip: appPackage.toString('base64') };
-        const app = this.getCompiler().toSandBox(this, appItem);
+        const app = this.getCompiler().toSandBox(this, descriptor, result);
 
         // Ensure there is an user for the app
         try {
@@ -707,13 +722,13 @@ export class AppManager {
 
         const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
         const appPackage = await this.appSourceStorage.fetch(item);
-        const appItem = { ...item, compiled: await this.getCompiledFromAppPackage(appPackage), zip: appPackage.toString('base64') };
+        const unpackageResult = await this.getParser().unpackageApp(appPackage);
 
         if (!item) {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        this.apps.set(item.id, this.getCompiler().toSandBox(this, appItem));
+        this.apps.set(item.id, this.getCompiler().toSandBox(this, item, unpackageResult));
 
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
@@ -958,15 +973,6 @@ export class AppManager {
         }
 
         return result;
-    }
-
-    private async  getCompiledFromAppPackage(appPackage: Buffer): Promise<IAppSourceItem['compiled']> {
-        const result = await this.getParser().unpackageApp(appPackage);
-
-        return Object.entries(result.files).reduce(
-            (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-            {} as { [key: string]: string },
-        );
     }
 }
 

@@ -9,7 +9,8 @@ import { MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
-import { IAppSourceItem } from '../storage';
+import { IAppStorageItem } from '../storage';
+import { IParseAppPackageResult } from './IParseAppPackageResult';
 
 export class AppCompiler {
     public normalizeStorageFiles(files: { [key: string]: string }): { [key: string]: string } {
@@ -22,9 +23,7 @@ export class AppCompiler {
         return result;
     }
 
-    public toSandBox(manager: AppManager, storage: IAppSourceItem): ProxiedApp {
-        const files = this.normalizeStorageFiles(storage.compiled);
-
+    public toSandBox(manager: AppManager, storage: IAppStorageItem, { files }: IParseAppPackageResult): ProxiedApp {
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
             throw new Error(`Invalid App package for "${ storage.info.name }". ` +
                 `Could not find the classFile (${ storage.info.classFile }) file.`);
