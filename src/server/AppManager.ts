@@ -504,6 +504,12 @@ export class AppManager {
 
         return aff;
     }
+    /**
+     * Uninstalls specified app from the server and remove
+     * all database records regarding it
+     *
+     * @returns the instance of the removed ProxiedApp
+     */
     public async remove(id: string, uninstallationParameters: IAppUninstallParameters): Promise<ProxiedApp> {
         const app = this.apps.get(id);
         const { user } = uninstallationParameters;
@@ -512,6 +518,18 @@ export class AppManager {
 
         // Let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
+
+        await this.removeLocal(id);
+
+        return app;
+    }
+
+    /**
+     * Removes the app instance from the local Apps container
+     * and every type of data associated with it
+     */
+    public async removeLocal(id: string): Promise<void> {
+        const app = this.apps.get(id);
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
             await this.disable(id);
@@ -528,12 +546,7 @@ export class AppManager {
         await this.appMetadataStorage.remove(app.getID());
         await this.schedulerManager.cleanUp(app.getID());
 
-        // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().doAppRemoved(app);
-
         this.apps.delete(app.getID());
-
-        return app;
     }
 
     public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
@@ -711,7 +724,7 @@ export class AppManager {
     }
 
     /**
-     * Goes through the entire loading up process. WARNING: Do not use. ;)
+     * Goes through the entire loading up process.
      *
      * @param appId the id of the application to load
      */
