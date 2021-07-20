@@ -43,7 +43,7 @@ export class AppManager {
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
     private readonly appMetadataStorage: AppMetadataStorage;
-    private readonly appSourceStorage: AppSourceStorage;
+    private appSourceStorage: AppSourceStorage;
     private readonly logStorage: AppLogStorage;
     private readonly bridges: AppBridges;
     private readonly parser: AppPackageParser;
@@ -173,6 +173,10 @@ export class AppManager {
     /** Gets whether the Apps have been loaded or not. */
     public areAppsLoaded(): boolean {
         return this.isLoaded;
+    }
+
+    public setSourceStorage(storage: AppSourceStorage): void {
+        this.appSourceStorage = storage;
     }
 
     /**
