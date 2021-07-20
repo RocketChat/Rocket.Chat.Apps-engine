@@ -544,6 +544,7 @@ export class AppManager {
         await this.removeAppUser(app);
         await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & PersistenceBridge).purge(app.getID());
         await this.appMetadataStorage.remove(app.getID());
+        await this.appSourceStorage.remove(app.getStorageItem()).catch();
         await this.schedulerManager.cleanUp(app.getID());
 
         this.apps.delete(app.getID());
