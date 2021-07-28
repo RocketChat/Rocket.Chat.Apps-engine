@@ -574,6 +574,7 @@ export class AppManager {
             settings: old.settings,
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
+            sourcePath: old.sourcePath,
             permissionsGranted,
         };
 
