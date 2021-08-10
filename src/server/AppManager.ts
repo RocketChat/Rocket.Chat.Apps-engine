@@ -550,7 +550,7 @@ export class AppManager {
         this.apps.delete(app.getID());
     }
 
-    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
+    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>, updateOptions = { loadApp: true }): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -563,13 +563,14 @@ export class AppManager {
             throw new Error('Can not update an App that does not currently exist.');
         }
 
-        await this.disable(old.id).catch();
+        // If there is any error during disabling, it doesn't really matter
+        await this.disable(old.id).catch(() => {});
 
         const descriptor: IAppStorageItem = {
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
-            status: this.apps.get(old.id).getStatus(),
+            status: this.apps.get(old.id)?.getStatus() || old.status,
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
@@ -594,7 +595,7 @@ export class AppManager {
 
         // Ensure there is an user for the app
         try {
-            await this.ensureAppUser(app);
+            await this.createAppUser(app);
         } catch (err) {
             aff.setAppUserError({
                 username: app.getAppUserUsername(),
@@ -604,15 +605,15 @@ export class AppManager {
             return aff;
         }
 
-        // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().doAppUpdated(app).catch();
-
-        // Store it temporarily so we can access it else where
-        this.apps.set(app.getID(), app);
         aff.setApp(app);
 
-        // Start up the app
-        await this.runStartUpProcess(stored, app, false, true);
+        if (updateOptions.loadApp) {
+            await this.bridges.getAppActivationBridge().doAppUpdated(app).catch();
+
+            await this.runStartUpProcess(stored, app, false, true);
+
+            this.apps.set(app.getID(), app);
+        }
 
         return aff;
     }
@@ -951,16 +952,6 @@ export class AppManager {
         }
 
         return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).remove(appUser, app.getID());
-    }
-
-    private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
-
-        if (appUser) {
-            return true;
-        }
-
-        return !!this.createAppUser(app);
     }
 
     private async uninstallApp(app: ProxiedApp, user: IUser): Promise<boolean> {
