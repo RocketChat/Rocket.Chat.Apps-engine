@@ -29,6 +29,7 @@ export class AppCompiler {
                 `Could not find the classFile (${ storage.info.classFile }) file.`);
         }
 
+        const exports = {};
         const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
         const context = vm.createContext({ require: customRequire, exports, process: {}, console });
 
