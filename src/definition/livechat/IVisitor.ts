@@ -4,7 +4,7 @@ import { IVisitorPhone } from './IVisitorPhone';
 export interface IVisitor {
     id?: string;
     token: string;
-    username: string;
+    username?: string;
     updatedAt?: Date;
     name: string;
     department?: string;
