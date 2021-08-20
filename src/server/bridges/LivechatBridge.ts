@@ -5,6 +5,7 @@ import {
     ILivechatTransferData,
     IVisitor,
 } from '../../definition/livechat';
+import { IMessage } from '../../definition/messages';
 import { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
@@ -133,6 +134,12 @@ export abstract class LivechatBridge extends BaseBridge {
        }
     }
 
+    public async do_fetchLivechatRoomMessages(appId: string, roomId: string): Promise<Array<IMessage>> {
+        if (this.hasMultiplePermission(appId)) {
+            return this._fetchLivechatRoomMessages(appId, roomId);
+        }
+    }
+
     public async doSetCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<number> {
         if (this.hasWritePermission(appId, 'livechat-custom-fields')) {
             return this.setCustomFields(data, appId);
@@ -165,6 +172,7 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
     protected abstract findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined>;
     protected abstract findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>>;
+    protected abstract _fetchLivechatRoomMessages(appId: string, roomId: string): Promise<Array<IMessage>>;
 
     protected abstract setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<number>;
 
