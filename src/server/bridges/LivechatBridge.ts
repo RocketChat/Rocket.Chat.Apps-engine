@@ -31,6 +31,12 @@ type LivechatWritePermissions = keyof Pick<
     'livechat-visitor'
 >;
 
+type LivechatMultiplePermissions = keyof Pick<
+    typeof AppPermissions,
+    'livechat-department' |
+    'livechat-message'
+>;
+
 export abstract class LivechatBridge extends BaseBridge {
    public doIsOnline(departmentId?: string, appId?: string): boolean {
        if (this.hasReadPermission(appId, 'livechat-status')) {
@@ -123,19 +129,19 @@ export abstract class LivechatBridge extends BaseBridge {
     }
 
    public async doFindDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
-       if (this.hasReadPermission(appId, 'livechat-department') || this.hasMultiplePermission(appId)) {
+       if (this.hasReadPermission(appId, 'livechat-department') || this.hasMultiplePermission(appId, 'livechat-department')) {
            return this.findDepartmentByIdOrName(value, appId);
        }
     }
 
     public async doFindDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>> {
-       if (this.hasMultiplePermission(appId)) {
+       if (this.hasMultiplePermission(appId, 'livechat-department')) {
            return this.findDepartmentsEnabledWithAgents(appId);
        }
     }
 
     public async do_fetchLivechatRoomMessages(appId: string, roomId: string): Promise<Array<IMessage>> {
-        if (this.hasMultiplePermission(appId)) {
+        if (this.hasMultiplePermission(appId, 'livechat-message')) {
             return this._fetchLivechatRoomMessages(appId, roomId);
         }
     }
@@ -202,14 +208,14 @@ export abstract class LivechatBridge extends BaseBridge {
         return false;
     }
 
-    private hasMultiplePermission(appId: string): boolean {
-        if (AppPermissionManager.hasPermission(appId, AppPermissions['livechat-department'].multiple)) {
+    private hasMultiplePermission(appId: string, scope: LivechatMultiplePermissions): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions[scope].multiple)) {
             return true;
         }
 
         AppPermissionManager.notifyAboutError(new PermissionDeniedError({
             appId,
-            missingPermissions: [AppPermissions['livechat-department'].multiple],
+            missingPermissions: [AppPermissions[scope].multiple],
         }));
 
         return false;
