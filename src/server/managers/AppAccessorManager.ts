@@ -7,6 +7,7 @@ import {
     IModify,
     IPersistence,
     IRead,
+    ITimers,
 } from '../../definition/accessors';
 import {
     ApiExtend,
@@ -33,6 +34,7 @@ import {
     SettingsExtend,
     SlashCommandsExtend,
     SlashCommandsModify,
+    Timers,
     UploadRead,
     UserRead,
 } from '../accessors';
@@ -49,6 +51,7 @@ export class AppAccessorManager {
     private readonly modifiers: Map<string, IModify>;
     private readonly persists: Map<string, IPersistence>;
     private readonly https: Map<string, IHttp>;
+    private readonly timers: Map<string, ITimers>;
 
     constructor(private readonly manager: AppManager) {
         this.bridges = this.manager.getBridges();
@@ -59,6 +62,7 @@ export class AppAccessorManager {
         this.modifiers = new Map<string, IModify>();
         this.persists = new Map<string, IPersistence>();
         this.https = new Map<string, IHttp>();
+        this.timers = new Map<string, Timers>();
     }
 
     /**
@@ -74,6 +78,7 @@ export class AppAccessorManager {
         this.modifiers.delete(appId);
         this.persists.delete(appId);
         this.https.delete(appId);
+        this.timers.delete(appId);
     }
 
     public getConfigurationExtend(appId: string): IConfigurationExtend {
@@ -176,4 +181,12 @@ export class AppAccessorManager {
 
         return this.https.get(appId);
     }
+
+    public getTimers(appId: string): ITimers {
+        if (!this.timers.has(appId)) {
+            this.timers.set(appId, new Timers(this.bridges));
+        }
+        return this.timers.get(appId);
+    }
+
 }

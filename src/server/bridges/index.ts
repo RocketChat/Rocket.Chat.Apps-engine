@@ -14,6 +14,7 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ServerSettingBridge } from './ServerSettingBridge';
+import { TimersBridge } from './TimersBridge';
 import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
@@ -34,6 +35,7 @@ export {
     RoomBridge,
     IInternalBridge,
     ServerSettingBridge,
+    TimersBridge,
     UserBridge,
     UploadBridge,
     UiInteractionBridge,

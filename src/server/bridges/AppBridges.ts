@@ -13,6 +13,7 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ServerSettingBridge } from './ServerSettingBridge';
+import { TimersBridge } from './TimersBridge';
 import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
@@ -48,6 +49,7 @@ export abstract class AppBridges {
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
     public abstract getServerSettingBridge(): ServerSettingBridge;
+    public abstract getTimersBridge(): TimersBridge;
     public abstract getUploadBridge(): UploadBridge;
     public abstract getUserBridge(): UserBridge;
     public abstract getUiInteractionBridge(): UiInteractionBridge;

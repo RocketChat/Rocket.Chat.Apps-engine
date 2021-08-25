@@ -12,6 +12,7 @@ import {
     RoomBridge,
     SchedulerBridge,
     ServerSettingBridge,
+    TimersBridge,
     UiInteractionBridge,
     UploadBridge,
     UserBridge,
@@ -31,6 +32,7 @@ import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
+import { TestsTimersBridge } from './timersBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
@@ -51,6 +53,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly livechatBridge: TestLivechatBridge;
     private readonly uploadBridge: TestUploadBridge;
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
+    private readonly timersBridge: TestsTimersBridge;
     private readonly schedulerBridge: TestSchedulerBridge;
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
 
@@ -71,6 +74,7 @@ export class TestsAppBridges extends AppBridges {
         this.livechatBridge = new TestLivechatBridge();
         this.uploadBridge = new TestUploadBridge();
         this.uiIntegrationBridge = new TestsUiIntegrationBridge();
+        this.timersBridge = new TestsTimersBridge();
         this.schedulerBridge = new TestSchedulerBridge();
         this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
     }
@@ -137,6 +141,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getUiInteractionBridge(): UiInteractionBridge {
         return this.uiIntegrationBridge;
+    }
+
+    public getTimersBridge(): TimersBridge {
+        return this.timersBridge;
     }
 
     public getSchedulerBridge(): SchedulerBridge {
