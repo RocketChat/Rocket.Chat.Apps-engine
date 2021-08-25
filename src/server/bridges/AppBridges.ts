@@ -9,6 +9,7 @@ import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
+import { NetBridge } from './NetBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
@@ -43,6 +44,7 @@ export abstract class AppBridges {
     public abstract getListenerBridge(): IListenerBridge;
     public abstract getLivechatBridge(): LivechatBridge;
     public abstract getMessageBridge(): MessageBridge;
+    public abstract getNetBridge(): NetBridge;
     public abstract getPersistenceBridge(): PersistenceBridge;
     public abstract getAppActivationBridge(): AppActivationBridge;
     public abstract getRoomBridge(): RoomBridge;

@@ -10,6 +10,7 @@ import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
+import { NetBridge } from './NetBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
@@ -26,6 +27,7 @@ export {
     IListenerBridge,
     LivechatBridge,
     MessageBridge,
+    NetBridge,
     PersistenceBridge,
     AppActivationBridge,
     AppDetailChangesBridge,

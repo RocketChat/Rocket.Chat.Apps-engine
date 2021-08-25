@@ -24,6 +24,7 @@ import { IModifyCreator } from './IModifyCreator';
 import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
+import { INet } from './INet';
 import { INotifier } from './INotifier';
 import { IPersistence } from './IPersistence';
 import { IPersistenceRead } from './IPersistenceRead';
@@ -77,6 +78,7 @@ export {
     IModifyDeleter,
     IModifyExtender,
     IModifyUpdater,
+    INet,
     INotifier,
     IPersistence,
     IPersistenceRead,

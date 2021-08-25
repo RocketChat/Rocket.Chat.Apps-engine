@@ -8,6 +8,7 @@ import {
     IListenerBridge,
     LivechatBridge,
     MessageBridge,
+    NetBridge,
     PersistenceBridge,
     RoomBridge,
     SchedulerBridge,
@@ -27,6 +28,7 @@ import { TestsHttpBridge } from './httpBridge';
 import { TestsInternalBridge } from './internalBridge';
 import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
+import { TestsNetBridge } from './netBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
@@ -51,6 +53,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly livechatBridge: TestLivechatBridge;
     private readonly uploadBridge: TestUploadBridge;
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
+    private readonly netBridge: TestsNetBridge;
     private readonly schedulerBridge: TestSchedulerBridge;
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
 
@@ -71,6 +74,7 @@ export class TestsAppBridges extends AppBridges {
         this.livechatBridge = new TestLivechatBridge();
         this.uploadBridge = new TestUploadBridge();
         this.uiIntegrationBridge = new TestsUiIntegrationBridge();
+        this.netBridge = new TestsNetBridge();
         this.schedulerBridge = new TestSchedulerBridge();
         this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
     }
@@ -137,6 +141,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getUiInteractionBridge(): UiInteractionBridge {
         return this.uiIntegrationBridge;
+    }
+
+    public getNetBridge(): NetBridge {
+        return this.netBridge;
     }
 
     public getSchedulerBridge(): SchedulerBridge {
