@@ -447,6 +447,10 @@ export class AppManager {
             languageContent: result.languageContent,
         };
 
+        const placeholder = new ProxiedApp(this, descriptor, null, () => '');
+
+        this.apps.set(result.info.id, placeholder);
+
         try {
             descriptor.sourcePath = await this.appSourceStorage.store(descriptor, appPackage);
 

@@ -1,4 +1,6 @@
+import * as timers from 'timers';
 import * as vm from 'vm';
+
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
@@ -20,7 +22,7 @@ export class ProxiedApp implements IApp {
 
     constructor(private readonly manager: AppManager,
                 private storageItem: IAppStorageItem,
-                private readonly app: App,
+                private readonly app: App | null,
                 private readonly customRequire: (mod: string) => {}) {
         this.previousStatus = storageItem.status;
     }
@@ -51,6 +53,8 @@ export class ProxiedApp implements IApp {
 
     public makeContext(data: object): vm.Context {
         return vm.createContext(Object.assign({}, {
+            ...timers,
+            Buffer,
             require: this.customRequire,
         }, data));
     }

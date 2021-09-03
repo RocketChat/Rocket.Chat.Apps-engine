@@ -26,3 +26,25 @@ export const netModuleHandler = (appId: string): ProxyHandler<typeof net> => ({
         return Reflect.get(target, prop, receiver);
     },
 });
+
+export const moduleHandlerFactory = (module: string) => {
+    return (appId: string): ProxyHandler<typeof net> => ({
+        get(target, prop: string, receiver) {
+            if (netModuleBlockList.includes(prop)) {
+                throw new ForbiddenNativeModuleAccess(module, prop);
+            }
+
+            //
+
+            if (!AppPermissionManager.hasPermission(appId, AppPermissions.networking.default)) {
+                throw new PermissionDeniedError({
+                    appId,
+                    missingPermissions: [AppPermissions.networking.default],
+                    methodName: `${module}.${prop}`,
+                });
+            }
+
+            return Reflect.get(target, prop, receiver);
+        },
+    });
+};
