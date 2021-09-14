@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as timers from 'timers';
 import * as vm from 'vm';
 
 import { App } from '../../definition/App';
@@ -31,7 +30,7 @@ export class AppCompiler {
         }
 
         const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
-        const context = vm.createContext({ require: customRequire, exports, process: {}, console, ...timers, Buffer });
+        const context = Utilities.buildDefaultAppContext({ require: customRequire, exports, process: {}, console });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)]);
         const result = script.runInContext(context);
@@ -43,9 +42,7 @@ export class AppCompiler {
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', vm.createContext({
-            ...timers,
-            Buffer,
+        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', Utilities.buildDefaultAppContext({
             rcLogger: logger,
             info: storage.info,
             App: result,

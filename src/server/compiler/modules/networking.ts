@@ -1,3 +1,5 @@
+import * as http from 'http';
+import * as https from 'https';
 import * as net from 'net';
 
 import { ForbiddenNativeModuleAccess } from '.';
@@ -5,36 +7,22 @@ import { PermissionDeniedError } from '../../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../../managers/AppPermissionManager';
 import { AppPermissions } from '../../permissions/AppPermissions';
 
-const netModuleBlockList = [
+type IHttp = typeof http;
+type IHttps = typeof https;
+type INet = typeof net;
+
+type NetworkingLibs =  IHttp | IHttps | INet;
+
+const networkingModuleBlockList = [
     'createServer', 'Server',
 ];
 
-export const netModuleHandler = (appId: string): ProxyHandler<typeof net> => ({
-    get(target, prop: string, receiver) {
-        if (netModuleBlockList.includes(prop)) {
-            throw new ForbiddenNativeModuleAccess('net', prop);
-        }
-
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.networking.default)) {
-            throw new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.networking.default],
-                methodName: `net.${prop}`,
-            });
-        }
-
-        return Reflect.get(target, prop, receiver);
-    },
-});
-
 export const moduleHandlerFactory = (module: string) => {
-    return (appId: string): ProxyHandler<typeof net> => ({
+    return (appId: string): ProxyHandler<NetworkingLibs> => ({
         get(target, prop: string, receiver) {
-            if (netModuleBlockList.includes(prop)) {
+            if (networkingModuleBlockList.includes(prop)) {
                 throw new ForbiddenNativeModuleAccess(module, prop);
             }
-
-            //
 
             if (!AppPermissionManager.hasPermission(appId, AppPermissions.networking.default)) {
                 throw new PermissionDeniedError({
