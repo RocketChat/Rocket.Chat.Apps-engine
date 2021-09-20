@@ -22,7 +22,7 @@ export class ProxiedApp implements IApp {
 
     constructor(private readonly manager: AppManager,
                 private storageItem: IAppStorageItem,
-                private readonly app: App | null,
+                private readonly app: App,
                 private readonly customRequire: (mod: string) => {}) {
         this.previousStatus = storageItem.status;
     }
