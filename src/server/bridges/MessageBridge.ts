@@ -57,7 +57,6 @@ export abstract class MessageBridge extends BaseBridge {
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {
-            console.log('message read permissions has', appId);
             return true;
         }
 

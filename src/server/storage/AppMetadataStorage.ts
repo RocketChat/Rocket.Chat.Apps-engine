@@ -1,6 +1,6 @@
 import { IAppStorageItem } from './IAppStorageItem';
 
-export abstract class AppStorage {
+export abstract class AppMetadataStorage {
     constructor(private readonly engine: string) { }
 
     public getEngine() {

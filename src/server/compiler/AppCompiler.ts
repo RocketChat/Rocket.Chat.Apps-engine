@@ -9,7 +9,8 @@ import { MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
 import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
-import { IAppStorageItem } from '../storage/IAppStorageItem';
+import { IAppStorageItem } from '../storage';
+import { IParseAppPackageResult } from './IParseAppPackageResult';
 
 export class AppCompiler {
     public normalizeStorageFiles(files: { [key: string]: string }): { [key: string]: string } {
@@ -22,34 +23,33 @@ export class AppCompiler {
         return result;
     }
 
-    public toSandBox(manager: AppManager, storage: IAppStorageItem): ProxiedApp {
-        const files = this.normalizeStorageFiles(storage.compiled);
-
+    public toSandBox(manager: AppManager, storage: IAppStorageItem, { files }: IParseAppPackageResult): ProxiedApp {
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
-            throw new Error(`Invalid App package for "${storage.info.name}". ` +
-                `Could not find the classFile (${storage.info.classFile}) file.`);
+            throw new Error(`Invalid App package for "${ storage.info.name }". ` +
+                `Could not find the classFile (${ storage.info.classFile }) file.`);
         }
 
+        const exports = {};
         const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
-        const context = vm.createContext({ require: customRequire, exports, process: {}, console });
+        const context = Utilities.buildDefaultAppContext({ require: customRequire, exports, process: {}, console });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)]);
         const result = script.runInContext(context);
 
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
-            throw new Error(`The App's main class for ${storage.info.name} is not valid ("${storage.info.classFile}").`);
+            throw new Error(`The App's main class for ${ storage.info.name } is not valid ("${ storage.info.classFile }").`);
         }
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', vm.createContext({
+        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', Utilities.buildDefaultAppContext({
             rcLogger: logger,
             info: storage.info,
             App: result,
             process: {},
             appAccessors,
-        }), { timeout: 1000, filename: `App_${storage.info.nameSlug}.js` });
+        }), { timeout: 1000, filename: `App_${ storage.info.nameSlug }.js` });
 
         if (!(rl instanceof App)) {
             throw new MustExtendAppError();

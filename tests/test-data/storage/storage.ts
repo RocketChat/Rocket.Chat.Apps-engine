@@ -1,7 +1,7 @@
 import * as Datastore from 'nedb';
-import { AppStorage, IAppStorageItem } from '../../src/server/storage';
+import { AppMetadataStorage, IAppStorageItem } from '../../../src/server/storage';
 
-export class TestsAppStorage extends AppStorage {
+export class TestsAppStorage extends AppMetadataStorage {
     private db: Datastore;
 
     constructor() {
