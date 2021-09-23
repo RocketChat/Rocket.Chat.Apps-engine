@@ -31,7 +31,7 @@ export class AppCompiler {
 
         const exports = {};
         const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
-        const context = vm.createContext({ require: customRequire, exports, process: {}, console });
+        const context = Utilities.buildDefaultAppContext({ require: customRequire, exports, process: {}, console });
 
         const script = new vm.Script(files[path.normalize(storage.info.classFile)]);
         const result = script.runInContext(context);
@@ -43,7 +43,7 @@ export class AppCompiler {
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', vm.createContext({
+        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', Utilities.buildDefaultAppContext({
             rcLogger: logger,
             info: storage.info,
             App: result,
