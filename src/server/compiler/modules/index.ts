@@ -11,6 +11,7 @@ export enum AllowedInternalModules {
     https = 'https',
     zlib = 'zlib',
     util = 'util',
+    punycode = 'punycode',
     os = 'os',
 }
 
@@ -37,6 +38,7 @@ const proxyHandlers = {
     https: moduleHandlerFactory('https'),
     zlib: defaultHandler,
     util: defaultHandler,
+    punycode: defaultHandler,
     os: noopHandler,
 };
 
