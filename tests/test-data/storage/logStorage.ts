@@ -1,5 +1,5 @@
-import { AppConsole, ILoggerStorageEntry } from '../../src/server/logging';
-import { AppLogStorage, IAppLogStorageFindOptions } from '../../src/server/storage';
+import { AppConsole, ILoggerStorageEntry } from '../../../src/server/logging';
+import { AppLogStorage, IAppLogStorageFindOptions } from '../../../src/server/storage';
 
 export class TestsAppLogStorage extends AppLogStorage {
     constructor() {

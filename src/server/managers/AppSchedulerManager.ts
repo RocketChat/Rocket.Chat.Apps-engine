@@ -26,12 +26,12 @@ export class AppSchedulerManager {
         this.registeredProcessors = new Map();
     }
 
-    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
+    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void | Array<string>> {
         if (!this.registeredProcessors.get(appId)) {
             this.registeredProcessors.set(appId, {});
         }
 
-        await this.bridge.doRegisterProcessors(processors.map((processor) => {
+        return this.bridge.doRegisterProcessors(processors.map((processor) => {
             const processorId = createProcessorId(processor.id, appId);
 
             this.registeredProcessors.get(appId)[processorId] = processor;
@@ -83,12 +83,12 @@ export class AppSchedulerManager {
         };
     }
 
-    public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
-        this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
+    public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void | string> {
+        return this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
-    public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
-        this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
+    public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void | string> {
+        return this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
     public async cancelJob(jobId: string, appId: string): Promise<void> {

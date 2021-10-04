@@ -1,4 +1,5 @@
 import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
+import { IMessage } from '../../../src/definition/messages';
 import { IUser } from '../../../src/definition/users';
 import { LivechatBridge } from '../../../src/server/bridges/LivechatBridge';
 
@@ -53,6 +54,9 @@ export class TestLivechatBridge extends LivechatBridge {
         throw new Error('Method not implemented');
     }
     public findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
+        throw new Error('Method not implemented');
+    }
+    public _fetchLivechatRoomMessages(appId: string, roomId: string): Promise<Array<IMessage>> {
         throw new Error('Method not implemented');
     }
     public setCustomFields(data: { token: IVisitor['token']; key: string; value: string; overwrite: boolean }, appId: string): Promise<number> {

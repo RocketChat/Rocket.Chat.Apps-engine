@@ -1,5 +1,6 @@
 import cloneDeep = require('lodash.clonedeep');
 import * as path from 'path';
+import * as timers from 'timers';
 import * as vm from 'vm';
 
 import { AllowedInternalModules, requireNativeModule } from '../compiler/modules';
@@ -86,5 +87,22 @@ export class Utilities {
 
             return fileExport;
         };
+    }
+
+    public static buildDefaultAppContext(injectables: unknown): vm.Context {
+        const defaultContextProperties = {
+            ...timers,
+            Buffer,
+        };
+
+        return vm.createContext(Object.assign({}, defaultContextProperties, injectables));
+    }
+
+    public static omit(object: { [key: string]: any }, keys: Array<string>) {
+        const cloned = this.deepClone(object);
+        for (const key of keys) {
+            delete cloned[key];
+        }
+        return cloned;
     }
 }
