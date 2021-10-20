@@ -20,6 +20,11 @@ export class UIActionButtonManager {
   }
 
   public getAllActionButtons() {
-      return this.registeredActionButtons;
+      const buttonList: Array<IUIActionButtonDescriptor> = [];
+
+      // Flatten map to a simple list of all buttons
+      this.registeredActionButtons.forEach((appButtons) => appButtons.forEach((button) => buttonList.push(button)));
+
+      return buttonList;
   }
 }

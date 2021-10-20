@@ -12,6 +12,7 @@ import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
     AppSlashCommandManager,
 } from './managers';
+import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
@@ -57,6 +58,7 @@ export class AppManager {
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
     private readonly schedulerManager: AppSchedulerManager;
+    private readonly uiActionButtonManager: UIActionButtonManager;
 
     private isLoaded: boolean;
 
@@ -102,6 +104,7 @@ export class AppManager {
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
         this.schedulerManager = new AppSchedulerManager(this);
+        this.uiActionButtonManager = new UIActionButtonManager();
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -168,6 +171,10 @@ export class AppManager {
 
     public getSchedulerManager(): AppSchedulerManager {
         return this.schedulerManager;
+    }
+
+    public getUIActionButtonManager(): UIActionButtonManager {
+        return this.uiActionButtonManager;
     }
 
     /** Gets whether the Apps have been loaded or not. */

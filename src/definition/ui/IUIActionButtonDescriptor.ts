@@ -18,4 +18,3 @@ export interface IUIActionButtonDescriptor {
     hasAllRoles?: Array<string>;
   };
 }
-
