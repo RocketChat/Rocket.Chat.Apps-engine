@@ -3,7 +3,7 @@ import { IBlock, IButtonElement, ITextObject } from './blocks';
 export enum UIKitSurfaceType {
     MODAL = 'modal',
     HOME = 'home',
-    CONTEXTUAL_BAR = 'contextual_bar',
+    CONTEXTUAL_BAR = 'contextualBar',
 }
 
 export interface IUIKitSurface {
