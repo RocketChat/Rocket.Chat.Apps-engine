@@ -1,14 +1,15 @@
 import { IBlock, IButtonElement, ITextObject } from './blocks';
 
-export enum UIKitViewType {
+export enum UIKitSurfaceType {
     MODAL = 'modal',
     HOME = 'home',
+    CONTEXTUAL_BAR = 'contextual_bar',
 }
 
-export interface IUIKitView {
+export interface IUIKitSurface {
     appId: string;
     id: string;
-    type: UIKitViewType;
+    type: UIKitSurfaceType;
     title: ITextObject;
     blocks: Array<IBlock>;
     close?: IButtonElement;
@@ -17,3 +18,7 @@ export interface IUIKitView {
     clearOnClose?: boolean;
     notifyOnClose?: boolean;
 }
+
+// Added for backwards compatibility
+export type IUIKitView = IUIKitSurface;
+export import UIKitViewType = UIKitSurfaceType;

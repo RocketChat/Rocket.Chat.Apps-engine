@@ -4,7 +4,7 @@ import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IV
 import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
-import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
@@ -881,7 +881,7 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_SUBMIT: {
-                    const { view } = interactionData.payload as { view: IUIKitView };
+                    const { view } = interactionData.payload as { view: IUIKitSurface };
 
                     return new UIKitViewSubmitInteractionContext({
                         appId,
@@ -893,7 +893,7 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
+                    const { view, isCleared } = interactionData.payload as { view: IUIKitSurface, isCleared: boolean };
 
                     return new UIKitViewCloseInteractionContext({
                         appId,

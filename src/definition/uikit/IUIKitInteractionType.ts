@@ -1,4 +1,4 @@
-import { IUIKitView } from './IUIKitView';
+import { IUIKitSurface } from './IUIKitSurface';
 
 export enum UIKitInteractionType {
     MODAL_OPEN = 'modal.open',
@@ -25,7 +25,7 @@ export interface IUIKitErrorInteraction extends IUIKitInteraction {
 
 export interface IUIKitModalInteraction extends IUIKitInteraction {
     type: UIKitInteractionType.MODAL_OPEN | UIKitInteractionType.MODAL_UPDATE | UIKitInteractionType.MODAL_CLOSE;
-    view: IUIKitView;
+    view: IUIKitSurface;
 }
 
 export interface IUIKitModalResponse extends IUIKitModalInteraction, IUIKitResponse { }

@@ -1,7 +1,7 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
-import { IUIKitView } from './IUIKitView';
+import { IUIKitSurface } from './IUIKitSurface';
 import {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
@@ -26,11 +26,11 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    view: IUIKitView;
+    view: IUIKitSurface;
     triggerId: string;
 }
 
 export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    view: IUIKitView;
+    view: IUIKitSurface;
     isCleared: boolean;
 }

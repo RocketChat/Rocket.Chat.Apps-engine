@@ -1,11 +1,11 @@
 import { Omit } from '../../lib/utils';
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
 import { IUIKitErrorResponse, IUIKitModalResponse, IUIKitResponse, UIKitInteractionType } from './IUIKitInteractionType';
-import { IUIKitView } from './IUIKitView';
+import { IUIKitSurface } from './IUIKitSurface';
 import { IUIKitBaseIncomingInteraction } from './UIKitIncomingInteractionTypes';
 import { formatModalInteraction } from './UIKitInteractionPayloadFormatter';
 
-export type IUIKitModalViewParam = Omit<IUIKitView, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitView, 'id'>>;
+export type IUIKitModalViewParam = Omit<IUIKitSurface, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitSurface, 'id'>>;
 
 export class UIKitInteractionResponder {
     constructor(private readonly baseContext: IUIKitBaseIncomingInteraction) { }
