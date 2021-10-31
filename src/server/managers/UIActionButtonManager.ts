@@ -1,30 +1,52 @@
 import { IUIActionButtonDescriptor } from '../../definition/ui';
+import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+import { AppPermissions } from '../permissions/AppPermissions';
+import { AppPermissionManager } from './AppPermissionManager';
 
 export class UIActionButtonManager {
-  private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
+    private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
 
-  public registerActionButton(appId: string, button: IUIActionButtonDescriptor) {
-    if (!this.registeredActionButtons.has(appId)) {
-      this.registeredActionButtons.set(appId, new Map());
+    public registerActionButton(appId: string, button: IUIActionButtonDescriptor) {
+        if (!this.hasPermission(appId)) {
+            return false;
+        }
+
+        if (!this.registeredActionButtons.has(appId)) {
+            this.registeredActionButtons.set(appId, new Map());
+        }
+
+        this.registeredActionButtons.get(appId).set(button.actionId, button);
+
+        return true;
     }
 
-    this.registeredActionButtons.get(appId).set(button.actionId, button);
-  }
+    public clearAppActionButtons(appId: string) {
+        this.registeredActionButtons.set(appId, new Map());
+    }
 
-  public clearAppActionButtons(appId: string) {
-    this.registeredActionButtons.set(appId, new Map());
-  }
+    public getAppActionButtons(appId: string) {
+        return this.registeredActionButtons.get(appId);
+    }
 
-  public getAppActionButtons(appId: string) {
-      return this.registeredActionButtons.get(appId);
-  }
+    public getAllActionButtons() {
+        const buttonList: Array<IUIActionButtonDescriptor> = [];
 
-  public getAllActionButtons() {
-      const buttonList: Array<IUIActionButtonDescriptor> = [];
+        // Flatten map to a simple list of all buttons
+        this.registeredActionButtons.forEach((appButtons) => appButtons.forEach((button) => buttonList.push(button)));
 
-      // Flatten map to a simple list of all buttons
-      this.registeredActionButtons.forEach((appButtons) => appButtons.forEach((button) => buttonList.push(button)));
+        return buttonList;
+    }
 
-      return buttonList;
-  }
+    private hasPermission(appId: string) {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.ui.registerButtons)) {
+            return true;
+        }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.ui.registerButtons],
+        }));
+
+        return false;
+    }
 }
