@@ -44,7 +44,7 @@ export class UIController implements IUIController {
 
         return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
     }
-    
+
     public updateContextualBarView(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser) {
         const interactionContext = {
             ...context,

@@ -32,7 +32,7 @@ export interface IUIKitModalInteraction extends IUIKitInteraction {
 }
 
 export interface IUIKitContextualBarInteraction extends IUIKitInteraction {
-    type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN | UIKitInteractionType.CONTEXTUAL_BAR_UPDATE | UIKitInteractionType.CONTEXTUAL_BAR_CLOSE; 
+    type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN | UIKitInteractionType.CONTEXTUAL_BAR_UPDATE | UIKitInteractionType.CONTEXTUAL_BAR_CLOSE;
     view: IUIKitSurface;
 }
 

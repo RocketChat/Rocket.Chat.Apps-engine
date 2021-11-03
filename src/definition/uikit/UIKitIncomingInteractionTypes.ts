@@ -3,9 +3,9 @@ import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IUIKitSurface } from './IUIKitSurface';
 import {
+    IUIKitIncomingInteractionContextualBarContainer,
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
-    IUIKitIncomingInteractionContextualBarContainer,
 } from './UIKitIncomingInteractionContainer';
 
 export interface IUIKitBaseIncomingInteraction {
