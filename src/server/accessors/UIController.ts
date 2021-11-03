@@ -1,8 +1,8 @@
 import { IUIController } from '../../definition/accessors';
 import { IUIKitErrorInteractionParam, IUIKitInteractionParam } from '../../definition/accessors/IUIController';
 import { UIKitInteractionType } from '../../definition/uikit';
-import { formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
-import { IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
+import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
+import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, UiInteractionBridge } from '../bridges';
 
@@ -33,6 +33,26 @@ export class UIController implements IUIController {
         };
 
         return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+    }
+
+    public openContextualBarView(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser) {
+        const interactionContext = {
+            ...context,
+            type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
+    }
+    
+    public updateContextualBarView(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser) {
+        const interactionContext = {
+            ...context,
+            type: UIKitInteractionType.CONTEXTUAL_BAR_UPDATE,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
     }
 
     public setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser) {

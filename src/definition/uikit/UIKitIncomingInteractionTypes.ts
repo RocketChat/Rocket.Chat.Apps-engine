@@ -5,6 +5,7 @@ import { IUIKitSurface } from './IUIKitSurface';
 import {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
+    IUIKitIncomingInteractionContextualBarContainer,
 } from './UIKitIncomingInteractionContainer';
 
 export interface IUIKitBaseIncomingInteraction {
@@ -22,7 +23,7 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     actionId: string;
     blockId: string;
     room: IUIKitBaseIncomingInteraction['room'];
-    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionContextualBarContainer | IUIKitIncomingInteractionMessageContainer;
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {
