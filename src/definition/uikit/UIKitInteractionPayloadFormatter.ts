@@ -33,7 +33,7 @@ export function formatContextualBarInteraction(view: IUIKitContextualBarViewPara
         throw new Error(`Invalid type "${ context.type }" for contextual bar interaction`);
     }
 
-    const type = context.type as UIKitInteractionType.CONTEXTUAL_BAR_OPEN | 
+    const type = context.type as UIKitInteractionType.CONTEXTUAL_BAR_OPEN |
         UIKitInteractionType.CONTEXTUAL_BAR_UPDATE |
         UIKitInteractionType.CONTEXTUAL_BAR_CLOSE;
 
