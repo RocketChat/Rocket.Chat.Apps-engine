@@ -1,4 +1,4 @@
-import { IUIActionButtonDescriptor } from '../../definition/ui';
+import { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { AppPermissionManager } from './AppPermissionManager';
@@ -29,10 +29,15 @@ export class UIActionButtonManager {
     }
 
     public getAllActionButtons() {
-        const buttonList: Array<IUIActionButtonDescriptor> = [];
+        const buttonList: Array<IUIActionButton> = [];
 
         // Flatten map to a simple list of all buttons
-        this.registeredActionButtons.forEach((appButtons) => appButtons.forEach((button) => buttonList.push(button)));
+        this.registeredActionButtons.forEach((appButtons, appId) => appButtons
+             .forEach((button) => buttonList.push({
+                 ...button,
+                 appId,
+             })),
+        );
 
         return buttonList;
     }
