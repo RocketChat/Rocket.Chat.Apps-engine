@@ -104,7 +104,7 @@ export class AppManager {
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
         this.schedulerManager = new AppSchedulerManager(this);
-        this.uiActionButtonManager = new UIActionButtonManager();
+        this.uiActionButtonManager = new UIActionButtonManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;

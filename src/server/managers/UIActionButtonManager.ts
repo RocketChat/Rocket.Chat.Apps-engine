@@ -1,10 +1,17 @@
 import { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
+import { AppManager } from '../AppManager';
+import { AppActivationBridge } from '../bridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { AppPermissionManager } from './AppPermissionManager';
 
 export class UIActionButtonManager {
+    private readonly activationBridge: AppActivationBridge;
     private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
+
+    constructor(manager: AppManager) {
+        this.activationBridge = manager.getBridges().getAppActivationBridge();
+    }
 
     public registerActionButton(appId: string, button: IUIActionButtonDescriptor) {
         if (!this.hasPermission(appId)) {
@@ -16,6 +23,8 @@ export class UIActionButtonManager {
         }
 
         this.registeredActionButtons.get(appId).set(button.actionId, button);
+
+        this.activationBridge.doActionsChanged();
 
         return true;
     }
