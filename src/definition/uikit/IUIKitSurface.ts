@@ -18,7 +18,3 @@ export interface IUIKitSurface {
     clearOnClose?: boolean;
     notifyOnClose?: boolean;
 }
-
-// Added for backwards compatibility
-export type IUIKitView = IUIKitSurface;
-export import UIKitViewType = UIKitSurfaceType;
