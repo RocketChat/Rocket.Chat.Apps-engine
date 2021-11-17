@@ -5,15 +5,17 @@ import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInter
 
 import uuid = require('uuid/v1');
 
+function isModalInteraction(type: IUIKitInteraction['type']): type is IUIKitModalInteraction['type'] {
+    return [UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(type);
+}
+
 export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIKitInteraction): IUIKitModalInteraction {
-    if (![UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(context.type)) {
+    if (!isModalInteraction(context.type)) {
         throw new Error(`Invalid type "${ context.type }" for modal interaction`);
     }
 
-    const type = context.type as UIKitInteractionType.MODAL_OPEN | UIKitInteractionType.MODAL_UPDATE | UIKitInteractionType.MODAL_CLOSE;
-
     return {
-        type,
+        type: context.type,
         triggerId: context.triggerId,
         appId: context.appId,
         view: {
@@ -26,19 +28,17 @@ export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIK
     };
 }
 
+function isContextualBarInteraction(type: IUIKitInteraction['type']): type is IUIKitContextualBarInteraction['type'] {
+    return [UIKitInteractionType.CONTEXTUAL_BAR_OPEN, UIKitInteractionType.CONTEXTUAL_BAR_UPDATE, UIKitInteractionType.CONTEXTUAL_BAR_CLOSE].includes(type);
+}
+
 export function formatContextualBarInteraction(view: IUIKitContextualBarViewParam, context: IUIKitInteraction): IUIKitContextualBarInteraction {
-    if (![UIKitInteractionType.CONTEXTUAL_BAR_OPEN,
-        UIKitInteractionType.CONTEXTUAL_BAR_UPDATE,
-        UIKitInteractionType.CONTEXTUAL_BAR_CLOSE].includes(context.type)) {
+    if (!isContextualBarInteraction(context.type)) {
         throw new Error(`Invalid type "${ context.type }" for contextual bar interaction`);
     }
 
-    const type = context.type as UIKitInteractionType.CONTEXTUAL_BAR_OPEN |
-        UIKitInteractionType.CONTEXTUAL_BAR_UPDATE |
-        UIKitInteractionType.CONTEXTUAL_BAR_CLOSE;
-
     return {
-        type,
+        type: context.type,
         triggerId: context.triggerId,
         appId: context.appId,
         view: {
