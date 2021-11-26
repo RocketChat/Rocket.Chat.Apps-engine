@@ -1,5 +1,6 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
+import { UIActionButtonContext } from '../ui';
 import { IUser } from '../users';
 import { IUIKitView } from './IUIKitView';
 import {
@@ -33,4 +34,12 @@ export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingI
 export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingInteraction {
     view: IUIKitView;
     isCleared: boolean;
+}
+
+export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomingInteraction {
+    context: UIActionButtonContext;
+    actionId: string;
+    triggerId: string;
+    room: IRoom;
+    message?: IMessage;
 }
