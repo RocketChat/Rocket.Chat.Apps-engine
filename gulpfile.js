@@ -51,7 +51,7 @@ function ts_definition_module_files() {
 }
 
 function watch() {
-    gulp.watch('src/**/*.ts', compile_ts);
+    gulp.watch('src/**/*.ts', gulp.series(compile_ts));
 }
 
 const compile = gulp.series(clean_generated, compile_ts, update_ts_definition_version, ts_definition_module_files);
