@@ -856,7 +856,8 @@ export class AppListenerManager {
         })(type);
 
         const app = this.manager.getOneById(appId);
-        if (!app.hasMethod(method)) {
+        if (!app?.hasMethod(method)) {
+            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
             return;
         }
 
