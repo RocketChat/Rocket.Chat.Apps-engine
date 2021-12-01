@@ -1,4 +1,5 @@
 import * as vm from 'vm';
+
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
@@ -9,6 +10,7 @@ import { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
+import { Utilities } from './misc/Utilities';
 import { IAppStorageItem } from './storage';
 
 export const ROCKETCHAT_APP_EXECUTION_PREFIX = '$RocketChat_App$';
@@ -50,7 +52,7 @@ export class ProxiedApp implements IApp {
     }
 
     public makeContext(data: object): vm.Context {
-        return vm.createContext(Object.assign({}, {
+        return Utilities.buildDefaultAppContext(Object.assign({}, {
             require: this.customRequire,
         }, data));
     }
@@ -112,7 +114,7 @@ export class ProxiedApp implements IApp {
         await this.call(AppMethod.SETSTATUS, status);
 
         if (!silent) {
-            await this.manager.getBridges().getAppActivationBridge().appStatusChanged(this, status);
+            await this.manager.getBridges().getAppActivationBridge().doAppStatusChanged(this, status);
         }
     }
 

@@ -93,7 +93,7 @@ export class ModifyCreator implements IModifyCreator {
         delete result.id;
 
         if (!result.sender || !result.sender.id) {
-            const appUser = await this.bridges.getUserBridge().getAppUser(this.appId);
+            const appUser = await this.bridges.getUserBridge().doGetAppUser(this.appId);
 
             if (!appUser) {
                 throw new Error('Invalid sender assigned to the message.');
@@ -102,7 +102,7 @@ export class ModifyCreator implements IModifyCreator {
             result.sender = appUser;
         }
 
-        return this.bridges.getMessageBridge().create(result, this.appId);
+        return this.bridges.getMessageBridge().doCreate(result, this.appId);
     }
 
     private _finishLivechatMessage(builder: ILivechatMessageBuilder): Promise<string> {
@@ -119,7 +119,7 @@ export class ModifyCreator implements IModifyCreator {
 
         result.token = result.visitor ? result.visitor.token : result.token;
 
-        return this.bridges.getLivechatBridge().createMessage(result, this.appId);
+        return this.bridges.getLivechatBridge().doCreateMessage(result, this.appId);
     }
 
     private _finishRoom(builder: IRoomBuilder): Promise<string> {
@@ -148,7 +148,7 @@ export class ModifyCreator implements IModifyCreator {
             }
         }
 
-        return this.bridges.getRoomBridge().create(result, builder.getMembersToBeAddedUsernames(), this.appId);
+        return this.bridges.getRoomBridge().doCreate(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
 
     private _finishDiscussion(builder: IDiscussionBuilder): Promise<string> {
@@ -171,7 +171,7 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid parentRoom assigned to the discussion.');
         }
 
-        return this.bridges.getRoomBridge().createDiscussion(
+        return this.bridges.getRoomBridge().doCreateDiscussion(
             room,
             builder.getParentMessage(),
             builder.getReply(),

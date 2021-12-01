@@ -11,8 +11,10 @@ export interface IAppStorageItem {
     updatedAt?: Date;
     status: AppStatus;
     info: IAppInfo;
-    zip: string;
-    compiled: { [s: string]: string };
+    /**
+     * The path that represents where the source of the app storaged.
+     */
+    sourcePath?: string;
     languageContent: { [key: string]: object };
     settings: { [id: string]: ISetting };
     implemented: { [int: string]: boolean };

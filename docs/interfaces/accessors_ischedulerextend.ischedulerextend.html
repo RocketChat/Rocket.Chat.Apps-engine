@@ -95,13 +95,13 @@
 					<a name="registerprocessors" class="tsd-anchor"></a>
 					<h3>register<wbr>Processors</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">register<wbr>Processors<span class="tsd-signature-symbol">(</span>processors<span class="tsd-signature-symbol">: </span><a href="scheduler_iprocessor.iprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">IProcessor</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">register<wbr>Processors<span class="tsd-signature-symbol">(</span>processors<span class="tsd-signature-symbol">: </span><a href="scheduler_iprocessor.iprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">IProcessor</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/0e029e0/src/definition/accessors/ISchedulerExtend.ts#L9">src/definition/accessors/ISchedulerExtend.ts:9</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/ISchedulerExtend.ts#L10">src/definition/accessors/ISchedulerExtend.ts:10</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -118,7 +118,8 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>List of task ids run at startup, or void no startup run is set</p>
 						</li>
 					</ul>
 				</section>

@@ -71,7 +71,7 @@ export interface IRoomBuilder {
      * Adds a user to the room, these are by username until further notice.
      *
      * @param username the user's username to add to the room
-     * @deprecated in favor of `addMemberByUsername`. This method will be removed on version 2.0.0
+     * @deprecated in favor of `addMemberToBeAddedByUsername`. This method will be removed on version 2.0.0
      */
     addUsername(username: string): IRoomBuilder;
 

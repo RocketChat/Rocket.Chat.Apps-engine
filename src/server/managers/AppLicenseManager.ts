@@ -1,5 +1,6 @@
 import { AppManager } from '../AppManager';
-import { IUserBridge } from '../bridges';
+import { UserBridge } from '../bridges';
+import { IInternalUserBridge } from '../bridges/IInternalUserBridge';
 import { InvalidLicenseError } from '../errors';
 import { IMarketplaceInfo } from '../marketplace';
 import { AppLicenseValidationResult } from '../marketplace/license';
@@ -12,7 +13,7 @@ enum LicenseVersion {
 
 export class AppLicenseManager {
     private readonly crypto: Crypto;
-    private readonly userBridge: IUserBridge;
+    private readonly userBridge: UserBridge;
     constructor(private readonly manager: AppManager) {
         this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
         this.userBridge = this.manager.getBridges().getUserBridge();
@@ -64,7 +65,7 @@ export class AppLicenseManager {
             validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
         }
 
-        const currentActiveUsers = await this.userBridge.getActiveUserCount();
+        const currentActiveUsers = await (this.userBridge as UserBridge & IInternalUserBridge).getActiveUserCount();
 
         if (license.maxSeats < currentActiveUsers) {
             validationResult.addError('maxSeats', 'License does not accomodate the current amount of active users. Please increase the number of seats');

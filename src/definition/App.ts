@@ -1,10 +1,14 @@
 import {
     IAppAccessors,
+    IAppInstallationContext,
+    IAppUninstallationContext,
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
     IHttp,
     ILogger,
+    IModify,
+    IPersistence,
     IRead,
 } from './accessors';
 import { AppStatus } from './AppStatus';
@@ -12,6 +16,7 @@ import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
 import { IAppInfo } from './metadata/IAppInfo';
 import { ISetting } from './settings';
+import { ISettingUpdateContext } from './settings/ISettingUpdateContext';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -58,7 +63,7 @@ export abstract class App implements IApp {
      * @return {string} the username of the app user
      *
      * @deprecated This method will be removed in the next major version.
-     * Please use read.getAppUser instead.
+     * Please use read.getUserReader().getAppUser() instead.
      */
     public getAppUserUsername(): string {
         return `${ this.info.nameSlug }.bot`;
@@ -162,6 +167,25 @@ export abstract class App implements IApp {
     }
 
     /**
+     * Method which is called when the App is uninstalled and it is called one single time.
+     *
+     * This method will NOT be called when an App is getting disabled manually, ONLY when
+     * it's being uninstalled from Rocket.Chat.
+     */
+    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
+        return;
+    }
+
+    /**
+     * Method which is called when the App is installed and it is called one single time.
+     *
+     * This method is NOT called when the App is updated.
+     */
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
+        return;
+    }
+
+    /**
      * Method which is called whenever a setting which belongs to this App has been updated
      * by an external system and not this App itself. The setting passed is the newly updated one.
      *
@@ -172,6 +196,19 @@ export abstract class App implements IApp {
      */
     public async onSettingUpdated(setting: ISetting, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<void> {
         return;
+    }
+
+    /**
+     * Method which is called before a setting which belongs to this App is going to be updated
+     * by an external system and not this App itself. The setting passed is the newly updated one.
+     *
+     * @param setting the setting which is going to be updated
+     * @param configurationModify the accessor to modifiy the system
+     * @param reader the reader accessor
+     * @param http an accessor to the outside world
+     */
+    public async onPreSettingUpdate(context: ISettingUpdateContext, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<ISetting> {
+        return context.newSetting;
     }
 
     /**

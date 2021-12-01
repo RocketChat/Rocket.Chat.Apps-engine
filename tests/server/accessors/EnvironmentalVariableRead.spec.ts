@@ -1,24 +1,24 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
 import { EnvironmentalVariableRead } from '../../../src/server/accessors';
-import { IEnvironmentalVariableBridge } from '../../../src/server/bridges';
+import { EnvironmentalVariableBridge } from '../../../src/server/bridges';
 
 export class EnvironmentalVariableReadAccessorTestFixture {
-    private mockEnvVarBridge: IEnvironmentalVariableBridge;
+    private mockEnvVarBridge: EnvironmentalVariableBridge;
 
     @SetupFixture
     public setupFixture() {
         this.mockEnvVarBridge = {
-            getValueByName(name: string, appId: string): Promise<string> {
+            doGetValueByName(name: string, appId: string): Promise<string> {
                 return Promise.resolve('value');
             },
-            isReadable(name: string, appId: string): Promise<boolean> {
+            doIsReadable(name: string, appId: string): Promise<boolean> {
                 return Promise.resolve(true);
             },
-            isSet(name: string, appId: string): Promise<boolean> {
+            doIsSet(name: string, appId: string): Promise<boolean> {
                 return Promise.resolve(false);
             },
-        } as IEnvironmentalVariableBridge;
+        } as EnvironmentalVariableBridge;
     }
 
     @AsyncTest()

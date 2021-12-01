@@ -8,26 +8,29 @@ import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCom
 import { IUser, UserStatusConnection, UserType } from '../../src/definition/users';
 
 import { TestsAppBridges } from './bridges/appBridges';
-import { TestsAppLogStorage } from './logStorage';
-import { TestsAppStorage } from './storage';
+import { TestsAppLogStorage } from './storage/logStorage';
+import { TestsAppStorage } from './storage/storage';
+import { TestSourceStorage } from './storage/TestSourceStorage';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { AppBridges } from '../../src/server/bridges';
-import { AppLogStorage, AppStorage } from '../../src/server/storage';
+import { AppLogStorage, AppMetadataStorage, AppSourceStorage } from '../../src/server/storage';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
     private logStorage: TestsAppLogStorage;
     private bridges: TestsAppBridges;
+    private sourceStorage: TestSourceStorage;
 
     constructor() {
         this.appStorage = new TestsAppStorage();
         this.logStorage = new TestsAppLogStorage();
         this.bridges = new TestsAppBridges();
+        this.sourceStorage = new TestSourceStorage();
     }
 
-    public getAppStorage(): AppStorage {
+    public getAppStorage(): AppMetadataStorage {
         return this.appStorage;
     }
 
@@ -37,6 +40,10 @@ export class TestInfastructureSetup {
 
     public getAppBridges(): AppBridges {
         return this.bridges;
+    }
+
+    public getSourceStorage(): AppSourceStorage {
+        return this.sourceStorage;
     }
 }
 

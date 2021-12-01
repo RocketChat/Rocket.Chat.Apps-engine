@@ -1,7 +1,11 @@
 import { IWorkspaceToken } from '../../../src/definition/cloud/IWorkspaceToken';
-import { ICloudWorkspaceBridge } from '../../../src/server/bridges/ICloudWorkspaceBridge';
+import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 
-export class TestAppCloudWorkspaceBridge implements ICloudWorkspaceBridge {
+export class TestAppCloudWorkspaceBridge extends CloudWorkspaceBridge {
+    constructor() {
+        super();
+    }
+
     public async getWorkspaceToken(scope: string, appId: string): Promise<IWorkspaceToken> {
         return {
             token: 'mock-workspace-token',

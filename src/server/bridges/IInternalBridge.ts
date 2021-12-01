@@ -1,6 +1,6 @@
 import { ISetting } from '../../definition/settings';
 
 export interface IInternalBridge {
-    getUsernamesOfRoomById(roomId: string): Array<string>;
-    getWorkspacePublicKey(): Promise<ISetting>;
+    doGetUsernamesOfRoomById(roomId: string): Array<string>;
+    doGetWorkspacePublicKey(): Promise<ISetting>;
 }

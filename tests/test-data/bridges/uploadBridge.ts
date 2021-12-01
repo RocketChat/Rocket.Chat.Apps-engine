@@ -1,8 +1,8 @@
 import { IUpload } from '../../../src/definition/uploads';
 import { IUploadDetails } from '../../../src/definition/uploads/IUploadDetails';
-import { IUploadBridge } from '../../../src/server/bridges/IUploadBridge';
+import { UploadBridge } from '../../../src/server/bridges/UploadBridge';
 
-export class TestUploadBridge implements IUploadBridge {
+export class TestUploadBridge extends UploadBridge {
     public getById(id: string, appId: string): Promise<IUpload> {
         throw new Error('Method not implemented');
     }

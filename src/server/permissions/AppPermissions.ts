@@ -53,6 +53,7 @@ export const AppPermissions = {
     'livechat-message': {
         read: { name: 'livechat-message.read' },
         write: { name: 'livechat-message.write' },
+        multiple: { name: 'livechat-message.multiple' },
     },
     'livechat-room': {
         read: { name: 'livechat-room.read' },
@@ -61,6 +62,7 @@ export const AppPermissions = {
     'livechat-department': {
         read: { name: 'livechat-department.read' },
         write: { name: 'livechat-department.write' },
+        multiple: { name: 'livechat-department.multiple' },
     },
     'env': {
         read: { name: 'env.read' },

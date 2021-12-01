@@ -3,13 +3,13 @@ import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
 import { RoomRead } from '../../../src/server/accessors';
-import { IRoomBridge } from '../../../src/server/bridges';
+import { RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
     private user: IUser;
-    private mockRoomBridgeWithRoom: IRoomBridge;
+    private mockRoomBridgeWithRoom: RoomBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -19,25 +19,25 @@ export class RoomReadAccessorTestFixture {
         const theRoom = this.room;
         const theUser = this.user;
         this.mockRoomBridgeWithRoom = {
-            getById(id, appId): Promise<IRoom> {
+            doGetById(id, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getByName(name, appId): Promise<IRoom> {
+            doGetByName(name, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getCreatorById(id, appId): Promise<IUser> {
+            doGetCreatorById(id, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getCreatorByName(name, appId): Promise<IUser> {
+            doGetCreatorByName(name, appId): Promise<IUser> {
                 return Promise.resolve(theUser);
             },
-            getDirectByUsernames(usernames, appId): Promise<IRoom> {
+            doGetDirectByUsernames(usernames, appId): Promise<IRoom> {
                 return Promise.resolve(theRoom);
             },
-            getMembers(name, appId): Promise<Array<IUser>> {
+            doGetMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
-        } as IRoomBridge;
+        } as RoomBridge;
     }
 
     @AsyncTest()
