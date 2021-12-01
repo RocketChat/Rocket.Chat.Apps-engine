@@ -902,8 +902,8 @@ export class AppManager {
             } else {
                 status = AppStatus.DISABLED;
                 app.getLogger().warn(
-                    `The App (${ app.getID() }) is disabled by itslef. \n` +
-                    `Check its "onEnable" implementation for the details.`,
+                    `The App (${ app.getID() }) disabled itself when being enabled. \n` +
+                    `Check the "onEnable" implementation for details.`,
                 );
             }
         } catch (e) {
