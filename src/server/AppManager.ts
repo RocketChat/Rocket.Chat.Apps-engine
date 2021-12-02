@@ -888,6 +888,7 @@ export class AppManager {
 
     private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean, silenceStatus = false): Promise<boolean> {
         let enable: boolean;
+        let status = AppStatus.ERROR_DISABLED;
 
         try {
             await app.validateLicense();
@@ -896,10 +897,17 @@ export class AppManager {
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
 
-            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
+            if (enable) {
+                status = isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED;
+            } else {
+                status = AppStatus.DISABLED;
+                app.getLogger().warn(
+                    `The App (${ app.getID() }) disabled itself when being enabled. \n` +
+                    `Check the "onEnable" implementation for details.`,
+                );
+            }
         } catch (e) {
             enable = false;
-            let status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -910,7 +918,6 @@ export class AppManager {
             }
 
             console.error(e);
-            await app.setStatus(status, silenceStatus);
         }
 
         if (enable) {
@@ -930,6 +937,7 @@ export class AppManager {
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
+        await app.setStatus(status, silenceStatus);
         return enable;
     }
 
