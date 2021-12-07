@@ -5,7 +5,7 @@ import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
 import { IApp } from '../definition/IApp';
-import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
+import { AppMethod, IAppAuthorInfo, IAppInfo, IEventPriorityFunction } from '../definition/metadata';
 import { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { AppConsole } from './logging';
@@ -49,6 +49,14 @@ export class ProxiedApp implements IApp {
 
     public hasMethod(method: AppMethod): boolean {
         return typeof (this.app as any)[method] === 'function';
+    }
+
+    public getMethod(method: AppMethod): IEventPriorityFunction | undefined {
+        if (!this.hasMethod(method)) {
+            return undefined;
+        }
+
+        return (this.app as any)[method];
     }
 
     public makeContext(data: object): vm.Context {

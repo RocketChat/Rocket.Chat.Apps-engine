@@ -4,6 +4,7 @@ import { IAppInfo } from './IAppInfo';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from './RocketChatAssociations';
 
 export * from './AppInterface';
+export * from './EventPriority';
 
 export {
     AppMethod,

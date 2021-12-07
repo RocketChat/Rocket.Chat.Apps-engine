@@ -2,7 +2,7 @@ import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
 import { IMessage } from '../../definition/messages';
-import { AppInterface, AppMethod } from '../../definition/metadata';
+import { AppInterface, AppMethod, EventPriority } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
@@ -46,9 +46,14 @@ type EventReturn = (
     ILivechatRoom
 );
 
+interface IEventListenerWithPriority {
+    priority: EventPriority;
+    appId: string;
+}
+
 export class AppListenerManager {
     private am: AppAccessorManager;
-    private listeners: Map<string, Array<string>>;
+    private listeners: Map<string, Array<IEventListenerWithPriority>>;
     /**
      * Locked events are those who are listed in an app's
      * "essentials" list but the app is disabled.
@@ -59,11 +64,11 @@ export class AppListenerManager {
 
     constructor(private readonly manager: AppManager) {
         this.am = manager.getAccessorManager();
-        this.listeners = new Map<string, Array<string>>();
+        this.listeners = new Map<string, Array<IEventListenerWithPriority>>();
         this.lockedEvents = new Map<string, Set<string>>();
 
         Object.keys(AppInterface).forEach((intt) => {
-            this.listeners.set(intt, new Array<string>());
+            this.listeners.set(intt, new Array<IEventListenerWithPriority>());
             this.lockedEvents.set(intt, new Set<string>());
         });
     }
@@ -76,14 +81,24 @@ export class AppListenerManager {
                 return;
             }
 
-            this.listeners.get(event).push(app.getID());
+            const priority = this.determineListenerPriority(app, event as AppInterface);
+
+            this.listeners.get(event).push({ priority, appId: app.getID() });
         });
+
+        // sort the event listeners by the priority they have set
+        const entries = this.listeners.entries();
+        for (const [int, listeners] of entries) {
+            const sorted = listeners.sort((a, b) => a.priority - b.priority);
+
+            this.listeners.set(int, sorted);
+        }
     }
 
     public unregisterListeners(app: ProxiedApp): void {
         this.listeners.forEach((apps, int) => {
-            if (apps.includes(app.getID())) {
-                const where = apps.indexOf(app.getID());
+            const where = apps.findIndex((v) => v.appId === app.getID());
+            if (where > -1) {
                 this.listeners.get(int).splice(where, 1);
             }
         });
@@ -124,8 +139,8 @@ export class AppListenerManager {
     public getListeners(int: AppInterface): Array<ProxiedApp> {
         const results = new Array<ProxiedApp>();
 
-        for (const appId of this.listeners.get(int)) {
-            results.push(this.manager.getOneById(appId));
+        for (const value of this.listeners.get(int)) {
+            results.push(this.manager.getOneById(value.appId));
         }
 
         return results;
@@ -230,29 +245,83 @@ export class AppListenerManager {
         }
     }
 
+    private determineListenerPriority(app: ProxiedApp, int: AppInterface): EventPriority {
+        let method: AppMethod;
+
+        switch (int) {
+            // Messages
+            case AppInterface.IPreMessageSentPrevent:
+                method = AppMethod.EXECUTEPREMESSAGESENTPREVENT;
+                break;
+            case AppInterface.IPreMessageSentModify:
+                method = AppMethod.EXECUTEPREMESSAGESENTMODIFY;
+                break;
+            case AppInterface.IPreMessageDeletePrevent:
+                method = AppMethod.EXECUTEPREMESSAGEDELETEPREVENT;
+                break;
+            case AppInterface.IPreMessageUpdatedPrevent:
+                method = AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT;
+                break;
+            case AppInterface.IPreMessageUpdatedModify:
+                method = AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY;
+                break;
+            // Rooms
+            case AppInterface.IPreRoomCreatePrevent:
+                method = AppMethod.EXECUTEPREROOMCREATEPREVENT;
+                break;
+            case AppInterface.IPreRoomCreateModify:
+                method = AppMethod.EXECUTEPREROOMCREATEMODIFY;
+                break;
+            case AppInterface.IPreRoomDeletePrevent:
+                method = AppMethod.EXECUTEPREROOMDELETEPREVENT;
+                break;
+            // FileUpload
+            case AppInterface.IPreFileUpload:
+                method = AppMethod.EXECUTE_PRE_FILE_UPLOAD;
+                break;
+            default:
+                return EventPriority.NORMAL;
+        }
+
+        if (!app.hasMethod(method)) {
+            return EventPriority.NORMAL;
+        }
+
+        const fun = app.getMethod(method);
+        if (!fun) {
+            return EventPriority.NORMAL;
+        }
+
+        if (typeof fun.priority === 'undefined') {
+            return EventPriority.NORMAL;
+        }
+
+        return fun.priority;
+    }
+
     // Messages
     private async executePreMessageSentPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTPREVENT)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTPREVENT)) {
                 prevented = await app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as boolean;
 
                 if (prevented) {
@@ -268,15 +337,15 @@ export class AppListenerManager {
         const msg = data;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTEXTEND)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -284,9 +353,9 @@ export class AppListenerManager {
                 await app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND,
                     cfMsg,
                     new MessageExtender(msg), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -298,15 +367,15 @@ export class AppListenerManager {
         let msg = data;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageSentModify)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageSentModify)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTMODIFY)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -314,9 +383,9 @@ export class AppListenerManager {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
                     cfMsg,
                     new MessageBuilder(msg),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as IMessage;
             }
         }
@@ -327,25 +396,25 @@ export class AppListenerManager {
     private async executePostMessageSent(data: IMessage): Promise<void> {
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostMessageSent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGESENT)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGESENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENT)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGESENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
@@ -355,24 +424,24 @@ export class AppListenerManager {
         let prevented = false;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageDeletePrevent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageDeletePrevent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEDELETEPREVENT)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT)) {
                 prevented = await app.call(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as boolean;
 
                 if (prevented) {
@@ -387,25 +456,25 @@ export class AppListenerManager {
     private async executePostMessageDelete(data: IMessage): Promise<void> {
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostMessageDeleted)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
@@ -415,24 +484,24 @@ export class AppListenerManager {
         let prevented = false;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT)) {
                 prevented = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as boolean;
 
                 if (prevented) {
@@ -448,15 +517,15 @@ export class AppListenerManager {
         const msg = data;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -464,9 +533,9 @@ export class AppListenerManager {
                 await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND,
                     cfMsg,
                     new MessageExtender(msg), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -478,15 +547,15 @@ export class AppListenerManager {
         let msg = data;
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY)) {
                 continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -494,9 +563,9 @@ export class AppListenerManager {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
                     cfMsg,
                     new MessageBuilder(msg),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as IMessage;
             }
         }
@@ -507,25 +576,25 @@ export class AppListenerManager {
     private async executePostMessageUpdated(data: IMessage): Promise<void> {
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostMessageUpdated)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEUPDATED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEUPDATED)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED,
                     cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
@@ -536,24 +605,24 @@ export class AppListenerManager {
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEPREVENT)) {
                 continueOn = await app.call(AppMethod.CHECKPREROOMCREATEPREVENT,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEPREVENT)) {
                 prevented = await app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as boolean;
 
                 if (prevented) {
@@ -569,15 +638,15 @@ export class AppListenerManager {
         const room = data;
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEEXTEND)) {
                 continueOn = await app.call(AppMethod.CHECKPREROOMCREATEEXTEND,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -585,9 +654,9 @@ export class AppListenerManager {
                 await app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND,
                     cfRoom,
                     new RoomExtender(room), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -599,15 +668,15 @@ export class AppListenerManager {
         let room = data;
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEMODIFY)) {
                 continueOn = await app.call(AppMethod.CHECKPREROOMCREATEMODIFY,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
@@ -615,9 +684,9 @@ export class AppListenerManager {
                 room = await app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY,
                     cfRoom,
                     new RoomBuilder(room),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as IRoom;
             }
         }
@@ -628,24 +697,24 @@ export class AppListenerManager {
     private async executePostRoomCreate(data: IRoom): Promise<void> {
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostRoomCreate)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTROOMCREATE,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMCREATE)) {
                 await app.call(AppMethod.EXECUTEPOSTROOMCREATE,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -655,24 +724,24 @@ export class AppListenerManager {
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMDELETEPREVENT)) {
                 continueOn = await app.call(AppMethod.CHECKPREROOMDELETEPREVENT,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMDELETEPREVENT)) {
                 prevented = await app.call(AppMethod.EXECUTEPREROOMDELETEPREVENT,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 ) as boolean;
 
                 if (prevented) {
@@ -687,24 +756,24 @@ export class AppListenerManager {
     private async executePostRoomDeleted(data: IRoom): Promise<void> {
         const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
-        for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostRoomDeleted)) {
+            const app = this.manager.getOneById(listen.appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMDELETED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTROOMDELETED,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTROOMDELETED,
                     cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -720,15 +789,15 @@ export class AppListenerManager {
             Utilities.deepFreeze(data.inviter);
         }
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED)) {
                 await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED,
                     data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -744,16 +813,16 @@ export class AppListenerManager {
             Utilities.deepFreeze(data.inviter);
         }
 
-        for (const appId of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_JOINED)) {
                 await app.call(AppMethod.EXECUTE_POST_ROOM_USER_JOINED,
                     data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
@@ -765,15 +834,15 @@ export class AppListenerManager {
         data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
         Utilities.deepFreeze(data.leavingUser);
 
-        for (const appId of this.listeners.get(AppInterface.IPreRoomUserLeave)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreRoomUserLeave)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE)) {
                 await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE,
                     data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -785,16 +854,16 @@ export class AppListenerManager {
         data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
         Utilities.deepFreeze(data.leavingUser);
 
-        for (const appId of this.listeners.get(AppInterface.IPostRoomUserLeave)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostRoomUserLeave)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE)) {
                 await app.call(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE,
                     data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
@@ -804,15 +873,15 @@ export class AppListenerManager {
     private async executePostExternalComponentOpened(data: IExternalComponent): Promise<void> {
         const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
                 await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
                     cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -821,15 +890,15 @@ export class AppListenerManager {
     private async executePostExternalComponentClosed(data: IExternalComponent): Promise<void> {
         const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
                 await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
                     cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
                 );
             }
         }
@@ -972,8 +1041,8 @@ export class AppListenerManager {
     private async executePostLivechatRoomStarted(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomStarted)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatRoomStarted)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED)) {
                 continue;
@@ -981,10 +1050,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -992,8 +1061,8 @@ export class AppListenerManager {
     private async executeLivechatRoomClosedHandler(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
                 continue;
@@ -1001,10 +1070,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1012,8 +1081,8 @@ export class AppListenerManager {
     private async executePostLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomClosed)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatRoomClosed)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED)) {
                 continue;
@@ -1021,10 +1090,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1032,8 +1101,8 @@ export class AppListenerManager {
     private async executePostLivechatAgentAssigned(data: ILivechatEventContext): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentAssigned)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatAgentAssigned)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED)) {
                 continue;
@@ -1041,10 +1110,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1052,8 +1121,8 @@ export class AppListenerManager {
     private async executePostLivechatAgentUnassigned(data: ILivechatEventContext): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentUnassigned)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatAgentUnassigned)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED)) {
                 continue;
@@ -1061,10 +1130,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1072,8 +1141,8 @@ export class AppListenerManager {
     private async executePostLivechatRoomTransferred(data: ILivechatTransferEventContext): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomTransferred)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatRoomTransferred)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED)) {
                 continue;
@@ -1081,10 +1150,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1092,8 +1161,8 @@ export class AppListenerManager {
     private async executePostLivechatGuestSaved(data: IVisitor): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED)) {
                 continue;
@@ -1101,10 +1170,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1112,8 +1181,8 @@ export class AppListenerManager {
     private async executePostLivechatRoomSaved(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomSaved)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPostLivechatRoomSaved)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED)) {
                 continue;
@@ -1121,10 +1190,10 @@ export class AppListenerManager {
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
                 cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
+                this.am.getReader(listen.appId),
+                this.am.getHttp(listen.appId),
+                this.am.getPersistence(listen.appId),
+                this.am.getModifier(listen.appId),
             );
         }
     }
@@ -1133,16 +1202,16 @@ export class AppListenerManager {
     private async executePreFileUpload(data: IFileUploadContext): Promise<void> {
         const context = Object.freeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPreFileUpload)) {
-            const app = this.manager.getOneById(appId);
+        for (const listen of this.listeners.get(AppInterface.IPreFileUpload)) {
+            const app = this.manager.getOneById(listen.appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
                 await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
                     context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
+                    this.am.getReader(listen.appId),
+                    this.am.getHttp(listen.appId),
+                    this.am.getPersistence(listen.appId),
+                    this.am.getModifier(listen.appId),
                 );
             }
         }
