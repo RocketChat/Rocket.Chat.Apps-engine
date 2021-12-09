@@ -183,4 +183,10 @@ export interface IRoomBuilder {
      * Note: modifying the returned value will have no effect.
      */
     getRoom(): IRoom;
+
+    /**
+     * Set siderbar custom icon
+     * @param icon: icon path
+     */
+    setSidebarIcon(sidebarIcon: string): IRoomBuilder;
 }

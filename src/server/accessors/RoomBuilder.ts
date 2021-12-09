@@ -8,7 +8,7 @@ export class RoomBuilder implements IRoomBuilder {
     protected room: IRoom;
     private members: Array<string>;
 
-    constructor(data?: Partial<IRoom>) {
+     constructor(data?: Partial<IRoom>) {
         this.kind = RocketChatAssociationModel.ROOM;
         this.room = (data ? data : { customFields: {} }) as IRoom;
         this.members = new Array<string>();
@@ -149,5 +149,10 @@ export class RoomBuilder implements IRoomBuilder {
 
     public getRoom(): IRoom {
         return this.room;
+    }
+
+    public setSidebarIcon(sidebarIcon: string): IRoomBuilder {
+        this.room.source.sidebarIcon = sidebarIcon;
+        return this;
     }
 }
