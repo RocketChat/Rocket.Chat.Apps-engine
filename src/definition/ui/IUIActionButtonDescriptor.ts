@@ -1,13 +1,15 @@
 import { UIActionButtonContext } from './UIActionButtonContext';
 
-// Temporary filter for RoomType
-export enum TemporaryRoomTypeFilter {
-    GROUP = 'group',
-    CHANNEL = 'channel',
-    LIVE_CHAT = 'livechat',
-    TEAM = 'team',
+export enum RoomTypeFilter {
+    PUBLIC_CHANNEL = 'public_channel',
+    PRIVATE_CHANNEL = 'private_channel',
+    PUBLIC_TEAM = 'public_team',
+    PRIVATE_TEAM = 'private_team',
+    PUBLIC_DISCUSSION = 'public_discussion',
+    PRIVATE_DISCUSSION = 'private_discussion',
     DIRECT = 'direct',
     DIRECT_MULTIPLE = 'direct_multiple',
+    LIVE_CHAT = 'livechat',
 }
 
 export enum MessageActionContext {
@@ -25,7 +27,7 @@ export interface IUIActionButtonDescriptor {
     // Suggestions for possible icons?
     icon?: string;
     when?: {
-        roomTypes?: Array<TemporaryRoomTypeFilter>;
+        roomTypes?: Array<RoomTypeFilter>;
         messageActionContext?: Array<MessageActionContext>;
         // How do we provide suggestions for permissions?
         hasOnePermission?: Array<string>;

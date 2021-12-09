@@ -37,7 +37,7 @@ export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingIn
 }
 
 export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    context: UIActionButtonContext;
+    buttonContext: UIActionButtonContext;
     actionId: string;
     triggerId: string;
     room: IRoom;

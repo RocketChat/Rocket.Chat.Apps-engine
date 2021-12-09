@@ -912,12 +912,12 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.ACTION_BUTTON: {
-                    const { context } = interactionData.payload as { context: UIActionButtonContext };
+                    const { context: buttonContext } = interactionData.payload as { context: UIActionButtonContext };
 
                     return new UIKitActionButtonInteractionContext({
                         appId,
                         actionId,
-                        context,
+                        buttonContext,
                         room,
                         triggerId,
                         user,
