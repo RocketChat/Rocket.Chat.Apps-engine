@@ -152,7 +152,9 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public setSidebarIcon(sidebarIcon: string): IRoomBuilder {
-        this.room.source.sidebarIcon = sidebarIcon;
+        if (this.room.sideBarIconSource) {
+            this.room.sideBarIconSource.sidebarIcon = sidebarIcon;
+        }
         return this;
     }
 }

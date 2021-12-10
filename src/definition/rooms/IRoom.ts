@@ -24,7 +24,7 @@ export interface IRoom {
     customFields?: { [key: string]: any };
     parentRoom?: IRoom;
     livechatData?: { [key: string]: any };
-    source?: {
+    sideBarIconSource?: {
         sidebarIcon?: string;
         type: OmnichannelSourceType;
         id?: string;
