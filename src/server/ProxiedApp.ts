@@ -99,9 +99,9 @@ export class ProxiedApp implements IApp {
             if (e instanceof AppsEngineException) {
                 throw e;
             }
+        } finally {
+            this.manager.getLogStorage().storeEntries(this.getID(), logger);
         }
-
-        this.manager.getLogStorage().storeEntries(this.getID(), logger);
 
         return result;
     }
