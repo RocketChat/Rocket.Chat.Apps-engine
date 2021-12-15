@@ -39,10 +39,18 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
+    public async doGetBadgeCount(uid: string, appId: string): Promise<number> {
+        if (this.hasReadPermission(appId)) {
+            return this.getBadgeCount(uid);
+        }
+    }
+
     protected abstract getById(id: string, appId: string): Promise<IUser>;
     protected abstract getByUsername(username: string, appId: string): Promise<IUser>;
     protected abstract getAppUser(appId?: string): Promise<IUser | undefined>;
     protected abstract getActiveUserCount(): Promise<number>;
+
+    protected abstract getBadgeCount(uid: string): Promise<number>;
     /**
      * Creates a user.
      * @param data the essential data for creating a user

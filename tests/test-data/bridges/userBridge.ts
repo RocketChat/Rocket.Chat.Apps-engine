@@ -30,4 +30,8 @@ export class TestsUserBridge extends UserBridge {
     public async update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
+
+    protected getBadgeCount(uid: string): Promise<number> {
+        throw new Error('Method not implemented.');
+    }
 }

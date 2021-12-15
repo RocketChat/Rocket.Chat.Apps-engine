@@ -16,4 +16,8 @@ export class UserRead implements IUserRead {
     public getAppUser(appId: string = this.appId): Promise<IUser | undefined> {
         return this.userBridge.doGetAppUser(appId);
     }
+
+    public getBadgeCount(uid: string): Promise<number> {
+        return this.userBridge.doGetBadgeCount(uid, this.appId);
+    }
 }
