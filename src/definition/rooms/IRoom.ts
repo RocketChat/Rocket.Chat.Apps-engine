@@ -1,4 +1,3 @@
-import { OmnichannelSourceType } from '../livechat/ILivechatRoom';
 import { IUser } from '../users';
 import { RoomType } from './RoomType';
 
@@ -24,11 +23,4 @@ export interface IRoom {
     customFields?: { [key: string]: any };
     parentRoom?: IRoom;
     livechatData?: { [key: string]: any };
-    sideBarIconSource?: {
-        sidebarIcon?: string;
-        type: OmnichannelSourceType;
-        id?: string;
-        alias?: string;
-        defaultIcon?: string;
-    };
 }
