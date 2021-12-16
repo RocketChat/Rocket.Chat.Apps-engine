@@ -6,4 +6,5 @@ export enum SettingType {
     NUMBER = 'int',
     SELECT = 'select',
     STRING = 'string',
+    MULTI_SELECT = 'multiSelect',
 }

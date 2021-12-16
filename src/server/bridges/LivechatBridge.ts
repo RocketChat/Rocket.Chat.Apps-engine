@@ -116,9 +116,9 @@ export abstract class LivechatBridge extends BaseBridge {
        }
     }
 
-   public async doCloseRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean> {
+   public async doCloseRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean> {
        if (this.hasWritePermission(appId, 'livechat-room')) {
-           return this.closeRoom(room, comment, appId);
+           return this.closeRoom(room, comment, closer, appId);
        }
     }
 
