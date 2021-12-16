@@ -185,8 +185,24 @@ export interface IRoomBuilder {
     getRoom(): IRoom;
 
     /**
-     * Set siderbar custom icon
-     * @param icon: icon path
+     * Set sidebar icon for the room, if the room is a omnichannel, created by an app
+     * @param sidebarIcon name of the icon provided by the app to be rendered in the sidebar
      */
-    setSidebarIcon(sidebarIcon: string): IRoomBuilder;
+    setSourceSidebarIcon(sidebarIcon: string): IRoomBuilder;
+    /**
+     * Get sidebar icon for the room, if the room is an omnichannel room, created by an app
+     * @returns name of the icon if it exists, otherwise undefined
+     */
+    getSourceSidebarIcon(): string | undefined;
+
+    /**
+     * Set default icon for the room, if the room is an omnichannel room, created by an app
+     * @param defaultIcon name of the icon provided by the app to be rendered as the default icon
+     */
+    setSourceDefaultIcon(defaultIcon: string): IRoomBuilder;
+    /**
+     * Get default icon for the room, if the room is an omnichannel room, created by an app
+     * @returns name of the icon if it exists, otherwise undefined
+     */
+    getSourceDefaultIcon(): string | undefined;
 }

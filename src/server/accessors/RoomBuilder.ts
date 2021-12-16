@@ -1,4 +1,5 @@
 import { IRoomBuilder } from '../../definition/accessors';
+import { isLivechatFromApp, isLivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
@@ -150,11 +151,53 @@ export class RoomBuilder implements IRoomBuilder {
     public getRoom(): IRoom {
         return this.room;
     }
-
-    public setSidebarIcon(sidebarIcon: string): IRoomBuilder {
-        if (this.room.sideBarIconSource) {
-            this.room.sideBarIconSource.sidebarIcon = sidebarIcon;
+    public setSourceSidebarIcon(sidebarIcon: string): IRoomBuilder {
+        if (!isLivechatRoom(this.room)) {
+            throw new Error('Only Omnichannel rooms can have a sidebar icon');
         }
+        if (!isLivechatFromApp(this.room)) {
+            throw new Error(
+                'Only Omnichannel rooms created by apps can have a sidebar icon',
+            );
+        }
+        this.room.source.sidebarIcon = sidebarIcon;
         return this;
+    }
+
+    public getSourceSidebarIcon(): string | undefined {
+        if (!isLivechatRoom(this.room)) {
+            throw new Error('Only Omnichannel rooms can have a sidebar icon');
+        }
+        if (!isLivechatFromApp(this.room)) {
+            throw new Error(
+                'Only Omnichannel rooms created by apps can have a sidebar icon',
+            );
+        }
+        return this.room.source.sidebarIcon;
+    }
+
+    public setSourceDefaultIcon(defaultIcon: string): IRoomBuilder {
+        if (!isLivechatRoom(this.room)) {
+            throw new Error('Only Omnichannel rooms can have a default icon');
+        }
+        if (!isLivechatFromApp(this.room)) {
+            throw new Error(
+                'Only Omnichannel rooms created by apps can have a default icon',
+            );
+        }
+        this.room.source.defaultIcon = defaultIcon;
+        return this;
+    }
+
+    public getSourceDefaultIcon(): string | undefined {
+        if (!isLivechatRoom(this.room)) {
+            throw new Error('Only Omnichannel rooms can have a default icon');
+        }
+        if (!isLivechatFromApp(this.room)) {
+            throw new Error(
+                'Only Omnichannel rooms created by apps can have a default icon',
+            );
+        }
+        return this.room.source.defaultIcon;
     }
 }
