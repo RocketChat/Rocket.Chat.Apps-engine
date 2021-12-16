@@ -44,7 +44,7 @@ export class TestLivechatBridge extends LivechatBridge {
     public findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
-    public createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
+    public createRoom(visitor: IVisitor, agent: IUser, appId: string, { source }: Pick<ILivechatRoom, 'source'>): Promise<ILivechatRoom> {
         throw new Error('Method not implemented');
     }
     public closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean> {
