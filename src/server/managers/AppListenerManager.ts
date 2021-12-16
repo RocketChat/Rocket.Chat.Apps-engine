@@ -1,3 +1,4 @@
+import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
@@ -33,7 +34,8 @@ type EventData = (
     IRoomUserJoinedContext |
     IRoomUserLeaveContext |
     ILivechatTransferEventContext |
-    IFileUploadContext
+    IFileUploadContext |
+    IPreEmailSentContext
 );
 
 type EventReturn = (
@@ -43,7 +45,8 @@ type EventReturn = (
     IRoom |
     IUser |
     IUIKitResponse |
-    ILivechatRoom
+    ILivechatRoom |
+    IEmailDescriptor
 );
 
 export class AppListenerManager {
@@ -224,6 +227,9 @@ export class AppListenerManager {
             // FileUpload
             case AppInterface.IPreFileUpload:
                 return this.executePreFileUpload(data as IFileUploadContext);
+            // Email
+            case AppInterface.IPreEmailSent:
+                return this.executePreEmailSent(data as IPreEmailSentContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1146,5 +1152,28 @@ export class AppListenerManager {
                 );
             }
         }
+    }
+
+    private async executePreEmailSent(data: IPreEmailSentContext): Promise<IEmailDescriptor> {
+        let descriptor = data.email;
+
+        for (const appId of this.listeners.get(AppInterface.IPreEmailSent)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_PRE_EMAIL_SENT)) {
+                descriptor = await app.call(AppMethod.EXECUTE_PRE_EMAIL_SENT,
+                    {
+                        context: data.context,
+                        email: descriptor,
+                    },
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+
+        return descriptor;
     }
 }
