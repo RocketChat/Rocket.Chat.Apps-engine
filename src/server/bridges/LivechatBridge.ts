@@ -174,7 +174,7 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData, appId: string): Promise<boolean>;
     protected abstract createRoom(visitor: IVisitor, agent: IUser, appId: string, { source }: Pick<ILivechatRoom, 'source'>): Promise<ILivechatRoom>;
-    protected abstract closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;
+    protected abstract closeRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean>;
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
     protected abstract findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined>;
     protected abstract findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>>;
