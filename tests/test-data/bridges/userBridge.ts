@@ -31,7 +31,7 @@ export class TestsUserBridge extends UserBridge {
         throw new Error('Method not implemented');
     }
 
-    protected getBadgeCount(uid: string): Promise<number> {
+    protected getUserUnreadMessageCount(uid: string): Promise<number> {
         throw new Error('Method not implemented.');
     }
 }
