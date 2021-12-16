@@ -11,7 +11,7 @@ export interface ILivechatCreator {
      * @param visitor The Livechat Visitor that started the conversation
      * @param agent The agent responsible for the room
      */
-    createRoom(visitor: IVisitor, agent: IUser): Promise<ILivechatRoom>;
+    createRoom(visitor: IVisitor, agent: IUser, { source }: Pick<ILivechatRoom, 'source'>): Promise<ILivechatRoom>;
     /**
      * Creates a Livechat visitor
      *

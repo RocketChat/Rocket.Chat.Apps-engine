@@ -8,8 +8,8 @@ import { AppBridges } from '../bridges';
 export class LivechatCreator implements ILivechatCreator {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
-    public createRoom(visitor: IVisitor, agent: IUser): Promise<ILivechatRoom> {
-        return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId);
+    public createRoom(visitor: IVisitor, agent: IUser, { source }: Pick<ILivechatRoom, 'source'>): Promise<ILivechatRoom> {
+        return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId, { source });
     }
 
     public createVisitor(visitor: IVisitor): Promise<string> {
