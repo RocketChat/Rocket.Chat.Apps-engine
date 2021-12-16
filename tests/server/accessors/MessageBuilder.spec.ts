@@ -115,5 +115,11 @@ export class MessageBuilderAccessorTestFixture {
         Expect(mb.setParseUrls(false)).toBe(mb);
         Expect(msg.parseUrls).toEqual(false);
         Expect(mb.getParseUrls()).toEqual(false);
+
+        Expect(mb.addCustomField('thing', 'value')).toBe(mb);
+        Expect(msg.customFields).toBeDefined();
+        Expect(msg.customFields.thing).toBe('value');
+        Expect(() => mb.addCustomField('thing', 'second')).toThrowError(Error, 'The message already contains a custom field by the key: thing');
+        Expect(() => mb.addCustomField('thing.', 'second')).toThrowError(Error, 'The given key contains a period, which is not allowed. Key: thing.');
     }
 }

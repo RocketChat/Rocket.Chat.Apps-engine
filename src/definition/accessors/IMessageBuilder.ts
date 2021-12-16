@@ -221,4 +221,14 @@ export interface IMessageBuilder {
      * Gets the block collection of the message
      */
     getBlocks(): Array<IBlock>;
+
+    /**
+     * Adds a custom field to the message.
+     * Note: This key can not already exist or it will throw an error.
+     * Note: The key must not contain a period in it, an error will be thrown.
+     *
+     * @param key the name of the custom field
+     * @param value the value of this custom field
+     */
+    addCustomField(key: string, value: any): IMessageBuilder;
 }
