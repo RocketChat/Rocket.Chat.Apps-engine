@@ -21,11 +21,8 @@ export enum MessageActionContext {
 
 export interface IUIActionButtonDescriptor {
     actionId: string;
-    nameI18n: string;
-    hintI18n: string;
+    labelI18n: string;
     context: UIActionButtonContext;
-    // Suggestions for possible icons?
-    icon?: string;
     when?: {
         roomTypes?: Array<RoomTypeFilter>;
         messageActionContext?: Array<MessageActionContext>;
