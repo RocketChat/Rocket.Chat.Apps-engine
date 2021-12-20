@@ -27,7 +27,6 @@ export const AppPermissions = {
     },
     'ui': {
         interaction: { name: 'ui.interact' },
-        registerButtons: { name: 'ui.registerButtons' },
     },
     'setting': {
         read: { name: 'server-setting.read' },

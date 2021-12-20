@@ -15,7 +15,6 @@ import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '..
 import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { Room } from '../../../src/server/rooms/Room';
 import { AppLogStorage } from '../../../src/server/storage';
@@ -77,9 +76,6 @@ export class AppSlashCommandManagerTestFixture {
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
-            },
-            getUIActionButtonManager() {
-                return {} as UIActionButtonManager;
             },
         } as AppManager;
 

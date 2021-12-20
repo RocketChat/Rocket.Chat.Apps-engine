@@ -18,8 +18,4 @@ export class TestsActivationBridge extends AppActivationBridge {
     public async appStatusChanged(app: ProxiedApp, status: AppStatus): Promise<void> {
         console.log(`The App ${ app.getName() } (${ app.getID() }) status has changed to: ${ status }`);
     }
-
-    protected async actionsChanged(): Promise<void> {
-        console.log('The actions have changed.');
-    }
 }
