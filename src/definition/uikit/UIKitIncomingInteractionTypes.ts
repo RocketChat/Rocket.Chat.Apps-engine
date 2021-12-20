@@ -3,6 +3,7 @@ import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IUIKitSurface } from './IUIKitSurface';
 import {
+    IUIKitIncomingInteractionContextualBarContainer,
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
 } from './UIKitIncomingInteractionContainer';
@@ -22,7 +23,7 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     actionId: string;
     blockId: string;
     room: IUIKitBaseIncomingInteraction['room'];
-    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionContextualBarContainer | IUIKitIncomingInteractionMessageContainer;
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {

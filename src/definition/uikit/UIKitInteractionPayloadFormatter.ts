@@ -1,24 +1,49 @@
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
-import { IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
+import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
 import { IUIKitSurface, UIKitSurfaceType } from './IUIKitSurface';
-import { IUIKitModalViewParam } from './UIKitInteractionResponder';
+import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
 
 import uuid = require('uuid/v1');
 
+function isModalInteraction(type: IUIKitInteraction['type']): type is IUIKitModalInteraction['type'] {
+    return [UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(type);
+}
+
 export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIKitInteraction): IUIKitModalInteraction {
-    if (![UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(context.type)) {
+    if (!isModalInteraction(context.type)) {
         throw new Error(`Invalid type "${ context.type }" for modal interaction`);
     }
 
-    const type = context.type as UIKitInteractionType.MODAL_OPEN | UIKitInteractionType.MODAL_UPDATE | UIKitInteractionType.MODAL_CLOSE;
-
     return {
-        type,
+        type: context.type,
         triggerId: context.triggerId,
         appId: context.appId,
         view: {
             appId: context.appId,
             type: UIKitSurfaceType.MODAL,
+            id: view.id ? view.id : uuid(),
+            ...view,
+            showIcon: true,
+        } as IUIKitSurface,
+    };
+}
+
+function isContextualBarInteraction(type: IUIKitInteraction['type']): type is IUIKitContextualBarInteraction['type'] {
+    return [UIKitInteractionType.CONTEXTUAL_BAR_OPEN, UIKitInteractionType.CONTEXTUAL_BAR_UPDATE, UIKitInteractionType.CONTEXTUAL_BAR_CLOSE].includes(type);
+}
+
+export function formatContextualBarInteraction(view: IUIKitContextualBarViewParam, context: IUIKitInteraction): IUIKitContextualBarInteraction {
+    if (!isContextualBarInteraction(context.type)) {
+        throw new Error(`Invalid type "${ context.type }" for contextual bar interaction`);
+    }
+
+    return {
+        type: context.type,
+        triggerId: context.triggerId,
+        appId: context.appId,
+        view: {
+            appId: context.appId,
+            type: UIKitSurfaceType.CONTEXTUAL_BAR,
             id: view.id ? view.id : uuid(),
             ...view,
             showIcon: true,

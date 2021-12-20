@@ -10,6 +10,9 @@ export interface IUIKitIncomingInteractionContainer {
 export interface IUIKitIncomingInteractionModalContainer extends IUIKitIncomingInteractionContainer {
     type: UIKitIncomingInteractionContainerType.VIEW;
 }
+export interface IUIKitIncomingInteractionContextualBarContainer extends IUIKitIncomingInteractionContainer {
+    type: UIKitIncomingInteractionContainerType.VIEW;
+}
 export interface IUIKitIncomingInteractionMessageContainer extends IUIKitIncomingInteractionContainer {
     type: UIKitIncomingInteractionContainerType.MESSAGE;
 }
