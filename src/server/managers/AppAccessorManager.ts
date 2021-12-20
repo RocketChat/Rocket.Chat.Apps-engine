@@ -37,7 +37,6 @@ import {
     UserRead,
 } from '../accessors';
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
-import { UIExtend } from '../accessors/UIExtend';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
 
@@ -91,9 +90,8 @@ export class AppAccessorManager {
             const sets = new SettingsExtend(rl);
             const excs = new ExternalComponentsExtend(this.manager.getExternalComponentManager(), appId);
             const scheduler = new SchedulerExtend(this.manager.getSchedulerManager(), appId);
-            const ui = new UIExtend(this.manager.getUIActionButtonManager(), appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs, scheduler, ui));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs, scheduler));
         }
 
         return this.configExtenders.get(appId);
