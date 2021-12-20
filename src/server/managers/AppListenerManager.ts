@@ -5,11 +5,15 @@ import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IV
 import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
+import { UIActionButtonContext } from '../../definition/ui';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
-    UIKitBlockInteractionContext, UIKitViewCloseInteractionContext, UIKitViewSubmitInteractionContext,
+    UIKitActionButtonInteractionContext,
+    UIKitBlockInteractionContext,
+    UIKitViewCloseInteractionContext,
+    UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
 import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
 import { IUser } from '../../definition/users';
@@ -852,11 +856,14 @@ export class AppListenerManager {
                     return AppMethod.UIKIT_VIEW_SUBMIT;
                 case UIKitIncomingInteractionType.VIEW_CLOSED:
                     return AppMethod.UIKIT_VIEW_CLOSE;
+                case UIKitIncomingInteractionType.ACTION_BUTTON:
+                    return AppMethod.UIKIT_ACTION_BUTTON;
             }
         })(type);
 
         const app = this.manager.getOneById(appId);
-        if (!app.hasMethod(method)) {
+        if (!app?.hasMethod(method)) {
+            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
             return;
         }
 
@@ -883,7 +890,7 @@ export class AppListenerManager {
                         triggerId,
                         value,
                         message,
-                        container: container as IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer,
+                        container,
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_SUBMIT: {
@@ -908,6 +915,19 @@ export class AppListenerManager {
                         room,
                         isCleared,
                         user,
+                    });
+                }
+                case UIKitIncomingInteractionType.ACTION_BUTTON: {
+                    const { context: buttonContext } = interactionData.payload as { context: UIActionButtonContext };
+
+                    return new UIKitActionButtonInteractionContext({
+                        appId,
+                        actionId,
+                        buttonContext,
+                        room,
+                        triggerId,
+                        user,
+                        message,
                     });
                 }
             }

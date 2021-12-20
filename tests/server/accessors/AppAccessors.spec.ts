@@ -8,6 +8,7 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -68,6 +69,9 @@ export class AppAccessorsTestFixture {
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
+            },
+            getUIActionButtonManager() {
+                return {} as UIActionButtonManager;
             },
         } as AppManager;
 
