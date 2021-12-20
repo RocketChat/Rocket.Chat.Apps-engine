@@ -1,6 +1,10 @@
 import { ILivechatRoom, IVisitor } from '../livechat';
 import { IUser } from '../users';
 
+export interface IExtraRoomParams {
+    source?: ILivechatRoom['source'];
+}
+
 export interface ILivechatCreator {
     /**
      * Creates a room to connect the `visitor` to an `agent`.
@@ -11,7 +15,7 @@ export interface ILivechatCreator {
      * @param visitor The Livechat Visitor that started the conversation
      * @param agent The agent responsible for the room
      */
-    createRoom(visitor: IVisitor, agent: IUser): Promise<ILivechatRoom>;
+    createRoom(visitor: IVisitor, agent: IUser, extraParams?: IExtraRoomParams): Promise<ILivechatRoom>;
     /**
      * Creates a Livechat visitor
      *
