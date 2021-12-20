@@ -1,5 +1,5 @@
 // tslint:disable:max-classes-per-file
-import { IUIKitBaseIncomingInteraction, IUIKitBlockIncomingInteraction, IUIKitViewCloseIncomingInteraction, IUIKitViewSubmitIncomingInteraction } from './UIKitIncomingInteractionTypes';
+import { IUIKitActionButtonIncomingInteraction, IUIKitBaseIncomingInteraction, IUIKitBlockIncomingInteraction, IUIKitViewCloseIncomingInteraction, IUIKitViewSubmitIncomingInteraction } from './UIKitIncomingInteractionTypes';
 import { UIKitInteractionResponder } from './UIKitInteractionResponder';
 
 export abstract class UIKitInteractionContext {
@@ -46,6 +46,16 @@ export class UIKitViewCloseInteractionContext extends UIKitInteractionContext {
     }
 
     public getInteractionData(): IUIKitViewCloseIncomingInteraction {
+        return this.interactionData;
+    }
+}
+
+export class UIKitActionButtonInteractionContext extends UIKitInteractionContext {
+    constructor(private readonly interactionData: IUIKitActionButtonIncomingInteraction) {
+        super(interactionData);
+    }
+
+    public getInteractionData(): IUIKitActionButtonIncomingInteraction {
         return this.interactionData;
     }
 }

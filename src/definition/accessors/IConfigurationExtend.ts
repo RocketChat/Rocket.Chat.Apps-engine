@@ -4,6 +4,7 @@ import { IHttpExtend } from './IHttp';
 import { ISchedulerExtend } from './ISchedulerExtend';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
+import { IUIExtend } from './IUIExtend';
 
 /**
  * This accessor provides methods for declaring the configuration
@@ -26,4 +27,6 @@ export interface IConfigurationExtend {
 
     /** Accessor for declaring tasks that can be scheduled (like cron) */
     readonly scheduler: ISchedulerExtend;
+    /** Accessor for registering different elements in the host UI */
+    readonly ui: IUIExtend;
 }

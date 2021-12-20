@@ -29,20 +29,7 @@ function lint_ts() {
     return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
 }
 
-function perform_patches() {
-    const FileTypeDeClarationPath = './node_modules/file-type/core.d.ts';
-
-    if (fs.existsSync(FileTypeDeClarationPath)) {
-        const patched = fs.readFileSync(FileTypeDeClarationPath)
-            .toString() // Our TypeScript version is too old that doesn't support ReadOnly type
-            .replace('readonly core.MimeType[]', 'core.MimeType[]');
-        fs.writeFileSync(FileTypeDeClarationPath, patched);
-    }
-}
-
 function compile_ts() {
-    perform_patches();
-
     return tsp.src().pipe(sourcemaps.init())
             .pipe(tsp())
             .pipe(sourcemaps.write('.'))
@@ -64,34 +51,33 @@ function ts_definition_module_files() {
 }
 
 function watch() {
-    gulp.watch('src/**/*.ts', gulp.series(lint_ts, compile_ts));
-    gulp.watch('package.json', gulp.series(update_ts_definition_version, ts_definition_module_files));
+    gulp.watch('src/**/*.ts', gulp.series(compile_ts));
 }
 
-const compile = gulp.series(clean_generated, lint_ts, compile_ts, update_ts_definition_version, ts_definition_module_files);
+const compile = gulp.series(clean_generated, compile_ts, update_ts_definition_version, ts_definition_module_files);
 
 gulp.task('bundle', bundle_sdk);
 
 gulp.task('clean', clean_generated);
 
-gulp.task('compile', compile);
+gulp.task('compile', gulp.series(compile));
 
 gulp.task('default', gulp.series(compile, watch));
 
-gulp.task('pack', gulp.series(clean_generated, lint_ts, compile_ts, shell.task([
+gulp.task('pack', gulp.series(lint_ts, compile, shell.task([
     'npm pack'
 ])));
 
-gulp.task('publish', gulp.series(clean_generated, lint_ts, compile_ts, bundle_sdk, shell.task([
+gulp.task('publish', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
     'npm publish --access public && npm pack'
 ], [
     'cd definition && npm publish --access public && npm pack'
 ])));
 
-gulp.task('publish-beta', gulp.series(clean_generated, lint_ts, compile_ts, bundle_sdk, shell.task([
+gulp.task('publish-beta', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
     'npm publish --access public --tag beta'
 ])));
 
-gulp.task('publish-alpha', gulp.series(clean_generated, lint_ts, compile_ts, bundle_sdk, shell.task([
+gulp.task('publish-alpha', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
     'npm publish --access public --tag alpha'
 ])));
