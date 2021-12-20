@@ -1,3 +1,4 @@
+import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
@@ -5,7 +6,7 @@ import { IMessage } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
-import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitView, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
@@ -37,7 +38,8 @@ type EventData = (
     IRoomUserJoinedContext |
     IRoomUserLeaveContext |
     ILivechatTransferEventContext |
-    IFileUploadContext
+    IFileUploadContext |
+    IPreEmailSentContext
 );
 
 type EventReturn = (
@@ -47,7 +49,8 @@ type EventReturn = (
     IRoom |
     IUser |
     IUIKitResponse |
-    ILivechatRoom
+    ILivechatRoom |
+    IEmailDescriptor
 );
 
 export class AppListenerManager {
@@ -228,6 +231,9 @@ export class AppListenerManager {
             // FileUpload
             case AppInterface.IPreFileUpload:
                 return this.executePreFileUpload(data as IFileUploadContext);
+            // Email
+            case AppInterface.IPreEmailSent:
+                return this.executePreEmailSent(data as IPreEmailSentContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -888,7 +894,7 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_SUBMIT: {
-                    const { view } = interactionData.payload as { view: IUIKitView };
+                    const { view } = interactionData.payload as { view: IUIKitSurface };
 
                     return new UIKitViewSubmitInteractionContext({
                         appId,
@@ -900,7 +906,7 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: IUIKitView, isCleared: boolean };
+                    const { view, isCleared } = interactionData.payload as { view: IUIKitSurface, isCleared: boolean };
 
                     return new UIKitViewCloseInteractionContext({
                         appId,
@@ -1166,5 +1172,28 @@ export class AppListenerManager {
                 );
             }
         }
+    }
+
+    private async executePreEmailSent(data: IPreEmailSentContext): Promise<IEmailDescriptor> {
+        let descriptor = data.email;
+
+        for (const appId of this.listeners.get(AppInterface.IPreEmailSent)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_PRE_EMAIL_SENT)) {
+                descriptor = await app.call(AppMethod.EXECUTE_PRE_EMAIL_SENT,
+                    {
+                        context: data.context,
+                        email: descriptor,
+                    },
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+
+        return descriptor;
     }
 }

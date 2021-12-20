@@ -1,11 +1,12 @@
 import { Omit } from '../../lib/utils';
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
-import { IUIKitErrorResponse, IUIKitModalResponse, IUIKitResponse, UIKitInteractionType } from './IUIKitInteractionType';
-import { IUIKitView } from './IUIKitView';
+import { IUIKitContextualBarResponse, IUIKitErrorResponse, IUIKitModalResponse, IUIKitResponse, UIKitInteractionType } from './IUIKitInteractionType';
+import { IUIKitSurface } from './IUIKitSurface';
 import { IUIKitBaseIncomingInteraction } from './UIKitIncomingInteractionTypes';
-import { formatModalInteraction } from './UIKitInteractionPayloadFormatter';
+import { formatContextualBarInteraction, formatModalInteraction } from './UIKitInteractionPayloadFormatter';
 
-export type IUIKitModalViewParam = Omit<IUIKitView, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitView, 'id'>>;
+export type IUIKitModalViewParam = Omit<IUIKitSurface, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitSurface, 'id'>>;
+export type IUIKitContextualBarViewParam = Omit<IUIKitSurface, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitSurface, 'id'>>;
 
 export class UIKitInteractionResponder {
     constructor(private readonly baseContext: IUIKitBaseIncomingInteraction) { }
@@ -21,6 +22,7 @@ export class UIKitInteractionResponder {
             success: false,
         };
     }
+
     public openModalViewResponse(viewData: IUIKitModalViewParam): IUIKitModalResponse {
         const { appId, triggerId } = this.baseContext;
 
@@ -36,6 +38,24 @@ export class UIKitInteractionResponder {
         return {
             success: true,
             ...formatModalInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.MODAL_UPDATE }),
+        };
+    }
+
+    public openContextualBarViewResponse(viewData: IUIKitContextualBarViewParam): IUIKitContextualBarResponse {
+        const { appId, triggerId } = this.baseContext;
+
+        return {
+            success: true,
+            ...formatContextualBarInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN }),
+        };
+    }
+
+    public updateContextualBarViewResponse(viewData: IUIKitContextualBarViewParam): IUIKitContextualBarResponse {
+        const { appId, triggerId } = this.baseContext;
+
+        return {
+            success: true,
+            ...formatContextualBarInteraction(viewData, { appId, triggerId, type: UIKitInteractionType.CONTEXTUAL_BAR_UPDATE }),
         };
     }
 

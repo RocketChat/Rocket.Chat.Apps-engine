@@ -200,4 +200,21 @@ export class MessageBuilder implements IMessageBuilder {
     public getBlocks() {
         return this.msg.blocks;
     }
+
+    public addCustomField(key: string, value: any): IMessageBuilder {
+        if (!this.msg.customFields) {
+            this.msg.customFields = {};
+        }
+
+        if (this.msg.customFields[key]) {
+            throw new Error(`The message already contains a custom field by the key: ${ key }`);
+        }
+
+        if (key.includes('.')) {
+            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
+        }
+
+        this.msg.customFields[key] = value;
+        return this;
+    }
 }

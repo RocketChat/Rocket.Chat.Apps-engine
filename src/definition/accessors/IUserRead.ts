@@ -13,4 +13,10 @@ export interface IUserRead {
      * Gets the app user of this app.
      */
     getAppUser(appId?: string): Promise<IUser | undefined>;
+
+    /**
+     * Gets the user's badge count (unread messages count).
+     * @param uid user's id
+     */
+    getUserUnreadMessageCount(uid: string): Promise<number | undefined>;
 }
