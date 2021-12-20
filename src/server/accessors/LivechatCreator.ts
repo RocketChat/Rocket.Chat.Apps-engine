@@ -1,4 +1,5 @@
 import { ILivechatCreator } from '../../definition/accessors';
+import { IExtraRoomParams } from '../../definition/accessors/ILivechatCreator';
 
 import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { IVisitor } from '../../definition/livechat/IVisitor';
@@ -8,8 +9,8 @@ import { AppBridges } from '../bridges';
 export class LivechatCreator implements ILivechatCreator {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
 
-    public createRoom(visitor: IVisitor, agent: IUser, { source }: Pick<ILivechatRoom, 'source'>): Promise<ILivechatRoom> {
-        return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId, { source });
+    public createRoom(visitor: IVisitor, agent: IUser, extraParams?: IExtraRoomParams): Promise<ILivechatRoom> {
+        return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId, extraParams);
     }
 
     public createVisitor(visitor: IVisitor): Promise<string> {

@@ -1,5 +1,4 @@
 import { IRoomBuilder } from '../../definition/accessors';
-import { isLivechatFromApp, isLivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
