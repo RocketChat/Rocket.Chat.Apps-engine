@@ -12,6 +12,7 @@ import { PathAlreadyExistsError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
 import { AppApi } from '../../../src/server/managers/AppApi';
+import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -75,6 +76,9 @@ export class AppApiManagerTestFixture {
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
+            },
+            getUIActionButtonManager() {
+                return {} as UIActionButtonManager;
             },
         } as AppManager;
 

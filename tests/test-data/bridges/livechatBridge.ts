@@ -1,3 +1,4 @@
+import { IExtraRoomParams } from '../../../src/definition/accessors/ILivechatCreator';
 import { IDepartment, ILivechatMessage, ILivechatRoom, ILivechatTransferData, IVisitor } from '../../../src/definition/livechat';
 import { IMessage } from '../../../src/definition/messages';
 import { IUser } from '../../../src/definition/users';
@@ -44,10 +45,10 @@ export class TestLivechatBridge extends LivechatBridge {
     public findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined> {
         throw new Error('Method not implemented');
     }
-    public createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
+    public createRoom(visitor: IVisitor, agent: IUser, appId: string, extraParams?: IExtraRoomParams): Promise<ILivechatRoom> {
         throw new Error('Method not implemented');
     }
-    public closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean> {
+    public closeRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
     public findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {

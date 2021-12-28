@@ -58,6 +58,7 @@ export enum AppMethod {
     UIKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
+    UIKIT_ACTION_BUTTON = 'executeActionButtonHandler',
     UIKIT_LIVECHAT_BLOCK_ACTION = 'executeLivechatBlockActionHandler',
     // Livechat
     EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
@@ -73,4 +74,6 @@ export enum AppMethod {
     EXECUTE_POST_LIVECHAT_ROOM_SAVED = 'executePostLivechatRoomSaved',
     // FileUpload
     EXECUTE_PRE_FILE_UPLOAD = 'executePreFileUpload',
+    // Email
+    EXECUTE_PRE_EMAIL_SENT = 'executePreEmailSent',
 }

@@ -41,4 +41,6 @@ export enum AppInterface {
     IPostLivechatRoomSaved = 'IPostLivechatRoomSaved',
     // FileUpload
     IPreFileUpload = 'IPreFileUpload',
+    // Email
+    IPreEmailSent = 'IPreEmailSent',
 }

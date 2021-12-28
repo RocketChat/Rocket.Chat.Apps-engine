@@ -1,8 +1,10 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
+import { UIActionButtonContext } from '../ui';
 import { IUser } from '../users';
-import { IUIKitView } from './IUIKitView';
+import { IUIKitSurface } from './IUIKitSurface';
 import {
+    IUIKitIncomingInteractionContextualBarContainer,
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
 } from './UIKitIncomingInteractionContainer';
@@ -22,15 +24,23 @@ export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingIntera
     actionId: string;
     blockId: string;
     room: IUIKitBaseIncomingInteraction['room'];
-    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
+    container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionContextualBarContainer | IUIKitIncomingInteractionMessageContainer;
 }
 
 export interface IUIKitViewSubmitIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    view: IUIKitView;
+    view: IUIKitSurface;
     triggerId: string;
 }
 
 export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    view: IUIKitView;
+    view: IUIKitSurface;
     isCleared: boolean;
+}
+
+export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomingInteraction {
+    buttonContext: UIActionButtonContext;
+    actionId: string;
+    triggerId: string;
+    room: IRoom;
+    message?: IMessage;
 }

@@ -1,3 +1,4 @@
+import { IExtraRoomParams } from '../../definition/accessors/ILivechatCreator';
 import {
     IDepartment,
     ILivechatMessage,
@@ -110,15 +111,15 @@ export abstract class LivechatBridge extends BaseBridge {
        }
     }
 
-   public async doCreateRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom> {
+   public async doCreateRoom(visitor: IVisitor, agent: IUser, appId: string, extraParams?: IExtraRoomParams): Promise<ILivechatRoom> {
        if (this.hasWritePermission(appId, 'livechat-room')) {
-           return this.createRoom(visitor, agent, appId);
+           return this.createRoom(visitor, agent, appId, extraParams);
        }
     }
 
-   public async doCloseRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean> {
+   public async doCloseRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean> {
        if (this.hasWritePermission(appId, 'livechat-room')) {
-           return this.closeRoom(room, comment, appId);
+           return this.closeRoom(room, comment, closer, appId);
        }
     }
 
@@ -173,8 +174,8 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract findVisitorByToken(token: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract findVisitorByPhoneNumber(phoneNumber: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData, appId: string): Promise<boolean>;
-    protected abstract createRoom(visitor: IVisitor, agent: IUser, appId: string): Promise<ILivechatRoom>;
-    protected abstract closeRoom(room: ILivechatRoom, comment: string, appId: string): Promise<boolean>;
+    protected abstract createRoom(visitor: IVisitor, agent: IUser, appId: string, extraParams?: IExtraRoomParams): Promise<ILivechatRoom>;
+    protected abstract closeRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean>;
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
     protected abstract findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined>;
     protected abstract findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>>;
