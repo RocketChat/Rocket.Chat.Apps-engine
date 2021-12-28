@@ -83,8 +83,10 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuicontroller.iuicontroller.html#opencontextualbarview" class="tsd-kind-icon">open<wbr>Contextual<wbr>Bar<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuicontroller.iuicontroller.html#openmodalview" class="tsd-kind-icon">open<wbr>Modal<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuicontroller.iuicontroller.html#setviewerror" class="tsd-kind-icon">set<wbr>View<wbr>Error</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuicontroller.iuicontroller.html#updatecontextualbarview" class="tsd-kind-icon">update<wbr>Contextual<wbr>Bar<wbr>View</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuicontroller.iuicontroller.html#updatemodalview" class="tsd-kind-icon">update<wbr>Modal<wbr>View</a></li>
 							</ul>
 						</section>
@@ -93,6 +95,35 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="opencontextualbarview" class="tsd-anchor"></a>
+					<h3>open<wbr>Contextual<wbr>Bar<wbr>View</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">open<wbr>Contextual<wbr>Bar<wbr>View<span class="tsd-signature-symbol">(</span>view<span class="tsd-signature-symbol">: </span><a href="../modules/uikit_uikitinteractionresponder.html#iuikitmodalviewparam" class="tsd-signature-type" data-tsd-kind="Type alias">IUIKitModalViewParam</a>, context<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikitinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;triggerId&quot;</span><span class="tsd-signature-symbol">&gt;</span>, user<span class="tsd-signature-symbol">: </span><a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/IUIController.ts#L12">src/definition/accessors/IUIController.ts:12</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>view: <a href="../modules/uikit_uikitinteractionresponder.html#iuikitmodalviewparam" class="tsd-signature-type" data-tsd-kind="Type alias">IUIKitModalViewParam</a></h5>
+								</li>
+								<li>
+									<h5>context: <span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikitinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;triggerId&quot;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>user: <a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="openmodalview" class="tsd-anchor"></a>
 					<h3>open<wbr>Modal<wbr>View</h3>
@@ -103,7 +134,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/IUIController.ts#L10">src/definition/accessors/IUIController.ts:10</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/IUIController.ts#L10">src/definition/accessors/IUIController.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -132,13 +163,42 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/IUIController.ts#L12">src/definition/accessors/IUIController.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/IUIController.ts#L14">src/definition/accessors/IUIController.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>errorInteraction: <span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikiterrorinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitErrorInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;viewId&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;errors&quot;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>context: <span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikitinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;triggerId&quot;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>user: <a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="updatecontextualbarview" class="tsd-anchor"></a>
+					<h3>update<wbr>Contextual<wbr>Bar<wbr>View</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Contextual<wbr>Bar<wbr>View<span class="tsd-signature-symbol">(</span>view<span class="tsd-signature-symbol">: </span><a href="../modules/uikit_uikitinteractionresponder.html#iuikitmodalviewparam" class="tsd-signature-type" data-tsd-kind="Type alias">IUIKitModalViewParam</a>, context<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikitinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;triggerId&quot;</span><span class="tsd-signature-symbol">&gt;</span>, user<span class="tsd-signature-symbol">: </span><a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/IUIController.ts#L13">src/definition/accessors/IUIController.ts:13</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>view: <a href="../modules/uikit_uikitinteractionresponder.html#iuikitmodalviewparam" class="tsd-signature-type" data-tsd-kind="Type alias">IUIKitModalViewParam</a></h5>
 								</li>
 								<li>
 									<h5>context: <span class="tsd-signature-type">Pick</span><span class="tsd-signature-symbol">&lt;</span><a href="uikit_iuikitinteractiontype.iuikitinteraction.html" class="tsd-signature-type" data-tsd-kind="Interface">IUIKitInteraction</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">&quot;triggerId&quot;</span><span class="tsd-signature-symbol">&gt;</span></h5>
@@ -161,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/IUIController.ts#L11">src/definition/accessors/IUIController.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/IUIController.ts#L11">src/definition/accessors/IUIController.ts:11</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -201,10 +261,16 @@
 						<a href="accessors_iuicontroller.iuicontroller.html" class="tsd-kind-icon">IUIController</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="accessors_iuicontroller.iuicontroller.html#opencontextualbarview" class="tsd-kind-icon">open<wbr>Contextual<wbr>Bar<wbr>View</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_iuicontroller.iuicontroller.html#openmodalview" class="tsd-kind-icon">open<wbr>Modal<wbr>View</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_iuicontroller.iuicontroller.html#setviewerror" class="tsd-kind-icon">set<wbr>View<wbr>Error</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="accessors_iuicontroller.iuicontroller.html#updatecontextualbarview" class="tsd-kind-icon">update<wbr>Contextual<wbr>Bar<wbr>View</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_iuicontroller.iuicontroller.html#updatemodalview" class="tsd-kind-icon">update<wbr>Modal<wbr>View</a>
