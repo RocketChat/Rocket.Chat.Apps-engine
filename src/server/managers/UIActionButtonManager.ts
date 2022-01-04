@@ -31,6 +31,7 @@ export class UIActionButtonManager {
 
     public clearAppActionButtons(appId: string) {
         this.registeredActionButtons.set(appId, new Map());
+        this.activationBridge.doActionsChanged();
     }
 
     public getAppActionButtons(appId: string) {
