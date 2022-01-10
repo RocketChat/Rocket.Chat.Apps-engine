@@ -97,13 +97,13 @@
 					<a name="closeroom" class="tsd-anchor"></a>
 					<h3>close<wbr>Room</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">close<wbr>Room<span class="tsd-signature-symbol">(</span>room<span class="tsd-signature-symbol">: </span><a href="rooms_iroom.iroom.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoom</a>, comment<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">close<wbr>Room<span class="tsd-signature-symbol">(</span>room<span class="tsd-signature-symbol">: </span><a href="rooms_iroom.iroom.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoom</a>, comment<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, closer<span class="tsd-signature-symbol">?: </span><a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/ILivechatUpdater.ts#L19">src/definition/accessors/ILivechatUpdater.ts:19</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/ILivechatUpdater.ts#L21">src/definition/accessors/ILivechatUpdater.ts:21</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -125,6 +125,12 @@
 										<p>The comment explaining the reason for closing the room</p>
 									</div>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> closer: <a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The user that closes the room</p>
+									</div>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
@@ -140,7 +146,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/ILivechatUpdater.ts#L30">src/definition/accessors/ILivechatUpdater.ts:30</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/ILivechatUpdater.ts#L32">src/definition/accessors/ILivechatUpdater.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -190,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/04d6109/src/definition/accessors/ILivechatUpdater.ts#L11">src/definition/accessors/ILivechatUpdater.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/e879c9c/src/definition/accessors/ILivechatUpdater.ts#L12">src/definition/accessors/ILivechatUpdater.ts:12</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

@@ -266,6 +266,7 @@ export class AppManager {
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
                 await this.schedulerManager.cleanUp(app.getID());
+                this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
         }
 
@@ -867,6 +868,7 @@ export class AppManager {
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         await this.schedulerManager.cleanUp(app.getID());
+        this.uiActionButtonManager.clearAppActionButtons(app.getID());
     }
 
     /**
