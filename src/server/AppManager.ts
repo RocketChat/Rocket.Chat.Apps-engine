@@ -563,6 +563,7 @@ export class AppManager {
         await this.disable(old.id).catch(() => {});
 
         const descriptor: IAppStorageItem = {
+            ...old,
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
