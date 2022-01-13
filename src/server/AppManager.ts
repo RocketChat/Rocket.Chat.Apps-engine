@@ -564,6 +564,7 @@ export class AppManager {
         await this.disable(old.id).catch(() => {});
 
         const descriptor: IAppStorageItem = {
+            ...old,
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
@@ -940,13 +941,14 @@ export class AppManager {
         }
 
         if (saveToDb) {
-            storageItem.status = app.getStatus();
+            storageItem.status = status;
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
         await app.setStatus(status, silenceStatus);
+
         return enable;
     }
 
