@@ -9,6 +9,10 @@ export class UserUpdater implements IUserUpdater {
         return this.bridges.getUserBridge().doUpdate(user, { statusText }, this.appId);
     }
 
+    public async updateStatus(user: IUser, statusText: IUser['statusText'], status: IUser['status']) {
+        return this.bridges.getUserBridge().doUpdate(user, { statusText, status }, this.appId);
+    }
+
     public async updateBio(user: IUser, bio: IUser['bio']) {
         return this.bridges.getUserBridge().doUpdate(user, { bio }, this.appId);
     }

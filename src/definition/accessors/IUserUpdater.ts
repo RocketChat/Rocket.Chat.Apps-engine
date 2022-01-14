@@ -11,6 +11,7 @@ import { IUser } from '../users/IUser';
  */
 export interface IUserUpdater {
     updateStatusText(user: IUser, statusText: IUser['statusText']): Promise<boolean>;
+    updateStatus(user: IUser, statusText: IUser['statusText'], status: IUser['status']): Promise<boolean>;
     updateBio(user: IUser, bio: IUser['bio']): Promise<boolean>;
     updateCustomFields(user: IUser, customFields: IUser['customFields']): Promise<boolean>;
 }
