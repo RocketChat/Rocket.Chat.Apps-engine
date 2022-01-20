@@ -6,15 +6,30 @@ import { SettingType } from '../../definition/settings';
 import { IUser } from '../../definition/users';
 
 export interface IOAuth2ClientOptions {
+    /**
+     * Alias for the client. This is used to identify the client's resources.
+     *
+     * It is used to avoid overwriting other clients' settings or endpoints
+     * when there are multiple.
+     *
+     */
     alias: string;
+    // Client ID required by the OAuth2 provider
     clientId: string;
+    // Client secret required by the OAuth2 provider
     clientSecret: string;
+    // The OAuth2 provider's URL to get an access token
+    accessTokenUri: string;
+    // Default scopes to be used when requesting access
     defaultScopes?: Array<string>;
 }
 
 export class OAuth2Client {
     constructor(private readonly app: App, private readonly config: IOAuth2ClientOptions) { }
 
+    /**
+     * Remember to instruct devs to add the i18n strings in ther app.
+     */
     public async setup(configuration: IConfigurationExtend) {
         configuration.api.provideApi({
             security: ApiSecurity.UNSECURE,
@@ -80,8 +95,8 @@ export class OAuth2Client {
             refreshToken: 'sdjadhakjdhkahdkajshd',
         }, [
             // How do we find user ID? Via `state` query param?
-            new RocketChatAssociationRecord(RocketChatAssociationModel.USER, 'asldkasdklajsd'),
-            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, 'asldkasdklajsd'),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.USER, request.query.state),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, `${this.config.alias}-oauth-connection`),
         ]);
 
         return {
