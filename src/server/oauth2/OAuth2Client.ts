@@ -11,6 +11,12 @@ export enum IGrantType {
     AuthorizationCode =  'authorization_code',
 }
 
+export interface IAuthData {
+    token: string;
+    expiresAt: number;
+    refreshToken: string;
+}
+
 export interface IOAuth2ClientOptions {
     /**
      * Alias for the client. This is used to identify the client's resources.
@@ -30,6 +36,10 @@ export interface IOAuth2ClientOptions {
     accessTokenUri: string;
     // Authorization URI
     authUri: string;
+    // Refresh token URI
+    refreshTokenUri: string;
+    // Revoke token URI
+    revokeTokenURI: string;
 }
 
 export class OAuth2Client {
@@ -59,7 +69,7 @@ export class OAuth2Client {
                 type: SettingType.STRING,
                 public: true,
                 required: true,
-                packageValue: '',
+                packageValue: '61630616441-bub4k41kit4o6fhvedkuceq8r4p03oh1.apps.googleusercontent.com',
                 i18nLabel: `${this.config.alias}-oauth-client-id`,
             }),
 
@@ -68,7 +78,7 @@ export class OAuth2Client {
                 type: SettingType.STRING,
                 public: true,
                 required: true,
-                packageValue: '',
+                packageValue: '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',
                 i18nLabel: `${this.config.alias}-oauth-client-secret`,
             }),
         ]);
@@ -114,7 +124,7 @@ export class OAuth2Client {
         return url;
     }
 
-    public async getAccessTokenForUser(user: IUser) {
+    public async getAccessTokenForUser(user: IUser): Promise<Array<IAuthData>> {
         const associations = [
             new RocketChatAssociationRecord(
                 RocketChatAssociationModel.USER,
@@ -129,7 +139,7 @@ export class OAuth2Client {
         return this.app
             .getAccessors()
             .reader.getPersistenceReader()
-            .readByAssociations(associations);
+            .readByAssociations(associations) as unknown as Array<IAuthData>;
     }
 
     public async handleOAuthCallback(
@@ -164,6 +174,7 @@ export class OAuth2Client {
             url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
             url.searchParams.set('code', code);
             url.searchParams.set('client_secret', clientSecret);
+            url.searchParams.set('access_type', 'offline');
             url.searchParams.set('grant_type', IGrantType.AuthorizationCode);
 
             const { content, statusCode } = await http.post(url.href, {
@@ -174,30 +185,31 @@ export class OAuth2Client {
                 content as string,
             );
 
-            persis.createWithAssociations(
-                {
-                    token: access_token,
-                    expiresAt: expires_in || '',
-                    refreshToken: refresh_token || '',
-                },
-                [
-                    new RocketChatAssociationRecord(
-                        RocketChatAssociationModel.USER,
-                        state,
-                    ),
-                    new RocketChatAssociationRecord(
-                        RocketChatAssociationModel.MISC,
-                        `${this.config.alias}-oauth-connection`,
-                    ),
-                ],
-            );
+            if (!access_token) {
+                return {
+                    status: statusCode,
+                    content: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                                <h1 style="text-align: center; font-family: Helvetica Neue;">\
+                                    Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
+                                </h1>\
+                            </div>',
+                };
+            }
+
+            this.saveToken({
+                token: access_token,
+                expiresAt: expires_in,
+                refreshToken: refresh_token,
+                userId: state,
+                persis,
+            });
 
             return {
                 status: statusCode,
                 content: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
                             <h1 style="text-align: center; font-family: Helvetica Neue;"> Authentication went successfully </br>\
                                 You can close this tab now.\
-                            </p>\
+                            </h1>\
                         </div>',
             };
         } catch (error) {
@@ -206,5 +218,119 @@ export class OAuth2Client {
                 status: 500,
             };
         }
+    }
+
+    public async refreshUserAccessToken({
+        user,
+        persis,
+    }: {
+        user: IUser,
+        persis: IPersistence,
+    }) {
+        try {
+            const {
+                config: { clientId, clientSecret, refreshTokenUri },
+            } = this;
+            const siteUrl = await this.app
+                    .getAccessors()
+                    .environmentReader.getServerSettings()
+                    .getValueById('Site_Url');
+            const redirectUri = this.app
+                    .getAccessors()
+                    .providedApiEndpoints[0].computedPath.substring(1);
+            const url = new URL(refreshTokenUri);
+
+            const tokensInfo = await this.getAccessTokenForUser(user);
+
+            for (const tokenInfo of tokensInfo) {
+                if (tokenInfo.refreshToken) {
+                    url.searchParams.set('client_id', clientId);
+                    url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+                    url.searchParams.set('refresh_token', tokenInfo.refreshToken);
+                    url.searchParams.set('client_secret', clientSecret);
+                    url.searchParams.set('grant_type', IGrantType.RefreshToken);
+
+                    const { content } = await this.app.getAccessors().http.post(url.href);
+
+                    const { access_token, expires_in, refresh_token } = JSON.parse(
+                        content as string,
+                    );
+
+                    if (access_token) {
+                        await this.removeToken({ userId: user.id, persis }),
+                        await this.saveToken({
+                            token: access_token,
+                            expiresAt: expires_in,
+                            refreshToken: refresh_token,
+                            userId: user.id,
+                            persis,
+                        });
+                    }
+                }
+            }
+        } catch (error) {
+            this.app.getLogger().error(error);
+        }
+
+    }
+
+    public async revokeUserAccessToken({ user, persis }: { user: IUser, persis: IPersistence}) {
+        const tokensInfo = await this.getAccessTokenForUser(user);
+
+        const url = new URL(this.config.revokeTokenURI);
+
+        for (const tokenInfo of tokensInfo) {
+            url.searchParams.set('token', tokenInfo.token);
+
+            await this.app.getAccessors().http.post(url.href);
+        }
+
+        this.removeToken({ userId: user.id, persis });
+
+    }
+
+    private async saveToken({
+        token,
+        expiresAt,
+        refreshToken,
+        userId,
+        persis,
+    }: {
+        token: string,
+        expiresAt: number,
+        refreshToken: string,
+        userId: string,
+        persis: IPersistence,
+    }) {
+        await persis.createWithAssociations(
+            {
+                token,
+                expiresAt: expiresAt || '',
+                refreshToken: refreshToken || '',
+            },
+            [
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.USER,
+                    userId,
+                ),
+                new RocketChatAssociationRecord(
+                    RocketChatAssociationModel.MISC,
+                    `${this.config.alias}-oauth-connection`,
+                ),
+            ],
+        );
+    }
+
+    private async removeToken({ userId, persis }: { userId: string, persis: IPersistence} ) {
+        await persis.removeByAssociations([
+            new RocketChatAssociationRecord(
+                RocketChatAssociationModel.USER,
+                userId,
+            ),
+            new RocketChatAssociationRecord(
+                RocketChatAssociationModel.MISC,
+                `${this.config.alias}-oauth-connection`,
+            ),
+        ]);
     }
 }
