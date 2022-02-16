@@ -10,6 +10,7 @@ export interface IVisitor {
     department?: string;
     phone?: Array<IVisitorPhone>;
     visitorEmails?: Array<IVisitorEmail>;
+    status?: string;
     customFields?: { [key: string]: any };
     livechatData?: { [key: string]: any };
 }
