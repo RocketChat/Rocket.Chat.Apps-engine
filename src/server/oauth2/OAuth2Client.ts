@@ -69,7 +69,7 @@ export class OAuth2Client {
                 type: SettingType.STRING,
                 public: true,
                 required: true,
-                packageValue: '61630616441-bub4k41kit4o6fhvedkuceq8r4p03oh1.apps.googleusercontent.com',
+                packageValue: '',
                 i18nLabel: `${this.config.alias}-oauth-client-id`,
             }),
 
@@ -78,7 +78,7 @@ export class OAuth2Client {
                 type: SettingType.STRING,
                 public: true,
                 required: true,
-                packageValue: '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',
+                packageValue: '',
                 i18nLabel: `${this.config.alias}-oauth-client-secret`,
             }),
         ]);
