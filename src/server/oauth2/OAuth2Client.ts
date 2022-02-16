@@ -26,10 +26,6 @@ export interface IOAuth2ClientOptions {
      *
      */
     alias: string;
-    // Client ID required by the OAuth2 provider
-    clientId: string;
-    // Client secret required by the OAuth2 provider
-    clientSecret: string;
     // Default scopes to be used when requesting access
     defaultScopes?: Array<string>;
     // Access token URI
@@ -109,6 +105,7 @@ export class OAuth2Client {
             .reader.getEnvironmentReader()
             .getSettings()
             .getValueById(`${this.config.alias}-oauth-client-id`);
+
         const url = new URL(authUri, siteUrl);
 
         url.searchParams.set('response_type', 'code');
@@ -160,9 +157,17 @@ export class OAuth2Client {
                 .getAccessors()
                 .providedApiEndpoints[0].computedPath.substring(1);
 
-            const {
-                config: { clientId, clientSecret },
-            } = this;
+            const clientId = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-client-id`);
+
+            const clientSecret = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
             const {
                 query: { code, state },
@@ -229,8 +234,21 @@ export class OAuth2Client {
     }) {
         try {
             const {
-                config: { clientId, clientSecret, refreshTokenUri },
+                config: { refreshTokenUri },
             } = this;
+
+            const clientId = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-client-id`);
+
+            const clientSecret = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-clientsecret`);
+
             const siteUrl = await this.app
                     .getAccessors()
                     .environmentReader.getServerSettings()
