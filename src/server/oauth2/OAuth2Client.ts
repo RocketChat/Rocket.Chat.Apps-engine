@@ -3,40 +3,9 @@ import { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../..
 import { ApiSecurity, ApiVisibility, IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
 import { App } from '../../definition/App';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../definition/metadata';
+import { IAuthData, IGrantType, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
 import { SettingType } from '../../definition/settings';
 import { IUser } from '../../definition/users';
-
-export enum IGrantType {
-    RefreshToken =  'refresh_token',
-    AuthorizationCode =  'authorization_code',
-}
-
-export interface IAuthData {
-    token: string;
-    expiresAt: number;
-    refreshToken: string;
-}
-
-export interface IOAuth2ClientOptions {
-    /**
-     * Alias for the client. This is used to identify the client's resources.
-     *
-     * It is used to avoid overwriting other clients' settings or endpoints
-     * when there are multiple.
-     *
-     */
-    alias: string;
-    // Default scopes to be used when requesting access
-    defaultScopes?: Array<string>;
-    // Access token URI
-    accessTokenUri: string;
-    // Authorization URI
-    authUri: string;
-    // Refresh token URI
-    refreshTokenUri: string;
-    // Revoke token URI
-    revokeTokenURI: string;
-}
 
 export class OAuth2Client {
     constructor(
@@ -47,7 +16,9 @@ export class OAuth2Client {
     /**
      * Remember to instruct devs to add the i18n strings in ther app.
      */
-    public async setup(configuration: IConfigurationExtend) {
+    public async setup(
+        configuration: IConfigurationExtend,
+    ): Promise<void> {
         configuration.api.provideApi({
             security: ApiSecurity.UNSECURE,
             visibility: ApiVisibility.PUBLIC,
@@ -148,6 +119,10 @@ export class OAuth2Client {
         persis: IPersistence,
     ): Promise<IApiResponse> {
         try {
+            const {
+                query: { code, state },
+            } = request;
+
             const siteUrl = await this.app
                 .getAccessors()
                 .environmentReader.getServerSettings()
@@ -169,9 +144,11 @@ export class OAuth2Client {
                 .getSettings()
                 .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
-            const {
-                query: { code, state },
-            } = request;
+            const user = await this.app
+                .getAccessors()
+                .reader
+                .getUserReader()
+                .getById(state);
 
             const url = new URL(accessTokenUrl, siteUrl);
 
@@ -201,21 +178,29 @@ export class OAuth2Client {
                 };
             }
 
-            this.saveToken({
+            await this.saveToken({
                 token: access_token,
                 expiresAt: expires_in,
                 refreshToken: refresh_token,
-                userId: state,
+                userId: user.id,
                 persis,
             });
 
+            const responseContent = await this.config.callback({
+                token: access_token,
+                expiresAt: expires_in,
+                refreshToken: refresh_token,
+            },
+                user,
+                read,
+                modify,
+                http,
+                persis,
+            );
+
             return {
                 status: statusCode,
-                content: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
-                            <h1 style="text-align: center; font-family: Helvetica Neue;"> Authentication went successfully </br>\
-                                You can close this tab now.\
-                            </h1>\
-                        </div>',
+                content: responseContent,
             };
         } catch (error) {
             this.app.getLogger().error(error);
@@ -231,7 +216,7 @@ export class OAuth2Client {
     }: {
         user: IUser,
         persis: IPersistence,
-    }) {
+    }): Promise<boolean> {
         try {
             const {
                 config: { refreshTokenUri },
@@ -275,24 +260,34 @@ export class OAuth2Client {
                     );
 
                     if (access_token) {
-                        await this.removeToken({ userId: user.id, persis }),
-                        await this.saveToken({
-                            token: access_token,
-                            expiresAt: expires_in,
-                            refreshToken: refresh_token,
-                            userId: user.id,
-                            persis,
-                        });
+                        await Promise.all([
+                            this.removeToken({ userId: user.id, persis }),
+                            this.saveToken({
+                                token: access_token,
+                                expiresAt: expires_in,
+                                refreshToken: refresh_token,
+                                userId: user.id,
+                                persis,
+                            }),
+                        ]);
                     }
                 }
             }
+            return true;
         } catch (error) {
             this.app.getLogger().error(error);
+            return false;
         }
 
     }
 
-    public async revokeUserAccessToken({ user, persis }: { user: IUser, persis: IPersistence}) {
+    public async revokeUserAccessToken({
+        user,
+        persis,
+    }: {
+        user: IUser,
+        persis: IPersistence,
+    }): Promise<Array<IAuthData>> {
         const tokensInfo = await this.getAccessTokenForUser(user);
 
         const url = new URL(this.config.revokeTokenURI);
@@ -303,8 +298,7 @@ export class OAuth2Client {
             await this.app.getAccessors().http.post(url.href);
         }
 
-        this.removeToken({ userId: user.id, persis });
-
+        return await this.removeToken({ userId: user.id, persis });
     }
 
     private async saveToken({
@@ -319,8 +313,8 @@ export class OAuth2Client {
         refreshToken: string,
         userId: string,
         persis: IPersistence,
-    }) {
-        await persis.createWithAssociations(
+    }): Promise<string> {
+        return persis.createWithAssociations(
             {
                 token,
                 expiresAt: expiresAt || '',
@@ -339,8 +333,14 @@ export class OAuth2Client {
         );
     }
 
-    private async removeToken({ userId, persis }: { userId: string, persis: IPersistence} ) {
-        await persis.removeByAssociations([
+    private async removeToken({
+        userId,
+        persis,
+    }: {
+        userId: string,
+        persis: IPersistence,
+    }): Promise<Array<IAuthData>> {
+        return persis.removeByAssociations([
             new RocketChatAssociationRecord(
                 RocketChatAssociationModel.USER,
                 userId,
@@ -349,6 +349,6 @@ export class OAuth2Client {
                 RocketChatAssociationModel.MISC,
                 `${this.config.alias}-oauth-connection`,
             ),
-        ]);
+        ]) as Promise<Array<IAuthData>>;
     }
 }
