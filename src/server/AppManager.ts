@@ -634,9 +634,9 @@ export class AppManager {
 
         await this.purgeAppConfig(app);
 
-        await this.runStartUpProcess(stored, app, false, true);
-
         this.apps.set(app.getID(), app);
+
+        await this.runStartUpProcess(stored, app, false, true);
     }
 
     public getLanguageContent(): { [key: string]: object } {
