@@ -1,5 +1,6 @@
-import { App } from '../../definition/App';
-import { IOAuth2ClientOptions, OAuth2Client } from './OAuth2Client';
+import { OAuth2Client } from '../../server/oauth2/OAuth2Client';
+import { App } from '../App';
+import { IOAuth2ClientOptions } from './IOAuth2';
 
 /**
  * Placeholder factory for OAuth2Client in case
