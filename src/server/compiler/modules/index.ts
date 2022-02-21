@@ -13,6 +13,7 @@ export enum AllowedInternalModules {
     util = 'util',
     punycode = 'punycode',
     os = 'os',
+    querystring = 'querystring',
 }
 
 export class ForbiddenNativeModuleAccess extends Error {
@@ -40,6 +41,7 @@ const proxyHandlers = {
     util: defaultHandler,
     punycode: defaultHandler,
     os: noopHandler,
+    querystring: defaultHandler,
 };
 
 export function requireNativeModule(module: AllowedInternalModules, appId: string) {
