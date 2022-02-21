@@ -3,7 +3,7 @@ import { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../..
 import { ApiSecurity, ApiVisibility, IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
 import { App } from '../../definition/App';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../definition/metadata';
-import { IAuthData, IGrantType, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
+import { GrantType, IAuthData, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
 import { SettingType } from '../../definition/settings';
 import { IUser } from '../../definition/users';
 
@@ -157,7 +157,7 @@ export class OAuth2Client {
             url.searchParams.set('code', code);
             url.searchParams.set('client_secret', clientSecret);
             url.searchParams.set('access_type', 'offline');
-            url.searchParams.set('grant_type', IGrantType.AuthorizationCode);
+            url.searchParams.set('grant_type', GrantType.AuthorizationCode);
 
             const { content, statusCode } = await http.post(url.href, {
                 headers: { Accept: 'application/json' },
@@ -251,7 +251,7 @@ export class OAuth2Client {
                     url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
                     url.searchParams.set('refresh_token', tokenInfo.refreshToken);
                     url.searchParams.set('client_secret', clientSecret);
-                    url.searchParams.set('grant_type', IGrantType.RefreshToken);
+                    url.searchParams.set('grant_type', GrantType.RefreshToken);
 
                     const { content } = await this.app.getAccessors().http.post(url.href);
 

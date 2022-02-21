@@ -1,14 +1,7 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IUser } from '../users/IUser';
 
-export enum IOAuth2Events {
-    Authorized = 'authorized',
-    Unauthorized = 'unauthorized',
-    Refreshed = 'refreshed',
-    Revoked = 'revoked',
-}
-
-export enum IGrantType {
+export enum GrantType {
     RefreshToken =  'refresh_token',
     AuthorizationCode =  'authorization_code',
 }
