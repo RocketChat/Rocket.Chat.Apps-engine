@@ -1,13 +1,40 @@
 import { URL } from 'url';
-import { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../../definition/accessors';
-import { ApiSecurity, ApiVisibility, IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
+import {
+    IConfigurationExtend,
+    IHttp,
+    IModify,
+    IPersistence,
+    IRead,
+} from '../../definition/accessors';
+import {
+    ApiSecurity,
+    ApiVisibility,
+    IApiEndpointInfo,
+    IApiRequest,
+    IApiResponse,
+} from '../../definition/api';
 import { App } from '../../definition/App';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../definition/metadata';
-import { GrantType, IAuthData, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
+import { GrantType, IAuthData, IOAuth2Client, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
 import { SettingType } from '../../definition/settings';
 import { IUser } from '../../definition/users';
 
-export class OAuth2Client {
+export class OAuth2Client implements IOAuth2Client {
+
+    private defaultContents = {
+        success:  '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                        <h1 style="text-align: center; font-family: Helvetica Neue;">\
+                            Authorization went successfully<br>\
+                            You can close this tab now<br>\
+                        </h1>\
+                    </div>',
+        failed: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                    <h1 style="text-align: center; font-family: Helvetica Neue;">\
+                        Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
+                    </h1>\
+                </div>',
+    };
+
     constructor(
         private readonly app: App,
         private readonly config: IOAuth2ClientOptions,
@@ -163,33 +190,42 @@ export class OAuth2Client {
                 headers: { Accept: 'application/json' },
             });
 
-            const { access_token, expires_in, refresh_token } = JSON.parse(
-                content as string,
-            );
+            let parsedContent: IAuthData;
 
-            if (!access_token) {
+            try {
+                const { access_token, expires_in, refresh_token } = JSON.parse(
+                    content as string,
+                );
+                parsedContent = {
+                    token: access_token,
+                    expiresAt: expires_in,
+                    refreshToken: refresh_token,
+                };
+            } catch (error) {
+
+                const failedContent = await this.config.callback({
+                    ...parsedContent,
+                },
+                    user,
+                    read,
+                    modify,
+                    http,
+                    persis,
+                );
                 return {
                     status: statusCode,
-                    content: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
-                                <h1 style="text-align: center; font-family: Helvetica Neue;">\
-                                    Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
-                                </h1>\
-                            </div>',
+                    content: failedContent || this.defaultContents.failed,
                 };
             }
 
             await this.saveToken({
-                token: access_token,
-                expiresAt: expires_in,
-                refreshToken: refresh_token,
+                ...parsedContent,
                 userId: user.id,
                 persis,
             });
 
             const responseContent = await this.config.callback({
-                token: access_token,
-                expiresAt: expires_in,
-                refreshToken: refresh_token,
+                ...parsedContent,
             },
                 user,
                 read,
@@ -200,12 +236,21 @@ export class OAuth2Client {
 
             return {
                 status: statusCode,
-                content: responseContent,
+                content: responseContent || this.defaultContents.success,
             };
         } catch (error) {
             this.app.getLogger().error(error);
+            const failedContent = await this.config.callback(
+                null,
+                null,
+                read,
+                modify,
+                http,
+                persis,
+            );
             return {
                 status: 500,
+                content: failedContent || this.defaultContents.failed,
             };
         }
     }
@@ -241,38 +286,40 @@ export class OAuth2Client {
             const redirectUri = this.app
                     .getAccessors()
                     .providedApiEndpoints[0].computedPath.substring(1);
+
             const url = new URL(refreshTokenUri);
 
-            const tokensInfo = await this.getAccessTokenForUser(user);
+            const tokenInfo = await this.getAccessTokenForUser(user);
 
-            for (const tokenInfo of tokensInfo) {
-                if (tokenInfo.refreshToken) {
+            if (tokenInfo[0].refreshToken) {
                     url.searchParams.set('client_id', clientId);
                     url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
-                    url.searchParams.set('refresh_token', tokenInfo.refreshToken);
+                    url.searchParams.set('refresh_token', tokenInfo[0].refreshToken);
                     url.searchParams.set('client_secret', clientSecret);
                     url.searchParams.set('grant_type', GrantType.RefreshToken);
 
                     const { content } = await this.app.getAccessors().http.post(url.href);
 
-                    const { access_token, expires_in, refresh_token } = JSON.parse(
-                        content as string,
-                    );
-
-                    if (access_token) {
-                        await Promise.all([
-                            this.removeToken({ userId: user.id, persis }),
-                            this.saveToken({
+                    try {
+                        const { access_token, expires_in, refresh_token } = JSON.parse(
+                            content as string,
+                        );
+                        if (access_token) {
+                           await this.removeToken({ userId: user.id, persis });
+                           await this.saveToken({
                                 token: access_token,
                                 expiresAt: expires_in,
                                 refreshToken: refresh_token,
                                 userId: user.id,
                                 persis,
-                            }),
-                        ]);
+                            });
+                        }
+                    } catch (error) {
+                        this.app.getLogger().error(error);
+                        return false;
                     }
                 }
-            }
+
             return true;
         } catch (error) {
             this.app.getLogger().error(error);
@@ -287,18 +334,23 @@ export class OAuth2Client {
     }: {
         user: IUser,
         persis: IPersistence,
-    }): Promise<Array<IAuthData>> {
-        const tokensInfo = await this.getAccessTokenForUser(user);
+    }): Promise<IAuthData | object> {
+        try {
+            const tokenInfo = await this.getAccessTokenForUser(user);
 
-        const url = new URL(this.config.revokeTokenURI);
+            const url = new URL(this.config.revokeTokenUri);
 
-        for (const tokenInfo of tokensInfo) {
-            url.searchParams.set('token', tokenInfo.token);
+            url.searchParams.set('token', tokenInfo[0].token);
 
             await this.app.getAccessors().http.post(url.href);
-        }
 
-        return await this.removeToken({ userId: user.id, persis });
+            const removedToken = await this.removeToken({ userId: user.id, persis });
+
+            return removedToken[0];
+        } catch (error) {
+            this.app.getLogger().error(error);
+            return {};
+        }
     }
 
     private async saveToken({
