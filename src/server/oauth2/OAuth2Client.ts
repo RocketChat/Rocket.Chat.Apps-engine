@@ -1,30 +1,58 @@
 import { URL } from 'url';
-import { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../../definition/accessors';
-import { ApiSecurity, ApiVisibility, IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
+import {
+    HttpStatusCode,
+    IConfigurationExtend,
+    IHttp,
+    IModify,
+    IPersistence,
+    IRead,
+} from '../../definition/accessors';
+import {
+    ApiSecurity,
+    ApiVisibility,
+    IApiEndpointInfo,
+    IApiRequest,
+    IApiResponse,
+} from '../../definition/api';
 import { App } from '../../definition/App';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../definition/metadata';
-import { GrantType, IAuthData, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
+import { IAuthData, IOAuth2Client, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
 import { SettingType } from '../../definition/settings';
 import { IUser } from '../../definition/users';
 
-export class OAuth2Client {
+export enum GrantType {
+    RefreshToken =  'refresh_token',
+    AuthorizationCode =  'authorization_code',
+}
+
+export class OAuth2Client implements IOAuth2Client {
+
+    private defaultContents = {
+        success:  '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                        <h1 style="text-align: center; font-family: Helvetica Neue;">\
+                            Authorization went successfully<br>\
+                            You can close this tab now<br>\
+                        </h1>\
+                    </div>',
+        failed: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                    <h1 style="text-align: center; font-family: Helvetica Neue;">\
+                        Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
+                    </h1>\
+                </div>',
+    };
+
     constructor(
         private readonly app: App,
         private readonly config: IOAuth2ClientOptions,
     ) {}
 
-    /**
-     * Remember to instruct devs to add the i18n strings in ther app.
-     */
-    public async setup(
-        configuration: IConfigurationExtend,
-    ): Promise<void> {
+    public async setup(configuration: IConfigurationExtend): Promise<void> {
         configuration.api.provideApi({
             security: ApiSecurity.UNSECURE,
             visibility: ApiVisibility.PUBLIC,
             endpoints: [
                 {
-                    path: `${this.config.alias}-callback/`,
+                    path: `${this.config.alias}-callback`,
                     get: this.handleOAuthCallback.bind(this),
                 },
             ],
@@ -51,10 +79,7 @@ export class OAuth2Client {
         ]);
     }
 
-    public async getUserAuthorizationUrl(
-        user: IUser,
-        scopes?: Array<string>,
-    ): Promise<URL> {
+    public async getUserAuthorizationUrl(user: IUser, scopes?: Array<string>): Promise<URL> {
         const redirectUri = this.app
             .getAccessors()
             .providedApiEndpoints[0].computedPath.substring(1);
@@ -92,7 +117,7 @@ export class OAuth2Client {
         return url;
     }
 
-    public async getAccessTokenForUser(user: IUser): Promise<Array<IAuthData>> {
+    public async getAccessTokenForUser(user: IUser): Promise<IAuthData | undefined> {
         const associations = [
             new RocketChatAssociationRecord(
                 RocketChatAssociationModel.USER,
@@ -104,120 +129,26 @@ export class OAuth2Client {
             ),
         ];
 
-        return this.app
+        const [ result ] = await this.app
             .getAccessors()
             .reader.getPersistenceReader()
-            .readByAssociations(associations) as unknown as Array<IAuthData>;
+            .readByAssociations(associations) as unknown as Array<IAuthData | undefined>;
+
+        return result;
     }
 
-    public async handleOAuthCallback(
-        request: IApiRequest,
-        endpoint: IApiEndpointInfo,
-        read: IRead,
-        modify: IModify,
-        http: IHttp,
-        persis: IPersistence,
-    ): Promise<IApiResponse> {
+    public async refreshUserAccessToken(user: IUser, persis: IPersistence): Promise<IAuthData | undefined> {
         try {
-            const {
-                query: { code, state },
-            } = request;
+            const tokenInfo = await this.getAccessTokenForUser(user);
 
-            const siteUrl = await this.app
-                .getAccessors()
-                .environmentReader.getServerSettings()
-                .getValueById('Site_Url');
-            const accessTokenUrl = this.config.accessTokenUri;
-            const redirectUri = this.app
-                .getAccessors()
-                .providedApiEndpoints[0].computedPath.substring(1);
-
-            const clientId = await this.app
-                .getAccessors()
-                .reader.getEnvironmentReader()
-                .getSettings()
-                .getValueById(`${this.config.alias}-oauth-client-id`);
-
-            const clientSecret = await this.app
-                .getAccessors()
-                .reader.getEnvironmentReader()
-                .getSettings()
-                .getValueById(`${this.config.alias}-oauth-clientsecret`);
-
-            const user = await this.app
-                .getAccessors()
-                .reader
-                .getUserReader()
-                .getById(state);
-
-            const url = new URL(accessTokenUrl, siteUrl);
-
-            url.searchParams.set('client_id', clientId);
-            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
-            url.searchParams.set('code', code);
-            url.searchParams.set('client_secret', clientSecret);
-            url.searchParams.set('access_type', 'offline');
-            url.searchParams.set('grant_type', GrantType.AuthorizationCode);
-
-            const { content, statusCode } = await http.post(url.href, {
-                headers: { Accept: 'application/json' },
-            });
-
-            const { access_token, expires_in, refresh_token } = JSON.parse(
-                content as string,
-            );
-
-            if (!access_token) {
-                return {
-                    status: statusCode,
-                    content: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
-                                <h1 style="text-align: center; font-family: Helvetica Neue;">\
-                                    Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
-                                </h1>\
-                            </div>',
-                };
+            if (!tokenInfo) {
+                throw new Error('User has no access token information');
             }
 
-            await this.saveToken({
-                token: access_token,
-                expiresAt: expires_in,
-                refreshToken: refresh_token,
-                userId: user.id,
-                persis,
-            });
+            if (!tokenInfo.refreshToken) {
+                throw new Error('User token information has no refresh token available');
+            }
 
-            const responseContent = await this.config.callback({
-                token: access_token,
-                expiresAt: expires_in,
-                refreshToken: refresh_token,
-            },
-                user,
-                read,
-                modify,
-                http,
-                persis,
-            );
-
-            return {
-                status: statusCode,
-                content: responseContent,
-            };
-        } catch (error) {
-            this.app.getLogger().error(error);
-            return {
-                status: 500,
-            };
-        }
-    }
-
-    public async refreshUserAccessToken({
-        user,
-        persis,
-    }: {
-        user: IUser,
-        persis: IPersistence,
-    }): Promise<boolean> {
-        try {
             const {
                 config: { refreshTokenUri },
             } = this;
@@ -241,85 +172,196 @@ export class OAuth2Client {
             const redirectUri = this.app
                     .getAccessors()
                     .providedApiEndpoints[0].computedPath.substring(1);
+
             const url = new URL(refreshTokenUri);
 
-            const tokensInfo = await this.getAccessTokenForUser(user);
+            url.searchParams.set('client_id', clientId);
+            url.searchParams.set('client_secret', clientSecret);
+            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('refresh_token', tokenInfo.refreshToken);
+            url.searchParams.set('grant_type', GrantType.RefreshToken);
 
-            for (const tokenInfo of tokensInfo) {
-                if (tokenInfo.refreshToken) {
-                    url.searchParams.set('client_id', clientId);
-                    url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
-                    url.searchParams.set('refresh_token', tokenInfo.refreshToken);
-                    url.searchParams.set('client_secret', clientSecret);
-                    url.searchParams.set('grant_type', GrantType.RefreshToken);
+            const { content, statusCode } = await this.app.getAccessors().http.post(url.href);
 
-                    const { content } = await this.app.getAccessors().http.post(url.href);
-
-                    const { access_token, expires_in, refresh_token } = JSON.parse(
-                        content as string,
-                    );
-
-                    if (access_token) {
-                        await Promise.all([
-                            this.removeToken({ userId: user.id, persis }),
-                            this.saveToken({
-                                token: access_token,
-                                expiresAt: expires_in,
-                                refreshToken: refresh_token,
-                                userId: user.id,
-                                persis,
-                            }),
-                        ]);
-                    }
-                }
+            if (statusCode !== 200) {
+                throw new Error('Request to provider was unsuccessful. Check logs for more information');
             }
+
+            const { access_token, expires_in, refresh_token, scope } = JSON.parse(
+                content as string,
+            );
+
+            if (!access_token) {
+                throw new Error('No access token returned by the provider');
+            }
+
+            const authData: IAuthData = {
+                scope,
+                token: access_token,
+                expiresAt: expires_in,
+                refreshToken: refresh_token || tokenInfo.refreshToken,
+            };
+
+            await this.saveToken(authData, user.id, persis);
+
+            return authData;
+        } catch (error) {
+            this.app.getLogger().error(error);
+            throw error;
+        }
+
+    }
+
+    public async revokeUserAccessToken(user: IUser, persis: IPersistence): Promise<boolean> {
+        try {
+            const tokenInfo = await this.getAccessTokenForUser(user);
+
+            if (!tokenInfo?.token) {
+                throw new Error('No access token available for this user.');
+            }
+
+            const url = new URL(this.config.revokeTokenUri);
+
+            url.searchParams.set('token', tokenInfo?.token);
+
+            const result = await this.app.getAccessors().http.post(url.href);
+
+            if (result.statusCode !== 200) {
+                throw new Error('Provider did not allow token to be revoked');
+            }
+
+            await this.removeToken({ userId: user.id, persis });
+
             return true;
         } catch (error) {
             this.app.getLogger().error(error);
             return false;
         }
-
     }
 
-    public async revokeUserAccessToken({
-        user,
-        persis,
-    }: {
-        user: IUser,
+    private async handleOAuthCallback(
+        request: IApiRequest,
+        endpoint: IApiEndpointInfo,
+        read: IRead,
+        modify: IModify,
+        http: IHttp,
         persis: IPersistence,
-    }): Promise<Array<IAuthData>> {
-        const tokensInfo = await this.getAccessTokenForUser(user);
+    ): Promise<IApiResponse> {
+        try {
+            const {
+                query: { code, state },
+            } = request;
 
-        const url = new URL(this.config.revokeTokenURI);
+            const user = await this.app
+                .getAccessors()
+                .reader
+                .getUserReader()
+                .getById(state);
 
-        for (const tokenInfo of tokensInfo) {
-            url.searchParams.set('token', tokenInfo.token);
+            if (!user) {
+                throw new Error('User could not be determined.');
+            }
 
-            await this.app.getAccessors().http.post(url.href);
+            // User chose not to authorize the access
+            if (!code) {
+                const failedResult = await this.config.authorizationCallback?.(
+                    undefined,
+                    user,
+                    read,
+                    modify,
+                    http,
+                    persis,
+                );
+
+                return {
+                    status: HttpStatusCode.UNAUTHORIZED,
+                    content: failedResult?.responseContent || this.defaultContents.failed,
+                };
+            }
+
+            const siteUrl = await this.app
+                .getAccessors()
+                .environmentReader.getServerSettings()
+                .getValueById('Site_Url');
+
+            const accessTokenUrl = this.config.accessTokenUri;
+
+            const redirectUri = this.app
+                .getAccessors()
+                .providedApiEndpoints[0].computedPath.substring(1);
+
+            const clientId = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-client-id`);
+
+            const clientSecret = await this.app
+                .getAccessors()
+                .reader.getEnvironmentReader()
+                .getSettings()
+                .getValueById(`${this.config.alias}-oauth-clientsecret`);
+
+            const url = new URL(accessTokenUrl, siteUrl);
+
+            url.searchParams.set('client_id', clientId);
+            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('code', code);
+            url.searchParams.set('client_secret', clientSecret);
+            url.searchParams.set('access_type', 'offline');
+            url.searchParams.set('grant_type', GrantType.AuthorizationCode);
+
+            const { content, statusCode } = await http.post(url.href, {
+                headers: { Accept: 'application/json' },
+            });
+
+            // If provider had a server error, nothing we can do
+            if (statusCode >= 500) {
+                throw new Error('Request for access token failed. Check logs for more information');
+            }
+
+            const response = JSON.parse(content as string);
+            const { access_token, expires_in, refresh_token, scope } = response;
+
+            const authData: IAuthData = {
+                scope,
+                token: access_token,
+                expiresAt: expires_in,
+                refreshToken: refresh_token,
+            };
+
+            const result = await this.config.authorizationCallback?.(
+                authData,
+                user,
+                read,
+                modify,
+                http,
+                persis,
+            );
+
+            await this.saveToken(
+                authData,
+                user.id,
+                persis,
+            );
+
+            return {
+                status: statusCode,
+                content: result?.responseContent || this.defaultContents.success,
+            };
+        } catch (error) {
+            this.app.getLogger().error(error);
+            return {
+                status: HttpStatusCode.INTERNAL_SERVER_ERROR,
+                content: this.defaultContents.failed,
+            };
         }
-
-        return await this.removeToken({ userId: user.id, persis });
     }
 
-    private async saveToken({
-        token,
-        expiresAt,
-        refreshToken,
-        userId,
-        persis,
-    }: {
-        token: string,
-        expiresAt: number,
-        refreshToken: string,
-        userId: string,
-        persis: IPersistence,
-    }): Promise<string> {
-        return persis.createWithAssociations(
-            {
-                token,
-                expiresAt: expiresAt || '',
-                refreshToken: refreshToken || '',
-            },
+    private async saveToken(authData: IAuthData, userId: string, persis: IPersistence): Promise<string> {
+        const { scope, token, expiresAt, refreshToken } = authData;
+
+        return persis.updateByAssociations(
             [
                 new RocketChatAssociationRecord(
                     RocketChatAssociationModel.USER,
@@ -330,6 +372,13 @@ export class OAuth2Client {
                     `${this.config.alias}-oauth-connection`,
                 ),
             ],
+            {
+                scope,
+                token,
+                expiresAt: expiresAt || '',
+                refreshToken: refreshToken || '',
+            },
+            true, // we want to create the record if it doesn't exist
         );
     }
 
@@ -339,8 +388,8 @@ export class OAuth2Client {
     }: {
         userId: string,
         persis: IPersistence,
-    }): Promise<Array<IAuthData>> {
-        return persis.removeByAssociations([
+    }): Promise<IAuthData> {
+        const [ result ] = await persis.removeByAssociations([
             new RocketChatAssociationRecord(
                 RocketChatAssociationModel.USER,
                 userId,
@@ -349,6 +398,8 @@ export class OAuth2Client {
                 RocketChatAssociationModel.MISC,
                 `${this.config.alias}-oauth-connection`,
             ),
-        ]) as Promise<Array<IAuthData>>;
+        ]) as unknown as Array<IAuthData>;
+
+        return result;
     }
 }
