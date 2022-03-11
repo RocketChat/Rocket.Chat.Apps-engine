@@ -40,6 +40,7 @@ export const AppPermissions = {
     'message': {
         read: { name: 'message.read' },
         write: { name: 'message.write' },
+        delete: { name: 'message.delete'},
     },
     'livechat-status': {
         read: { name: 'livechat-status.read' },
@@ -101,6 +102,7 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.room.write,
     AppPermissions.message.read,
     AppPermissions.message.write,
+    AppPermissions.message.delete,
     AppPermissions['livechat-department'].read,
     AppPermissions['livechat-department'].write,
     AppPermissions['livechat-room'].read,
