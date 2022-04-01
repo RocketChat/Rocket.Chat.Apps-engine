@@ -11,7 +11,7 @@ import { IUIExtend } from './IUIExtend';
  * of your App. It is provided during initialization of your App.
  */
 export interface IConfigurationExtend {
-    /** Accessor for customing the handling of IHttp requests and responses your App causes. */
+    /** Accessor for customizing the handling of IHttp requests and responses your App causes. */
     readonly http: IHttpExtend;
 
     /** Accessor for declaring the settings your App provides. */

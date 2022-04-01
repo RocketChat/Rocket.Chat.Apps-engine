@@ -22,6 +22,7 @@ export enum AppStatus {
     ERROR_DISABLED = 'error_disabled',
     /** The App was manually disabled by a user. */
     MANUALLY_DISABLED = 'manually_disabled',
+    /** The App was disabled due to invalid settings */
     INVALID_SETTINGS_DISABLED = 'invalid_settings_disabled',
     /** The App was disabled due to other circumstances. */
     DISABLED = 'disabled',

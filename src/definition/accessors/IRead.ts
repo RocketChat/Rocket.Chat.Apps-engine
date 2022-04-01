@@ -32,6 +32,7 @@ export interface IRead {
     /** Gets the INotifier for notifying users/rooms. */
     getNotifier(): INotifier;
 
+    /** Gets the ILivechatRead instance */
     getLivechatReader(): ILivechatRead;
     getUploadReader(): IUploadRead;
     getCloudWorkspaceReader(): ICloudWorkspaceRead;
