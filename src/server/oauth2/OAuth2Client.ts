@@ -105,7 +105,7 @@ export class OAuth2Client implements IOAuth2Client {
         const url = new URL(authUri, siteUrl);
 
         url.searchParams.set('response_type', 'code');
-        url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+        url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
         url.searchParams.set('state', user.id);
         url.searchParams.set('client_id', clientId);
         url.searchParams.set('access_type', 'offline');
@@ -177,7 +177,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             url.searchParams.set('client_id', clientId);
             url.searchParams.set('client_secret', clientSecret);
-            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
             url.searchParams.set('refresh_token', tokenInfo.refreshToken);
             url.searchParams.set('grant_type', GrantType.RefreshToken);
 
@@ -209,7 +209,6 @@ export class OAuth2Client implements IOAuth2Client {
             this.app.getLogger().error(error);
             throw error;
         }
-
     }
 
     public async revokeUserAccessToken(user: IUser, persis: IPersistence): Promise<boolean> {
@@ -305,7 +304,7 @@ export class OAuth2Client implements IOAuth2Client {
             const url = new URL(accessTokenUrl, siteUrl);
 
             url.searchParams.set('client_id', clientId);
-            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
             url.searchParams.set('code', code);
             url.searchParams.set('client_secret', clientSecret);
             url.searchParams.set('access_type', 'offline');
