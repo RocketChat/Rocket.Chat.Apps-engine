@@ -78,4 +78,5 @@ export enum AppMethod {
     EXECUTE_PRE_EMAIL_SENT = 'executePreEmailSent',
     // User
     EXECUTE_POST_USER_CREATED = 'executePostUserCreated',
+    EXECUTE_POST_USER_UPDATED = 'executePostUserUpdated',
 }

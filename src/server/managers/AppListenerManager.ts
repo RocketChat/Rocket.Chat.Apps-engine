@@ -16,7 +16,7 @@ import {
     UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
 import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
-import { IUser, IUserContext } from '../../definition/users';
+import { IUser, IUserContext, IUserUpdateContext } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
 import { Message } from '../messages/Message';
@@ -237,6 +237,8 @@ export class AppListenerManager {
             // User
             case AppInterface.IPostUserCreated:
                 return this.executePostUserCreated(data as IUserContext);
+            case AppInterface.IPostUserUpdated:
+                return this.executePostUserUpdated(data as IUserContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1208,6 +1210,24 @@ export class AppListenerManager {
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_CREATED)) {
                 await app.call(AppMethod.EXECUTE_POST_USER_CREATED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserUpdated(data: IUserUpdateContext): Promise<void> {
+        const context = Object.freeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_UPDATED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_UPDATED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),

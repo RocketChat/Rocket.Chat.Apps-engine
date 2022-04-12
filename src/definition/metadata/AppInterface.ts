@@ -44,4 +44,5 @@ export enum AppInterface {
     // Email
     IPreEmailSent = 'IPreEmailSent',
     IPostUserCreated = 'IPostUserCreated',
+    IPostUserUpdated = 'IPostUserUpdated',
 }
