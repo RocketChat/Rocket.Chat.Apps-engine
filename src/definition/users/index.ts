@@ -1,4 +1,5 @@
 import { IPostUserCreated } from './IPostUserCreated';
+import { IPostUserDeleted } from './IPostUserDeleted';
 import { IPostUserUpdated } from './IPostUserUpdated';
 import { IUser } from './IUser';
 import { IUserContext } from './IUserContext';
@@ -16,6 +17,7 @@ export {
     UserType,
     IPostUserCreated,
     IPostUserUpdated,
+    IPostUserDeleted,
     IUserContext,
     IUserUpdateContext,
 };

@@ -239,6 +239,8 @@ export class AppListenerManager {
                 return this.executePostUserCreated(data as IUserContext);
             case AppInterface.IPostUserUpdated:
                 return this.executePostUserUpdated(data as IUserContext);
+            case AppInterface.IPostUserDeleted:
+                return this.executePostUserDeleted(data as IUserContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1238,4 +1240,21 @@ export class AppListenerManager {
         }
     }
 
+    private async executePostUserDeleted(data: IUserContext): Promise<void> {
+        const context = Object.freeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_DELETED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
 }
