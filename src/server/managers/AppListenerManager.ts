@@ -1225,7 +1225,7 @@ export class AppListenerManager {
     private async executePostUserUpdated(data: IUserUpdateContext): Promise<void> {
         const context = Utilities.deepFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+        for (const appId of this.listeners.get(AppInterface.IPostUserUpdated)) {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_UPDATED)) {
@@ -1243,7 +1243,7 @@ export class AppListenerManager {
     private async executePostUserDeleted(data: IUserContext): Promise<void> {
         const context = Utilities.deepFreeze(data);
 
-        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+        for (const appId of this.listeners.get(AppInterface.IPostUserDeleted)) {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
