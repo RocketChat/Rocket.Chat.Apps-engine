@@ -243,6 +243,8 @@ export class AppListenerManager {
                 return this.executePostUserDeleted(data as IUserContext);
             case AppInterface.IPostUserLoggedIn:
                 return this.executePostUserLoggedIn(data as IUser);
+            case AppInterface.IPostUserLoggedOut:
+                return this.executePostUserLoggedOut(data as IUser);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1268,6 +1270,24 @@ export class AppListenerManager {
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_IN)) {
                 await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_IN,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserLoggedOut(data: IUser): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserLoggedOut)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_OUT)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),

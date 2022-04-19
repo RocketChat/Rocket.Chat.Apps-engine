@@ -47,4 +47,5 @@ export enum AppInterface {
     IPostUserUpdated = 'IPostUserUpdated',
     IPostUserDeleted = 'IPostUserDeleted',
     IPostUserLoggedIn = 'IPostUserLoggedIn',
+    IPostUserLoggedOut = 'IPostUserLoggedOut',
 }
