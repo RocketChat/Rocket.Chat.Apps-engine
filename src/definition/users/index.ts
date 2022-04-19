@@ -1,5 +1,6 @@
 import { IPostUserCreated } from './IPostUserCreated';
 import { IPostUserDeleted } from './IPostUserDeleted';
+import { IPostUserLoggedIn } from './IPostUserLoggedIn';
 import { IPostUserUpdated } from './IPostUserUpdated';
 import { IUser } from './IUser';
 import { IUserContext } from './IUserContext';
@@ -18,6 +19,7 @@ export {
     IPostUserCreated,
     IPostUserUpdated,
     IPostUserDeleted,
+    IPostUserLoggedIn,
     IUserContext,
     IUserUpdateContext,
 };
