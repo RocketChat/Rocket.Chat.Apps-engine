@@ -8,7 +8,7 @@ import { IUser } from './IUser';
  * event
  *
  * This event is triggered *after* the
- * user logout from the Rocket.chat
+ * user logged into Rocket.chat
  */
 export interface IPostUserLoggedIn {
     [AppMethod.EXECUTE_POST_USER_LOGGED_IN](
