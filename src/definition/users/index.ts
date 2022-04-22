@@ -5,7 +5,7 @@ import { IUser } from './IUser';
 import { IUserContext } from './IUserContext';
 import { IUserCreationOptions } from './IUserCreationOptions';
 import { IUserEmail } from './IUserEmail';
-import { IUserUpdateContext } from './IUserUpdateContex';
+import { IUserUpdateContext } from './IUserUpdateContext';
 import { UserStatusConnection } from './UserStatusConnection';
 import { UserType } from './UserType';
 
