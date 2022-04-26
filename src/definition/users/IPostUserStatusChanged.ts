@@ -9,6 +9,8 @@ import { IUserStatusContext } from './IUserStatusContext';
  *
  * This event is triggered *after* the
  * user changes his status on Rocket.chat
+ * for online, away, busy or offline.
+ * Does **not** trigger when the custom status is changed
  */
 export interface IPostUserStatusChanged {
     [AppMethod.EXECUTE_POST_USER_STATUS_CHANGED](
