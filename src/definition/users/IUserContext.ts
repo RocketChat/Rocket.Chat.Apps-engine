@@ -7,13 +7,13 @@ import { IUser } from './IUser';
  */
 export interface IUserContext {
     /**
-     * The user that was affected by
-     * update
+     * The user who has been affected
+     * by the action
      */
     user: IUser;
     /**
-     * The user that performed the
-     * updates
+     * The user who performed the
+     * action. Null if it's the user himself
      */
     performedBy?: IUser;
 }

@@ -6,19 +6,19 @@ import { IUser } from './IUser';
  */
 export interface IUserUpdateContext {
     /**
-     * The user that was affected by
-     * update
+     * The user who has been affected
+     * by the action
      */
     user: IUser;
 
     /**
-     * The user that performed the
-     * updates
+     * The user who performed the
+     * update. Null if it's the user himself
      */
     performedBy?: IUser;
 
     /**
-     * The user before the update
+     * The user data before the update
      */
     previousData?: IUser;
 }
