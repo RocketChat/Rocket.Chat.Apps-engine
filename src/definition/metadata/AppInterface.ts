@@ -10,6 +10,7 @@ export enum AppInterface {
     IPreMessageUpdatedExtend = 'IPreMessageUpdatedExtend',
     IPreMessageUpdatedModify = 'IPreMessageUpdatedModify',
     IPostMessageUpdated = 'IPostMessageUpdated',
+    IPostMessageReacted = 'IPostMessageReacted',
     // Rooms
     IPreRoomCreatePrevent = 'IPreRoomCreatePrevent',
     IPreRoomCreateExtend = 'IPreRoomCreateExtend',

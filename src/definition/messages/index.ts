@@ -6,7 +6,9 @@ import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
 import { IMessageFile } from './IMessageFile';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
+import { IMessageReactionContext } from './IMessageReactionContext';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
+import { IPostMessageReacted } from './IPostMessageReacted';
 import { IPostMessageSent } from './IPostMessageSent';
 import { IPostMessageUpdated } from './IPostMessageUpdated';
 import { IPreMessageDeletePrevent } from './IPreMessageDeletePrevent';
@@ -40,6 +42,8 @@ export {
     IPreMessageUpdatedExtend,
     IPreMessageUpdatedModify,
     IPreMessageUpdatedPrevent,
+    IPostMessageReacted,
+    IMessageReactionContext,
     MessageActionButtonsAlignment,
     MessageActionType,
     MessageProcessingType,

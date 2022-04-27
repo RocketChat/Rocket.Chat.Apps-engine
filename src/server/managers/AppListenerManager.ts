@@ -2,7 +2,7 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage } from '../../definition/messages';
+import { IMessage, IMessageReactionContext } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -39,7 +39,8 @@ type EventData = (
     IRoomUserLeaveContext |
     ILivechatTransferEventContext |
     IFileUploadContext |
-    IPreEmailSentContext
+    IPreEmailSentContext |
+    IMessageReactionContext
 );
 
 type EventReturn = (
@@ -174,6 +175,8 @@ export class AppListenerManager {
             case AppInterface.IPostMessageUpdated:
                 this.executePostMessageUpdated(data as IMessage);
                 return;
+            case AppInterface.IPostMessageReacted:
+                return this.executePostMessageReacted(data as IMessageReactionContext);
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -1195,5 +1198,25 @@ export class AppListenerManager {
         }
 
         return descriptor;
+    }
+
+    private async executePostMessageReacted(data: IMessageReactionContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageReacted)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REACTED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REACTED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
     }
 }
