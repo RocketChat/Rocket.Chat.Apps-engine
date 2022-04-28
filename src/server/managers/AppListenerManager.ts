@@ -2,7 +2,7 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage, IMessageFollowContext, IMessageReactionContext } from '../../definition/messages';
+import { IMessage, IMessageFollowContext, IMessagePinContext, IMessageReactionContext } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -41,7 +41,8 @@ type EventData = (
     IFileUploadContext |
     IPreEmailSentContext |
     IMessageReactionContext |
-    IMessageFollowContext
+    IMessageFollowContext |
+    IMessagePinContext
 );
 
 type EventReturn = (
@@ -180,6 +181,8 @@ export class AppListenerManager {
                 return this.executePostMessageReacted(data as IMessageReactionContext);
             case AppInterface.IPostMessageFollowed:
                 return this.executePostMessageFollowed(data as IMessageFollowContext);
+            case AppInterface.IPostMessagePinned:
+                return this.executePostMessagePinned(data as IMessagePinContext);
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -1234,6 +1237,26 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessagePinned(data: IMessagePinContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessagePinned)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_PINNED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_PINNED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
