@@ -25,4 +25,8 @@ export interface IMessage {
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
     blocks?: Array<IBlock>;
+    starred?: Array<{ _id: string }>;
+    pinned?: boolean;
+    pinnedAt?: Date;
+    pinnedBy?: { _id: string, username: string };
 }

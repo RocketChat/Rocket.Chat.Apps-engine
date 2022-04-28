@@ -6,10 +6,12 @@ import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
 import { IMessageFile } from './IMessageFile';
 import { IMessageFollowContext } from './IMessageFollowContext';
+import { IMessagePinContext } from './IMessagePinContext';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IMessageReactionContext } from './IMessageReactionContext';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageFollowed } from './IPostMessageFollowed';
+import { IPostMessagePinned } from './IPostMessagePinned';
 import { IPostMessageReacted } from './IPostMessageReacted';
 import { IPostMessageSent } from './IPostMessageSent';
 import { IPostMessageUpdated } from './IPostMessageUpdated';
@@ -20,8 +22,6 @@ import { IPreMessageSentPrevent } from './IPreMessageSentPrevent';
 import { IPreMessageUpdatedExtend } from './IPreMessageUpdatedExtend';
 import { IPreMessageUpdatedModify } from './IPreMessageUpdatedModify';
 import { IPreMessageUpdatedPrevent } from './IPreMessageUpdatedPrevent';
-import { IPostMessagePinned } from './IPostMessagePinned'
-import { IMessagePinContext } from './IMessagePinContext'
 
 import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
 import { MessageActionType } from './MessageActionType';
