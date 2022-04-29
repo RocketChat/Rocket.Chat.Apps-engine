@@ -17,5 +17,5 @@ export interface IMessageFollowContext {
     /**
      * If the message was followed or unfollowed
      */
-    isUnfollow: boolean;
+    isFollowed: boolean;
 }

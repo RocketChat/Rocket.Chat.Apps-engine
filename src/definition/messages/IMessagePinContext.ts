@@ -17,5 +17,5 @@ export interface IMessagePinContext {
     /**
      * If the message was pinned or unpinned
      */
-    isUnpinned: boolean;
+    isPinned: boolean;
 }
