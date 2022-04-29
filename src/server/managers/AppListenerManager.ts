@@ -2,7 +2,7 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage, IMessageFollowContext, IMessagePinContext, IMessageReactionContext, IMessageStarContext } from '../../definition/messages';
+import { IMessage, IMessageFollowContext, IMessagePinContext, IMessageReactionContext, IMessageReportContext, IMessageStarContext } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -43,7 +43,8 @@ type EventData = (
     IMessageReactionContext |
     IMessageFollowContext |
     IMessagePinContext |
-    IMessageStarContext
+    IMessageStarContext |
+    IMessageReportContext
 );
 
 type EventReturn = (
@@ -186,6 +187,8 @@ export class AppListenerManager {
                 return this.executePostMessagePinned(data as IMessagePinContext);
             case AppInterface.IPostMessageStarred:
                 return this.executePostMessageStarred(data as IMessageStarContext);
+            case AppInterface.IPostMessageReported:
+                return this.executePostMessageReported(data as IMessageReportContext);
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -1280,6 +1283,26 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_MESSAGE_STARRED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessageReported(data: IMessageReportContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageReported)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REPORTED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REPORTED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
