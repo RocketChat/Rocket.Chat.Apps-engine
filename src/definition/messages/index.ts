@@ -4,6 +4,7 @@ import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { IMessageDeleteContext } from './IMessageDeleteContext';
 import { IMessageFile } from './IMessageFile';
 import { IMessageFollowContext } from './IMessageFollowContext';
 import { IMessagePinContext } from './IMessagePinContext';
@@ -64,4 +65,5 @@ export {
     MessageActionButtonsAlignment,
     MessageActionType,
     MessageProcessingType,
+    IMessageDeleteContext,
 };

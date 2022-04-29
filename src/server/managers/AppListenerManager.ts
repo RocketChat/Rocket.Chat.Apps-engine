@@ -2,7 +2,7 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage, IMessageFollowContext, IMessagePinContext, IMessageReactionContext, IMessageReportContext, IMessageStarContext } from '../../definition/messages';
+import { IMessage, IMessageDeleteContext, IMessageFollowContext, IMessagePinContext, IMessageReactionContext, IMessageReportContext, IMessageStarContext } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -44,7 +44,8 @@ type EventData = (
     IMessageFollowContext |
     IMessagePinContext |
     IMessageStarContext |
-    IMessageReportContext
+    IMessageReportContext |
+    IMessageDeleteContext
 );
 
 type EventReturn = (
@@ -168,7 +169,7 @@ export class AppListenerManager {
             case AppInterface.IPreMessageDeletePrevent:
                 return this.executePreMessageDeletePrevent(data as IMessage);
             case AppInterface.IPostMessageDeleted:
-                this.executePostMessageDelete(data as IMessage);
+                this.executePostMessageDelete(data as IMessageDeleteContext);
                 return;
             case AppInterface.IPreMessageUpdatedPrevent:
                 return this.executePreMessageUpdatedPrevent(data as IMessage);
@@ -409,8 +410,8 @@ export class AppListenerManager {
         return prevented;
     }
 
-    private async executePostMessageDelete(data: IMessage): Promise<void> {
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
+    private async executePostMessageDelete(data: IMessageDeleteContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
@@ -418,7 +419,7 @@ export class AppListenerManager {
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
-                    cfMsg,
+                    context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                 ) as boolean;
@@ -426,7 +427,7 @@ export class AppListenerManager {
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
-                    cfMsg,
+                    context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
