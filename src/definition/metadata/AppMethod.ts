@@ -76,4 +76,8 @@ export enum AppMethod {
     EXECUTE_PRE_FILE_UPLOAD = 'executePreFileUpload',
     // Email
     EXECUTE_PRE_EMAIL_SENT = 'executePreEmailSent',
+    // User
+    EXECUTE_POST_USER_CREATED = 'executePostUserCreated',
+    EXECUTE_POST_USER_UPDATED = 'executePostUserUpdated',
+    EXECUTE_POST_USER_DELETED = 'executePostUserDeleted',
 }
