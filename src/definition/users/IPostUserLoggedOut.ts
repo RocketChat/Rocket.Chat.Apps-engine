@@ -1,18 +1,18 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IUserContext } from './IUserContext';
+import { IUser } from './IUser';
 
 /**
  * Event interface that allows an app to
- * register as a handler of the `IPostUserDeleted`
+ * register as a handler of the `IPostUserLoggedOut`
  * event
  *
  * This event is triggered *after* the
- * user has been removed from the database.
+ * user logout from the Rocket.chat
  */
-export interface IPostUserDeleted {
-    [AppMethod.EXECUTE_POST_USER_CREATED](
-        context: IUserContext,
+export interface IPostUserLoggedOut {
+    [AppMethod.EXECUTE_POST_USER_LOGGED_OUT](
+        context: IUser,
         read: IRead,
         http: IHttp,
         persis: IPersistence,

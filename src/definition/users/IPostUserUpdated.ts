@@ -1,6 +1,6 @@
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IUserUpdateContext } from './IUserUpdateContext';
+import { IUserContext } from './IUserContext';
 
 /**
  * Event interface that allows an app to
@@ -11,8 +11,8 @@ import { IUserUpdateContext } from './IUserUpdateContext';
  * user has been saved to the database.
  */
 export interface IPostUserUpdated {
-    [AppMethod.EXECUTE_POST_USER_UPDATED](
-        context: IUserUpdateContext,
+    [AppMethod.EXECUTE_POST_USER_CREATED](
+        context: IUserContext,
         read: IRead,
         http: IHttp,
         persis: IPersistence,

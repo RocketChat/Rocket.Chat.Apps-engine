@@ -16,7 +16,7 @@ import {
     UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
 import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
-import { IUser, IUserContext, IUserUpdateContext } from '../../definition/users';
+import { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
 import { Message } from '../messages/Message';
@@ -39,7 +39,10 @@ type EventData = (
     IRoomUserLeaveContext |
     ILivechatTransferEventContext |
     IFileUploadContext |
-    IPreEmailSentContext
+    IPreEmailSentContext |
+    IUserContext |
+    IUserUpdateContext |
+    IUserStatusContext
 );
 
 type EventReturn = (
@@ -241,6 +244,12 @@ export class AppListenerManager {
                 return this.executePostUserUpdated(data as IUserContext);
             case AppInterface.IPostUserDeleted:
                 return this.executePostUserDeleted(data as IUserContext);
+            case AppInterface.IPostUserLoggedIn:
+                return this.executePostUserLoggedIn(data as IUser);
+            case AppInterface.IPostUserLoggedOut:
+                return this.executePostUserLoggedOut(data as IUser);
+            case AppInterface.IPostUserStatusChanged:
+                return this.executePostUserStatusChanged(data as IUserStatusContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -1248,6 +1257,59 @@ export class AppListenerManager {
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
                 await app.call(AppMethod.EXECUTE_POST_USER_DELETED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                    );
+            }
+        }
+    }
+
+    private async executePostUserLoggedIn(data: IUser): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserLoggedIn)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_IN)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_IN,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserLoggedOut(data: IUser): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserLoggedOut)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_OUT)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+    private async executePostUserStatusChanged(data: IUserStatusContext): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserStatusChanged)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),

@@ -80,4 +80,7 @@ export enum AppMethod {
     EXECUTE_POST_USER_CREATED = 'executePostUserCreated',
     EXECUTE_POST_USER_UPDATED = 'executePostUserUpdated',
     EXECUTE_POST_USER_DELETED = 'executePostUserDeleted',
+    EXECUTE_POST_USER_LOGGED_IN = 'executePostUserLoggedIn',
+    EXECUTE_POST_USER_LOGGED_OUT = 'executePostUserLoggedOut',
+    EXECUTE_POST_USER_STATUS_CHANGED = 'executePostUserStatusChanged',
 }
