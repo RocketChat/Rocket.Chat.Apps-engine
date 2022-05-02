@@ -14,4 +14,8 @@ export interface IMessageReportContext {
      * The user who reported the message
      */
     user: IUser;
+    /**
+     * The reason the message was reported
+     */
+    reason: string;
 }
