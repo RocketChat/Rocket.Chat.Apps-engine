@@ -13,7 +13,7 @@ export interface IMessageReactionContext {
     /**
      * If the reaction was removed or added from the message
      */
-    isRemoved: boolean;
+    isReacted: boolean;
     /**
      * The message that recieved the reaction
      */

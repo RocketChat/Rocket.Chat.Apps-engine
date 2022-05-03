@@ -1,6 +1,6 @@
 import { IRoom } from '../rooms';
 import { IBlock } from '../uikit';
-import { IUser } from '../users';
+import { IUser, IUserLookup } from '../users';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageFile } from './IMessageFile';
 import { IMessageReactions } from './IMessageReaction';
@@ -28,5 +28,5 @@ export interface IMessage {
     starred?: Array<{ _id: string }>;
     pinned?: boolean;
     pinnedAt?: Date;
-    pinnedBy?: { _id: string, username: string };
+    pinnedBy?: IUserLookup;
 }
