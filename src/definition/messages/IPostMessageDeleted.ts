@@ -14,7 +14,7 @@ export interface IPostMessageDeleted {
      * @param http An accessor to the outside world
      * @returns whether to run the executor function
      */
-    checkPostMessageDeleted?(context: IMessageDeleteContext, read: IRead, http: IHttp): Promise<boolean>;
+    checkPostMessageDeleted?(message: IMessage, read: IRead, http: IHttp): Promise<boolean>;
 
     /**
      * Method called *after* the message has been deleted.

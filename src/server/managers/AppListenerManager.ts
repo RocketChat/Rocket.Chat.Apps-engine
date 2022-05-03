@@ -434,16 +434,16 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECK_POST_MESSAGE_DELETED)) {
-                continueOn = await app.call(AppMethod.CHECK_POST_MESSAGE_DELETED,
+            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
+                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
                     message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                 ) as boolean;
             }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_DELETED)) {
-                await app.call(AppMethod.EXECUTE_POST_MESSAGE_DELETED,
+            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
                     message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
