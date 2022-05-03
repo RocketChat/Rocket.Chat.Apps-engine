@@ -412,26 +412,28 @@ export class AppListenerManager {
 
     private async executePostMessageDelete(data: IMessageDeleteContext): Promise<void> {
         const context = Utilities.deepCloneAndFreeze(data);
+        const {message} = context;
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
 
             let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
-                    context,
+            if (app.hasMethod(AppMethod.CHECK_POST_MESSAGE_DELETED)) {
+                continueOn = await app.call(AppMethod.CHECK_POST_MESSAGE_DELETED,
+                    message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                 ) as boolean;
             }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
-                await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
-                    context,
+            if (continueOn && app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_DELETED)) {
+                await app.call(AppMethod.EXECUTE_POST_MESSAGE_DELETED,
+                    message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
                     this.am.getModifier(appId),
+                    context,
                 );
             }
         }

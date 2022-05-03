@@ -1,3 +1,4 @@
+import { IMessage } from '.';
 import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IMessageDeleteContext } from './IMessageDeleteContext';
 
@@ -8,7 +9,7 @@ export interface IPostMessageDeleted {
      * this handler should actually be executed for after the message
      * has been deleted.
      *
-     * @param context The context of the message which was deleted
+     * @param message The deleted message
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @returns whether to run the executor function
@@ -18,10 +19,18 @@ export interface IPostMessageDeleted {
     /**
      * Method called *after* the message has been deleted.
      *
-     * @param context The context of the message which was deleted
+     * @param message The deleted message
      * @param read An accessor to the environment
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
+     * @param context The context of the message which was deleted
      */
-    executePostMessageDeleted(context: IMessageDeleteContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
+    executePostMessageDeleted(
+        message: IMessage,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence,
+        modify: IModify,
+        context: IMessageDeleteContext,
+    ): Promise<void>;
 }
