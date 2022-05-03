@@ -46,4 +46,10 @@ export enum AppInterface {
     IPreFileUpload = 'IPreFileUpload',
     // Email
     IPreEmailSent = 'IPreEmailSent',
+    IPostUserCreated = 'IPostUserCreated',
+    IPostUserUpdated = 'IPostUserUpdated',
+    IPostUserDeleted = 'IPostUserDeleted',
+    IPostUserLoggedIn = 'IPostUserLoggedIn',
+    IPostUserLoggedOut = 'IPostUserLoggedOut',
+    IPostUserStatusChanged = 'IPostUserStatusChanged',
 }
