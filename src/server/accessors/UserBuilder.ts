@@ -55,6 +55,12 @@ export class UserBuilder implements IUserBuilder {
         return this.user.roles;
     }
 
+    // Note: if the user doesn't have a preferred language set, then this will return undefined
+    // In that case, use the default language of the Rocket.Chat server from the server settings
+    public getPreferredLanguage(): string | undefined {
+        return this.user.userPreferredLanguage;
+    }
+
     public getUser(): Partial<IUser> {
         if (!this.user.username) {
             throw new Error('The "username" property is required.');

@@ -18,6 +18,7 @@ export interface IUser {
     createdAt: Date;
     updatedAt: Date;
     lastLoginAt: Date;
+    userPreferredLanguage?: string;
     appId?: string;
     customFields?: { [key: string]: any };
 }
