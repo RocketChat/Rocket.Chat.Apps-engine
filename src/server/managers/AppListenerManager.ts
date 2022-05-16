@@ -444,6 +444,8 @@ export class AppListenerManager {
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
+                    // `context` has more information about the event, but
+                    // we had to keep this `message` here for compatibility
                     message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
