@@ -2,7 +2,15 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage, IMessageDeleteContext, IMessageFollowContext, IMessagePinContext, IMessageReactionContext, IMessageReportContext, IMessageStarContext } from '../../definition/messages';
+import {
+  IMessage,
+  IMessageDeleteContext,
+  IMessageFollowContext,
+  IMessagePinContext,
+  IMessageReactionContext,
+  IMessageReportContext,
+  IMessageStarContext,
+} from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -1331,6 +1339,7 @@ export class AppListenerManager {
             );
         }
     }
+
     private async executePostUserCreated(data: IUserContext): Promise<void> {
         const context = Utilities.deepFreeze(data);
 
