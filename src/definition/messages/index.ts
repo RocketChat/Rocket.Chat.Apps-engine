@@ -4,16 +4,21 @@ import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
 import { IMessageAttachmentField } from './IMessageAttachmentField';
 import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import { IMessageDeleteContext } from './IMessageDeleteContext';
 import { IMessageFile } from './IMessageFile';
 import { IMessageFollowContext } from './IMessageFollowContext';
 import { IMessagePinContext } from './IMessagePinContext';
 import { IMessageReaction, IMessageReactions } from './IMessageReaction';
 import { IMessageReactionContext } from './IMessageReactionContext';
+import { IMessageReportContext } from './IMessageReportContext';
+import { IMessageStarContext } from './IMessageStarContext';
 import { IPostMessageDeleted } from './IPostMessageDeleted';
 import { IPostMessageFollowed } from './IPostMessageFollowed';
 import { IPostMessagePinned } from './IPostMessagePinned';
 import { IPostMessageReacted } from './IPostMessageReacted';
+import { IPostMessageReported } from './IPostMessageReported';
 import { IPostMessageSent } from './IPostMessageSent';
+import { IPostMessageStarred } from './IPostMessageStarred';
 import { IPostMessageUpdated } from './IPostMessageUpdated';
 import { IPreMessageDeletePrevent } from './IPreMessageDeletePrevent';
 import { IPreMessageSentExtend } from './IPreMessageSentExtend';
@@ -53,7 +58,12 @@ export {
     IMessageReactionContext,
     IPostMessagePinned,
     IMessagePinContext,
+    IPostMessageStarred,
+    IMessageStarContext,
+    IPostMessageReported,
+    IMessageReportContext,
     MessageActionButtonsAlignment,
     MessageActionType,
     MessageProcessingType,
+    IMessageDeleteContext,
 };
