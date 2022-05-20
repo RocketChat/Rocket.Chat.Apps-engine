@@ -1,6 +1,7 @@
 import { IUserBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IUser, IUserEmail } from '../../definition/users';
+import { IUserSettings } from '../../definition/users/IUserSettings';
 
 export class UserBuilder implements IUserBuilder {
     public kind: RocketChatAssociationModel.USER;
@@ -55,10 +56,8 @@ export class UserBuilder implements IUserBuilder {
         return this.user.roles;
     }
 
-    // Note: if the user doesn't have a preferred language set, then this will return undefined
-    // In that case, use the default language of the Rocket.Chat server from the server settings
-    public getPreferredLanguage(): string | undefined {
-        return this.user.userPreferredLanguage;
+    public getSettings(): Partial<IUserSettings> {
+        return this.user.settings;
     }
 
     public getUser(): Partial<IUser> {
