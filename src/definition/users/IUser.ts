@@ -1,7 +1,7 @@
 import { IUserEmail } from './IUserEmail';
+import { IUserSettings } from './IUserSettings';
 import { UserStatusConnection } from './UserStatusConnection';
 import { UserType } from './UserType';
-import { IUserSettings } from './IUserSettings';
 
 export interface IUser {
     id: string;
