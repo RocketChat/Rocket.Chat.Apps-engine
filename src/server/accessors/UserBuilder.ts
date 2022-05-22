@@ -1,6 +1,7 @@
 import { IUserBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IUser, IUserEmail } from '../../definition/users';
+import { IUserSettings } from '../../definition/users/IUserSettings';
 
 export class UserBuilder implements IUserBuilder {
     public kind: RocketChatAssociationModel.USER;
@@ -53,6 +54,10 @@ export class UserBuilder implements IUserBuilder {
 
     public getRoles(): Array<string> {
         return this.user.roles;
+    }
+
+    public getSettings(): Partial<IUserSettings> {
+        return this.user.settings;
     }
 
     public getUser(): Partial<IUser> {
