@@ -1,0 +1,74 @@
+import type { IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
+import { AppManager } from '../AppManager';
+import { AVideoConfProviderAlreadyExistsError, NoVideoConfProviderRegisteredError } from '../errors';
+import { AppAccessorManager } from './AppAccessorManager';
+import { AppVideoConfProvider } from './AppVideoConfProvider';
+
+export class AppVideoConfProviderManager {
+    private readonly accessors: AppAccessorManager;
+
+    private videoConfProviders: Map<string, AppVideoConfProvider>;
+
+    constructor(private readonly manager: AppManager) {
+        this.accessors = this.manager.getAccessorManager();
+
+        this.videoConfProviders = new Map<string, AppVideoConfProvider>();
+    }
+    public addProvider(appId: string, provider: IVideoConfProvider): void {
+        const app = this.manager.getOneById(appId);
+        if (!app) {
+            throw new Error('App must exist in order for a video conference provider to be added.');
+        }
+
+        this.videoConfProviders.set(appId, new AppVideoConfProvider(app, provider));
+    }
+
+    public registerProviders(appId: string): void {
+        if (!this.videoConfProviders.has(appId)) {
+            return;
+        }
+
+        const providerInfo = this.videoConfProviders.get(appId);
+
+        const registeredProviderInfo = this.retrieveRegisteredProvider();
+        if (registeredProviderInfo && registeredProviderInfo !== providerInfo) {
+            throw new AVideoConfProviderAlreadyExistsError();
+        }
+
+        providerInfo.hasBeenRegistered();
+    }
+
+    public unregisterProviders(appId: string): void {
+        if (!this.videoConfProviders.has(appId)) {
+            return;
+        }
+
+        this.videoConfProviders.get(appId).isRegistered = false;
+    }
+
+    public async generateUrl(callId: string): Promise<string> {
+        const providerInfo = this.retrieveRegisteredProvider();
+        if (!providerInfo) {
+            throw new NoVideoConfProviderRegisteredError();
+        }
+
+        return providerInfo.runGenerateUrl(callId, this.manager.getLogStorage(), this.accessors);
+    }
+
+    public async customizeUrl(call: IVideoConference, user: IVideoConferenceUser, options: IVideoConferenceOptions): Promise<string> {
+        const providerInfo = this.retrieveRegisteredProvider();
+        if (!providerInfo) {
+            throw new NoVideoConfProviderRegisteredError();
+        }
+
+        return providerInfo.runCustomizeUrl(call, user, options, this.manager.getLogStorage(), this.accessors);
+    }
+
+    private retrieveRegisteredProvider(): AppVideoConfProvider | undefined {
+        for (const [, provider] of this.videoConfProviders) {
+            if (provider.isRegistered) {
+                return provider;
+            }
+        }
+    }
+}

@@ -45,3 +45,4 @@ export * from './IUploadCreator';
 export * from './IUploadRead';
 export * from './IUserBuilder';
 export * from './IUserRead';
+export * from './IVideoConfProvidersExtend';

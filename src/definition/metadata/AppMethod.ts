@@ -5,6 +5,8 @@ export enum AppMethod {
     _COMMAND_PREVIEWER = 'previewer',
     _COMMAND_PREVIEW_EXECUTOR = 'executePreviewItem',
     _JOB_PROCESSOR = 'jobProcessor',
+    _VIDEOCONF_GENERATE_URL = 'generateUrl',
+    _VIDEOCONF_CUSTOMIZE_URL = 'customizeUrl',
     INITIALIZE = 'initialize',
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',
