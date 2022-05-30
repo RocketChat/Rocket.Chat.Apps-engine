@@ -1,7 +1,10 @@
 import type { IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
 import { AppManager } from '../AppManager';
 import { AVideoConfProviderAlreadyExistsError, NoVideoConfProviderRegisteredError } from '../errors';
+import { PermissionDeniedError } from '../errors/PermissionDeniedError';
+import { AppPermissions } from '../permissions/AppPermissions';
 import { AppAccessorManager } from './AppAccessorManager';
+import { AppPermissionManager } from './AppPermissionManager';
 import { AppVideoConfProvider } from './AppVideoConfProvider';
 
 export class AppVideoConfProviderManager {
@@ -18,6 +21,13 @@ export class AppVideoConfProviderManager {
         const app = this.manager.getOneById(appId);
         if (!app) {
             throw new Error('App must exist in order for a video conference provider to be added.');
+        }
+
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.videoConfProvider.default)) {
+            throw new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.videoConfProvider.default],
+            });
         }
 
         this.videoConfProviders.set(appId, new AppVideoConfProvider(app, provider));
