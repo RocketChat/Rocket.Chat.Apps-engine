@@ -33,8 +33,8 @@ export class AppVideoConfProvider {
 
     public async runCustomizeUrl(
       call: IVideoConference,
-      user: IVideoConferenceUser,
-      options: IVideoConferenceOptions,
+      user: IVideoConferenceUser | undefined,
+      options: IVideoConferenceOptions = {},
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
     ): Promise<string> {

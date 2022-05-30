@@ -179,5 +179,6 @@ export class AppVideoConfProviderManagerTestFixture {
         const user = TestData.getVideoConferenceUser();
 
         await Expect(await manager.customizeUrl(call, user, {})).toBe('video-conf/first-call#caller');
+        await Expect(await manager.customizeUrl(call, undefined, {})).toBe('video-conf/first-call#');
     }
 }

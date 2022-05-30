@@ -13,5 +13,5 @@ export interface IVideoConfProvider {
     /**
      * The function which gets called whenever a user join url is requested
      */
-    customizeUrl(call: IVideoConference, user: IVideoConferenceUser, options: IVideoConferenceOptions): Promise<string>;
+    customizeUrl(call: IVideoConference, user?: IVideoConferenceUser, options?: IVideoConferenceOptions): Promise<string>;
 }

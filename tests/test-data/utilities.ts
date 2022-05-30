@@ -197,8 +197,8 @@ export class TestData {
                 return `video-conf/${callId}`;
             },
 
-            async customizeUrl(call: IVideoConference, user: IVideoConferenceUser, options: IVideoConferenceOptions): Promise<string> {
-                return `video-conf/${call._id}#${user.username}`;
+            async customizeUrl(call: IVideoConference, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
+                return `video-conf/${call._id}#${user ? user.username : ''}`;
             },
         };
     }

@@ -69,7 +69,7 @@ export class AppVideoConfProviderManager {
         return providerInfo.runGenerateUrl(callId, this.manager.getLogStorage(), this.accessors);
     }
 
-    public async customizeUrl(call: IVideoConference, user: IVideoConferenceUser, options: IVideoConferenceOptions): Promise<string> {
+    public async customizeUrl(call: IVideoConference, user?: IVideoConferenceUser, options?: IVideoConferenceOptions): Promise<string> {
         const providerInfo = this.retrieveRegisteredProvider();
         if (!providerInfo) {
             throw new NoVideoConfProviderRegisteredError();
