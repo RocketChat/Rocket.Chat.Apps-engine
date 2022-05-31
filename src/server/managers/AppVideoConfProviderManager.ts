@@ -1,4 +1,4 @@
-import type { IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
+import type { INewVideoConference, IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
 import { AppManager } from '../AppManager';
 import { AVideoConfProviderAlreadyExistsError, NoVideoConfProviderRegisteredError } from '../errors';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
@@ -56,13 +56,13 @@ export class AppVideoConfProviderManager {
         this.videoConfProviders.get(appId).isRegistered = false;
     }
 
-    public async generateUrl(callId: string): Promise<string> {
+    public async generateUrl(call: INewVideoConference): Promise<string> {
         const providerInfo = this.retrieveRegisteredProvider();
         if (!providerInfo) {
             throw new NoVideoConfProviderRegisteredError();
         }
 
-        return providerInfo.runGenerateUrl(callId, this.manager.getLogStorage(), this.accessors);
+        return providerInfo.runGenerateUrl(call, this.manager.getLogStorage(), this.accessors);
     }
 
     public async customizeUrl(call: IVideoConference, user?: IVideoConferenceUser, options?: IVideoConferenceOptions): Promise<string> {

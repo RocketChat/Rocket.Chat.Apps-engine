@@ -16,7 +16,7 @@ import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
-import { IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../src/definition/videoConfProviders';
+import { INewVideoConference, IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../src/definition/videoConfProviders';
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
@@ -193,8 +193,8 @@ export class TestData {
 
     public static getVideoConfProvider(): IVideoConfProvider {
         return {
-            async generateUrl(callId: string): Promise<string> {
-                return `video-conf/${callId}`;
+            async generateUrl(call: INewVideoConference): Promise<string> {
+                return `video-conf/${call._id}`;
             },
 
             async customizeUrl(call: IVideoConference, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {

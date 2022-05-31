@@ -1,5 +1,5 @@
 import { AppMethod } from '../../definition/metadata';
-import type { IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
+import type { INewVideoConference, IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../definition/videoConfProviders';
 
 import { ProxiedApp } from '../ProxiedApp';
 import { AppLogStorage } from '../storage';
@@ -24,11 +24,11 @@ export class AppVideoConfProvider {
     }
 
     public async runGenerateUrl(
-      callId: string,
+      call: INewVideoConference,
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
     ): Promise<string> {
-        return await this.runTheCode(AppMethod._VIDEOCONF_GENERATE_URL, logStorage, accessors, [callId]);
+        return await this.runTheCode(AppMethod._VIDEOCONF_GENERATE_URL, logStorage, accessors, [call]);
     }
 
     public async runCustomizeUrl(

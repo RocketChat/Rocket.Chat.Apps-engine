@@ -1,4 +1,4 @@
-import { IVideoConference } from './IVideoConference';
+import { INewVideoConference, IVideoConference } from './IVideoConference';
 import { IVideoConferenceOptions } from './IVideoConferenceOptions';
 import { IVideoConferenceUser } from './IVideoConferenceUser';
 
@@ -9,7 +9,7 @@ export interface IVideoConfProvider {
     /**
      * The function which gets called when a new video conference url is requested
      */
-    generateUrl(callId: string): Promise<string>;
+    generateUrl(call: INewVideoConference): Promise<string>;
     /**
      * The function which gets called whenever a user join url is requested
      */
