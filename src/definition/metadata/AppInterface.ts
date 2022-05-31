@@ -10,6 +10,11 @@ export enum AppInterface {
     IPreMessageUpdatedExtend = 'IPreMessageUpdatedExtend',
     IPreMessageUpdatedModify = 'IPreMessageUpdatedModify',
     IPostMessageUpdated = 'IPostMessageUpdated',
+    IPostMessageReacted = 'IPostMessageReacted',
+    IPostMessageFollowed = 'IPostMessageFollowed',
+    IPostMessagePinned = 'IPostMessagePinned',
+    IPostMessageStarred = 'IPostMessageStarred',
+    IPostMessageReported = 'IPostMessageReported',
     // Rooms
     IPreRoomCreatePrevent = 'IPreRoomCreatePrevent',
     IPreRoomCreateExtend = 'IPreRoomCreateExtend',
@@ -43,4 +48,10 @@ export enum AppInterface {
     IPreFileUpload = 'IPreFileUpload',
     // Email
     IPreEmailSent = 'IPreEmailSent',
+    IPostUserCreated = 'IPostUserCreated',
+    IPostUserUpdated = 'IPostUserUpdated',
+    IPostUserDeleted = 'IPostUserDeleted',
+    IPostUserLoggedIn = 'IPostUserLoggedIn',
+    IPostUserLoggedOut = 'IPostUserLoggedOut',
+    IPostUserStatusChanged = 'IPostUserStatusChanged',
 }

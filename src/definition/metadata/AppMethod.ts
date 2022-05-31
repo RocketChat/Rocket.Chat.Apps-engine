@@ -34,6 +34,11 @@ export enum AppMethod {
     EXECUTEPREMESSAGEUPDATEDMODIFY = 'executePreMessageUpdatedModify',
     CHECKPOSTMESSAGEUPDATED = 'checkPostMessageUpdated',
     EXECUTEPOSTMESSAGEUPDATED = 'executePostMessageUpdated',
+    EXECUTE_POST_MESSAGE_REACTED = 'executePostMessageReacted',
+    EXECUTE_POST_MESSAGE_FOLLOWED = 'executePostMessageFollowed',
+    EXECUTE_POST_MESSAGE_PINNED = 'executePostMessagePinned',
+    EXECUTE_POST_MESSAGE_STARRED = 'executePostMessageStarred',
+    EXECUTE_POST_MESSAGE_REPORTED = 'executePostMessageReported',
     // Room handlers
     CHECKPREROOMCREATEPREVENT = 'checkPreRoomCreatePrevent',
     EXECUTEPREROOMCREATEPREVENT = 'executePreRoomCreatePrevent',
@@ -76,4 +81,11 @@ export enum AppMethod {
     EXECUTE_PRE_FILE_UPLOAD = 'executePreFileUpload',
     // Email
     EXECUTE_PRE_EMAIL_SENT = 'executePreEmailSent',
+    // User
+    EXECUTE_POST_USER_CREATED = 'executePostUserCreated',
+    EXECUTE_POST_USER_UPDATED = 'executePostUserUpdated',
+    EXECUTE_POST_USER_DELETED = 'executePostUserDeleted',
+    EXECUTE_POST_USER_LOGGED_IN = 'executePostUserLoggedIn',
+    EXECUTE_POST_USER_LOGGED_OUT = 'executePostUserLoggedOut',
+    EXECUTE_POST_USER_STATUS_CHANGED = 'executePostUserStatusChanged',
 }

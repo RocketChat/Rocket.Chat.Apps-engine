@@ -19,22 +19,21 @@ export enum MessageActionContext {
     STARRED = 'starred',
 }
 
+export interface IUActionButtonWhen {
+    roomTypes?: Array<RoomTypeFilter>;
+    messageActionContext?: Array<MessageActionContext>;
+    hasOnePermission?: Array<string>;
+    hasAllPermissions?: Array<string>;
+    hasOneRole?: Array<string>;
+    hasAllRoles?: Array<string>;
+}
+
 export interface IUIActionButtonDescriptor {
     actionId: string;
     labelI18n: string;
     context: UIActionButtonContext;
-    when?: {
-        roomTypes?: Array<RoomTypeFilter>;
-        messageActionContext?: Array<MessageActionContext>;
-        // How do we provide suggestions for permissions?
-        hasOnePermission?: Array<string>;
-        hasAllPermissions?: Array<string>;
-        // How do we provide suggestions for roles?
-        hasOneRole?: Array<string>;
-        hasAllRoles?: Array<string>;
-    };
+    when?: IUActionButtonWhen;
 }
-
 export interface IUIActionButton extends IUIActionButtonDescriptor {
     appId: string;
 }

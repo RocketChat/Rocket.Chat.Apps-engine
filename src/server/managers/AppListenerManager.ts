@@ -2,7 +2,15 @@ import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import { IMessage } from '../../definition/messages';
+import {
+  IMessage,
+  IMessageDeleteContext,
+  IMessageFollowContext,
+  IMessagePinContext,
+  IMessageReactionContext,
+  IMessageReportContext,
+  IMessageStarContext,
+} from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
@@ -16,7 +24,7 @@ import {
     UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
 import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
-import { IUser } from '../../definition/users';
+import { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import { AppManager } from '../AppManager';
 import { Message } from '../messages/Message';
@@ -39,7 +47,16 @@ type EventData = (
     IRoomUserLeaveContext |
     ILivechatTransferEventContext |
     IFileUploadContext |
-    IPreEmailSentContext
+    IPreEmailSentContext |
+    IMessageReactionContext |
+    IMessageFollowContext |
+    IMessagePinContext |
+    IMessageStarContext |
+    IMessageReportContext |
+    IMessageDeleteContext |
+    IUserContext |
+    IUserUpdateContext |
+    IUserStatusContext
 );
 
 type EventReturn = (
@@ -163,7 +180,7 @@ export class AppListenerManager {
             case AppInterface.IPreMessageDeletePrevent:
                 return this.executePreMessageDeletePrevent(data as IMessage);
             case AppInterface.IPostMessageDeleted:
-                this.executePostMessageDelete(data as IMessage);
+                this.executePostMessageDelete(data as IMessageDeleteContext);
                 return;
             case AppInterface.IPreMessageUpdatedPrevent:
                 return this.executePreMessageUpdatedPrevent(data as IMessage);
@@ -174,6 +191,16 @@ export class AppListenerManager {
             case AppInterface.IPostMessageUpdated:
                 this.executePostMessageUpdated(data as IMessage);
                 return;
+            case AppInterface.IPostMessageReacted:
+                return this.executePostMessageReacted(data as IMessageReactionContext);
+            case AppInterface.IPostMessageFollowed:
+                return this.executePostMessageFollowed(data as IMessageFollowContext);
+            case AppInterface.IPostMessagePinned:
+                return this.executePostMessagePinned(data as IMessagePinContext);
+            case AppInterface.IPostMessageStarred:
+                return this.executePostMessageStarred(data as IMessageStarContext);
+            case AppInterface.IPostMessageReported:
+                return this.executePostMessageReported(data as IMessageReportContext);
             // Rooms
             case AppInterface.IPreRoomCreatePrevent:
                 return this.executePreRoomCreatePrevent(data as IRoom);
@@ -234,6 +261,19 @@ export class AppListenerManager {
             // Email
             case AppInterface.IPreEmailSent:
                 return this.executePreEmailSent(data as IPreEmailSentContext);
+            // User
+            case AppInterface.IPostUserCreated:
+                return this.executePostUserCreated(data as IUserContext);
+            case AppInterface.IPostUserUpdated:
+                return this.executePostUserUpdated(data as IUserContext);
+            case AppInterface.IPostUserDeleted:
+                return this.executePostUserDeleted(data as IUserContext);
+            case AppInterface.IPostUserLoggedIn:
+                return this.executePostUserLoggedIn(data as IUser);
+            case AppInterface.IPostUserLoggedOut:
+                return this.executePostUserLoggedOut(data as IUser);
+            case AppInterface.IPostUserStatusChanged:
+                return this.executePostUserStatusChanged(data as IUserStatusContext);
             default:
                 console.warn('An invalid listener was called');
                 return;
@@ -394,8 +434,9 @@ export class AppListenerManager {
         return prevented;
     }
 
-    private async executePostMessageDelete(data: IMessage): Promise<void> {
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
+    private async executePostMessageDelete(data: IMessageDeleteContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+        const {message} = context;
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
@@ -403,19 +444,23 @@ export class AppListenerManager {
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
                 continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
-                    cfMsg,
+                    // `context` has more information about the event, but
+                    // we had to keep this `message` here for compatibility
+                    message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
+                    context,
                 ) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
-                    cfMsg,
+                    message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
                     this.am.getModifier(appId),
+                    context,
                 );
             }
         }
@@ -1195,5 +1240,212 @@ export class AppListenerManager {
         }
 
         return descriptor;
+    }
+
+    private async executePostMessageReacted(data: IMessageReactionContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageReacted)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REACTED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REACTED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessageFollowed(data: IMessageFollowContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageFollowed)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessagePinned(data: IMessagePinContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessagePinned)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_PINNED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_PINNED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessageStarred(data: IMessageStarContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageStarred)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_STARRED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_STARRED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostMessageReported(data: IMessageReportContext): Promise<void> {
+        const context = Utilities.deepCloneAndFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostMessageReported)) {
+            const app = this.manager.getOneById(appId);
+
+            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REPORTED)) {
+                continue;
+            }
+
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REPORTED,
+                context,
+                this.am.getReader(appId),
+                this.am.getHttp(appId),
+                this.am.getPersistence(appId),
+                this.am.getModifier(appId),
+            );
+        }
+    }
+
+    private async executePostUserCreated(data: IUserContext): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_CREATED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_CREATED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserUpdated(data: IUserUpdateContext): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserUpdated)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_UPDATED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_UPDATED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserDeleted(data: IUserContext): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserDeleted)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_DELETED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                    );
+            }
+        }
+    }
+
+    private async executePostUserLoggedIn(data: IUser): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserLoggedIn)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_IN)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_IN,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+
+    private async executePostUserLoggedOut(data: IUser): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserLoggedOut)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_OUT)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
+    }
+    private async executePostUserStatusChanged(data: IUserStatusContext): Promise<void> {
+        const context = Utilities.deepFreeze(data);
+
+        for (const appId of this.listeners.get(AppInterface.IPostUserStatusChanged)) {
+            const app = this.manager.getOneById(appId);
+
+            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED)) {
+                await app.call(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED,
+                    context,
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+        }
     }
 }
