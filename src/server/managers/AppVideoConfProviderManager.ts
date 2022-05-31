@@ -30,10 +30,6 @@ export class AppVideoConfProviderManager {
             });
         }
 
-        if (this.videoConfProviders.has(appId)) {
-            throw new AVideoConfProviderAlreadyExistsError();
-        }
-
         this.videoConfProviders.set(appId, new AppVideoConfProvider(app, provider));
     }
 
