@@ -11,7 +11,7 @@ import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager,
+    AppSlashCommandManager, AppVideoConfProviderManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -60,6 +60,7 @@ export class AppManager {
     private readonly licenseManager: AppLicenseManager;
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
+    private readonly videoConfProviderManager: AppVideoConfProviderManager;
 
     private isLoaded: boolean;
 
@@ -106,6 +107,7 @@ export class AppManager {
         this.licenseManager = new AppLicenseManager(this);
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
+        this.videoConfProviderManager = new AppVideoConfProviderManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -149,6 +151,10 @@ export class AppManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): AppSlashCommandManager {
         return this.commandManager;
+    }
+
+    public getVideoConfProviderManager(): AppVideoConfProviderManager {
+        return this.videoConfProviderManager;
     }
 
     public getLicenseManager(): AppLicenseManager {
@@ -870,6 +876,7 @@ export class AppManager {
         this.accessorManager.purifyApp(app.getID());
         await this.schedulerManager.cleanUp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
+        this.videoConfProviderManager.unregisterProviders(app.getID());
     }
 
     /**
@@ -936,6 +943,7 @@ export class AppManager {
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
             this.listenerManager.releaseEssentialEvents(app);
+            this.videoConfProviderManager.registerProviders(app.getID());
         } else {
             await this.purgeAppConfig(app);
         }

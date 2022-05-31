@@ -14,8 +14,13 @@ import { TestSourceStorage } from './storage/TestSourceStorage';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
+import { App } from '../../src/definition/App';
+import { AppStatus } from '../../src/definition/AppStatus';
+import { INewVideoConference, IVideoConference, IVideoConferenceOptions, IVideoConferenceUser, IVideoConfProvider } from '../../src/definition/videoConfProviders';
+import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
-import { AppLogStorage, AppMetadataStorage, AppSourceStorage } from '../../src/server/storage';
+import { ProxiedApp } from '../../src/server/ProxiedApp';
+import { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -184,6 +189,44 @@ export class TestData {
                 },
             }],
         };
+    }
+
+    public static getVideoConfProvider(): IVideoConfProvider {
+        return {
+            async generateUrl(call: INewVideoConference): Promise<string> {
+                return `video-conf/${call._id}`;
+            },
+
+            async customizeUrl(call: IVideoConference, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
+                return `video-conf/${call._id}#${user ? user.username : ''}`;
+            },
+        };
+    }
+
+    public static getVideoConferenceUser(): IVideoConferenceUser {
+        return {
+            _id: 'callerId',
+            username: 'caller',
+            name: 'John Caller',
+        };
+    }
+
+    public static getVideoConference(): IVideoConference {
+        return {
+            _id: 'first-call',
+            type: 'videoconference',
+            rid: 'roomId',
+            url: 'video-conf/first-call',
+            createdBy: this.getVideoConferenceUser(),
+            title: 'Test Call',
+        };
+    }
+
+    public static getMockApp(id: string, name: string): ProxiedApp {
+        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
+            getName() { return 'testing'; },
+            getID() { return 'testing'; },
+        } as App, (mod: string) => mod);
     }
 }
 

@@ -84,6 +84,9 @@ export const AppPermissions = {
     'command': {
         default: { name: 'slashcommand' },
     },
+    'videoConfProvider': {
+        default: { name: 'videoconf-provider' },
+    },
     'apis': {
         default: { name: 'api' },
     },
@@ -116,5 +119,6 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.persistence.default,
     AppPermissions.env.read,
     AppPermissions.command.default,
+    AppPermissions.videoConfProvider.default,
     AppPermissions.apis.default,
 ];
