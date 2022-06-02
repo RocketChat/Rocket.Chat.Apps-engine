@@ -35,6 +35,7 @@ import {
     SlashCommandsModify,
     UploadRead,
     UserRead,
+    VideoConferenceRead,
     VideoConfProviderExtend,
 } from '../accessors';
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
@@ -142,8 +143,9 @@ export class AppAccessorManager {
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
             const cloud = new CloudWorkspaceRead(this.bridges.getCloudWorkspaceBridge(), appId);
+            const videoConf = new VideoConferenceRead(this.bridges.getVideoConferenceBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf));
         }
 
         return this.readers.get(appId);

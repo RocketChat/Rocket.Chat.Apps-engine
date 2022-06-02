@@ -1,12 +1,10 @@
-import { INewVideoConference, IVideoConference } from './IVideoConference';
 import { IVideoConferenceOptions } from './IVideoConferenceOptions';
-import { IVideoConferenceUser } from './IVideoConferenceUser';
 import { IVideoConfProvider } from './IVideoConfProvider';
+import { VideoConfData, VideoConfDataExtended } from './VideoConfData';
 
 export {
-    INewVideoConference,
-    IVideoConference,
     IVideoConferenceOptions,
-    IVideoConferenceUser,
     IVideoConfProvider,
+    VideoConfData,
+    VideoConfDataExtended,
 };

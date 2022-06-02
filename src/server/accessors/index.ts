@@ -33,6 +33,7 @@ import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
 import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
+import { VideoConferenceRead } from './VideoConferenceRead';
 import { VideoConfProviderExtend } from './VideoConfProviderExtend';
 
 export {
@@ -71,5 +72,6 @@ export {
     UserRead,
     SchedulerExtend,
     SchedulerModify,
+    VideoConferenceRead,
     VideoConfProviderExtend,
 };

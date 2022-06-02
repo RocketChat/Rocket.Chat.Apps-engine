@@ -84,6 +84,9 @@ export const AppPermissions = {
     'command': {
         default: { name: 'slashcommand' },
     },
+    'videoConference': {
+        read: { name: 'video-conference.read' },
+    },
     'videoConfProvider': {
         default: { name: 'videoconf-provider' },
     },
@@ -119,6 +122,7 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.persistence.default,
     AppPermissions.env.read,
     AppPermissions.command.default,
+    AppPermissions.videoConference.read,
     AppPermissions.videoConfProvider.default,
     AppPermissions.apis.default,
 ];
