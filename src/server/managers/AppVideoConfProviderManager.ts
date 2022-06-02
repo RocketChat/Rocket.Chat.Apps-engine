@@ -24,10 +24,10 @@ export class AppVideoConfProviderManager {
             throw new Error('App must exist in order for a video conference provider to be added.');
         }
 
-        if (!AppPermissionManager.hasPermission(appId, AppPermissions.videoConfProvider.default)) {
+        if (!AppPermissionManager.hasPermission(appId, AppPermissions.videoConference.provider)) {
             throw new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.videoConfProvider.default],
+                missingPermissions: [AppPermissions.videoConference.provider],
             });
         }
 
