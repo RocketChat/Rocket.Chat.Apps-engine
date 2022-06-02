@@ -1,5 +1,5 @@
-import type { IGroupVideoConference, IVideoConference } from '../videoConferences/IVideoConference';
+import type { GroupVideoConference, VideoConference } from '../videoConferences/VideoConference';
 
-export type VideoConfData = Pick<IVideoConference, '_id' | 'type' | 'rid' | 'createdBy'> & { title?: IGroupVideoConference['title'] };
+export type VideoConfData = Pick<VideoConference, '_id' | 'type' | 'rid' | 'createdBy'> & { title?: GroupVideoConference['title'] };
 
-export type VideoConfDataExtended = VideoConfData & Required<Pick<IVideoConference, 'url'>>;
+export type VideoConfDataExtended = VideoConfData & Required<Pick<VideoConference, 'url'>>;

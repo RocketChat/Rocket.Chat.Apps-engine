@@ -1,4 +1,4 @@
-import type { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
+import { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
 import { AppManager } from '../AppManager';
 import { AVideoConfProviderAlreadyExistsError, NoVideoConfProviderRegisteredError } from '../errors';

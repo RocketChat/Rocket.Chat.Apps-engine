@@ -1,8 +1,9 @@
-import type { IVideoConferenceUser } from './IVideoConferenceUser';
+// tslint:disable:interface-over-type-literal
+import { IVideoConferenceUser } from './IVideoConferenceUser';
 
-export interface IVideoConferenceMember extends IVideoConferenceUser {
+export type VideoConferenceMember = IVideoConferenceUser & {
     ts: Date;
-}
+};
 
 export enum VideoConferenceStatus {
     CALLING = 0,
@@ -10,12 +11,12 @@ export enum VideoConferenceStatus {
     ENDED = 2,
 }
 
-export interface IVideoConference {
+export type BaseVideoConference = {
     _id: string;
     _updatedAt: Date;
     type: 'direct' | 'videoconference';
     rid: string;
-    users: Array<IVideoConferenceMember>;
+    users: Array<VideoConferenceMember>;
     status: VideoConferenceStatus;
     messages: {
         started?: string;
@@ -28,14 +29,16 @@ export interface IVideoConference {
 
     endedBy?: IVideoConferenceUser;
     endedAt?: Date;
-}
+};
 
-export interface IDirectVideoConference extends IVideoConference {
+export type DirectVideoConference = BaseVideoConference & {
     type: 'direct';
-}
+};
 
-export interface IGroupVideoConference extends IVideoConference {
+export type GroupVideoConference = BaseVideoConference & {
     type: 'videoconference';
     anonymousUsers: number;
     title: string;
-}
+};
+
+export type VideoConference = DirectVideoConference | GroupVideoConference;

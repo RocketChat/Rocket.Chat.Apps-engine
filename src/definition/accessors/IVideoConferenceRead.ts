@@ -1,4 +1,4 @@
-import { IVideoConference } from '../videoConferences/IVideoConference';
+import { VideoConference } from '../videoConferences/VideoConference';
 
 /**
  * This accessor provides methods for accessing
@@ -11,5 +11,5 @@ export interface IVideoConferenceRead {
      * @param id the id of the video conference
      * @returns the video conference
      */
-    getById(id: string): Promise<IVideoConference | undefined>;
+    getById(id: string): Promise<VideoConference | undefined>;
 }

@@ -16,8 +16,8 @@ import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
-import { IVideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
 import { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
+import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/VideoConference';
 import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
@@ -230,7 +230,7 @@ export class TestData {
         };
     }
 
-    public static getVideoConference(): IVideoConference {
+    public static getVideoConference(): VideoConference {
         return {
             _id: 'first-call',
             _updatedAt: new Date(),
@@ -261,6 +261,8 @@ export class TestData {
                 username: 'mrdoe',
             },
             createdAt: new Date(),
+            title: 'Video Conference',
+            anonymousUsers: 0,
         };
     }
 

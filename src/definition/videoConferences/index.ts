@@ -1,5 +1,7 @@
-import { IVideoConference } from './IVideoConference';
+import { IVideoConferenceUser } from './IVideoConferenceUser';
+import { VideoConference } from './VideoConference';
 
 export {
-    IVideoConference,
+    VideoConference,
+    IVideoConferenceUser,
 };

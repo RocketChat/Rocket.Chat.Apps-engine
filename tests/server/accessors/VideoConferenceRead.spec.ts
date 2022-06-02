@@ -1,12 +1,12 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { IVideoConference } from '../../../src/definition/videoConferences';
+import { VideoConference } from '../../../src/definition/videoConferences';
 
 import { VideoConferenceRead } from '../../../src/server/accessors';
 import { VideoConferenceBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class VideoConferenceReadAccessorTestFixture {
-    private videoConference: IVideoConference;
+    private videoConference: VideoConference;
     private mockVideoConfBridge: VideoConferenceBridge;
 
     @SetupFixture
@@ -15,7 +15,7 @@ export class VideoConferenceReadAccessorTestFixture {
 
         const call = this.videoConference;
         this.mockVideoConfBridge = {
-            doGetById(id, appId): Promise<IVideoConference> {
+            doGetById(id, appId): Promise<VideoConference> {
                 return Promise.resolve(call);
             },
         } as VideoConferenceBridge;
