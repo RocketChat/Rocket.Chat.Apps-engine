@@ -1,7 +1,10 @@
+import { IDirectVideoConference, IGroupVideoConference, IVideoConference, VideoConference } from './IVideoConference';
 import { IVideoConferenceUser } from './IVideoConferenceUser';
-import { VideoConference } from './VideoConference';
 
 export {
-    VideoConference,
+    IDirectVideoConference,
+    IGroupVideoConference,
+    IVideoConference,
     IVideoConferenceUser,
+    VideoConference,
 };

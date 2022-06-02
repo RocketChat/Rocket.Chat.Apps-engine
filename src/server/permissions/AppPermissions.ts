@@ -86,6 +86,7 @@ export const AppPermissions = {
     },
     'videoConference': {
         read: { name: 'video-conference.read' },
+        write: { name: 'video-conference.write' },
     },
     'videoConfProvider': {
         default: { name: 'videoconf-provider' },

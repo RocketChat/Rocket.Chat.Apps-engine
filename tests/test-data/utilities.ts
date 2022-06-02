@@ -16,8 +16,8 @@ import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
+import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
 import { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
-import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/VideoConference';
 import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';

@@ -1,4 +1,3 @@
-// tslint:disable:interface-over-type-literal
 import { IVideoConferenceUser } from './IVideoConferenceUser';
 
 export type VideoConferenceMember = IVideoConferenceUser & {
@@ -11,7 +10,7 @@ export enum VideoConferenceStatus {
     ENDED = 2,
 }
 
-export type BaseVideoConference = {
+export interface IVideoConference {
     _id: string;
     _updatedAt: Date;
     type: 'direct' | 'videoconference';
@@ -29,16 +28,18 @@ export type BaseVideoConference = {
 
     endedBy?: IVideoConferenceUser;
     endedAt?: Date;
-};
 
-export type DirectVideoConference = BaseVideoConference & {
+    providerData?: Record<string, any>;
+}
+
+export interface IDirectVideoConference extends IVideoConference {
     type: 'direct';
-};
+}
 
-export type GroupVideoConference = BaseVideoConference & {
+export interface IGroupVideoConference extends IVideoConference {
     type: 'videoconference';
     anonymousUsers: number;
     title: string;
-};
+}
 
-export type VideoConference = DirectVideoConference | GroupVideoConference;
+export type VideoConference = IDirectVideoConference | IGroupVideoConference;
