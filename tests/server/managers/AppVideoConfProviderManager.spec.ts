@@ -133,7 +133,7 @@ export class AppVideoConfProviderManagerTestFixture {
     public async failToGenerateUrlWithoutProvider() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
 
-        const call = TestData.getVideoConference();
+        const call = TestData.getVideoConfData();
 
         await Expect(async () => manager.generateUrl(call))
             .toThrowErrorAsync(NoVideoConfProviderRegisteredError, 'There are no video conference providers registered in the system.');
@@ -150,7 +150,7 @@ export class AppVideoConfProviderManagerTestFixture {
         manager.addProvider('testing', TestData.getVideoConfProvider());
         manager.registerProviders('testing');
 
-        const call = TestData.getVideoConference();
+        const call = TestData.getVideoConfData();
 
         const url = await manager.generateUrl(call);
         await Expect(url).toBe('video-conf/first-call');
@@ -159,7 +159,7 @@ export class AppVideoConfProviderManagerTestFixture {
     @AsyncTest()
     public async failToCustomizeUrlWithoutProvider() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
-        const call = TestData.getVideoConference();
+        const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
         await Expect(async () => await manager.customizeUrl(call, user, {}))
@@ -177,7 +177,7 @@ export class AppVideoConfProviderManagerTestFixture {
         manager.addProvider('testing', TestData.getVideoConfProvider());
         manager.registerProviders('testing');
 
-        const call = TestData.getVideoConference();
+        const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
         await Expect(await manager.customizeUrl(call, user, {})).toBe('video-conf/first-call#caller');

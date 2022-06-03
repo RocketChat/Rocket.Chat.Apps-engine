@@ -16,6 +16,8 @@ import { ServerSettingBridge } from './ServerSettingBridge';
 import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
+import type { VideoConferenceBridge } from './VideoConferenceBridge';
+
 export type Bridge = CommandBridge
             | ApiBridge
             | AppDetailChangesBridge
@@ -32,7 +34,8 @@ export type Bridge = CommandBridge
             | UploadBridge
             | UserBridge
             | UiInteractionBridge
-            | SchedulerBridge;
+            | SchedulerBridge
+            | VideoConferenceBridge;
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): CommandBridge;
@@ -53,4 +56,5 @@ export abstract class AppBridges {
     public abstract getUiInteractionBridge(): UiInteractionBridge;
     public abstract getSchedulerBridge(): SchedulerBridge;
     public abstract getCloudWorkspaceBridge(): CloudWorkspaceBridge;
+    public abstract getVideoConferenceBridge(): VideoConferenceBridge;
 }

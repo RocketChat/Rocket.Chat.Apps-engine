@@ -1,10 +1,11 @@
-import { IMessageExtender, IModifyExtender, IRoomExtender } from '../../definition/accessors';
+import { IMessageExtender, IModifyExtender, IRoomExtender, IVideoConferenceExtender } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IUser } from '../../definition/users';
 
 import { AppBridges } from '../bridges/AppBridges';
 import { MessageExtender } from './MessageExtender';
 import { RoomExtender } from './RoomExtender';
+import { VideoConferenceExtender } from './VideoConferenceExtend';
 
 export class ModifyExtender implements IModifyExtender {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
@@ -24,12 +25,21 @@ export class ModifyExtender implements IModifyExtender {
         return new RoomExtender(room);
     }
 
-    public finish(extender: IMessageExtender | IRoomExtender): Promise<void> {
+    public async extendVideoConference(id: string, updater: IUser): Promise<IVideoConferenceExtender> {
+        const call = await this.bridges.getVideoConferenceBridge().doGetById(id, this.appId);
+        call._updatedAt = new Date();
+
+        return new VideoConferenceExtender(call);
+    }
+
+    public finish(extender: IMessageExtender | IRoomExtender | IVideoConferenceExtender): Promise<void> {
         switch (extender.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this.bridges.getMessageBridge().doUpdate(extender.getMessage(), this.appId);
             case RocketChatAssociationModel.ROOM:
                 return this.bridges.getRoomBridge().doUpdate(extender.getRoom(), extender.getUsernamesOfMembersBeingAdded(), this.appId);
+            case RocketChatAssociationModel.VIDEO_CONFERENCE:
+                return this.bridges.getVideoConferenceBridge().doUpdate(extender.getVideoConference(), this.appId);
             default:
                 throw new Error('Invalid extender passed to the ModifyExtender.finish function.');
         }
