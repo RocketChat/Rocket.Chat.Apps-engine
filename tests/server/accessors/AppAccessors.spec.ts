@@ -1,5 +1,4 @@
 import { Expect, Setup, SetupFixture, Test } from 'alsatian';
-import * as vm from 'vm';
 
 import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';
@@ -10,6 +9,7 @@ import { AppConsole } from '../../../src/server/logging';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
@@ -28,6 +28,9 @@ export class AppAccessorsTestFixture {
         this.mockBridges = new TestsAppBridges();
 
         this.mockApp = {
+            getRuntime() {
+                return {} as AppsEngineRuntime;
+            },
             getID() {
                 return 'testing';
             },
@@ -36,13 +39,6 @@ export class AppAccessorsTestFixture {
             },
             hasMethod(method: AppMethod): boolean {
                 return true;
-            },
-            makeContext(data: object): vm.Context {
-                return {} as vm.Context;
-            },
-            runInContext(codeToRun: string, context: vm.Context): any {
-                return AppAccessorsTestFixture.doThrow ?
-                    Promise.reject('You told me so') : Promise.resolve();
             },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);

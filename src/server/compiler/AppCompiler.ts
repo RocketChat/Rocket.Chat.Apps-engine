@@ -1,5 +1,4 @@
 import * as path from 'path';
-import * as vm from 'vm';
 
 import { App } from '../../definition/App';
 import { AppMethod } from '../../definition/metadata';
@@ -7,8 +6,9 @@ import { AppAccessors } from '../accessors';
 import { AppManager } from '../AppManager';
 import { MustContainFunctionError, MustExtendAppError } from '../errors';
 import { AppConsole } from '../logging';
-import { Utilities } from '../misc/Utilities';
 import { ProxiedApp } from '../ProxiedApp';
+import { getRuntime } from '../runtime';
+import { buildCustomRequire } from '../runtime/require';
 import { IAppStorageItem } from '../storage';
 import { IParseAppPackageResult } from './IParseAppPackageResult';
 
@@ -29,12 +29,12 @@ export class AppCompiler {
                 `Could not find the classFile (${ storage.info.classFile }) file.`);
         }
 
-        const exports = {};
-        const customRequire = Utilities.buildCustomRequire(files, storage.info.id);
-        const context = Utilities.buildDefaultAppContext({ require: customRequire, exports, process: {}, console });
+        const Runtime = getRuntime();
 
-        const script = new vm.Script(files[path.normalize(storage.info.classFile)]);
-        const result = script.runInContext(context);
+        const customRequire = buildCustomRequire(files, storage.info.id);
+        const result = Runtime.runCode(files[path.normalize(storage.info.classFile)], {
+            require: customRequire,
+        });
 
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
@@ -43,13 +43,12 @@ export class AppCompiler {
 
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = vm.runInNewContext('new App(info, rcLogger, appAccessors);', Utilities.buildDefaultAppContext({
+        const rl = Runtime.runCode('new App(info, rcLogger, appAccessors);', {
             rcLogger: logger,
             info: storage.info,
             App: result,
-            process: {},
             appAccessors,
-        }), { timeout: 1000, filename: `App_${ storage.info.nameSlug }.js` });
+        }, { timeout: 1000, filename: `App_${ storage.info.nameSlug }.js` });
 
         if (!(rl instanceof App)) {
             throw new MustExtendAppError();
@@ -79,7 +78,7 @@ export class AppCompiler {
             throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        const app = new ProxiedApp(manager, storage, rl as App, customRequire);
+        const app = new ProxiedApp(manager, storage, rl as App, new Runtime(rl as App, customRequire));
 
         manager.getLogStorage().storeEntries(app.getID(), logger);
 

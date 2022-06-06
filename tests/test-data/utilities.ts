@@ -22,6 +22,8 @@ import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDa
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
+import { getRuntime } from '../../src/server/runtime';
+import { AppsEngineRuntime } from '../../src/server/runtime/AppsEngineRuntime';
 import { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
 
 export class TestInfastructureSetup {
@@ -267,10 +269,16 @@ export class TestData {
     }
 
     public static getMockApp(id: string, name: string): ProxiedApp {
-        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
+        const app = {
             getName() { return 'testing'; },
             getID() { return 'testing'; },
-        } as App, (mod: string) => mod);
+        } as App;
+        return new ProxiedApp(
+            {} as AppManager,
+            { status: AppStatus.UNKNOWN } as IAppStorageItem,
+            app,
+            new (getRuntime())(app, require) as AppsEngineRuntime,
+        );
     }
 }
 

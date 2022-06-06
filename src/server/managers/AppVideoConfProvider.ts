@@ -53,37 +53,29 @@ export class AppVideoConfProvider {
             return;
         }
 
-        const runContext = this.app.makeContext({
-            provider: this.provider,
-            args: [
-                ...runContextArgs,
-                accessors.getReader(this.app.getID()),
-                accessors.getModifier(this.app.getID()),
-                accessors.getHttp(this.app.getID()),
-                accessors.getPersistence(this.app.getID()),
-            ],
-        });
-
         const logger = this.app.setupLogger(method);
         logger.debug(`Executing ${ method } on video conference provider...`);
 
-        let result: string | undefined;
         try {
             const runCode = `provider.${ method }.apply(provider, args)`;
-            result = await this.app.runInContext(runCode, runContext);
+            const result = await this.app.getRuntime().runInSandbox(runCode, {
+                provider: this.provider,
+                args: [
+                    ...runContextArgs,
+                    accessors.getReader(this.app.getID()),
+                    accessors.getModifier(this.app.getID()),
+                    accessors.getHttp(this.app.getID()),
+                    accessors.getPersistence(this.app.getID()),
+                ],
+            });
+
             logger.debug(`Video Conference Provider's ${ method } was successfully executed.`);
+            return result;
         } catch (e) {
             logger.error(e);
             logger.debug(`Video Conference Provider's ${ method } was unsuccessful.`);
-        }
-
-        try {
+        } finally {
             await logStorage.storeEntries(this.app.getID(), logger);
-        } catch (e) {
-            // Don't care, at the moment.
-            // TODO: Evaluate to determine if we do care
         }
-
-        return result;
     }
 }
