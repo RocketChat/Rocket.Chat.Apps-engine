@@ -84,10 +84,7 @@ export class OAuth2Client implements IOAuth2Client {
             .getAccessors()
             .providedApiEndpoints[0].computedPath.substring(1);
 
-        const siteUrl = await this.app
-            .getAccessors()
-            .environmentReader.getServerSettings()
-            .getValueById('Site_Url');
+        const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
         const finalScopes = ([] as Array<string>).concat(
             this.config.defaultScopes || [],
@@ -165,10 +162,8 @@ export class OAuth2Client implements IOAuth2Client {
                 .getSettings()
                 .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
-            const siteUrl = await this.app
-                    .getAccessors()
-                    .environmentReader.getServerSettings()
-                    .getValueById('Site_Url');
+            const siteUrl = await this.getBaseURLWithoutTrailingSlash();
+
             const redirectUri = this.app
                     .getAccessors()
                     .providedApiEndpoints[0].computedPath.substring(1);
@@ -238,6 +233,20 @@ export class OAuth2Client implements IOAuth2Client {
         }
     }
 
+    private async getBaseURLWithoutTrailingSlash(): Promise<string> {
+        const SITE_URL = 'Site_Url';
+        const url = await this.app
+            .getAccessors()
+            .environmentReader.getServerSettings()
+            .getValueById(SITE_URL);
+
+        const lastChar = url.substr(url.length - 1);
+        if (lastChar === '/') {
+            return url.substr(0, url.length - 1);
+        }
+        return url;
+    }
+
     private async handleOAuthCallback(
         request: IApiRequest,
         endpoint: IApiEndpointInfo,
@@ -278,10 +287,7 @@ export class OAuth2Client implements IOAuth2Client {
                 };
             }
 
-            const siteUrl = await this.app
-                .getAccessors()
-                .environmentReader.getServerSettings()
-                .getValueById('Site_Url');
+            const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
             const accessTokenUrl = this.config.accessTokenUri;
 
