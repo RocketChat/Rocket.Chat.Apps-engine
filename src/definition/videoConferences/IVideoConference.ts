@@ -29,6 +29,7 @@ export interface IVideoConference {
     endedBy?: IVideoConferenceUser;
     endedAt?: Date;
 
+    providerName: string;
     providerData?: Record<string, any>;
 }
 
