@@ -240,8 +240,7 @@ export class OAuth2Client implements IOAuth2Client {
             .environmentReader.getServerSettings()
             .getValueById(SITE_URL);
 
-        const lastChar = url.substr(url.length - 1);
-        if (lastChar === '/') {
+        if (url.endsWith('/')) {
             return url.substr(0, url.length - 1);
         }
         return url;
