@@ -193,14 +193,16 @@ export class TestData {
         };
     }
 
-    public static getVideoConfProvider(): IVideoConfProvider {
+    public static getVideoConfProvider(name = 'test'): IVideoConfProvider {
         return {
+            name,
+
             async generateUrl(call: VideoConfData): Promise<string> {
-                return `video-conf/${call._id}`;
+                return `${name}/${call._id}`;
             },
 
             async customizeUrl(call: VideoConfDataExtended, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
-                return `video-conf/${call._id}#${user ? user.username : ''}`;
+                return `${name}/${call._id}#${user ? user.username : ''}`;
             },
         };
     }
@@ -223,10 +225,10 @@ export class TestData {
         };
     }
 
-    public static getVideoConfDataExtended(): VideoConfDataExtended {
+    public static getVideoConfDataExtended(providerName = 'test'): VideoConfDataExtended {
         return {
             ...this.getVideoConfData(),
-            url: 'video-conf/first-call',
+            url: '${providerName}/first-call',
         };
     }
 
@@ -263,6 +265,7 @@ export class TestData {
             createdAt: new Date(),
             title: 'Video Conference',
             anonymousUsers: 0,
+            providerName: 'test',
         };
     }
 

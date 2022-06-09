@@ -6,6 +6,7 @@ import { VideoConfData, VideoConfDataExtended } from './VideoConfData';
  * Represents a video conference provider
  */
 export interface IVideoConfProvider {
+    name: string;
     /**
      * The function which gets called when a new video conference url is requested
      */

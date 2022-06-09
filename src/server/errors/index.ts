@@ -1,4 +1,3 @@
-import { AVideoConfProviderAlreadyExistsError } from './AVideoConfProviderAlreadyExistsError';
 import { CommandAlreadyExistsError } from './CommandAlreadyExistsError';
 import { CommandHasAlreadyBeenTouchedError } from './CommandHasAlreadyBeenTouchedError';
 import { CompilerError } from './CompilerError';
@@ -6,9 +5,10 @@ import { InvalidLicenseError } from './InvalidLicenseError';
 import { MustContainFunctionError } from './MustContainFunctionError';
 import { MustExtendAppError } from './MustExtendAppError';
 import { NotEnoughMethodArgumentsError } from './NotEnoughMethodArgumentsError';
-import { NoVideoConfProviderRegisteredError } from './NoVideoConfProviderRegisteredError';
 import { PathAlreadyExistsError } from './PathAlreadyExistsError';
 import { RequiredApiVersionError } from './RequiredApiVersionError';
+import { VideoConfProviderAlreadyExistsError } from './VideoConfProviderAlreadyExistsError';
+import { VideoConfProviderNotRegisteredError } from './VideoConfProviderNotRegisteredError';
 
 export {
     CommandAlreadyExistsError,
@@ -20,6 +20,6 @@ export {
     NotEnoughMethodArgumentsError,
     RequiredApiVersionError,
     InvalidLicenseError,
-    NoVideoConfProviderRegisteredError,
-    AVideoConfProviderAlreadyExistsError,
+    VideoConfProviderAlreadyExistsError,
+    VideoConfProviderNotRegisteredError,
 };

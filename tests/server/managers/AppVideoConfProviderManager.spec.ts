@@ -5,7 +5,7 @@ import { TestData } from '../../test-data/utilities';
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AVideoConfProviderAlreadyExistsError, NoVideoConfProviderRegisteredError } from '../../../src/server/errors';
+import { VideoConfProviderAlreadyExistsError, VideoConfProviderNotRegisteredError } from '../../../src/server/errors';
 import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { AppVideoConfProvider } from '../../../src/server/managers/AppVideoConfProvider';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
@@ -97,22 +97,84 @@ export class AppVideoConfProviderManagerTestFixture {
     }
 
     @Test()
+    public ignoreAppsWithoutProviders() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        Expect(() => manager.registerProviders('non-existant')).not.toThrow();
+    }
+
+    @Test()
     public registerProviders() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
 
-        manager.addProvider('testing', TestData.getVideoConfProvider());
-        const firstRegInfo = (manager as any).videoConfProviders.get('testing') as AppVideoConfProvider;
+        manager.addProvider('firstApp', TestData.getVideoConfProvider());
+        const appInfo = (manager as any).videoConfProviders.get('firstApp') as Map<string, AppVideoConfProvider>;
+        Expect(appInfo).toBeDefined();
+        const regInfo = appInfo.get('test');
+        Expect(regInfo).toBeDefined();
 
-        manager.addProvider('testing2', TestData.getVideoConfProvider());
-        const secondRegInfo = (manager as any).videoConfProviders.get('testing2') as AppVideoConfProvider;
+        Expect(regInfo.isRegistered).toBe(false);
+        Expect(() => manager.registerProviders('firstApp')).not.toThrow();
+        Expect(regInfo.isRegistered).toBe(true);
+    }
 
-        Expect(() => manager.registerProviders('non-existant')).not.toThrow();
-        Expect(() => manager.registerProviders('testing')).not.toThrow();
-        Expect(firstRegInfo.isRegistered).toBe(true);
+    @Test()
+    public registerTwoProviders() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        manager.addProvider('firstApp', TestData.getVideoConfProvider());
+        manager.addProvider('firstApp', TestData.getVideoConfProvider('another-test'));
+        const firstApp = (manager as any).videoConfProviders.get('firstApp') as Map<string, AppVideoConfProvider>;
+        Expect(firstApp).toBeDefined();
+        const firstRegInfo = firstApp.get('test');
+        Expect(firstRegInfo).toBeDefined();
+        const secondRegInfo = firstApp.get('another-test');
+        Expect(secondRegInfo).toBeDefined();
+
+        Expect(firstRegInfo.isRegistered).toBe(false);
         Expect(secondRegInfo.isRegistered).toBe(false);
+        Expect(() => manager.registerProviders('firstApp')).not.toThrow();
+        Expect(firstRegInfo.isRegistered).toBe(true);
+        Expect(secondRegInfo.isRegistered).toBe(true);
+    }
 
-        Expect(() => manager.registerProviders('testing2'))
-            .toThrowError(AVideoConfProviderAlreadyExistsError, 'A video conference provider is already registered in the system.');
+    @Test()
+    public registerProvidersFromMultipleApps() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        manager.addProvider('firstApp', TestData.getVideoConfProvider());
+        manager.addProvider('firstApp', TestData.getVideoConfProvider('another-test'));
+        manager.addProvider('secondApp', TestData.getVideoConfProvider('test3'));
+
+        const firstApp = (manager as any).videoConfProviders.get('firstApp') as Map<string, AppVideoConfProvider>;
+        Expect(firstApp).toBeDefined();
+        const firstRegInfo = firstApp.get('test');
+        const secondRegInfo = firstApp.get('another-test');
+        Expect(firstRegInfo).toBeDefined();
+        Expect(secondRegInfo).toBeDefined();
+        const secondApp = (manager as any).videoConfProviders.get('secondApp') as Map<string, AppVideoConfProvider>;
+        Expect(secondApp).toBeDefined();
+        const thirdRegInfo = secondApp.get('test3');
+        Expect(thirdRegInfo).toBeDefined();
+
+        Expect(firstRegInfo.isRegistered).toBe(false);
+        Expect(secondRegInfo.isRegistered).toBe(false);
+        Expect(() => manager.registerProviders('firstApp')).not.toThrow();
+        Expect(firstRegInfo.isRegistered).toBe(true);
+        Expect(secondRegInfo.isRegistered).toBe(true);
+        Expect(thirdRegInfo.isRegistered).toBe(false);
+        Expect(() => manager.registerProviders('secondApp')).not.toThrow();
+        Expect(thirdRegInfo.isRegistered).toBe(true);
+    }
+
+    @Test()
+    public failToRegisterSameProvider() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        manager.addProvider('firstApp', TestData.getVideoConfProvider());
+
+        Expect(() => manager.addProvider('secondApp', TestData.getVideoConfProvider('test')))
+            .toThrowError(VideoConfProviderAlreadyExistsError, `The video conference provider "test" was already registered by another App.`);
     }
 
     @Test()
@@ -120,7 +182,7 @@ export class AppVideoConfProviderManagerTestFixture {
         const manager = new AppVideoConfProviderManager(this.mockManager);
 
         manager.addProvider('testing', TestData.getVideoConfProvider());
-        const regInfo = (manager as any).videoConfProviders.get('testing') as AppVideoConfProvider;
+        const regInfo = (manager as any).videoConfProviders.get('testing').get('test') as AppVideoConfProvider;
         Expect(() => manager.registerProviders('testing')).not.toThrow();
 
         Expect(() => manager.unregisterProviders('non-existant')).not.toThrow();
@@ -135,13 +197,13 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const call = TestData.getVideoConfData();
 
-        await Expect(async () => manager.generateUrl(call))
-            .toThrowErrorAsync(NoVideoConfProviderRegisteredError, 'There are no video conference providers registered in the system.');
+        await Expect(async () => manager.generateUrl('test', call))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
 
         manager.addProvider('testing', TestData.getVideoConfProvider());
 
-        await Expect(async () => await manager.generateUrl(call))
-            .toThrowErrorAsync(NoVideoConfProviderRegisteredError, 'There are no video conference providers registered in the system.');
+        await Expect(async () => await manager.generateUrl('test', call))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
     }
 
     @AsyncTest()
@@ -152,8 +214,46 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const call = TestData.getVideoConfData();
 
-        const url = await manager.generateUrl(call);
-        await Expect(url).toBe('video-conf/first-call');
+        const url = await manager.generateUrl('test', call);
+        await Expect(url).toBe('test/first-call');
+    }
+
+    @AsyncTest()
+    public async generateUrlWithMultipleProvidersAvailable() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+        manager.addProvider('testing', TestData.getVideoConfProvider());
+        manager.addProvider('testing', TestData.getVideoConfProvider('test2'));
+        manager.registerProviders('testing');
+        manager.addProvider('secondApp', TestData.getVideoConfProvider('differentProvider'));
+        manager.registerProviders('secondApp');
+
+        const call = TestData.getVideoConfData();
+
+        const url = await manager.generateUrl('test', call);
+        await Expect(url).toBe('test/first-call');
+
+        const url2 = await manager.generateUrl('test2', call);
+        await Expect(url2).toBe('test2/first-call');
+
+        const url3 = await manager.generateUrl('differentProvider', call);
+        await Expect(url3).toBe('differentProvider/first-call');
+    }
+
+    @AsyncTest()
+    public async failToGenerateUrlWithUnknownProvider() {
+        const call = TestData.getVideoConfData();
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+        await Expect(async () => await manager.generateUrl('unknownProvider', call))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unknownProvider" is not registered in the system.`);
+    }
+
+    @AsyncTest()
+    public async failToGenerateUrlWithUnregisteredProvider() {
+        const call = TestData.getVideoConfData();
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+        manager.addProvider('unregisteredApp', TestData.getVideoConfProvider('unregisteredProvider'));
+        await Expect(async () => await manager.generateUrl('unregisteredProvider', call))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unregisteredProvider" is not registered in the system.`);
     }
 
     @AsyncTest()
@@ -162,13 +262,13 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
-        await Expect(async () => await manager.customizeUrl(call, user, {}))
-            .toThrowErrorAsync(NoVideoConfProviderRegisteredError, 'There are no video conference providers registered in the system.');
+        await Expect(async () => await manager.customizeUrl('test', call, user, {}))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
 
         manager.addProvider('testing', TestData.getVideoConfProvider());
 
-        await Expect(async () => await manager.customizeUrl(call, user, {}))
-            .toThrowErrorAsync(NoVideoConfProviderRegisteredError, 'There are no video conference providers registered in the system.');
+        await Expect(async () => await manager.customizeUrl('test', call, user, {}))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
     }
 
     @AsyncTest()
@@ -180,7 +280,50 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
-        await Expect(await manager.customizeUrl(call, user, {})).toBe('video-conf/first-call#caller');
-        await Expect(await manager.customizeUrl(call, undefined, {})).toBe('video-conf/first-call#');
+        await Expect(await manager.customizeUrl('test', call, user, {})).toBe('test/first-call#caller');
+        await Expect(await manager.customizeUrl('test', call, undefined, {})).toBe('test/first-call#');
+    }
+
+    @AsyncTest()
+    public async customizeUrlWithMultipleProvidersAvailable() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+        manager.addProvider('testing', TestData.getVideoConfProvider());
+        manager.addProvider('testing', TestData.getVideoConfProvider('test2'));
+        manager.registerProviders('testing');
+        manager.addProvider('secondApp', TestData.getVideoConfProvider('differentProvider'));
+        manager.registerProviders('secondApp');
+
+        const call = TestData.getVideoConfDataExtended();
+        const user = TestData.getVideoConferenceUser();
+
+        await Expect(await manager.customizeUrl('test', call, user, {})).toBe('test/first-call#caller');
+        await Expect(await manager.customizeUrl('test', call, undefined, {})).toBe('test/first-call#');
+
+        await Expect(await manager.customizeUrl('test2', call, user, {})).toBe('test2/first-call#caller');
+        await Expect(await manager.customizeUrl('test2', call, undefined, {})).toBe('test2/first-call#');
+
+        await Expect(await manager.customizeUrl('differentProvider', call, user, {})).toBe('differentProvider/first-call#caller');
+        await Expect(await manager.customizeUrl('differentProvider', call, undefined, {})).toBe('differentProvider/first-call#');
+    }
+
+    @AsyncTest()
+    public async failToCustomizeUrlWithUnknownProvider() {
+        const call = TestData.getVideoConfDataExtended();
+        const user = TestData.getVideoConferenceUser();
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        await Expect(async () => await manager.customizeUrl('unknownProvider', call, user, {}))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unknownProvider" is not registered in the system.`);
+    }
+
+    @AsyncTest()
+    public async failToCustomizeUrlWithUnregisteredProvider() {
+        const call = TestData.getVideoConfDataExtended();
+        const user = TestData.getVideoConferenceUser();
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+
+        manager.addProvider('unregisteredApp', TestData.getVideoConfProvider('unregisteredProvider'));
+        await Expect(async () => await manager.customizeUrl('unregisteredProvider', call, user, {}))
+            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unregisteredProvider" is not registered in the system.`);
     }
 }
