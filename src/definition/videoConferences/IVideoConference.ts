@@ -13,7 +13,7 @@ export enum VideoConferenceStatus {
 export interface IVideoConference {
     _id: string;
     _updatedAt: Date;
-    type: 'direct' | 'videoconference';
+    type: 'direct' | 'videoconference' | 'livechat';
     rid: string;
     users: Array<VideoConferenceMember>;
     status: VideoConferenceStatus;
@@ -43,4 +43,8 @@ export interface IGroupVideoConference extends IVideoConference {
     title: string;
 }
 
-export type VideoConference = IDirectVideoConference | IGroupVideoConference;
+export interface ILivechatVideoConference extends IVideoConference {
+    type: 'livechat';
+}
+
+export type VideoConference = IDirectVideoConference | IGroupVideoConference | ILivechatVideoConference;
