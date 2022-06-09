@@ -292,7 +292,6 @@ export class AppVideoConfProviderManagerTestFixture {
         manager.registerProviders('testing');
         manager.addProvider('secondApp', TestData.getVideoConfProvider('differentProvider'));
         manager.registerProviders('secondApp');
-        manager.addProvider('unregisteredApp', TestData.getVideoConfProvider('unregisteredProvider'));
 
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
