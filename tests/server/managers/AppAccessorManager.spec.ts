@@ -2,7 +2,7 @@ import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Te
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager  } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager  } from '../../../src/server/managers';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -38,9 +38,6 @@ export class AppAccessorManagerTestFixture {
             },
             getUIActionButtonManager() {
                 return {} as UIActionButtonManager;
-            },
-            getVideoConfProviderManager() {
-                return {} as AppVideoConfProviderManager;
             },
         } as AppManager;
     }

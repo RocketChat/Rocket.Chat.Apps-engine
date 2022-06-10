@@ -7,7 +7,6 @@ import {
     ISettingsExtend,
     ISlashCommandsExtend,
     IUIExtend,
-    IVideoConfProvidersExtend,
 } from '../../definition/accessors';
 
 export class ConfigurationExtend implements IConfigurationExtend {
@@ -19,6 +18,5 @@ export class ConfigurationExtend implements IConfigurationExtend {
         public readonly externalComponents: IExternalComponentsExtend,
         public readonly scheduler: ISchedulerExtend,
         public readonly ui: IUIExtend,
-        public readonly videoConfProviders: IVideoConfProvidersExtend,
     ) { }
 }

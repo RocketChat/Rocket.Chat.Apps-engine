@@ -5,7 +5,6 @@ import { ISchedulerExtend } from './ISchedulerExtend';
 import { ISettingsExtend } from './ISettingsExtend';
 import { ISlashCommandsExtend } from './ISlashCommandsExtend';
 import { IUIExtend } from './IUIExtend';
-import { IVideoConfProvidersExtend } from './IVideoConfProvidersExtend';
 
 /**
  * This accessor provides methods for declaring the configuration
@@ -30,7 +29,4 @@ export interface IConfigurationExtend {
     readonly scheduler: ISchedulerExtend;
     /** Accessor for registering different elements in the host UI */
     readonly ui: IUIExtend;
-
-    /** Accessor for declaring the videoconf providers which your App provides. */
-    readonly videoConfProviders: IVideoConfProvidersExtend;
 }

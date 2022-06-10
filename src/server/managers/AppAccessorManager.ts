@@ -35,8 +35,6 @@ import {
     SlashCommandsModify,
     UploadRead,
     UserRead,
-    VideoConferenceRead,
-    VideoConfProviderExtend,
 } from '../accessors';
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
 import { UIExtend } from '../accessors/UIExtend';
@@ -89,14 +87,13 @@ export class AppAccessorManager {
 
             const htt = new HttpExtend();
             const cmds = new SlashCommandsExtend(this.manager.getCommandManager(), appId);
-            const videoConf = new VideoConfProviderExtend(this.manager.getVideoConfProviderManager(), appId);
             const apis = new ApiExtend(this.manager.getApiManager(), appId);
             const sets = new SettingsExtend(rl);
             const excs = new ExternalComponentsExtend(this.manager.getExternalComponentManager(), appId);
             const scheduler = new SchedulerExtend(this.manager.getSchedulerManager(), appId);
             const ui = new UIExtend(this.manager.getUIActionButtonManager(), appId);
 
-            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs, scheduler, ui, videoConf));
+            this.configExtenders.set(appId, new ConfigurationExtend(htt, sets, cmds, apis, excs, scheduler, ui));
         }
 
         return this.configExtenders.get(appId);
@@ -143,9 +140,8 @@ export class AppAccessorManager {
             const livechat = new LivechatRead(this.bridges.getLivechatBridge(), appId);
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
             const cloud = new CloudWorkspaceRead(this.bridges.getCloudWorkspaceBridge(), appId);
-            const videoConf = new VideoConferenceRead(this.bridges.getVideoConferenceBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud));
         }
 
         return this.readers.get(appId);

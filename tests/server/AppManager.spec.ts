@@ -5,7 +5,7 @@ import { SimpleClass, TestInfastructureSetup } from '../test-data/utilities';
 import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
 import { AppCompiler, AppPackageParser } from '../../src/server/compiler';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppListenerManager, AppSettingsManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppListenerManager, AppSettingsManager, AppSlashCommandManager } from '../../src/server/managers';
 import { AppLogStorage, AppMetadataStorage, AppSourceStorage } from '../../src/server/storage';
 
 export class AppManagerTestFixture {
@@ -95,6 +95,5 @@ export class AppManagerTestFixture {
         Expect(manager.getExternalComponentManager() instanceof AppExternalComponentManager).toBe(true);
         Expect(manager.getApiManager() instanceof AppApiManager).toBe(true);
         Expect(manager.getSettingsManager() instanceof AppSettingsManager).toBe(true);
-        Expect(manager.getVideoConfProviderManager() instanceof AppVideoConfProviderManager).toBe(true);
     }
 }

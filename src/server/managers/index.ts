@@ -6,7 +6,6 @@ import { AppListenerManager } from './AppListenerManager';
 import { AppSchedulerManager } from './AppSchedulerManager';
 import { AppSettingsManager } from './AppSettingsManager';
 import { AppSlashCommandManager } from './AppSlashCommandManager';
-import { AppVideoConfProviderManager } from './AppVideoConfProviderManager';
 
 export {
     AppAccessorManager,
@@ -17,5 +16,4 @@ export {
     AppSlashCommandManager,
     AppApiManager,
     AppSchedulerManager,
-    AppVideoConfProviderManager,
 };
