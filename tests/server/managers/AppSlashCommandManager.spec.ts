@@ -13,7 +13,7 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
@@ -80,6 +80,9 @@ export class AppSlashCommandManagerTestFixture {
             },
             getUIActionButtonManager() {
                 return {} as UIActionButtonManager;
+            },
+            getVideoConfProviderManager() {
+                return {} as AppVideoConfProviderManager;
             },
         } as AppManager;
 

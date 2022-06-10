@@ -7,6 +7,8 @@ import { MustExtendAppError } from './MustExtendAppError';
 import { NotEnoughMethodArgumentsError } from './NotEnoughMethodArgumentsError';
 import { PathAlreadyExistsError } from './PathAlreadyExistsError';
 import { RequiredApiVersionError } from './RequiredApiVersionError';
+import { VideoConfProviderAlreadyExistsError } from './VideoConfProviderAlreadyExistsError';
+import { VideoConfProviderNotRegisteredError } from './VideoConfProviderNotRegisteredError';
 
 export {
     CommandAlreadyExistsError,
@@ -18,4 +20,6 @@ export {
     NotEnoughMethodArgumentsError,
     RequiredApiVersionError,
     InvalidLicenseError,
+    VideoConfProviderAlreadyExistsError,
+    VideoConfProviderNotRegisteredError,
 };
