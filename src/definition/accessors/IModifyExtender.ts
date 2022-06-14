@@ -28,7 +28,7 @@ export interface IModifyExtender {
      * Modifies a video conference in a non-destructive way: Properties can be added to it,
      * but existing properties cannot be changed.
      */
-    extendVideoConference(id: string, updater: IUser): Promise<IVideoConferenceExtender>;
+    extendVideoConference(id: string): Promise<IVideoConferenceExtender>;
 
     /**
      * Finishes the extending process, saving the object to the database.
