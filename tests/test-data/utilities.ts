@@ -16,6 +16,7 @@ import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
 import { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
+import { AppVideoConference } from '../../src/definition/videoConferences/AppVideoConference';
 import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
 import { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
 import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
@@ -229,6 +230,15 @@ export class TestData {
         return {
             ...this.getVideoConfData(),
             url: '${providerName}/first-call',
+        };
+    }
+
+    public static getAppVideoConference(): AppVideoConference {
+        return {
+            rid: 'roomId',
+            createdBy: 'userId',
+            title: 'Video Conference',
+            providerName: 'test',
         };
     }
 

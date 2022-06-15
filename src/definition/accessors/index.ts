@@ -45,6 +45,7 @@ export * from './IUploadCreator';
 export * from './IUploadRead';
 export * from './IUserBuilder';
 export * from './IUserRead';
+export * from './IVideoConferenceBuilder';
 export * from './IVideoConferenceExtend';
 export * from './IVideoConferenceRead';
 export * from './IVideoConfProvidersExtend';
