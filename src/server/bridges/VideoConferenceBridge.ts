@@ -1,3 +1,4 @@
+import type { AppVideoConference } from '../../definition/videoConferences/AppVideoConference';
 import type { VideoConference } from '../../definition/videoConferences/IVideoConference';
 import { IVideoConfProvider } from '../../definition/videoConfProviders';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
@@ -9,6 +10,12 @@ export abstract class VideoConferenceBridge extends BaseBridge {
     public async doGetById(callId: string, appId: string): Promise<VideoConference> {
         if (this.hasReadPermission(appId)) {
             return this.getById(callId, appId);
+        }
+    }
+
+    public async doCreate(call: AppVideoConference, appId: string): Promise<string> {
+        if (this.hasWritePermission(appId)) {
+            return this.create(call, appId);
         }
     }
 
@@ -30,6 +37,7 @@ export abstract class VideoConferenceBridge extends BaseBridge {
         }
     }
 
+    protected abstract create(call: AppVideoConference, appId: string): Promise<string>;
     protected abstract getById(callId: string, appId: string): Promise<VideoConference>;
     protected abstract update(call: VideoConference, appId: string): Promise<void>;
     protected abstract registerProvider(info: IVideoConfProvider, appId: string): Promise<void>;

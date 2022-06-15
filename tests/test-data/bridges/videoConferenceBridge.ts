@@ -1,10 +1,15 @@
 import { VideoConference } from '../../../src/definition/videoConferences';
+import { AppVideoConference } from '../../../src/definition/videoConferences';
 import { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 import { VideoConferenceBridge } from '../../../src/server/bridges';
 
 export class TestsVideoConferenceBridge extends VideoConferenceBridge {
     public getById(callId: string, appId: string): Promise<VideoConference> {
         throw new Error('Method not implemented.');
+    }
+
+    public create(call: AppVideoConference, appId: string): Promise<string> {
+        throw new Error('Method not implemented');
     }
 
     public update(call: VideoConference, appId: string): Promise<void> {
