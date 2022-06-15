@@ -25,7 +25,7 @@ export class ModifyExtender implements IModifyExtender {
         return new RoomExtender(room);
     }
 
-    public async extendVideoConference(id: string, updater: IUser): Promise<IVideoConferenceExtender> {
+    public async extendVideoConference(id: string): Promise<IVideoConferenceExtender> {
         const call = await this.bridges.getVideoConferenceBridge().doGetById(id, this.appId);
         call._updatedAt = new Date();
 
