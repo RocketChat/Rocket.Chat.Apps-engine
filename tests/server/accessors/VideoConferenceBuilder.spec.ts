@@ -78,4 +78,19 @@ export class VideoConferenceBuilderAccessorTestFixture {
 
         Expect(builder.getVideoConference()).toBe(call);
     }
+
+    @Test()
+    public initialData() {
+        const call = { providerName: 'test'} as AppVideoConference;
+        const builder = new VideoConferenceBuilder(call);
+
+        Expect(call.providerName).toBe('test');
+        Expect(builder.getProviderName()).toBe('test');
+
+        Expect(builder.setProviderName('test2')).toBe(builder);
+        Expect(call.providerName).toBe('test2');
+        Expect(builder.getProviderName()).toBe('test2');
+
+        Expect(builder.getVideoConference()).toBe(call);
+    }
 }
