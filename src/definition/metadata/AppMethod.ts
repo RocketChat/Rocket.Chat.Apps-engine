@@ -7,6 +7,7 @@ export enum AppMethod {
     _JOB_PROCESSOR = 'jobProcessor',
     _VIDEOCONF_GENERATE_URL = 'generateUrl',
     _VIDEOCONF_CUSTOMIZE_URL = 'customizeUrl',
+    _VIDEOCONF_IS_CONFIGURED = 'isFullyConfigured',
     INITIALIZE = 'initialize',
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',

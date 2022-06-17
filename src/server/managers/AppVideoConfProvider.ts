@@ -24,12 +24,23 @@ export class AppVideoConfProvider {
         return this.app.hasMethod(method);
     }
 
+    public async runIsFullyConfigured(
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<boolean> {
+        if (typeof this.provider[AppMethod._VIDEOCONF_IS_CONFIGURED] !== 'function') {
+            return true;
+        }
+
+        return await this.runTheCode(AppMethod._VIDEOCONF_IS_CONFIGURED, logStorage, accessors, []) as boolean;
+    }
+
     public async runGenerateUrl(
       call: VideoConfData,
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
     ): Promise<string> {
-        return await this.runTheCode(AppMethod._VIDEOCONF_GENERATE_URL, logStorage, accessors, [call]);
+        return await this.runTheCode(AppMethod._VIDEOCONF_GENERATE_URL, logStorage, accessors, [call]) as string;
     }
 
     public async runCustomizeUrl(
@@ -39,15 +50,15 @@ export class AppVideoConfProvider {
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
     ): Promise<string> {
-        return await this.runTheCode(AppMethod._VIDEOCONF_CUSTOMIZE_URL, logStorage, accessors, [call, user, options]);
+        return await this.runTheCode(AppMethod._VIDEOCONF_CUSTOMIZE_URL, logStorage, accessors, [call, user, options]) as string;
     }
 
     private async runTheCode(
-      method: AppMethod._VIDEOCONF_GENERATE_URL | AppMethod._VIDEOCONF_CUSTOMIZE_URL,
+      method: AppMethod._VIDEOCONF_GENERATE_URL | AppMethod._VIDEOCONF_CUSTOMIZE_URL | AppMethod._VIDEOCONF_IS_CONFIGURED,
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
       runContextArgs: Array<any>,
-    ): Promise<string | undefined> {
+    ): Promise<string | boolean | undefined> {
         // Ensure the provider has the property before going on
         if (typeof this.provider[method] !== 'function') {
             return;
