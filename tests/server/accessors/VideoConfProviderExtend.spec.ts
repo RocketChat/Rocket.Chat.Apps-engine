@@ -12,10 +12,10 @@ export class VideoConfProviderExtendAccessorTestFixture {
 
     @AsyncTest()
     public async provideProviderToVideoConfProviderExtend(): Promise<void> {
-        let providerAdded: boolean = false;
+        let providerAdded: IVideoConfProvider | undefined;
         const mockManager: AppVideoConfProviderManager = {
             addProvider(appId: string, provider: IVideoConfProvider) {
-                providerAdded = true;
+                providerAdded = provider;
             },
         } as AppVideoConfProviderManager;
 
@@ -23,6 +23,7 @@ export class VideoConfProviderExtendAccessorTestFixture {
 
         const mockProvider: IVideoConfProvider = {
             name: 'test',
+
             async generateUrl(): Promise<string> {
                 return '';
             },
@@ -32,6 +33,6 @@ export class VideoConfProviderExtendAccessorTestFixture {
         } as IVideoConfProvider;
 
         await Expect(async () => await se.provideVideoConfProvider(mockProvider)).not.toThrowAsync();
-        Expect(providerAdded).toBe(true);
+        Expect(providerAdded).toBe(mockProvider);
     }
 }

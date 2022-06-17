@@ -94,6 +94,15 @@ export class AppVideoConfProviderManager {
         this.videoConfProviders.delete(appId);
     }
 
+    public async isFullyConfigured(providerName: string): Promise<boolean> {
+        const providerInfo = this.retrieveProviderInfo(providerName);
+        if (!providerInfo) {
+            throw new VideoConfProviderNotRegisteredError(providerName);
+        }
+
+        return providerInfo.runIsFullyConfigured(this.manager.getLogStorage(), this.accessors);
+    }
+
     public async generateUrl(providerName: string, call: VideoConfData): Promise<string> {
         const providerInfo = this.retrieveProviderInfo(providerName);
         if (!providerInfo) {

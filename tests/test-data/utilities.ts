@@ -208,6 +208,48 @@ export class TestData {
         };
     }
 
+    public static getInvalidConfProvider(name = 'invalid'): IVideoConfProvider {
+        return {
+            name,
+
+            async isFullyConfigured(): Promise<boolean> {
+                return false;
+            },
+
+            async generateUrl(call: VideoConfData): Promise<string> {
+                return ``;
+            },
+
+            async customizeUrl(call: VideoConfDataExtended, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
+                return ``;
+            },
+        };
+    }
+
+    public static getFullVideoConfProvider(name = 'test'): IVideoConfProvider {
+        return {
+            name,
+
+            capabilities: {
+                mic: true,
+                cam: true,
+                title: true,
+            },
+
+            async isFullyConfigured(): Promise<boolean> {
+                return true;
+            },
+
+            async generateUrl(call: VideoConfData): Promise<string> {
+                return `${name}/${call._id}`;
+            },
+
+            async customizeUrl(call: VideoConfDataExtended, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
+                return `${name}/${call._id}#${user ? user.username : ''}`;
+            },
+        };
+    }
+
     public static getVideoConferenceUser(): IVideoConferenceUser {
         return {
             _id: 'callerId',

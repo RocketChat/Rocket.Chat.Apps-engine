@@ -207,6 +207,24 @@ export class AppVideoConfProviderManagerTestFixture {
     }
 
     @AsyncTest()
+    public async isFullyConfigured() {
+        const manager = new AppVideoConfProviderManager(this.mockManager);
+        manager.addProvider('testing', TestData.getVideoConfProvider());
+        manager.addProvider('testing', TestData.getFullVideoConfProvider('full'));
+        manager.addProvider('testing', TestData.getInvalidConfProvider());
+        manager.registerProviders('testing');
+
+        const statusTest = await manager.isFullyConfigured('test');
+        await Expect(statusTest).toBe(true);
+
+        const statusFull = await manager.isFullyConfigured('full');
+        await Expect(statusFull).toBe(true);
+
+        const statusInvalid = await manager.isFullyConfigured('invalid');
+        await Expect(statusInvalid).toBe(false);
+    }
+
+    @AsyncTest()
     public async generateUrl() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
         manager.addProvider('testing', TestData.getVideoConfProvider());
