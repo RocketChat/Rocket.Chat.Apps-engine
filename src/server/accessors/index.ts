@@ -4,6 +4,7 @@ import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
+import { EnvironmentWrite } from './EnvironmentWrite';
 import { ExternalComponentsExtend } from './ExternalComponentsExtend';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
@@ -28,6 +29,7 @@ import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
 import { SettingRead } from './SettingRead';
 import { SettingsExtend } from './SettingsExtend';
+import { SettingUpdater } from './SettingUpdater';
 import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
@@ -41,6 +43,7 @@ export {
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    EnvironmentWrite,
     ExternalComponentsExtend,
     Http,
     HttpExtend,
@@ -63,6 +66,7 @@ export {
     ServerSettingsModify,
     SettingRead,
     SettingsExtend,
+    SettingUpdater,
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
