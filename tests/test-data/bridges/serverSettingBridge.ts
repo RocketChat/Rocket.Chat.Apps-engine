@@ -26,4 +26,8 @@ export class TestsServerSettingBridge extends ServerSettingBridge {
     public updateOne(setting: ISetting, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
+
+    public incrementValue(id: ISetting['id'], value: number, appId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
 }
