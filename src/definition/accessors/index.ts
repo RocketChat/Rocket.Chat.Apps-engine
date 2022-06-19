@@ -36,6 +36,7 @@ export * from './ISchedulerExtend';
 export * from './ISchedulerModify';
 export * from './IServerSettingRead';
 export * from './IServerSettingsModify';
+export * from './IServerSettingUpdater';
 export * from './ISettingRead';
 export * from './ISettingsExtend';
 export * from './ISettingUpdater';

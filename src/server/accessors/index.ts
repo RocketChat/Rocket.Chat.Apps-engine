@@ -27,6 +27,7 @@ import { SchedulerExtend } from './SchedulerExtend';
 import { SchedulerModify } from './SchedulerModify';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
+import { ServerSettingUpdater } from './ServerSettingUpdater';
 import { SettingRead } from './SettingRead';
 import { SettingsExtend } from './SettingsExtend';
 import { SettingUpdater } from './SettingUpdater';
@@ -64,6 +65,7 @@ export {
     RoomRead,
     ServerSettingRead,
     ServerSettingsModify,
+    ServerSettingUpdater,
     SettingRead,
     SettingsExtend,
     SettingUpdater,
