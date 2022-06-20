@@ -14,6 +14,13 @@ export interface IApiEndpoint {
      */
     path: string;
     examples?: {[key: string]: IApiExample};
+    /**
+     * Whether this endpoint requires an authenticated user to access it.
+     *
+     * The authentication will be done by the host server using its own
+     * authentication system.
+     */
+    authRequired?: boolean;
 
     /**
      * Called whenever the publically accessible url for this App is called,
