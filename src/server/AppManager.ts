@@ -265,7 +265,6 @@ export class AppManager {
                 await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
-                await this.schedulerManager.cleanUp(app.getID());
                 this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
         }
@@ -868,7 +867,6 @@ export class AppManager {
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
-        await this.schedulerManager.cleanUp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
     }
 
