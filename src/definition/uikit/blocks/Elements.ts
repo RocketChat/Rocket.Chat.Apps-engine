@@ -28,7 +28,7 @@ export interface IInputElement extends IBlockElement {
     actionId: string;
     placeholder: ITextObject;
     initialValue?: string | Array<string>;
-    dispatchActionConfig?: InputElementDispatchAction[];
+    dispatchActionConfig?: Array<InputElementDispatchAction>;
 }
 
 export enum ButtonStyle {
