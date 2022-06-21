@@ -9,6 +9,10 @@ export enum BlockElementType {
     MULTI_STATIC_SELECT = 'multi_static_select',
 }
 
+export enum InputElementDispatchAction {
+    ON_CHARACTER_ENTERED = 'on_character_entered',
+}
+
 export interface IBlockElement {
     type: BlockElementType;
 }
@@ -23,6 +27,7 @@ export interface IInputElement extends IBlockElement {
     actionId: string;
     placeholder: ITextObject;
     initialValue?: string | Array<string>;
+    dispatchActionConfig?: InputElementDispatchAction[];
 }
 
 export enum ButtonStyle {
