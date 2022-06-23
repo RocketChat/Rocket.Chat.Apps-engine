@@ -406,7 +406,7 @@ export class AppManager {
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        await this.purgeAppConfig(app);
+        await this.purgeAppConfig(app, true);
 
         await app.setStatus(status, silent);
 
@@ -860,7 +860,10 @@ export class AppManager {
         return result;
     }
 
-    private async purgeAppConfig(app: ProxiedApp) {
+    private async purgeAppConfig(app: ProxiedApp, isDisabled: boolean = false) {
+        if (!isDisabled) {
+            await this.schedulerManager.cleanUp(app.getID());
+        }
         this.listenerManager.unregisterListeners(app);
         this.listenerManager.lockEssentialEvents(app);
         this.commandManager.unregisterCommands(app.getID());
