@@ -19,6 +19,9 @@ export interface IApiEndpoint {
      *
      * The authentication will be done by the host server using its own
      * authentication system.
+     *
+     * If no authentication is provided, the request will be automatically
+     * rejected with a 401 status code.
      */
     authRequired?: boolean;
 

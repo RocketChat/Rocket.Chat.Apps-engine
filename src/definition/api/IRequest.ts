@@ -9,9 +9,8 @@ export interface IApiRequest {
     content: any;
     privateHash?: string;
     /**
-     * The user that is making the request.
-     * Available if the endpoint has property
-     * `authRequired` set to `true`.
+     * The user that is making the request, as
+     * authenticated by Rocket.Chat's strategy.
      */
     user?: IUser;
 }
