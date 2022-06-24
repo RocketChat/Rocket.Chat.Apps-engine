@@ -9,7 +9,6 @@ import {
     IRoomRead,
     IUploadRead,
     IUserRead,
-    IVideoConferenceRead,
 } from '../../definition/accessors';
 
 export class Reader implements IRead {
@@ -23,7 +22,6 @@ export class Reader implements IRead {
         private livechat: ILivechatRead,
         private upload: IUploadRead,
         private cloud: ICloudWorkspaceRead,
-        private videoConf: IVideoConferenceRead,
     ) { }
 
     public getEnvironmentReader(): IEnvironmentRead {
@@ -60,9 +58,5 @@ export class Reader implements IRead {
 
     public getCloudWorkspaceReader(): ICloudWorkspaceRead {
         return this.cloud;
-    }
-
-    public getVideoConferenceReader(): IVideoConferenceRead {
-        return this.videoConf;
     }
 }

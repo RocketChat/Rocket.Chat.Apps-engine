@@ -1,3 +1,4 @@
+import { AppStatus } from '../../definition/AppStatus';
 import { AppMethod } from '../../definition/metadata';
 import {
     IJobContext,
@@ -53,6 +54,14 @@ export class AppSchedulerManager {
             }
 
             const app = this.manager.getOneById(appId);
+            const status = app.getStatus();
+            const previousStatus = app.getPreviousStatus();
+
+            const isNotToRunJob = this.isNotToRunJob(status, previousStatus);
+
+            if (isNotToRunJob) {
+                return;
+            }
 
             const logger = app.setupLogger(AppMethod._JOB_PROCESSOR);
             logger.debug(`Job processor ${processor.id} is being executed...`);
@@ -99,5 +108,12 @@ export class AppSchedulerManager {
 
     public async cleanUp(appId: string): Promise<void> {
         (this.bridge as IInternalSchedulerBridge & SchedulerBridge).cancelAllJobs(appId);
+    }
+
+    private isNotToRunJob(status: AppStatus, previousStatus: AppStatus): boolean {
+        const isAppCurrentDisabled = status === AppStatus.DISABLED || status === AppStatus.MANUALLY_DISABLED;
+        const wasAppDisabled = previousStatus === AppStatus.DISABLED || previousStatus === AppStatus.MANUALLY_DISABLED;
+
+        return (status === AppStatus.INITIALIZED && wasAppDisabled) || isAppCurrentDisabled;
     }
 }

@@ -15,7 +15,6 @@ import {
     UiInteractionBridge,
     UploadBridge,
     UserBridge,
-    VideoConferenceBridge,
 } from '../../../src/server/bridges';
 import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 import { TestsActivationBridge } from './activationBridge';
@@ -35,7 +34,6 @@ import { TestsServerSettingBridge } from './serverSettingBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
-import { TestsVideoConferenceBridge } from './videoConferenceBridge';
 
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
@@ -55,7 +53,6 @@ export class TestsAppBridges extends AppBridges {
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
     private readonly schedulerBridge: TestSchedulerBridge;
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
-    private readonly videoConfBridge: TestsVideoConferenceBridge;
 
     constructor() {
         super();
@@ -76,7 +73,6 @@ export class TestsAppBridges extends AppBridges {
         this.uiIntegrationBridge = new TestsUiIntegrationBridge();
         this.schedulerBridge = new TestSchedulerBridge();
         this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
-        this.videoConfBridge = new TestsVideoConferenceBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -149,9 +145,5 @@ export class TestsAppBridges extends AppBridges {
 
     public getCloudWorkspaceBridge(): CloudWorkspaceBridge {
         return this.cloudWorkspaceBridge;
-    }
-
-    public getVideoConferenceBridge(): VideoConferenceBridge {
-        return this.videoConfBridge;
     }
 }

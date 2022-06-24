@@ -11,7 +11,7 @@ import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager, AppVideoConfProviderManager,
+    AppSlashCommandManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -61,7 +61,6 @@ export class AppManager {
     private readonly licenseManager: AppLicenseManager;
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
-    private readonly videoConfProviderManager: AppVideoConfProviderManager;
 
     private isLoaded: boolean;
 
@@ -108,7 +107,6 @@ export class AppManager {
         this.licenseManager = new AppLicenseManager(this);
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
-        this.videoConfProviderManager = new AppVideoConfProviderManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -152,10 +150,6 @@ export class AppManager {
     /** Gets the command manager's instance. */
     public getCommandManager(): AppSlashCommandManager {
         return this.commandManager;
-    }
-
-    public getVideoConfProviderManager(): AppVideoConfProviderManager {
-        return this.videoConfProviderManager;
     }
 
     public getLicenseManager(): AppLicenseManager {
@@ -272,7 +266,6 @@ export class AppManager {
                 await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
-                await this.schedulerManager.cleanUp(app.getID());
                 this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
         }
@@ -414,7 +407,7 @@ export class AppManager {
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        await this.purgeAppConfig(app);
+        await this.purgeAppConfig(app, true);
 
         await app.setStatus(status, silent);
 
@@ -868,16 +861,17 @@ export class AppManager {
         return result;
     }
 
-    private async purgeAppConfig(app: ProxiedApp) {
+    private async purgeAppConfig(app: ProxiedApp, isDisabled: boolean = false) {
+        if (!isDisabled) {
+            await this.schedulerManager.cleanUp(app.getID());
+        }
         this.listenerManager.unregisterListeners(app);
         this.listenerManager.lockEssentialEvents(app);
         this.commandManager.unregisterCommands(app.getID());
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
-        await this.schedulerManager.cleanUp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
-        this.videoConfProviderManager.unregisterProviders(app.getID());
     }
 
     /**
@@ -944,7 +938,6 @@ export class AppManager {
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
             this.listenerManager.releaseEssentialEvents(app);
-            this.videoConfProviderManager.registerProviders(app.getID());
         } else {
             await this.purgeAppConfig(app);
         }

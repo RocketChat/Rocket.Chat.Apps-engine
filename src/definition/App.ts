@@ -147,7 +147,7 @@ export abstract class App implements IApp {
 
     /**
      * Method which is called when this App is enabled and can be called several
-     * times during this instance's life time. Once after the `ititialize()` is called,
+     * times during this instance's life time. Once after the `initialize()` is called,
      * pending it doesn't throw an error, and then anytime the App is enabled by the user.
      * If this method, `onEnable()`, returns false, then this App will not
      * actually be enabled (ex: a setting isn't configured).

@@ -19,4 +19,6 @@ export interface ITextObject {
 export interface IOptionObject {
     text: ITextObject;
     value: string;
+
+    url?: string;
 }

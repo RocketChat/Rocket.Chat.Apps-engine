@@ -7,7 +7,6 @@ import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
 import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
-import type { IVideoConferenceRead } from './IVideoConferenceRead';
 
 /**
  * The IRead accessor provides methods for accessing the
@@ -36,6 +35,4 @@ export interface IRead {
     getLivechatReader(): ILivechatRead;
     getUploadReader(): IUploadRead;
     getCloudWorkspaceReader(): ICloudWorkspaceRead;
-
-    getVideoConferenceReader(): IVideoConferenceRead;
 }

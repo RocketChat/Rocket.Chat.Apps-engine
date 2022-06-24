@@ -14,17 +14,8 @@ import { TestSourceStorage } from './storage/TestSourceStorage';
 
 import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
-import { App } from '../../src/definition/App';
-import { AppStatus } from '../../src/definition/AppStatus';
-import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
-import { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
-import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
-import { AppManager } from '../../src/server/AppManager';
 import { AppBridges } from '../../src/server/bridges';
-import { ProxiedApp } from '../../src/server/ProxiedApp';
-import { getRuntime } from '../../src/server/runtime';
-import { AppsEngineRuntime } from '../../src/server/runtime/AppsEngineRuntime';
-import { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
+import { AppLogStorage, AppMetadataStorage, AppSourceStorage } from '../../src/server/storage';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -193,92 +184,6 @@ export class TestData {
                 },
             }],
         };
-    }
-
-    public static getVideoConfProvider(): IVideoConfProvider {
-        return {
-            async generateUrl(call: VideoConfData): Promise<string> {
-                return `video-conf/${call._id}`;
-            },
-
-            async customizeUrl(call: VideoConfDataExtended, user: IVideoConferenceUser | undefined, options: IVideoConferenceOptions): Promise<string> {
-                return `video-conf/${call._id}#${user ? user.username : ''}`;
-            },
-        };
-    }
-
-    public static getVideoConferenceUser(): IVideoConferenceUser {
-        return {
-            _id: 'callerId',
-            username: 'caller',
-            name: 'John Caller',
-        };
-    }
-
-    public static getVideoConfData(): VideoConfData {
-        return {
-            _id: 'first-call',
-            type: 'videoconference',
-            rid: 'roomId',
-            createdBy: this.getVideoConferenceUser(),
-            title: 'Test Call',
-        };
-    }
-
-    public static getVideoConfDataExtended(): VideoConfDataExtended {
-        return {
-            ...this.getVideoConfData(),
-            url: 'video-conf/first-call',
-        };
-    }
-
-    public static getVideoConference(): VideoConference {
-        return {
-            _id: 'first-call',
-            _updatedAt: new Date(),
-            type: 'videoconference',
-            rid: 'roomId',
-            users: [
-                {
-                    _id: 'johnId',
-                    name: 'John Doe',
-                    username: 'mrdoe',
-                    ts: new Date(),
-                },
-                {
-                    _id: 'janeId',
-                    name: 'Jane Doe',
-                    username: 'msdoe',
-                    ts: new Date(),
-                },
-            ],
-            status: VideoConferenceStatus.STARTED,
-            messages: {
-                started: 'messageId',
-            },
-            url: 'video-conf/first-call',
-            createdBy: {
-                _id: 'johnId',
-                name: 'John Doe',
-                username: 'mrdoe',
-            },
-            createdAt: new Date(),
-            title: 'Video Conference',
-            anonymousUsers: 0,
-        };
-    }
-
-    public static getMockApp(id: string, name: string): ProxiedApp {
-        const app = {
-            getName() { return 'testing'; },
-            getID() { return 'testing'; },
-        } as App;
-        return new ProxiedApp(
-            {} as AppManager,
-            { status: AppStatus.UNKNOWN } as IAppStorageItem,
-            app,
-            new (getRuntime())(app, require) as AppsEngineRuntime,
-        );
     }
 }
 
