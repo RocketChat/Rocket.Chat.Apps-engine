@@ -66,7 +66,7 @@
     "alsatian": "^2.4.0",
     "browserify": "^16.5.2",
     "del": "^3.0.0",
-    "eslint": "^4.19.1",
+    "eslint": "^8.18.0",
     "gulp": "^4.0.2",
     "gulp-bump": "^3.2.0",
     "gulp-shell": "^0.6.5",
