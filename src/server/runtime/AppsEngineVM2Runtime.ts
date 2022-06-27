@@ -6,8 +6,10 @@ import { APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT, AppsEngineRuntime, getFilenameForA
 export class AppsEngineVM2Runtime extends AppsEngineRuntime {
     public static defaultNodeVMOptions: NodeVMOptions = {
         console: 'inherit',
-        wrapper: 'none',
+        // wrapper: 'none',
         timeout: APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT,
+        // we don't need any compiling happening
+        compiler: (code: string, filename: string) => code,
         // We keep require inaccessible here as we expect it to be provided
         // require: false,
         sandbox: {
@@ -17,14 +19,28 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
     };
 
     public static runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
-        NodeVM.code(code, options?.filename, {
+        const vmOptions = {
             ...AppsEngineVM2Runtime.defaultNodeVMOptions,
             timeout: options?.timeout,
             sandbox: {
                 ...AppsEngineVM2Runtime.defaultNodeVMOptions.sandbox,
                 ...sandbox || {},
+                exports: {},
             },
-        });
+        };
+
+        if (sandbox?.require instanceof Function) {
+            vmOptions.require = {
+                external: ['@rocket.chat/apps-engine'],
+                // resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
+                customRequire: (...args) => (console.log(`Custom require called with ${args}`), sandbox.require(...args)),
+                context: 'host',
+            };
+
+            delete sandbox.require;
+        }
+
+        return (new NodeVM(vmOptions)).run(code);
     }
 
     private vm: NodeVM;

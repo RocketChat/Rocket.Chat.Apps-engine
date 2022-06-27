@@ -13,5 +13,5 @@ export function _getRuntime(requiredEnv: string = 'vm2'): AvailableRuntime {
 }
 
 export function getRuntime() {
-    return _getRuntime(process.env?.ROCKETCHAT_APPS_ENGINE_RUNTIME || '');
+    return _getRuntime(process.env?.ROCKETCHAT_APPS_ENGINE_RUNTIME);
 }

@@ -36,6 +36,8 @@ export class AppCompiler {
             require: customRequire,
         });
 
+        console.log(storage.info.classFile, result);
+
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
             throw new Error(`The App's main class for ${ storage.info.name } is not valid ("${ storage.info.classFile }").`);
