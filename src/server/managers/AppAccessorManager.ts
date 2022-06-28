@@ -31,6 +31,7 @@ import {
     SchedulerModify,
     ServerSettingRead,
     ServerSettingsModify,
+    ServerSettingUpdater,
     SettingRead,
     SettingsExtend,
     SettingUpdater,
@@ -134,9 +135,10 @@ export class AppAccessorManager {
                 throw new Error(`No App found by the provided id: ${ appId }`);
             }
 
-            const sets = new SettingUpdater(rl);
+            const sets = new SettingUpdater(rl, this.manager.getSettingsManager());
+            const serverSetting = new ServerSettingUpdater(this.bridges, appId);
 
-            this.envWriters.set(appId, new EnvironmentWrite(sets));
+            this.envWriters.set(appId, new EnvironmentWrite(sets, serverSetting));
         }
 
         return this.envWriters.get(appId);

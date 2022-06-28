@@ -1,3 +1,4 @@
+import { IServerSettingUpdater } from './IServerSettingUpdater';
 import { ISettingUpdater } from './ISettingUpdater';
 
 /**
@@ -5,4 +6,5 @@ import { ISettingUpdater } from './ISettingUpdater';
  */
 export interface IEnvironmentWrite {
     getSettings(): ISettingUpdater;
+    getServerSettings(): IServerSettingUpdater;
 }
