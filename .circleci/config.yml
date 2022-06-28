@@ -99,9 +99,7 @@ jobs:
             else
                 # Add build number to the end of the version
                 npm version --no-git-tag-version "$(node -p "require('./package.json').version").$CIRCLE_BUILD_NUM"
-                if [[ $CIRCLE_BRANCH == 'new/videoconf' ]]; then
-                    npm run go-publish-videoconf
-                elif [[ $CIRCLE_BRANCH == 'alpha' ]]; then
+                if [[ $CIRCLE_BRANCH == 'alpha' ]]; then
                     npm run go-publish-alpha
                 else
                     npm run go-publish-beta
@@ -144,6 +142,5 @@ workflows:
                 only:
                   - alpha
                   - beta
-                  - "new/videoconf"
               tags:
                 only: /^v.*/
