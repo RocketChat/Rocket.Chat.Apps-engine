@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-engine",
-  "version": "1.33.0-videoconf",
+  "version": "1.33.0-alpha",
   "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index",
   "typings": "index",
@@ -12,7 +12,6 @@
     "bundle": "gulp bundle",
     "compile": "gulp compile",
     "go-publish": "gulp publish",
-    "go-publish-videoconf": "gulp publish-videoconf",
     "go-publish-beta": "gulp publish-beta",
     "go-publish-alpha": "gulp publish-alpha",
     "unit-tests": "NODE_ENV=test ts-node ./tests/runner.ts",
