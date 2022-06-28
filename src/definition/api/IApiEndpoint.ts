@@ -14,6 +14,16 @@ export interface IApiEndpoint {
      */
     path: string;
     examples?: {[key: string]: IApiExample};
+    /**
+     * Whether this endpoint requires an authenticated user to access it.
+     *
+     * The authentication will be done by the host server using its own
+     * authentication system.
+     *
+     * If no authentication is provided, the request will be automatically
+     * rejected with a 401 status code.
+     */
+    authRequired?: boolean;
 
     /**
      * Called whenever the publically accessible url for this App is called,
