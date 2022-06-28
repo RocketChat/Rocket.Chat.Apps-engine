@@ -1,4 +1,4 @@
-import { IAppAccessors, IEnvironmentRead, IHttp, IRead } from '../../definition/accessors';
+import { IAppAccessors, IEnvironmentRead, IEnvironmentWrite, IHttp, IRead } from '../../definition/accessors';
 import { IApiEndpointMetadata } from '../../definition/api';
 import { AppManager } from '../AppManager';
 import { AppAccessorManager } from '../managers/AppAccessorManager';
@@ -15,6 +15,10 @@ export class AppAccessors implements IAppAccessors {
 
     public get environmentReader(): IEnvironmentRead {
         return this.accessorManager.getEnvironmentRead(this.appId);
+    }
+
+    public get environmentWriter(): IEnvironmentWrite {
+        return this.accessorManager.getEnvironmentWrite(this.appId);
     }
 
     public get reader(): IRead {

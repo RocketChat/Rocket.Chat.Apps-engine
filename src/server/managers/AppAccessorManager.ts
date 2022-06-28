@@ -2,6 +2,7 @@ import {
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
+    IEnvironmentWrite,
     IHttp,
     IHttpExtend,
     IModify,
@@ -14,6 +15,7 @@ import {
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    EnvironmentWrite,
     ExternalComponentsExtend,
     Http,
     HttpExtend,
@@ -29,8 +31,10 @@ import {
     SchedulerModify,
     ServerSettingRead,
     ServerSettingsModify,
+    ServerSettingUpdater,
     SettingRead,
     SettingsExtend,
+    SettingUpdater,
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
@@ -47,6 +51,7 @@ export class AppAccessorManager {
     private readonly bridges: AppBridges;
     private readonly configExtenders: Map<string, IConfigurationExtend>;
     private readonly envReaders: Map<string, IEnvironmentRead>;
+    private readonly envWriters: Map<string, IEnvironmentWrite>;
     private readonly configModifiers: Map<string, IConfigurationModify>;
     private readonly readers: Map<string, IRead>;
     private readonly modifiers: Map<string, IModify>;
@@ -57,6 +62,7 @@ export class AppAccessorManager {
         this.bridges = this.manager.getBridges();
         this.configExtenders = new Map<string, IConfigurationExtend>();
         this.envReaders = new Map<string, IEnvironmentRead>();
+        this.envWriters = new Map<string, IEnvironmentWrite>();
         this.configModifiers = new Map<string, IConfigurationModify>();
         this.readers = new Map<string, IRead>();
         this.modifiers = new Map<string, IModify>();
@@ -72,6 +78,7 @@ export class AppAccessorManager {
     public purifyApp(appId: string): void {
         this.configExtenders.delete(appId);
         this.envReaders.delete(appId);
+        this.envWriters.delete(appId);
         this.configModifiers.delete(appId);
         this.readers.delete(appId);
         this.modifiers.delete(appId);
@@ -118,6 +125,23 @@ export class AppAccessorManager {
         }
 
         return this.envReaders.get(appId);
+    }
+
+    public getEnvironmentWrite(appId: string): IEnvironmentWrite {
+        if (!this.envWriters.has(appId)) {
+            const rl = this.manager.getOneById(appId);
+
+            if (!rl) {
+                throw new Error(`No App found by the provided id: ${ appId }`);
+            }
+
+            const sets = new SettingUpdater(rl, this.manager.getSettingsManager());
+            const serverSetting = new ServerSettingUpdater(this.bridges, appId);
+
+            this.envWriters.set(appId, new EnvironmentWrite(sets, serverSetting));
+        }
+
+        return this.envWriters.get(appId);
     }
 
     public getConfigurationModify(appId: string): IConfigurationModify {
