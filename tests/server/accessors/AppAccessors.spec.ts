@@ -7,7 +7,7 @@ import { AppAccessors } from '../../../src/server/accessors';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSettingsManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
@@ -75,6 +75,9 @@ export class AppAccessorsTestFixture {
             },
             getVideoConfProviderManager() {
                 return {} as AppVideoConfProviderManager;
+            },
+            getSettingsManager() {
+                return {} as AppSettingsManager;
             },
         } as AppManager;
 
