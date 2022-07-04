@@ -24,9 +24,9 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
-    public async doNotifyUser(user: IUser, message: IMessage, appId: string): Promise<void> {
+    public async doNotifyUser(user: IUser, message: IMessage, appId: string, messageId?: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
-            return this.notifyUser(user, message, appId);
+            return this.notifyUser(user, message, appId, messageId);
         }
     }
 
@@ -50,7 +50,7 @@ export abstract class MessageBridge extends BaseBridge {
 
     protected abstract create(message: IMessage, appId: string): Promise<string>;
     protected abstract update(message: IMessage, appId: string): Promise<void>;
-    protected abstract notifyUser(user: IUser, message: IMessage, appId: string): Promise<void>;
+    protected abstract notifyUser(user: IUser, message: IMessage, appId: string, messageId?: string): Promise<void>;
     protected abstract notifyRoom(room: IRoom, message: IMessage, appId: string): Promise<void>;
     protected abstract typing(options: ITypingDescriptor, appId: string): Promise<void>;
     protected abstract getById(messageId: string, appId: string): Promise<IMessage>;

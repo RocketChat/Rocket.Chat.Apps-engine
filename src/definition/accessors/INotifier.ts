@@ -38,7 +38,7 @@ export interface INotifier {
      * @param user The user who should be notified
      * @param message The message with the content to notify the user about
      */
-    notifyUser(user: IUser, message: IMessage): Promise<void>;
+    notifyUser(user: IUser, message: IMessage, messageId?: string): Promise<void>;
 
     /**
      * Notifies all of the users in the provided room.

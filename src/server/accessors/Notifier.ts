@@ -13,14 +13,14 @@ export class Notifier implements INotifier {
         private readonly appId: string,
     ) { }
 
-    public async notifyUser(user: IUser, message: IMessage): Promise<void> {
+    public async notifyUser(user: IUser, message: IMessage, messageId?: string): Promise<void> {
         if (!message.sender || !message.sender.id) {
             const appUser = await this.userBridge.doGetAppUser(this.appId);
 
             message.sender = appUser;
         }
 
-        await this.msgBridge.doNotifyUser(user, message, this.appId);
+        await this.msgBridge.doNotifyUser(user, message, this.appId, messageId);
     }
 
     public async notifyRoom(room: IRoom, message: IMessage): Promise<void> {
