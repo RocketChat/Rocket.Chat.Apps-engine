@@ -7,7 +7,9 @@ export type VideoConferenceMember = IVideoConferenceUser & {
 export enum VideoConferenceStatus {
     CALLING = 0,
     STARTED = 1,
-    ENDED = 2,
+    EXPIRED = 2,
+    ENDED = 3,
+    DECLINED = 4,
 }
 
 export interface IVideoConference {
