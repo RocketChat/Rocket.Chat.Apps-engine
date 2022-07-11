@@ -92,6 +92,10 @@ export const AppPermissions = {
     'apis': {
         default: { name: 'api' },
     },
+    'oauth-app': {
+        read: { name: 'oauth-app.read' },
+        write: { name: 'oauth-app.write' },
+    },
 };
 
 export const defaultPermissions: Array<IPermission> = [
@@ -125,4 +129,6 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.videoConference.read,
     AppPermissions.videoConference.write,
     AppPermissions.apis.default,
+    AppPermissions['oauth-app'].write,
+    AppPermissions['oauth-app'].read,
 ];

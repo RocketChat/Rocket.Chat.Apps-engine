@@ -9,6 +9,7 @@ import { IInternalBridge } from './IInternalBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
+import { OAuthAppsBridge } from './OAuthAppsBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
@@ -35,7 +36,8 @@ export type Bridge = CommandBridge
             | UserBridge
             | UiInteractionBridge
             | SchedulerBridge
-            | VideoConferenceBridge;
+            | VideoConferenceBridge
+            | OAuthAppsBridge;
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): CommandBridge;
@@ -57,4 +59,6 @@ export abstract class AppBridges {
     public abstract getSchedulerBridge(): SchedulerBridge;
     public abstract getCloudWorkspaceBridge(): CloudWorkspaceBridge;
     public abstract getVideoConferenceBridge(): VideoConferenceBridge;
+    public abstract getOAuthAppsBridge(): OAuthAppsBridge;
+
 }

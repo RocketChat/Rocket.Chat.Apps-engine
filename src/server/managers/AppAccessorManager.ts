@@ -23,6 +23,7 @@ import {
     MessageRead,
     Modify,
     Notifier,
+    OAuthApps,
     Persistence,
     PersistenceRead,
     Reader,
@@ -57,6 +58,7 @@ export class AppAccessorManager {
     private readonly modifiers: Map<string, IModify>;
     private readonly persists: Map<string, IPersistence>;
     private readonly https: Map<string, IHttp>;
+    private readonly oauthApps: Map<string, OAuthApps>;
 
     constructor(private readonly manager: AppManager) {
         this.bridges = this.manager.getBridges();
@@ -68,6 +70,7 @@ export class AppAccessorManager {
         this.modifiers = new Map<string, IModify>();
         this.persists = new Map<string, IPersistence>();
         this.https = new Map<string, IHttp>();
+        this.oauthApps = new Map<string, OAuthApps>();
     }
 
     /**
@@ -84,6 +87,7 @@ export class AppAccessorManager {
         this.modifiers.delete(appId);
         this.persists.delete(appId);
         this.https.delete(appId);
+        this.oauthApps.delete(appId);
     }
 
     public getConfigurationExtend(appId: string): IConfigurationExtend {

@@ -10,8 +10,16 @@ import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './comp
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
-    AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager, AppVideoConfProviderManager,
+    AppAccessorManager,
+    AppApiManager,
+    AppExternalComponentManager,
+    AppLicenseManager,
+    AppListenerManager,
+    AppOAuthAppsManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -61,6 +69,7 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
+    private readonly oauthAppsManager: AppOAuthAppsManager;
 
     private isLoaded: boolean;
 
@@ -108,6 +117,7 @@ export class AppManager {
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
+        this.oauthAppsManager = new AppOAuthAppsManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -191,6 +201,11 @@ export class AppManager {
 
     public setSourceStorage(storage: AppSourceStorage): void {
         this.appSourceStorage = storage;
+    }
+
+    /** Get the manager of the OAuth apps manager */
+    public getOAuthAppsManager(): AppOAuthAppsManager {
+        return this.oauthAppsManager;
     }
 
     /**
@@ -878,6 +893,7 @@ export class AppManager {
         this.accessorManager.purifyApp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
         this.videoConfProviderManager.unregisterProviders(app.getID());
+        this.oauthAppsManager.removeAllOAuthApps(app.getID());
     }
 
     /**
