@@ -91,6 +91,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifycreator.html#startlivechatmessage" class="tsd-kind-icon">start<wbr>Livechat<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifycreator.html#startmessage" class="tsd-kind-icon">start<wbr>Message</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifycreator.html#startroom" class="tsd-kind-icon">start<wbr>Room</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifycreator.html#startvideoconference" class="tsd-kind-icon">start<wbr>Video<wbr>Conference</a></li>
 							</ul>
 						</section>
 					</div>
@@ -102,13 +103,13 @@
 					<a name="finish" class="tsd-anchor"></a>
 					<h3>finish</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">finish<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="accessors_idiscussionbuilder.idiscussionbuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IDiscussionBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_iroombuilder.iroombuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoomBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ilivechatmessagebuilder.ilivechatmessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">ILivechatMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_imessagebuilder.imessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageBuilder</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">finish<span class="tsd-signature-symbol">(</span>builder<span class="tsd-signature-symbol">: </span><a href="accessors_idiscussionbuilder.idiscussionbuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IDiscussionBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_iroombuilder.iroombuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoomBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ilivechatmessagebuilder.ilivechatmessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">ILivechatMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_imessagebuilder.imessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ivideoconferencebuilder.ivideoconferencebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IVideoConferenceBuilder</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L69">src/definition/accessors/IModifyCreator.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L80">src/definition/accessors/IModifyCreator.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -119,7 +120,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>builder: <a href="accessors_idiscussionbuilder.idiscussionbuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IDiscussionBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_iroombuilder.iroombuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoomBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ilivechatmessagebuilder.ilivechatmessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">ILivechatMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_imessagebuilder.imessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageBuilder</a></h5>
+									<h5>builder: <a href="accessors_idiscussionbuilder.idiscussionbuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IDiscussionBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_iroombuilder.iroombuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoomBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ilivechatmessagebuilder.ilivechatmessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">ILivechatMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_imessagebuilder.imessagebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageBuilder</a><span class="tsd-signature-symbol"> | </span><a href="accessors_ivideoconferencebuilder.ivideoconferencebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IVideoConferenceBuilder</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the builder instance</p>
 									</div>
@@ -140,7 +141,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L26">src/definition/accessors/IModifyCreator.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L29">src/definition/accessors/IModifyCreator.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -162,7 +163,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L16">src/definition/accessors/IModifyCreator.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L19">src/definition/accessors/IModifyCreator.ts:19</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -185,7 +186,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L21">src/definition/accessors/IModifyCreator.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L24">src/definition/accessors/IModifyCreator.ts:24</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -207,7 +208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L61">src/definition/accessors/IModifyCreator.ts:61</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L64">src/definition/accessors/IModifyCreator.ts:64</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -240,7 +241,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L43">src/definition/accessors/IModifyCreator.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L46">src/definition/accessors/IModifyCreator.ts:46</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,7 +274,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L34">src/definition/accessors/IModifyCreator.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L37">src/definition/accessors/IModifyCreator.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -306,7 +307,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/a5703e1/src/definition/accessors/IModifyCreator.ts#L52">src/definition/accessors/IModifyCreator.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L55">src/definition/accessors/IModifyCreator.ts:55</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -326,6 +327,38 @@
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="accessors_iroombuilder.iroombuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IRoomBuilder</a></h4>
 							<p>an IRoomBuilder instance</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="startvideoconference" class="tsd-anchor"></a>
+					<h3>start<wbr>Video<wbr>Conference</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">start<wbr>Video<wbr>Conference<span class="tsd-signature-symbol">(</span>data<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/videoconferences_appvideoconference.html#appvideoconference" class="tsd-signature-type" data-tsd-kind="Type alias">AppVideoConference</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="accessors_ivideoconferencebuilder.ivideoconferencebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IVideoConferenceBuilder</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/b573f80/src/definition/accessors/IModifyCreator.ts#L72">src/definition/accessors/IModifyCreator.ts:72</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Starts the process for building a new video conference.</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> data: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span><a href="../modules/videoconferences_appvideoconference.html#appvideoconference" class="tsd-signature-type" data-tsd-kind="Type alias">AppVideoConference</a><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>(optional) the initial data to pass into the builder,</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="accessors_ivideoconferencebuilder.ivideoconferencebuilder.html" class="tsd-signature-type" data-tsd-kind="Interface">IVideoConferenceBuilder</a></h4>
+							<p>an IVideoConferenceBuilder instance</p>
 						</li>
 					</ul>
 				</section>
@@ -372,6 +405,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors.imodifycreator.html#startroom" class="tsd-kind-icon">start<wbr>Room</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="accessors.imodifycreator.html#startvideoconference" class="tsd-kind-icon">start<wbr>Video<wbr>Conference</a>
 							</li>
 						</ul>
 					</li>
