@@ -4,6 +4,7 @@ import { ConfigurationExtend } from './ConfigurationExtend';
 import { ConfigurationModify } from './ConfigurationModify';
 import { EnvironmentalVariableRead } from './EnvironmentalVariableRead';
 import { EnvironmentRead } from './EnvironmentRead';
+import { EnvironmentWrite } from './EnvironmentWrite';
 import { ExternalComponentsExtend } from './ExternalComponentsExtend';
 import { Http } from './Http';
 import { HttpExtend } from './HttpExtend';
@@ -26,13 +27,19 @@ import { SchedulerExtend } from './SchedulerExtend';
 import { SchedulerModify } from './SchedulerModify';
 import { ServerSettingRead } from './ServerSettingRead';
 import { ServerSettingsModify } from './ServerSettingsModify';
+import { ServerSettingUpdater } from './ServerSettingUpdater';
 import { SettingRead } from './SettingRead';
 import { SettingsExtend } from './SettingsExtend';
+import { SettingUpdater } from './SettingUpdater';
 import { SlashCommandsExtend } from './SlashCommandsExtend';
 import { SlashCommandsModify } from './SlashCommandsModify';
 import { UploadRead } from './UploadRead';
 import { UserBuilder } from './UserBuilder';
 import { UserRead } from './UserRead';
+import { VideoConferenceBuilder } from './VideoConferenceBuilder';
+import { VideoConferenceExtender } from './VideoConferenceExtend';
+import { VideoConferenceRead } from './VideoConferenceRead';
+import { VideoConfProviderExtend } from './VideoConfProviderExtend';
 
 export {
     ApiExtend,
@@ -41,6 +48,7 @@ export {
     ConfigurationModify,
     EnvironmentalVariableRead,
     EnvironmentRead,
+    EnvironmentWrite,
     ExternalComponentsExtend,
     Http,
     HttpExtend,
@@ -61,8 +69,10 @@ export {
     RoomRead,
     ServerSettingRead,
     ServerSettingsModify,
+    ServerSettingUpdater,
     SettingRead,
     SettingsExtend,
+    SettingUpdater,
     SlashCommandsExtend,
     SlashCommandsModify,
     UploadRead,
@@ -70,4 +80,8 @@ export {
     UserRead,
     SchedulerExtend,
     SchedulerModify,
+    VideoConferenceBuilder,
+    VideoConferenceExtender,
+    VideoConferenceRead,
+    VideoConfProviderExtend,
 };

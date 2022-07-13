@@ -1,4 +1,3 @@
-import { ApiEndpoint } from './ApiEndpoint';
 import { IApiEndpoint } from './IApiEndpoint';
 
 /**
@@ -16,7 +15,7 @@ export interface IApi {
     /**
      * Provide enpoints for this api registry
      */
-    endpoints: Array<ApiEndpoint | IApiEndpoint>;
+    endpoints: Array<IApiEndpoint>;
 }
 
 export enum ApiVisibility {
@@ -55,6 +54,5 @@ export enum ApiSecurity {
      * will be generated automatically.
      * @param `X-Auth-Token`
      */
-    // AUTH_TOKEN,
     // CHECKSUM_SECRET,
 }

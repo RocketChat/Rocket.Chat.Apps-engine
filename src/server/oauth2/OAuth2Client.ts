@@ -84,10 +84,7 @@ export class OAuth2Client implements IOAuth2Client {
             .getAccessors()
             .providedApiEndpoints[0].computedPath.substring(1);
 
-        const siteUrl = await this.app
-            .getAccessors()
-            .environmentReader.getServerSettings()
-            .getValueById('Site_Url');
+        const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
         const finalScopes = ([] as Array<string>).concat(
             this.config.defaultScopes || [],
@@ -105,7 +102,7 @@ export class OAuth2Client implements IOAuth2Client {
         const url = new URL(authUri, siteUrl);
 
         url.searchParams.set('response_type', 'code');
-        url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+        url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
         url.searchParams.set('state', user.id);
         url.searchParams.set('client_id', clientId);
         url.searchParams.set('access_type', 'offline');
@@ -165,10 +162,8 @@ export class OAuth2Client implements IOAuth2Client {
                 .getSettings()
                 .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
-            const siteUrl = await this.app
-                    .getAccessors()
-                    .environmentReader.getServerSettings()
-                    .getValueById('Site_Url');
+            const siteUrl = await this.getBaseURLWithoutTrailingSlash();
+
             const redirectUri = this.app
                     .getAccessors()
                     .providedApiEndpoints[0].computedPath.substring(1);
@@ -177,7 +172,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             url.searchParams.set('client_id', clientId);
             url.searchParams.set('client_secret', clientSecret);
-            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
             url.searchParams.set('refresh_token', tokenInfo.refreshToken);
             url.searchParams.set('grant_type', GrantType.RefreshToken);
 
@@ -209,7 +204,6 @@ export class OAuth2Client implements IOAuth2Client {
             this.app.getLogger().error(error);
             throw error;
         }
-
     }
 
     public async revokeUserAccessToken(user: IUser, persis: IPersistence): Promise<boolean> {
@@ -237,6 +231,19 @@ export class OAuth2Client implements IOAuth2Client {
             this.app.getLogger().error(error);
             return false;
         }
+    }
+
+    private async getBaseURLWithoutTrailingSlash(): Promise<string> {
+        const SITE_URL = 'Site_Url';
+        const url = await this.app
+            .getAccessors()
+            .environmentReader.getServerSettings()
+            .getValueById(SITE_URL);
+
+        if (url.endsWith('/')) {
+            return url.substr(0, url.length - 1);
+        }
+        return url;
     }
 
     private async handleOAuthCallback(
@@ -279,10 +286,7 @@ export class OAuth2Client implements IOAuth2Client {
                 };
             }
 
-            const siteUrl = await this.app
-                .getAccessors()
-                .environmentReader.getServerSettings()
-                .getValueById('Site_Url');
+            const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
             const accessTokenUrl = this.config.accessTokenUri;
 
@@ -305,7 +309,7 @@ export class OAuth2Client implements IOAuth2Client {
             const url = new URL(accessTokenUrl, siteUrl);
 
             url.searchParams.set('client_id', clientId);
-            url.searchParams.set('redirect_uri', `${siteUrl}${redirectUri}`);
+            url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
             url.searchParams.set('code', code);
             url.searchParams.set('client_secret', clientSecret);
             url.searchParams.set('access_type', 'offline');

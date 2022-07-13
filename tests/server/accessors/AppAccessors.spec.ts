@@ -7,7 +7,7 @@ import { AppAccessors } from '../../../src/server/accessors';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSettingsManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
@@ -73,6 +73,12 @@ export class AppAccessorsTestFixture {
             getUIActionButtonManager() {
                 return {} as UIActionButtonManager;
             },
+            getVideoConfProviderManager() {
+                return {} as AppVideoConfProviderManager;
+            },
+            getSettingsManager() {
+                return {} as AppSettingsManager;
+            },
         } as AppManager;
 
         this.mockAccessors = new AppAccessorManager(this.mockManager);
@@ -111,6 +117,7 @@ export class AppAccessorsTestFixture {
         const appAccessors = new AppAccessors(this.mockManager, 'testing');
 
         Expect(appAccessors.environmentReader).toEqual(this.mockAccessors.getEnvironmentRead('testing'));
+        Expect(appAccessors.environmentWriter).toEqual(this.mockAccessors.getEnvironmentWrite('testing'));
         Expect(appAccessors.reader).toEqual(this.mockAccessors.getReader('testing'));
         Expect(appAccessors.http).toEqual(this.mockAccessors.getHttp('testing'));
         Expect(appAccessors.providedApiEndpoints).toEqual(this.mockApiManager.listApis('testing'));

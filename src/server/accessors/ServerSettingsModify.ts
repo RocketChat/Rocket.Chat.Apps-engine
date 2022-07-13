@@ -17,4 +17,8 @@ export class ServerSettingsModify implements IServerSettingsModify {
     public async modifySetting(setting: ISetting): Promise<void> {
         await this.bridge.doUpdateOne(setting, this.appId);
     }
+
+    public async incrementValue(id: ISetting['id'], value: number = 1): Promise<void> {
+        await this.bridge.doIncrementValue(id, value, this.appId);
+    }
 }

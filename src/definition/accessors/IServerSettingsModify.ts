@@ -28,4 +28,13 @@ export interface IServerSettingsModify {
      * @param setting the modified setting (id must be provided)
      */
     modifySetting(setting: ISetting): Promise<void>;
+
+    /**
+     * Increases the setting value by the specified amount.
+     * To be used only with statistic settings that track the amount of times an action has been performed
+     *
+     * @param id the id of the existing Rocket.Chat setting
+     * @param value how much should the count be increased by. Defaults to 1.
+     */
+    incrementValue(id: ISetting['id'], value?: number): Promise<void>;
 }
