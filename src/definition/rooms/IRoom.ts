@@ -1,5 +1,5 @@
-import { IUser } from '../users';
-import { RoomType } from './RoomType';
+import { IUser } from "../users";
+import { RoomType } from "./RoomType";
 
 export interface IRoom {
     id: string;
@@ -23,4 +23,5 @@ export interface IRoom {
     customFields?: { [key: string]: any };
     parentRoom?: IRoom;
     livechatData?: { [key: string]: any };
+    isArchived?: boolean;
 }
