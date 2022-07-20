@@ -84,6 +84,14 @@ export class RoomBuilderAccessorTestFixture {
         Expect(room.customFields).toBeEmpty();
         Expect(rb.getCustomFields()).toBeEmpty();
 
+        Expect(rb.setArchived(true)).toBe(rb);
+        Expect(room.isArchived).toBe(true);
+        Expect(rb.getArchived()).toBe(true);
+
+        Expect(rb.setArchived(false)).toBe(rb);
+        Expect(room.isArchived).toBe(false);
+        Expect(rb.getArchived()).toBe(false);
+
         Expect(rb.getRoom()).toBe(room);
     }
 }
