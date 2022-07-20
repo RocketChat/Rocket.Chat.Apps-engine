@@ -1,11 +1,12 @@
-import { IUser } from '../users';
-import { RoomType } from './RoomType';
+import { IUser } from "../users";
+import { RoomType } from "./RoomType";
 
 export interface IRoom {
     id: string;
     displayName?: string;
     slugifiedName: string;
     type: RoomType;
+    isArchived: boolean;
     creator: IUser;
     /**
      * @deprecated usernames will be removed on version 2.0.0

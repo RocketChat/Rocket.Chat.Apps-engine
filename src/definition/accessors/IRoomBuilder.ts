@@ -1,6 +1,6 @@
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom, RoomType } from '../rooms';
-import { IUser } from '../users';
+import { RocketChatAssociationModel } from "../metadata";
+import { IRoom, RoomType } from "../rooms";
+import { IUser } from "../users";
 
 /**
  * Interface for building out a room.
@@ -8,7 +8,9 @@ import { IUser } from '../users';
  * be able to successfully save the room object.
  */
 export interface IRoomBuilder {
-    kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+    kind:
+        | RocketChatAssociationModel.ROOM
+        | RocketChatAssociationModel.DISCUSSION;
 
     /**
      * Provides a convient way to set the data for the room.
@@ -66,6 +68,18 @@ export interface IRoomBuilder {
      * Gets the room's creator.
      */
     getCreator(): IUser;
+
+    /**
+     * Archives/Unarchives the room
+     *
+     * @param archived archive status of room
+     */
+    setArchived(archived: IRoom["isArchived"]): IRoomBuilder;
+
+    /**
+     * Gets the archive status of room
+     */
+    getArchived(): IRoom["isArchived"];
 
     /**
      * Adds a user to the room, these are by username until further notice.
