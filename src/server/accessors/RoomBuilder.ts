@@ -1,12 +1,11 @@
-import { IRoomBuilder } from "../../definition/accessors";
-import { RocketChatAssociationModel } from "../../definition/metadata";
-import { IRoom, RoomType } from "../../definition/rooms";
-import { IUser } from "../../definition/users";
+import { IRoomBuilder } from '../../definition/accessors';
+import { RocketChatAssociationModel } from '../../definition/metadata';
+import { IRoom, RoomType } from '../../definition/rooms';
+import { IUser } from '../../definition/users';
 
 export class RoomBuilder implements IRoomBuilder {
-    public kind:
-        | RocketChatAssociationModel.ROOM
-        | RocketChatAssociationModel.DISCUSSION;
+    public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+
     protected room: IRoom;
     private members: Array<string>;
 
@@ -15,11 +14,11 @@ export class RoomBuilder implements IRoomBuilder {
         this.room = (data ? data : { customFields: {} }) as IRoom;
         this.members = new Array<string>();
     }
-    setArchived(archived: IRoom["isArchived"]): IRoomBuilder {
+    public setArchived(archived: IRoom['isArchived']): IRoomBuilder {
         this.room.isArchived = archived;
         return this;
     }
-    getArchived(): IRoom["isArchived"] {
+    public getArchived(): IRoom['isArchived'] {
         return this.room.isArchived;
     }
 
@@ -98,9 +97,7 @@ export class RoomBuilder implements IRoomBuilder {
         return this;
     }
 
-    public setMembersToBeAddedByUsernames(
-        usernames: Array<string>
-    ): IRoomBuilder {
+    public setMembersToBeAddedByUsernames(usernames: Array<string>): IRoomBuilder {
         this.members = usernames;
         return this;
     }
@@ -127,9 +124,7 @@ export class RoomBuilder implements IRoomBuilder {
         return this.room.isReadOnly;
     }
 
-    public setDisplayingOfSystemMessages(
-        displaySystemMessages: boolean
-    ): IRoomBuilder {
+    public setDisplayingOfSystemMessages(displaySystemMessages: boolean): IRoomBuilder {
         this.room.displaySystemMessages = displaySystemMessages;
         return this;
     }
@@ -139,7 +134,7 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public addCustomField(key: string, value: object): IRoomBuilder {
-        if (typeof this.room.customFields !== "object") {
+        if (typeof this.room.customFields !== 'object') {
             this.room.customFields = {};
         }
 
