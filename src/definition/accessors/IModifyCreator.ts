@@ -75,7 +75,7 @@ export interface IModifyCreator {
 
     /**
      * Starts the process for building a new user.
-     * 
+     *
      * @param data (optional) the initial data to pass into the builder,
      *          the `id` property will be ignored
      * @return an IUserBuilder instance
