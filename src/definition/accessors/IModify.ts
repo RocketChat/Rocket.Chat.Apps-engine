@@ -3,7 +3,7 @@ import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
 import { IModifyUpdater } from './IModifyUpdater';
 import { INotifier } from './INotifier';
-import { IOAuthApps } from './IOAuthApps';
+import { IOAuthAppsModify } from './IOAuthAppsModify';
 import { ISchedulerModify } from './ISchedulerModify';
 import { IUIController } from './IUIController';
 
@@ -35,5 +35,5 @@ export interface IModify {
     /**
      * Gets the accessor for creating OAuth apps
      */
-    getOAuthAppsService(): IOAuthApps;
+    getOAuthAppsModifier(): IOAuthAppsModify;
 }

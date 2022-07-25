@@ -23,7 +23,7 @@ import {
     MessageRead,
     Modify,
     Notifier,
-    OAuthApps,
+    OAuthAppsReader,
     Persistence,
     PersistenceRead,
     Reader,
@@ -58,7 +58,6 @@ export class AppAccessorManager {
     private readonly modifiers: Map<string, IModify>;
     private readonly persists: Map<string, IPersistence>;
     private readonly https: Map<string, IHttp>;
-    private readonly oauthApps: Map<string, OAuthApps>;
 
     constructor(private readonly manager: AppManager) {
         this.bridges = this.manager.getBridges();
@@ -70,7 +69,6 @@ export class AppAccessorManager {
         this.modifiers = new Map<string, IModify>();
         this.persists = new Map<string, IPersistence>();
         this.https = new Map<string, IHttp>();
-        this.oauthApps = new Map<string, OAuthApps>();
     }
 
     /**
@@ -87,7 +85,6 @@ export class AppAccessorManager {
         this.modifiers.delete(appId);
         this.persists.delete(appId);
         this.https.delete(appId);
-        this.oauthApps.delete(appId);
     }
 
     public getConfigurationExtend(appId: string): IConfigurationExtend {
@@ -172,8 +169,21 @@ export class AppAccessorManager {
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
             const cloud = new CloudWorkspaceRead(this.bridges.getCloudWorkspaceBridge(), appId);
             const videoConf = new VideoConferenceRead(this.bridges.getVideoConferenceBridge(), appId);
+            const oauthApps = new OAuthAppsReader(this.bridges.getOAuthAppsBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf));
+            this.readers.set(appId, new Reader(
+                env,
+                msg,
+                persist,
+                room,
+                user,
+                noti,
+                livechat,
+                upload,
+                cloud,
+                videoConf,
+                oauthApps,
+            ));
         }
 
         return this.readers.get(appId);

@@ -129,6 +129,4 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.videoConference.read,
     AppPermissions.videoConference.write,
     AppPermissions.apis.default,
-    AppPermissions['oauth-app'].write,
-    AppPermissions['oauth-app'].read,
 ];

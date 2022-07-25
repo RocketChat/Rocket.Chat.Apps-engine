@@ -15,7 +15,6 @@ import {
     AppExternalComponentManager,
     AppLicenseManager,
     AppListenerManager,
-    AppOAuthAppsManager,
     AppSchedulerManager,
     AppSettingsManager,
     AppSlashCommandManager,
@@ -69,8 +68,6 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
-    private readonly oauthAppsManager: AppOAuthAppsManager;
-
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -117,7 +114,6 @@ export class AppManager {
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
-        this.oauthAppsManager = new AppOAuthAppsManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -201,11 +197,6 @@ export class AppManager {
 
     public setSourceStorage(storage: AppSourceStorage): void {
         this.appSourceStorage = storage;
-    }
-
-    /** Get the manager of the OAuth apps manager */
-    public getOAuthAppsManager(): AppOAuthAppsManager {
-        return this.oauthAppsManager;
     }
 
     /**
@@ -893,7 +884,6 @@ export class AppManager {
         this.accessorManager.purifyApp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
         this.videoConfProviderManager.unregisterProviders(app.getID());
-        this.oauthAppsManager.removeAllOAuthApps(app.getID());
     }
 
     /**

@@ -17,7 +17,8 @@ import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
 import { ModifyUpdater } from './ModifyUpdater';
 import { Notifier } from './Notifier';
-import { OAuthApps } from './OAuthApps';
+import { OAuthAppsModify } from './OAuthAppsModify';
+import { OAuthAppsReader } from './OAuthAppsReader';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
@@ -85,5 +86,6 @@ export {
     VideoConferenceExtender,
     VideoConferenceRead,
     VideoConfProviderExtend,
-    OAuthApps,
+    OAuthAppsModify,
+    OAuthAppsReader,
 };
