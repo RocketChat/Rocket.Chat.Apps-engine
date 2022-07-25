@@ -1,4 +1,5 @@
-import { IOAuthAppParams, IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
+import { IOAuthAppParams } from '../../definition/accessors/IOAuthApp';
+import { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
 import { OAuthAppsBridge } from '../bridges/OAuthAppsBridge';
 
 export class OAuthAppsModify implements IOAuthAppsModify {

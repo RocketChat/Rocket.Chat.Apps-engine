@@ -1,4 +1,4 @@
-import { IOAuthApp } from '../../definition/accessors/IOAuthAppsModify';
+import { IOAuthApp } from '../../definition/accessors/IOAuthApp';
 import { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
 import { OAuthAppsBridge } from '../bridges/OAuthAppsBridge';
 

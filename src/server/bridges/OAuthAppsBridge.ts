@@ -1,4 +1,4 @@
-import { IOAuthApp, IOAuthAppParams } from '../../definition/accessors/IOAuthAppsModify';
+import { IOAuthApp, IOAuthAppParams } from '../../definition/accessors/IOAuthApp';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';

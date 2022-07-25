@@ -1,4 +1,4 @@
-import { IOAuthApp, IOAuthAppParams } from '../../../src/definition/accessors/IOAuthApps';
+import { IOAuthApp, IOAuthAppParams } from '../../../src/definition/accessors/IOAuthApp';
 import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
 
 export class TestOAuthAppsBridge extends OAuthAppsBridge {
