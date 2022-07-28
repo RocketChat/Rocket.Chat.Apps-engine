@@ -17,6 +17,7 @@ import { ServerSettingBridge } from './ServerSettingBridge';
 import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
+import { VideoConferenceBridge } from './VideoConferenceBridge';
 
 export {
     CloudWorkspaceBridge,
@@ -39,4 +40,5 @@ export {
     UiInteractionBridge,
     SchedulerBridge,
     AppBridges,
+    VideoConferenceBridge,
 };

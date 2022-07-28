@@ -1,7 +1,7 @@
 ## Thoughts While Working (for docs)
 - Apps which don't provide a valid uuid4 id will be assigned one, but this is not recommended and your App should provide an id
 - The language strings are only done on the clients (`TAPi18next.addResourceBundle(lang, projectName, translations);`)
-- The implementer of this should restrict the server setting access and environmental variables. Idea is to allow the implementer to have a default set of restricted ones while letting the admin/owner of the server to restrict it even further or lift the restriction on some more. Simple interface with settings and checkbox to allow/disallow them. :thinking:
+- The implementer of this should restrict the server setting access and environmental variables. Idea is to allow the implementer to have a default set of restricted ones while letting the admin/owner of the server to restrict it even further or lift the restriction on some more. Simple interface with settings and checkbox to allow/disallow them.  :thinking:
 
 ## What does the Apps-Engine enable you to do?
 The Apps-Engine is Rocket.Chat's _plugin framework_ - it provides the APIs for Rocket.Chat Apps to interact with the host system.
