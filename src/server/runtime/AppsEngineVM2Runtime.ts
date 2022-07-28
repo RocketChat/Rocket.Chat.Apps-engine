@@ -90,10 +90,14 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
                 require: true,
             },
             require: {
-                external: true,
+                external: {
+                    modules: ['@rocket.chat/apps-engine/**/*'],
+                    transitive: true,
+                },
                 builtin: ["*"],
+                // import: [''],
                 // import: ['@*'],
-                root: './',
+                // root: './',
             },
         };
 
