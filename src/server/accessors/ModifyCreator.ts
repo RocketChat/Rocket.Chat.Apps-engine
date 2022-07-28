@@ -6,12 +6,14 @@ import {
     IModifyCreator,
     IRoomBuilder,
     IUploadCreator,
+    IVideoConferenceBuilder,
 } from '../../definition/accessors';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
+import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
 import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
@@ -19,6 +21,7 @@ import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 import { UploadCreator } from './UploadCreator';
+import { VideoConferenceBuilder } from './VideoConferenceBuilder';
 
 export class ModifyCreator implements IModifyCreator {
     private livechatCreator: LivechatCreator;
@@ -73,7 +76,11 @@ export class ModifyCreator implements IModifyCreator {
         return new DiscussionBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder): Promise<string> {
+    public startVideoConference(data?: Partial<AppVideoConference>): IVideoConferenceBuilder {
+        return new VideoConferenceBuilder(data);
+    }
+
+    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -83,6 +90,8 @@ export class ModifyCreator implements IModifyCreator {
                 return this._finishRoom(builder);
             case RocketChatAssociationModel.DISCUSSION:
                 return this._finishDiscussion(builder as IDiscussionBuilder);
+            case RocketChatAssociationModel.VIDEO_CONFERENCE:
+                return this._finishVideoConference(builder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
@@ -178,5 +187,23 @@ export class ModifyCreator implements IModifyCreator {
             builder.getMembersToBeAddedUsernames(),
             this.appId,
         );
+    }
+
+    private _finishVideoConference(builder: IVideoConferenceBuilder): Promise<string> {
+        const videoConference = builder.getVideoConference();
+
+        if (!videoConference.createdBy) {
+            throw new Error('Invalid creator assigned to the video conference.');
+        }
+
+        if (!videoConference.providerName?.trim()) {
+            throw new Error('Invalid provider name assigned to the video conference.');
+        }
+
+        if (!videoConference.rid) {
+            throw new Error('Invalid roomId assigned to the video conference.');
+        }
+
+        return this.bridges.getVideoConferenceBridge().doCreate(videoConference, this.appId);
     }
 }
