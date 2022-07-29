@@ -25,7 +25,6 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             sandbox: {
                 ...AppsEngineVM2Runtime.defaultNodeVMOptions.sandbox,
                 ...sandbox || {},
-                exports: {},
             },
         };
 
@@ -33,14 +32,17 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             vmOptions.require = {
                 external: ['@rocket.chat/apps-engine'],
                 // resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
-                customRequire: (...args) => (console.log(`Custom require called with ${args}`), sandbox.require(...args)),
-                context: 'host',
+                // customRequire: (...args) => (console.log(`Custom require called with ${args}`), sandbox.require(...args)),
+                context: 'sandbox',
             };
 
             delete sandbox.require;
         }
 
-        return (new NodeVM(vmOptions)).run(code);
+        const app = (new NodeVM(vmOptions)).run(code, 'app.js');
+        // Get first exported object, vm2 does not return the last value when it's an assignment as intern vm
+        // so we use the first exported value as the class.
+        return app && app[Object.keys(app)[0]];
     }
 
     private vm: NodeVM;

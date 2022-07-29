@@ -36,25 +36,23 @@ export class AppCompiler {
             require: customRequire,
         });
 
-        console.log(storage.info.classFile, result);
-
         if (typeof result !== 'function') {
             // tslint:disable-next-line:max-line-length
             throw new Error(`The App's main class for ${ storage.info.name } is not valid ("${ storage.info.classFile }").`);
         }
-
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = Runtime.runCode('new App(info, rcLogger, appAccessors);', {
+        const rl = Runtime.runCode('exports.app = new App(info, rcLogger, appAccessors);', {
             rcLogger: logger,
             info: storage.info,
             App: result,
             appAccessors,
         }, { timeout: 1000, filename: `App_${ storage.info.nameSlug }.js` });
 
-        if (!(rl instanceof App)) {
-            throw new MustExtendAppError();
-        }
+        // TODO: app is importing the Class App internally so it's not same object to compare. Need to find a way to make this test
+        // if (!(rl instanceof App)) {
+        //     throw new MustExtendAppError();
+        // }
 
         if (typeof rl.getName !== 'function') {
             throw new MustContainFunctionError(storage.info.classFile, 'getName');
