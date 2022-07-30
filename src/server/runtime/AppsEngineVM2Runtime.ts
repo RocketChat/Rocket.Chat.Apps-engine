@@ -28,21 +28,28 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             },
         };
 
+        const resolve = sandbox.require;
         if (sandbox?.require instanceof Function) {
             vmOptions.require = {
                 external: ['@rocket.chat/apps-engine'],
-                // resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
-                // customRequire: (...args) => (console.log(`Custom require called with ${args}`), sandbox.require(...args)),
+                resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
                 context: 'sandbox',
             };
 
             delete sandbox.require;
         }
 
-        const app = (new NodeVM(vmOptions)).run(code, 'app.js');
+        const vm = new NodeVM(vmOptions));
+        const app = (vm.run(code, {
+            filename: options?.filename || 'app.js',
+            // TODO: Missing type declaration. Only way to require modules manually
+            require: (mod) => {
+                return resolve(mod, vm.require.bind(vm));
+            },
+        });
         // Get first exported object, vm2 does not return the last value when it's an assignment as intern vm
         // so we use the first exported value as the class.
-        return app && app[Object.keys(app)[0]];
+        return options?.returnAllExports ? app : app && app[Object.keys(app)[0]];
     }
 
     private vm: NodeVM;

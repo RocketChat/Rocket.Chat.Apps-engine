@@ -19,4 +19,5 @@ export abstract class AppsEngineRuntime {
 export interface IAppsEngineRuntimeOptions {
     timeout?: number;
     filename?: string;
+    returnAllExports?: boolean;
 }

@@ -20,15 +20,21 @@ export function allowedInternalModuleRequire(moduleName: string): moduleName is 
 }
 
 export function buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath: string = '.'): (mod: string) => {} {
-    return function _requirer(mod: string) {
+    return function _requirer(mod: string, requirer?: any) {
         // Keep compatibility with apps importing apps-ts-definition
         if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
+            if (requirer) {
+                return requirer(mod);
+            }
             mod = path.normalize(mod);
             mod = mod.replace('@rocket.chat/apps-ts-definition/', '../../definition/');
             return require(mod);
         }
 
         if (mod.startsWith('@rocket.chat/apps-engine/definition/')) {
+            if (requirer) {
+                return requirer(mod);
+            }
             mod = path.normalize(mod);
             mod = mod.replace('@rocket.chat/apps-engine/definition/', '../../definition/');
             return require(mod);
@@ -52,13 +58,13 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
         }
 
         const Runtime = getRuntime();
-        const fileExport = {};
 
-        Runtime.runCode(files[filename], {
+        // TODO: specify correct file name
+        return Runtime.runCode(files[filename], {
             require: buildCustomRequire(files, appId, path.dirname(filename) + '/'),
-            exports: fileExport,
+        }, {
+            returnAllExports: true,
+            filename,
         });
-
-        return fileExport;
     };
 }
