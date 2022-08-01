@@ -31,8 +31,8 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
         const resolve = sandbox.require;
         if (sandbox?.require instanceof Function) {
             vmOptions.require = {
-                external: true,
-                builtin: ['*'],
+                external: ['@rocket.chat/apps-engine', 'uuid'],
+                builtin: ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'],
                 resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
                 context: 'sandbox',
             };

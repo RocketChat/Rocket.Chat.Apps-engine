@@ -41,6 +41,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
         }
 
         if (allowedInternalModuleRequire(mod)) {
+            // TODO: Need to use the vm2 require in this function and evaluate the necessity of the proxies
             return requireNativeModule(mod, appId);
         }
 
