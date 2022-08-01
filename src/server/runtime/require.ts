@@ -19,8 +19,8 @@ export function allowedInternalModuleRequire(moduleName: string): moduleName is 
     return moduleName in AllowedInternalModules;
 }
 
-export function buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath: string = '.'): (mod: string) => {} {
-    return function _requirer(mod: string, requirer?: any) {
+export function buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath: string = '.'): (mod: string, require: any) => {} {
+    return function _requirer(mod: string, requirer: any) {
         // Keep compatibility with apps importing apps-ts-definition
         if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
             if (requirer) {
@@ -42,7 +42,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
 
         if (allowedInternalModuleRequire(mod)) {
             // TODO: Need to use the vm2 require in this function and evaluate the necessity of the proxies
-            return requireNativeModule(mod, appId);
+            return requireNativeModule(mod, appId, requirer);
         }
 
         if (currentPath !== '.') {
