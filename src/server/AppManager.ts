@@ -40,6 +40,10 @@ export interface IAppManagerDeps {
     sourceStorage: AppSourceStorage;
 }
 
+interface IPurgeAppConfigOpts {
+    keepScheduledJobs?: boolean;
+}
+
 export class AppManager {
     public static Instance: AppManager;
 
@@ -413,7 +417,7 @@ export class AppManager {
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        await this.purgeAppConfig(app, true);
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
 
         await app.setStatus(status, silent);
 
@@ -638,7 +642,7 @@ export class AppManager {
             return appPackageOrInstance;
         })();
 
-        await this.purgeAppConfig(app);
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
 
         this.apps.set(app.getID(), app);
 
@@ -867,8 +871,8 @@ export class AppManager {
         return result;
     }
 
-    private async purgeAppConfig(app: ProxiedApp, isDisabled: boolean = false) {
-        if (!isDisabled) {
+    private async purgeAppConfig(app: ProxiedApp, opts: IPurgeAppConfigOpts = {}) {
+        if (!opts.keepScheduledJobs) {
             await this.schedulerManager.cleanUp(app.getID());
         }
         this.listenerManager.unregisterListeners(app);
