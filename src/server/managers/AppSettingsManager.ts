@@ -42,11 +42,10 @@ export class AppSettingsManager {
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
-        const appSettings = (await rl.call(
+        const decoratedSetting = (await rl.call(
             AppMethod.ON_PRE_SETTING_UPDATE,
             { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http,
-        ));
-        const decoratedSetting = Object.entries(appSettings).length === 0 ? setting : appSettings;
+        )) || setting;
 
         decoratedSetting.updatedAt = new Date();
         rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;

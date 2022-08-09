@@ -78,7 +78,7 @@ export class AppApi {
         const logger = this.app.setupLogger(AppMethod._API_EXECUTOR);
         logger.debug(`${ path }'s ${ method } is being executed...`, request);
 
-        const runCode = `endpoint.${ method }.apply(endpoint, args)`;
+        const runCode = `module.exports = endpoint.${ method }.apply(endpoint, args)`;
         try {
             const result: IApiResponse = await this.app.getRuntime().runInSandbox(runCode, {
                 endpoint: this.endpoint,

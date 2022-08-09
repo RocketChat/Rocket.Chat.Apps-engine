@@ -76,7 +76,7 @@ export class AppSlashCommand {
         logger.debug(`${ command }'s ${ method } is being executed...`, context);
 
         try {
-            const runCode = `slashCommand.${ method }.apply(slashCommand, args)`;
+            const runCode = `module.exports = slashCommand.${ method }.apply(slashCommand, args)`;
             const result = await this.app.getRuntime().runInSandbox(runCode, {
                 slashCommand: this.slashCommand,
                 args: [

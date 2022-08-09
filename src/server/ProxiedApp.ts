@@ -79,7 +79,7 @@ export class ProxiedApp implements IApp {
         let result;
         try {
             result = await this.runtime.runInSandbox(
-                `app.${method}.apply(app, args)`,
+                `module.exports = app.${method}.apply(app, args)`,
                 { app: this.app, args },
             );
             logger.debug(`'${method}' was successfully called! The result is:`, result);
