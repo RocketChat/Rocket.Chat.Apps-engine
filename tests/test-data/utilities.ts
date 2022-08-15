@@ -325,7 +325,7 @@ export class TestData {
         return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
             getName() { return 'testing'; },
             getID() { return 'testing'; },
-        } as App, (mod: string) => mod);
+        } as App, ((mod: string) => mod) as any);
     }
 }
 
