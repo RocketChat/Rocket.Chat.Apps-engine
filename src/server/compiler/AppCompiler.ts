@@ -4,7 +4,7 @@ import { App } from '../../definition/App';
 import { AppMethod } from '../../definition/metadata';
 import { AppAccessors } from '../accessors';
 import { AppManager } from '../AppManager';
-import { MustContainFunctionError, MustExtendAppError } from '../errors';
+import { MustContainFunctionError } from '../errors';
 import { AppConsole } from '../logging';
 import { ProxiedApp } from '../ProxiedApp';
 import { getRuntime } from '../runtime';
@@ -78,7 +78,8 @@ export class AppCompiler {
             throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
         }
 
-        const app = new ProxiedApp(manager, storage, rl as App, new Runtime(rl as App, customRequire));
+        // TODO: Fix this type cast from to any to the right one
+        const app = new ProxiedApp(manager, storage, rl as App, new Runtime(rl as App, customRequire as any));
 
         manager.getLogStorage().storeEntries(app.getID(), logger);
 

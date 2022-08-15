@@ -80,8 +80,6 @@ export class AppSchedulerManager {
                 });
                 logger.debug(`Job processor ${processor.id} was sucessfully executed`);
             } catch (e) {
-                console.error(e);
-                console.debug(`Job processor ${processor.id} was unsuccessful`);
                 logger.error(e);
                 logger.debug(`Job processor ${processor.id} was unsuccessful`);
 

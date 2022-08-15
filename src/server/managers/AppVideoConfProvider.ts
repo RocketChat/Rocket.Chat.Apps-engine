@@ -64,7 +64,8 @@ export class AppVideoConfProvider {
             return;
         }
 
-        const runContext = this.app.makeContext({
+        // TODO: Fix this type cast
+        const runContext = (this.app as any).makeContext({
             provider: this.provider,
             args: [
                 ...runContextArgs,
@@ -81,7 +82,8 @@ export class AppVideoConfProvider {
         let result: string | undefined;
         try {
             const runCode = `provider.${ method }.apply(provider, args)`;
-            result = await this.app.runInContext(runCode, runContext);
+            // TODO: Fix this type cast from to any
+            result = await (this.app as any).runInContext(runCode, runContext);
             logger.debug(`Video Conference Provider's ${ method } was successfully executed.`);
         } catch (e) {
             logger.error(e);

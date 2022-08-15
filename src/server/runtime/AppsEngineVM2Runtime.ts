@@ -45,7 +45,7 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             filename: options?.filename || 'app.js',
             // TODO: Missing type declaration. Only way to require modules manually
             require: (mod: string) => resolve(mod, vm.require.bind(vm)),
-        }));
+        } as any));
         // Get first exported object, vm2 does not return the last value when it's an assignment as intern vm
         // so we use the first exported value as the class.
         return options?.returnAllExports ? app : app && app[Object.keys(app)[0]];
