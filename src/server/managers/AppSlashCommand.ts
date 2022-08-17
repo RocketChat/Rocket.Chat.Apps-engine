@@ -39,23 +39,32 @@ export class AppSlashCommand {
         return this.app.hasMethod(method);
     }
 
-    public async runExecutorOrPreviewer(method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
-                                        context: SlashCommandContext, logStorage: AppLogStorage,
-                                        accessors: AppAccessorManager): Promise<void | ISlashCommandPreview> {
-
+    public async runExecutorOrPreviewer(
+      method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
+      context: SlashCommandContext,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<void | ISlashCommandPreview> {
         return await this.runTheCode(method, logStorage, accessors, context, new Array());
     }
 
-    public async runPreviewExecutor(previewItem: ISlashCommandPreviewItem, context: SlashCommandContext,
-                                    logStorage: AppLogStorage, accessors: AppAccessorManager): Promise<void> {
-
+    public async runPreviewExecutor(
+      previewItem: ISlashCommandPreviewItem,
+      context: SlashCommandContext,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<void> {
         await this.runTheCode(AppMethod._COMMAND_PREVIEW_EXECUTOR, logStorage, accessors, context, [previewItem]);
         return;
     }
 
-    private async runTheCode(method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
-                             logStorage: AppLogStorage, accessors: AppAccessorManager,
-                             context: SlashCommandContext, runContextArgs: Array<any>): Promise<void | ISlashCommandPreview> {
+    private async runTheCode(
+      method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+      context: SlashCommandContext,
+      runContextArgs: Array<any>,
+    ): Promise<void | ISlashCommandPreview> {
         const command = this.slashCommand.command;
 
         // Ensure the slash command has the property before going on

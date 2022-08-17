@@ -1,4 +1,5 @@
 import { IUserEmail } from './IUserEmail';
+import { IUserSettings } from './IUserSettings';
 import { UserStatusConnection } from './UserStatusConnection';
 import { UserType } from './UserType';
 
@@ -18,6 +19,7 @@ export interface IUser {
     createdAt: Date;
     updatedAt: Date;
     lastLoginAt: Date;
+    settings?: IUserSettings;
     appId?: string;
     customFields?: { [key: string]: any };
 }

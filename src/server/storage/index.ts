@@ -1,10 +1,4 @@
-import { AppLogStorage, IAppLogStorageFindOptions } from './AppLogStorage';
-import { AppStorage } from './AppStorage';
-import { IAppStorageItem } from './IAppStorageItem';
-
-export {
-    AppLogStorage,
-    AppStorage,
-    IAppStorageItem,
-    IAppLogStorageFindOptions,
-};
+export { AppLogStorage, IAppLogStorageFindOptions } from './AppLogStorage';
+export { AppMetadataStorage } from './AppMetadataStorage';
+export { IAppStorageItem } from './IAppStorageItem';
+export { AppSourceStorage } from './AppSourceStorage';

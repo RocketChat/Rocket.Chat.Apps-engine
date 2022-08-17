@@ -41,12 +41,19 @@ export abstract class ServerSettingBridge extends BaseBridge {
        }
     }
 
+    public async doIncrementValue(id: ISetting['id'], value: number, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.incrementValue(id, value, appId);
+        }
+    }
+
    protected abstract getAll(appId: string): Promise<Array<ISetting>>;
    protected abstract getOneById(id: string, appId: string): Promise<ISetting>;
    protected abstract hideGroup(name: string, appId: string): Promise<void>;
    protected abstract hideSetting(id: string, appId: string): Promise<void>;
    protected abstract isReadableById(id: string, appId: string): Promise<boolean>;
    protected abstract updateOne(setting: ISetting, appId: string): Promise<void>;
+   protected abstract incrementValue(id: ISetting['id'], value: number, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.setting.write)) {

@@ -1,4 +1,5 @@
 import { IUserUpdater } from '../../definition/accessors/IUserUpdater';
+import { UserStatusConnection } from '../../definition/users';
 import { IUser } from '../../definition/users/IUser';
 import { AppBridges } from '../bridges';
 
@@ -7,6 +8,10 @@ export class UserUpdater implements IUserUpdater {
 
     public async updateStatusText(user: IUser, statusText: IUser['statusText']) {
         return this.bridges.getUserBridge().doUpdate(user, { statusText }, this.appId);
+    }
+
+    public async updateStatus(user: IUser, statusText: IUser['statusText'], status: UserStatusConnection) {
+        return this.bridges.getUserBridge().doUpdate(user, { statusText, status }, this.appId);
     }
 
     public async updateBio(user: IUser, bio: IUser['bio']) {

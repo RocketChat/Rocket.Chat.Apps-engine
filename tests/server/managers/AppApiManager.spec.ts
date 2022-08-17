@@ -10,12 +10,13 @@ import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
 import { PathAlreadyExistsError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { AppApi } from '../../../src/server/managers/AppApi';
+import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
-import { TestsAppLogStorage } from '../../test-data/logStorage';
+import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 export class AppApiManagerTestFixture {
@@ -75,6 +76,12 @@ export class AppApiManagerTestFixture {
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
+            },
+            getUIActionButtonManager() {
+                return {} as UIActionButtonManager;
+            },
+            getVideoConfProviderManager() {
+                return {} as AppVideoConfProviderManager;
             },
         } as AppManager;
 

@@ -1,5 +1,6 @@
 import { ILivechatTransferData, IVisitor } from '../livechat';
 import { IRoom } from '../rooms';
+import { IUser } from '../users';
 
 export interface ILivechatUpdater {
     /**
@@ -15,8 +16,9 @@ export interface ILivechatUpdater {
      *
      * @param room The room to be closed
      * @param comment The comment explaining the reason for closing the room
+     * @param closer The user that closes the room
      */
-    closeRoom(room: IRoom, comment: string): Promise<boolean>;
+    closeRoom(room: IRoom, comment: string, closer?: IUser): Promise<boolean>;
 
     /**
      * Set a livechat visitor's custom fields by its token

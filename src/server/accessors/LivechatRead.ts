@@ -2,6 +2,7 @@ import { ILivechatRead } from '../../definition/accessors/ILivechatRead';
 import { IDepartment } from '../../definition/livechat';
 import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
 import { IVisitor } from '../../definition/livechat/IVisitor';
+import { IMessage } from '../../definition/messages';
 import { LivechatBridge } from '../bridges/LivechatBridge';
 export class LivechatRead implements ILivechatRead {
     constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) { }
@@ -55,5 +56,9 @@ export class LivechatRead implements ILivechatRead {
 
     public getLivechatDepartmentByIdOrName(value: string): Promise<IDepartment | undefined> {
         return this.livechatBridge.doFindDepartmentByIdOrName(value, this.appId);
+    }
+
+    public _fetchLivechatRoomMessages(roomId: string): Promise<Array<IMessage>> {
+        return this.livechatBridge.do_fetchLivechatRoomMessages(this.appId, roomId);
     }
 }

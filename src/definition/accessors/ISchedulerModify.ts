@@ -11,14 +11,16 @@ export interface ISchedulerModify {
      * Schedules a registered processor to run _once_.
      *
      * @param {IOnetimeSchedule} job
+     * @returns jobid as string
      */
-    scheduleOnce(job: IOnetimeSchedule): Promise<void>;
+    scheduleOnce(job: IOnetimeSchedule): Promise<void | string>;
     /**
      * Schedules a registered processor to run in recurrencly according to a given interval
      *
      * @param {IRecurringSchedule} job
+     * @returns jobid as string
      */
-    scheduleRecurring(job: IRecurringSchedule): Promise<void>;
+    scheduleRecurring(job: IRecurringSchedule): Promise<void | string>;
     /**
      * Cancels a running job given its jobId
      *

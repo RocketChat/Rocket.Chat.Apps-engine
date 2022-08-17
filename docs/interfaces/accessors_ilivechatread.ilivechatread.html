@@ -83,6 +83,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_ilivechatread.ilivechatread.html#_fetchlivechatroommessages" class="tsd-kind-icon">_fetch<wbr>Livechat<wbr>Room<wbr>Messages</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_ilivechatread.ilivechatread.html#getdepartmentsenabledwithagents" class="tsd-kind-icon">get<wbr>Departments<wbr>Enabled<wbr>With<wbr>Agents</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_ilivechatread.ilivechatread.html#getlivechatdepartmentbyidorname" class="tsd-kind-icon">get<wbr>Livechat<wbr>Department<wbr>ById<wbr>OrName</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_ilivechatread.ilivechatread.html#getlivechatrooms" class="tsd-kind-icon">get<wbr>Livechat<wbr>Rooms</a></li>
@@ -101,6 +102,37 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="_fetchlivechatroommessages" class="tsd-anchor"></a>
+					<h3>_fetch<wbr>Livechat<wbr>Room<wbr>Messages</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">_fetch<wbr>Livechat<wbr>Room<wbr>Messages<span class="tsd-signature-symbol">(</span>roomId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L35">src/definition/accessors/ILivechatRead.ts:35</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>experimental</dt>
+									<dd><p>we do not encourage the wider usage of this method,
+										as we&#39;re evaluating its performance and fit for the API.</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>roomId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="getdepartmentsenabledwithagents" class="tsd-anchor"></a>
 					<h3>get<wbr>Departments<wbr>Enabled<wbr>With<wbr>Agents</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -110,7 +142,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L17">src/definition/accessors/ILivechatRead.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L18">src/definition/accessors/ILivechatRead.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_idepartment.idepartment.html" class="tsd-signature-type" data-tsd-kind="Interface">IDepartment</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -127,7 +159,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L29">src/definition/accessors/ILivechatRead.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L30">src/definition/accessors/ILivechatRead.ts:30</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -150,7 +182,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L18">src/definition/accessors/ILivechatRead.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L19">src/definition/accessors/ILivechatRead.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -176,7 +208,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L26">src/definition/accessors/ILivechatRead.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L27">src/definition/accessors/ILivechatRead.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -199,7 +231,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L25">src/definition/accessors/ILivechatRead.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L26">src/definition/accessors/ILivechatRead.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -222,7 +254,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L28">src/definition/accessors/ILivechatRead.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L29">src/definition/accessors/ILivechatRead.ts:29</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -245,7 +277,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L27">src/definition/accessors/ILivechatRead.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L28">src/definition/accessors/ILivechatRead.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -268,7 +300,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L24">src/definition/accessors/ILivechatRead.ts:24</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L25">src/definition/accessors/ILivechatRead.ts:25</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -300,7 +332,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L11">src/definition/accessors/ILivechatRead.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L12">src/definition/accessors/ILivechatRead.ts:12</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/ILivechatRead.ts#L16">src/definition/accessors/ILivechatRead.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/ILivechatRead.ts#L17">src/definition/accessors/ILivechatRead.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -377,6 +409,9 @@
 					<li class="current tsd-kind-interface tsd-parent-kind-module">
 						<a href="accessors_ilivechatread.ilivechatread.html" class="tsd-kind-icon">ILivechat<wbr>Read</a>
 						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="accessors_ilivechatread.ilivechatread.html#_fetchlivechatroommessages" class="tsd-kind-icon">_fetch<wbr>Livechat<wbr>Room<wbr>Messages</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_ilivechatread.ilivechatread.html#getdepartmentsenabledwithagents" class="tsd-kind-icon">get<wbr>Departments<wbr>Enabled<wbr>With<wbr>Agents</a>
 							</li>

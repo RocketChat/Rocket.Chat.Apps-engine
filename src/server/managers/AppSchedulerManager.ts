@@ -1,3 +1,4 @@
+import { AppStatus } from '../../definition/AppStatus';
 import { AppMethod } from '../../definition/metadata';
 import {
     IJobContext,
@@ -26,12 +27,12 @@ export class AppSchedulerManager {
         this.registeredProcessors = new Map();
     }
 
-    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
+    public async registerProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void | Array<string>> {
         if (!this.registeredProcessors.get(appId)) {
             this.registeredProcessors.set(appId, {});
         }
 
-        await this.bridge.doRegisterProcessors(processors.map((processor) => {
+        return this.bridge.doRegisterProcessors(processors.map((processor) => {
             const processorId = createProcessorId(processor.id, appId);
 
             this.registeredProcessors.get(appId)[processorId] = processor;
@@ -53,6 +54,14 @@ export class AppSchedulerManager {
             }
 
             const app = this.manager.getOneById(appId);
+            const status = app.getStatus();
+            const previousStatus = app.getPreviousStatus();
+
+            const isNotToRunJob = this.isNotToRunJob(status, previousStatus);
+
+            if (isNotToRunJob) {
+                return;
+            }
 
             const context = app.makeContext({
                 processor,
@@ -83,12 +92,12 @@ export class AppSchedulerManager {
         };
     }
 
-    public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
-        this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
+    public async scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void | string> {
+        return this.bridge.doScheduleOnce({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
-    public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
-        this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
+    public async scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void | string> {
+        return this.bridge.doScheduleRecurring({ ...job, id: createProcessorId(job.id, appId) }, appId);
     }
 
     public async cancelJob(jobId: string, appId: string): Promise<void> {
@@ -101,5 +110,12 @@ export class AppSchedulerManager {
 
     public async cleanUp(appId: string): Promise<void> {
         (this.bridge as IInternalSchedulerBridge & SchedulerBridge).cancelAllJobs(appId);
+    }
+
+    private isNotToRunJob(status: AppStatus, previousStatus: AppStatus): boolean {
+        const isAppCurrentDisabled = status === AppStatus.DISABLED || status === AppStatus.MANUALLY_DISABLED;
+        const wasAppDisabled = previousStatus === AppStatus.DISABLED || previousStatus === AppStatus.MANUALLY_DISABLED;
+
+        return (status === AppStatus.INITIALIZED && wasAppDisabled) || isAppCurrentDisabled;
     }
 }

@@ -1,22 +1,25 @@
+import { Buffer } from 'buffer';
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
-import { AppMethod } from '../definition/metadata';
+import { AppMethod, IAppInfo } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
 import { AppBridges, PersistenceBridge, UserBridge } from './bridges';
 import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge';
-import {IInternalUserBridge} from './bridges/IInternalUserBridge';
+import { IInternalUserBridge } from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager,
+    AppSlashCommandManager, AppVideoConfProviderManager,
 } from './managers';
+import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
-import { AppLogStorage, AppStorage, IAppStorageItem } from './storage';
+import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
+import { AppSourceStorage } from './storage/AppSourceStorage';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -29,12 +32,24 @@ export interface IAppUninstallParameters {
     user: IUser;
 }
 
+export interface IAppManagerDeps {
+    metadataStorage: AppMetadataStorage;
+    logStorage: AppLogStorage;
+    bridges: AppBridges;
+    sourceStorage: AppSourceStorage;
+}
+
+interface IPurgeAppConfigOpts {
+    keepScheduledJobs?: boolean;
+}
+
 export class AppManager {
     public static Instance: AppManager;
 
     // apps contains all of the Apps
     private readonly apps: Map<string, ProxiedApp>;
-    private readonly storage: AppStorage;
+    private readonly appMetadataStorage: AppMetadataStorage;
+    private appSourceStorage: AppSourceStorage;
     private readonly logStorage: AppLogStorage;
     private readonly bridges: AppBridges;
     private readonly parser: AppPackageParser;
@@ -48,31 +63,39 @@ export class AppManager {
     private readonly settingsManager: AppSettingsManager;
     private readonly licenseManager: AppLicenseManager;
     private readonly schedulerManager: AppSchedulerManager;
+    private readonly uiActionButtonManager: UIActionButtonManager;
+    private readonly videoConfProviderManager: AppVideoConfProviderManager;
 
     private isLoaded: boolean;
 
-    constructor(rlStorage: AppStorage, logStorage: AppLogStorage, rlBridges: AppBridges) {
+    constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
         // Singleton style. There can only ever be one AppManager instance
         if (typeof AppManager.Instance !== 'undefined') {
-            throw new Error('There is already a valid AppManager instance.');
+            throw new Error('There is already a valid AppManager instance');
         }
 
-        if (rlStorage instanceof AppStorage) {
-            this.storage = rlStorage;
+        if (metadataStorage instanceof AppMetadataStorage) {
+            this.appMetadataStorage = metadataStorage;
         } else {
-            throw new Error('Invalid instance of the AppStorage.');
+            throw new Error('Invalid instance of the AppMetadataStorage');
         }
 
         if (logStorage instanceof AppLogStorage) {
             this.logStorage = logStorage;
         } else {
-            throw new Error('Invalid instance of the AppLogStorage.');
+            throw new Error('Invalid instance of the AppLogStorage');
         }
 
-        if (rlBridges instanceof AppBridges) {
-            this.bridges = rlBridges;
+        if (bridges instanceof AppBridges) {
+            this.bridges = bridges;
         } else {
             throw new Error('Invalid instance of the AppBridges');
+        }
+
+        if (sourceStorage instanceof AppSourceStorage) {
+            this.appSourceStorage = sourceStorage;
+        } else {
+            throw new Error('Invalid instance of the AppSourceStorage');
         }
 
         this.apps = new Map<string, ProxiedApp>();
@@ -87,14 +110,16 @@ export class AppManager {
         this.settingsManager = new AppSettingsManager(this);
         this.licenseManager = new AppLicenseManager(this);
         this.schedulerManager = new AppSchedulerManager(this);
+        this.uiActionButtonManager = new UIActionButtonManager(this);
+        this.videoConfProviderManager = new AppVideoConfProviderManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
     }
 
     /** Gets the instance of the storage connector. */
-    public getStorage(): AppStorage {
-        return this.storage;
+    public getStorage(): AppMetadataStorage {
+        return this.appMetadataStorage;
     }
 
     /** Gets the instance of the log storage connector. */
@@ -132,6 +157,10 @@ export class AppManager {
         return this.commandManager;
     }
 
+    public getVideoConfProviderManager(): AppVideoConfProviderManager {
+        return this.videoConfProviderManager;
+    }
+
     public getLicenseManager(): AppLicenseManager {
         return this.licenseManager;
     }
@@ -155,9 +184,17 @@ export class AppManager {
         return this.schedulerManager;
     }
 
+    public getUIActionButtonManager(): UIActionButtonManager {
+        return this.uiActionButtonManager;
+    }
+
     /** Gets whether the Apps have been loaded or not. */
     public areAppsLoaded(): boolean {
         return this.isLoaded;
+    }
+
+    public setSourceStorage(storage: AppSourceStorage): void {
+        this.appSourceStorage = storage;
     }
 
     /**
@@ -172,7 +209,7 @@ export class AppManager {
             return;
         }
 
-        const items: Map<string, IAppStorageItem> = await this.storage.retrieveAll();
+        const items: Map<string, IAppStorageItem> = await this.appMetadataStorage.retrieveAll();
         const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
         for (const item of items.values()) {
@@ -182,7 +219,11 @@ export class AppManager {
                 aff.setAppInfo(item.info);
                 aff.setImplementedInterfaces(item.implemented);
 
-                const app = this.getCompiler().toSandBox(this, item);
+                const appPackage = await this.appSourceStorage.fetch(item);
+                const unpackageResult = await this.getParser().unpackageApp(appPackage);
+
+                const app = this.getCompiler().toSandBox(this, item, unpackageResult);
+
                 this.apps.set(item.id, app);
                 aff.setApp(app);
             } catch (e) {
@@ -207,6 +248,9 @@ export class AppManager {
                 // Usually if an App is disabled before it's initialized,
                 // then something (such as an error) occured while
                 // it was compiled or something similar.
+                // We still have to validate its license, though
+                await rl.validateLicense();
+
                 continue;
             }
 
@@ -231,7 +275,7 @@ export class AppManager {
                 await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
-                await this.schedulerManager.cleanUp(app.getID());
+                this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
         }
 
@@ -248,12 +292,7 @@ export class AppManager {
 
         for (const app of this.apps.values()) {
             if (app.getStatus() === AppStatus.INITIALIZED) {
-                this.listenerManager.unregisterListeners(app);
-                this.commandManager.unregisterCommands(app.getID());
-                this.externalComponentManager.unregisterExternalComponents(app.getID());
-                this.apiManager.unregisterApis(app.getID());
-                this.accessorManager.purifyApp(app.getID());
-                await this.schedulerManager.cleanUp(app.getID());
+                await this.purgeAppConfig(app);
             } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
                 await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
@@ -345,7 +384,7 @@ export class AppManager {
             throw new Error('The App had compiler errors, can not enable it.');
         }
 
-        const storageItem = await this.storage.retrieveOne(id);
+        const storageItem = await this.appMetadataStorage.retrieveOne(id);
         if (!storageItem) {
             throw new Error(`Could not enable an App with the id of "${ id }" as it doesn't exist.`);
         }
@@ -355,7 +394,7 @@ export class AppManager {
             storageItem.status = rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            await this.storage.update(storageItem).catch();
+            await this.appMetadataStorage.update(storageItem).catch();
         }
 
         return isSetup;
@@ -377,17 +416,11 @@ export class AppManager {
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        this.listenerManager.unregisterListeners(app);
-        this.listenerManager.lockEssentialEvents(app);
-        this.commandManager.unregisterCommands(app.getID());
-        this.externalComponentManager.unregisterExternalComponents(app.getID());
-        this.apiManager.unregisterApis(app.getID());
-        this.accessorManager.purifyApp(app.getID());
-        await this.schedulerManager.cleanUp(app.getID());
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
 
         await app.setStatus(status, silent);
 
-        const storageItem = await this.storage.retrieveOne(id);
+        const storageItem = await this.appMetadataStorage.retrieveOne(id);
 
         app.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
         await app.validateLicense().catch();
@@ -395,7 +428,7 @@ export class AppManager {
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
         storageItem.status = app.getStatus();
-        await this.storage.update(storageItem).catch();
+        await this.appMetadataStorage.update(storageItem).catch();
 
         return true;
     }
@@ -405,49 +438,58 @@ export class AppManager {
 
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
+        const undoSteps: Array<() => void> = [];
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
 
-        const compiled = {
+        const descriptor: IAppStorageItem = {
             id: result.info.id,
             info: result.info,
             status: AppStatus.UNKNOWN,
-            zip: appPackage.toString('base64'),
-            // tslint:disable-next-line: max-line-length
-            compiled: Object.entries(result.files).reduce(
-                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as { [key: string]: string },
-            ),
-            languageContent: result.languageContent,
             settings: {},
             implemented: result.implemented.getValues(),
             marketplaceInfo,
             permissionsGranted,
+            languageContent: result.languageContent,
         };
+
+        try {
+            descriptor.sourcePath = await this.appSourceStorage.store(descriptor, appPackage);
+
+            undoSteps.push(() => this.appSourceStorage.remove(descriptor));
+        } catch (error) {
+            aff.setStorageError('Failed to store app package');
+
+            return aff;
+        }
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, compiled);
+        const app = this.getCompiler().toSandBox(this, descriptor, result);
 
         // Create a user for the app
         try {
-            await this.createAppUser(app);
+            await this.createAppUser(result.info);
+
+            undoSteps.push(() => this.removeAppUser(app));
         } catch (err) {
             aff.setAppUserError({
                 username: app.getAppUserUsername(),
                 message: 'Failed to create an app user for this app.',
             });
 
+            await Promise.all(undoSteps.map((undoer) => undoer()));
+
             return aff;
         }
 
-        const created = await this.storage.create(compiled);
+        const created = await this.appMetadataStorage.create(descriptor);
 
         if (!created) {
             aff.setStorageError('Failed to create the App, the storage did not return it.');
 
-            await this.removeAppUser(app);
+            await Promise.all(undoSteps.map((undoer) => undoer()));
 
             return aff;
         }
@@ -504,81 +546,106 @@ export class AppManager {
             await this.disable(id);
         }
 
-        this.listenerManager.unregisterListeners(app);
+        await this.purgeAppConfig(app);
         this.listenerManager.releaseEssentialEvents(app);
-        this.commandManager.unregisterCommands(app.getID());
-        this.externalComponentManager.purgeExternalComponents(app.getID());
-        this.apiManager.unregisterApis(app.getID());
-        this.accessorManager.purifyApp(app.getID());
         await this.removeAppUser(app);
         await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & PersistenceBridge).purge(app.getID());
-        await this.storage.remove(app.getID());
-        await this.schedulerManager.cleanUp(app.getID());
+        await this.appMetadataStorage.remove(app.getID());
+        await this.appSourceStorage.remove(app.getStorageItem()).catch();
 
         this.apps.delete(app.getID());
     }
 
-    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>): Promise<AppFabricationFulfillment> {
+    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>, updateOptions = { loadApp: true }): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
         aff.setAppInfo(result.info);
         aff.setImplementedInterfaces(result.implemented.getValues());
 
-        const old = await this.storage.retrieveOne(result.info.id);
+        const old = await this.appMetadataStorage.retrieveOne(result.info.id);
 
         if (!old) {
             throw new Error('Can not update an App that does not currently exist.');
         }
 
-        await this.disable(old.id).catch();
+        // If there is any error during disabling, it doesn't really matter
+        await this.disable(old.id).catch(() => {});
 
-        // TODO: We could show what new interfaces have been added
-
-        const stored = await this.storage.update({
+        const descriptor: IAppStorageItem = {
+            ...old,
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
-            status: this.apps.get(old.id).getStatus(),
-            zip: appPackage.toString('base64'),
-            compiled: Object.entries(result.files).reduce(
-                (files, [key, value]) => (files[key.replace(/\./gi, '$')] = value, files),
-                {} as {[key: string]: string},
-            ),
+            status: this.apps.get(old.id)?.getStatus() || old.status,
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
             marketplaceInfo: old.marketplaceInfo,
+            sourcePath: old.sourcePath,
             permissionsGranted,
-        });
+        };
 
-        // Now that is has all been compiled, let's get the
-        // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, stored);
+        try {
+            descriptor.sourcePath = await this.appSourceStorage.update(descriptor, appPackage);
+        } catch (error) {
+            aff.setStorageError('Failed to storage app package');
+
+            return aff;
+        }
+
+        const stored = await this.appMetadataStorage.update(descriptor);
+
+        const app = this.getCompiler().toSandBox(this, descriptor, result);
 
         // Ensure there is an user for the app
         try {
-            await this.ensureAppUser(app);
+            await this.createAppUser(result.info);
         } catch (err) {
             aff.setAppUserError({
-                username: app.getAppUserUsername(),
+                username: `${ result.info.nameSlug }.bot`,
                 message: 'Failed to create an app user for this app.',
             });
 
             return aff;
         }
 
-        // Let everyone know that the App has been updated
-        await this.bridges.getAppActivationBridge().doAppUpdated(app).catch();
-
-        // Store it temporarily so we can access it else where
-        this.apps.set(app.getID(), app);
         aff.setApp(app);
 
-        // Start up the app
-        await this.runStartUpProcess(stored, app, false, true);
+        if (updateOptions.loadApp) {
+            await this.updateLocal(stored, app);
+
+            await this.bridges.getAppActivationBridge().doAppUpdated(app).catch(() => {});
+        }
 
         return aff;
+    }
+
+    /**
+     * Updates the local instance of an app.
+     *
+     * If the second parameter is a Buffer of an app package,
+     * unpackage and instantiate the app's main class
+     *
+     * With an instance of a ProxiedApp, start it up and replace
+     * the reference in the local app collection
+     */
+    public async updateLocal(stored: IAppStorageItem, appPackageOrInstance: ProxiedApp | Buffer) {
+        const app = await (async () => {
+            if (appPackageOrInstance instanceof Buffer) {
+                const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
+
+                return this.getCompiler().toSandBox(this, stored, parseResult);
+            }
+
+            return appPackageOrInstance;
+        })();
+
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
+
+        this.apps.set(app.getID(), app);
+
+        await this.runStartUpProcess(stored, app, false, true);
     }
 
     public getLanguageContent(): { [key: string]: object } {
@@ -649,7 +716,7 @@ export class AppManager {
 
             appStorageItem.marketplaceInfo.subscriptionInfo = appInfo.subscriptionInfo;
 
-            return this.storage.update(appStorageItem);
+            return this.appMetadataStorage.update(appStorageItem);
         })).catch();
 
         const queue = [] as Array<Promise<void>>;
@@ -662,15 +729,13 @@ export class AppManager {
 
                 return app.setStatus(AppStatus.DISABLED);
             })
-            .catch((error) => {
+            .catch(async (error) => {
                 if (!(error instanceof InvalidLicenseError)) {
                     console.error(error);
                     return;
                 }
 
-                this.commandManager.unregisterCommands(app.getID());
-                this.externalComponentManager.unregisterExternalComponents(app.getID());
-                this.apiManager.unregisterApis(app.getID());
+                await this.purgeAppConfig(app);
 
                 return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
             })
@@ -682,7 +747,7 @@ export class AppManager {
                 const storageItem = app.getStorageItem();
                 storageItem.status = app.getStatus();
 
-                return this.storage.update(storageItem).catch(console.error) as Promise<void>;
+                return this.appMetadataStorage.update(storageItem).catch(console.error) as Promise<void>;
             }),
         ));
 
@@ -699,13 +764,15 @@ export class AppManager {
             return this.apps.get(appId);
         }
 
-        const item: IAppStorageItem = await this.storage.retrieveOne(appId);
+        const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
+        const appPackage = await this.appSourceStorage.fetch(item);
+        const unpackageResult = await this.getParser().unpackageApp(appPackage);
 
         if (!item) {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        this.apps.set(item.id, this.getCompiler().toSandBox(this, item));
+        this.apps.set(item.id, this.getCompiler().toSandBox(this, item, unpackageResult));
 
         const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
@@ -787,10 +854,7 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
-            this.commandManager.unregisterCommands(storageItem.id);
-            this.externalComponentManager.unregisterExternalComponents(storageItem.id);
-            this.apiManager.unregisterApis(storageItem.id);
-            await this.schedulerManager.cleanUp(storageItem.id);
+            await this.purgeAppConfig(app);
             result = false;
 
             await app.setStatus(status, silenceStatus);
@@ -800,10 +864,24 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            await this.storage.update(storageItem).catch();
+            await this.appMetadataStorage.update(storageItem).catch();
         }
 
         return result;
+    }
+
+    private async purgeAppConfig(app: ProxiedApp, opts: IPurgeAppConfigOpts = {}) {
+        if (!opts.keepScheduledJobs) {
+            await this.schedulerManager.cleanUp(app.getID());
+        }
+        this.listenerManager.unregisterListeners(app);
+        this.listenerManager.lockEssentialEvents(app);
+        this.commandManager.unregisterCommands(app.getID());
+        this.externalComponentManager.unregisterExternalComponents(app.getID());
+        this.apiManager.unregisterApis(app.getID());
+        this.accessorManager.purifyApp(app.getID());
+        this.uiActionButtonManager.clearAppActionButtons(app.getID());
+        this.videoConfProviderManager.unregisterProviders(app.getID());
     }
 
     /**
@@ -832,6 +910,7 @@ export class AppManager {
 
     private async enableApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, isManual: boolean, silenceStatus = false): Promise<boolean> {
         let enable: boolean;
+        let status = AppStatus.ERROR_DISABLED;
 
         try {
             await app.validateLicense();
@@ -840,10 +919,17 @@ export class AppManager {
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
                 this.getAccessorManager().getConfigurationModify(storageItem.id)) as boolean;
 
-            await app.setStatus(isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED, silenceStatus);
+            if (enable) {
+                status = isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED;
+            } else {
+                status = AppStatus.DISABLED;
+                app.getLogger().warn(
+                    `The App (${ app.getID() }) disabled itself when being enabled. \n` +
+                    `Check the "onEnable" implementation for details.`,
+                );
+            }
         } catch (e) {
             enable = false;
-            let status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
                 console.warn('Please report the following error:');
@@ -854,7 +940,6 @@ export class AppManager {
             }
 
             console.error(e);
-            await app.setStatus(status, silenceStatus);
         }
 
         if (enable) {
@@ -863,43 +948,42 @@ export class AppManager {
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
             this.listenerManager.releaseEssentialEvents(app);
+            this.videoConfProviderManager.registerProviders(app.getID());
         } else {
-            this.commandManager.unregisterCommands(app.getID());
-            this.externalComponentManager.unregisterExternalComponents(app.getID());
-            this.apiManager.unregisterApis(app.getID());
-            this.listenerManager.lockEssentialEvents(app);
-            await this.schedulerManager.cleanUp(app.getID());
+            await this.purgeAppConfig(app);
         }
 
         if (saveToDb) {
-            storageItem.status = app.getStatus();
+            storageItem.status = status;
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            await this.storage.update(storageItem).catch();
+            await this.appMetadataStorage.update(storageItem).catch();
         }
+
+        await app.setStatus(status, silenceStatus);
 
         return enable;
     }
 
-    private async createAppUser(app: ProxiedApp): Promise<string> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
+    private async createAppUser(appInfo: IAppInfo): Promise<string> {
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(appInfo.id);
 
         if (appUser) {
             return appUser.id;
         }
 
         const userData: Partial<IUser> = {
-            username: app.getAppUserUsername(),
-            name: app.getInfo().name,
+            username: `${ appInfo.nameSlug }.bot`,
+            name: appInfo.name,
             roles: ['app'],
-            appId: app.getID(),
+            appId: appInfo.id,
             type: UserType.APP,
             status: 'online',
             isEnabled: true,
         };
 
-        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).create(userData, app.getID(), {
-            avatarUrl: app.getInfo().iconFileContent || app.getInfo().iconFile,
+        return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).create(userData, appInfo.id, {
+            avatarUrl: appInfo.iconFileContent || appInfo.iconFile,
             joinDefaultChannels: true,
             sendWelcomeEmail: false,
         });
@@ -913,16 +997,6 @@ export class AppManager {
         }
 
         return (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).remove(appUser, app.getID());
-    }
-
-    private async ensureAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
-
-        if (appUser) {
-            return true;
-        }
-
-        return !!this.createAppUser(app);
     }
 
     private async uninstallApp(app: ProxiedApp, user: IUser): Promise<boolean> {

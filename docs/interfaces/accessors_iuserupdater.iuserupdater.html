@@ -97,6 +97,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuserupdater.iuserupdater.html#updatebio" class="tsd-kind-icon">update<wbr>Bio</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuserupdater.iuserupdater.html#updatecustomfields" class="tsd-kind-icon">update<wbr>Custom<wbr>Fields</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuserupdater.iuserupdater.html#updatestatus" class="tsd-kind-icon">update<wbr>Status</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors_iuserupdater.iuserupdater.html#updatestatustext" class="tsd-kind-icon">update<wbr>Status<wbr>Text</a></li>
 							</ul>
 						</section>
@@ -115,7 +116,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/IUserUpdater.ts#L14">src/definition/accessors/IUserUpdater.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/IUserUpdater.ts#L15">src/definition/accessors/IUserUpdater.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -141,7 +142,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/IUserUpdater.ts#L15">src/definition/accessors/IUserUpdater.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/IUserUpdater.ts#L16">src/definition/accessors/IUserUpdater.ts:16</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -163,6 +164,35 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="updatestatus" class="tsd-anchor"></a>
+					<h3>update<wbr>Status</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">update<wbr>Status<span class="tsd-signature-symbol">(</span>user<span class="tsd-signature-symbol">: </span><a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a>, statusText<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, status<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/IUserUpdater.ts#L14">src/definition/accessors/IUserUpdater.ts:14</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>user: <a href="users_iuser.iuser.html" class="tsd-signature-type" data-tsd-kind="Interface">IUser</a></h5>
+								</li>
+								<li>
+									<h5>statusText: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>status: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="updatestatustext" class="tsd-anchor"></a>
 					<h3>update<wbr>Status<wbr>Text</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
@@ -172,7 +202,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/cc6e19c/src/definition/accessors/IUserUpdater.ts#L13">src/definition/accessors/IUserUpdater.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/accessors/IUserUpdater.ts#L13">src/definition/accessors/IUserUpdater.ts:13</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -213,6 +243,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_iuserupdater.iuserupdater.html#updatecustomfields" class="tsd-kind-icon">update<wbr>Custom<wbr>Fields</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="accessors_iuserupdater.iuserupdater.html#updatestatus" class="tsd-kind-icon">update<wbr>Status</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="accessors_iuserupdater.iuserupdater.html#updatestatustext" class="tsd-kind-icon">update<wbr>Status<wbr>Text</a>

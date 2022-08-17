@@ -5,6 +5,9 @@ export enum AppMethod {
     _COMMAND_PREVIEWER = 'previewer',
     _COMMAND_PREVIEW_EXECUTOR = 'executePreviewItem',
     _JOB_PROCESSOR = 'jobProcessor',
+    _VIDEOCONF_GENERATE_URL = 'generateUrl',
+    _VIDEOCONF_CUSTOMIZE_URL = 'customizeUrl',
+    _VIDEOCONF_IS_CONFIGURED = 'isFullyConfigured',
     INITIALIZE = 'initialize',
     ONENABLE = 'onEnable',
     ONDISABLE = 'onDisable',
@@ -34,6 +37,11 @@ export enum AppMethod {
     EXECUTEPREMESSAGEUPDATEDMODIFY = 'executePreMessageUpdatedModify',
     CHECKPOSTMESSAGEUPDATED = 'checkPostMessageUpdated',
     EXECUTEPOSTMESSAGEUPDATED = 'executePostMessageUpdated',
+    EXECUTE_POST_MESSAGE_REACTED = 'executePostMessageReacted',
+    EXECUTE_POST_MESSAGE_FOLLOWED = 'executePostMessageFollowed',
+    EXECUTE_POST_MESSAGE_PINNED = 'executePostMessagePinned',
+    EXECUTE_POST_MESSAGE_STARRED = 'executePostMessageStarred',
+    EXECUTE_POST_MESSAGE_REPORTED = 'executePostMessageReported',
     // Room handlers
     CHECKPREROOMCREATEPREVENT = 'checkPreRoomCreatePrevent',
     EXECUTEPREROOMCREATEPREVENT = 'executePreRoomCreatePrevent',
@@ -58,6 +66,7 @@ export enum AppMethod {
     UIKIT_BLOCK_ACTION = 'executeBlockActionHandler',
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
+    UIKIT_ACTION_BUTTON = 'executeActionButtonHandler',
     UIKIT_LIVECHAT_BLOCK_ACTION = 'executeLivechatBlockActionHandler',
     // Livechat
     EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
@@ -73,4 +82,13 @@ export enum AppMethod {
     EXECUTE_POST_LIVECHAT_ROOM_SAVED = 'executePostLivechatRoomSaved',
     // FileUpload
     EXECUTE_PRE_FILE_UPLOAD = 'executePreFileUpload',
+    // Email
+    EXECUTE_PRE_EMAIL_SENT = 'executePreEmailSent',
+    // User
+    EXECUTE_POST_USER_CREATED = 'executePostUserCreated',
+    EXECUTE_POST_USER_UPDATED = 'executePostUserUpdated',
+    EXECUTE_POST_USER_DELETED = 'executePostUserDeleted',
+    EXECUTE_POST_USER_LOGGED_IN = 'executePostUserLoggedIn',
+    EXECUTE_POST_USER_LOGGED_OUT = 'executePostUserLoggedOut',
+    EXECUTE_POST_USER_STATUS_CHANGED = 'executePostUserStatusChanged',
 }

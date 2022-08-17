@@ -27,6 +27,7 @@ export const AppPermissions = {
     },
     'ui': {
         interaction: { name: 'ui.interact' },
+        registerButtons: { name: 'ui.registerButtons' },
     },
     'setting': {
         read: { name: 'server-setting.read' },
@@ -53,6 +54,7 @@ export const AppPermissions = {
     'livechat-message': {
         read: { name: 'livechat-message.read' },
         write: { name: 'livechat-message.write' },
+        multiple: { name: 'livechat-message.multiple' },
     },
     'livechat-room': {
         read: { name: 'livechat-room.read' },
@@ -81,6 +83,11 @@ export const AppPermissions = {
     },
     'command': {
         default: { name: 'slashcommand' },
+    },
+    'videoConference': {
+        read: { name: 'video-conference.read' },
+        write: { name: 'video-conference.write' },
+        provider: { name: 'video-conference-provider' },
     },
     'apis': {
         default: { name: 'api' },
@@ -114,5 +121,8 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.persistence.default,
     AppPermissions.env.read,
     AppPermissions.command.default,
+    AppPermissions.videoConference.provider,
+    AppPermissions.videoConference.read,
+    AppPermissions.videoConference.write,
     AppPermissions.apis.default,
 ];

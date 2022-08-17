@@ -6,6 +6,7 @@ export enum RocketChatAssociationModel {
     USER = 'user',
     FILE = 'file',
     MISC = 'misc',
+    VIDEO_CONFERENCE = 'video-conference',
 }
 
 export class RocketChatAssociationRecord {

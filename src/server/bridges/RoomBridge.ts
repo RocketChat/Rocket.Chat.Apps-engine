@@ -87,7 +87,7 @@ export abstract class RoomBridge extends BaseBridge {
 
         AppPermissionManager.notifyAboutError(new PermissionDeniedError({
             appId,
-            missingPermissions: [AppPermissions.scheduler.default],
+            missingPermissions: [AppPermissions.room.write],
         }));
 
         return false;

@@ -1,4 +1,5 @@
 import { RequestMethod } from '../accessors';
+import { IUser } from '../users';
 
 export interface IApiRequest {
     method: RequestMethod;
@@ -7,4 +8,9 @@ export interface IApiRequest {
     params: { [key: string]: string };
     content: any;
     privateHash?: string;
+    /**
+     * The user that is making the request, as
+     * authenticated by Rocket.Chat's strategy.
+     */
+    user?: IUser;
 }

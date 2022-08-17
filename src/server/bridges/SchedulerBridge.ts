@@ -9,19 +9,19 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class SchedulerBridge extends BaseBridge {
-    public async doRegisterProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void> {
+    public async doRegisterProcessors(processors: Array<IProcessor> = [], appId: string): Promise<void | Array<string>> {
         if (this.hasDefaultPermission(appId)) {
             return this.registerProcessors(processors, appId);
         }
     }
 
-    public async doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void> {
+    public async doScheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void | string> {
         if (this.hasDefaultPermission(appId)) {
             return this.scheduleOnce(job, appId);
         }
     }
 
-    public async doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void> {
+    public async doScheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void | string> {
         if (this.hasDefaultPermission(appId)) {
             return this.scheduleRecurring(job, appId);
         }
@@ -39,9 +39,9 @@ export abstract class SchedulerBridge extends BaseBridge {
         }
     }
 
-    protected abstract registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void>;
-    protected abstract scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void>;
-    protected abstract scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void>;
+    protected abstract registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void | Array<string>>;
+    protected abstract scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void | string>;
+    protected abstract scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void | string>;
     protected abstract cancelJob(jobId: string, appId: string): Promise<void>;
     protected abstract cancelAllJobs(appId: string): Promise<void>;
 
