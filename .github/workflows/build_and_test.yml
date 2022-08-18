@@ -167,6 +167,7 @@ jobs:
                   if [[ '${{ github.event_name }}' = 'release' ]]; then
                       npm publish --tag latest
                   else
+                      ls -la
                       # Add build number to the end of the version
                       npm version --no-git-tag-version "$(node -p "require('./package.json').version").${{ github.event.number }}"
 
