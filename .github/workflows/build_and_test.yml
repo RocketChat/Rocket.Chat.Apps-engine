@@ -4,6 +4,9 @@ on:
     release:
         types: [published]
     pull_request:
+    push:
+        branches:
+            - "alpha"
 
 jobs:
     prepare:
