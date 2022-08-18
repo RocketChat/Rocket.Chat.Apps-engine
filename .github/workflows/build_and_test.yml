@@ -169,7 +169,7 @@ jobs:
                   else
                       ls -la
                       # Add build number to the end of the version
-                      npm version --no-git-tag-version "$(node -p "require('./package.json').version").${{ github.event.number }}"
+                      npm version "$(node -p "require('./package.json').version").${{ github.run_number }}" --no-git-tag-version
 
                       GIT_BRANCH="${GITHUB_REF#*heads/}"
                       if [[ $GIT_BRANCH == 'alpha' ]]; then
