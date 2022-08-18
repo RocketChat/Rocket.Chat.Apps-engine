@@ -92,6 +92,10 @@ export const AppPermissions = {
     'apis': {
         default: { name: 'api' },
     },
+    'oauth-app': {
+        read: { name: 'oauth-app.read' },
+        write: { name: 'oauth-app.write' },
+    },
 };
 
 export const defaultPermissions: Array<IPermission> = [

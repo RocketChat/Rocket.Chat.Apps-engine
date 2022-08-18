@@ -3,6 +3,7 @@ import { IEnvironmentRead } from './IEnvironmentRead';
 import { ILivechatRead } from './ILivechatRead';
 import { IMessageRead } from './IMessageRead';
 import { INotifier } from './INotifier';
+import { IOAuthAppsReader } from './IOAuthAppsReader';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
 import { IUploadRead } from './IUploadRead';
@@ -38,4 +39,6 @@ export interface IRead {
     getCloudWorkspaceReader(): ICloudWorkspaceRead;
 
     getVideoConferenceReader(): IVideoConferenceRead;
+
+    getOAuthAppsReader(): IOAuthAppsReader;
 }
