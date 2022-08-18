@@ -139,7 +139,7 @@ jobs:
 
     publish:
         runs-on: ubuntu-latest
-        if: github.event_name == 'release' || github.event_name == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
+        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
         needs: build
 
         steps:
