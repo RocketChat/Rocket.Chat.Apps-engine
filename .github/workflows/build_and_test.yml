@@ -1,0 +1,176 @@
+name: Build and Test
+
+on:
+    release:
+        types: [published]
+    pull_request:
+
+jobs:
+    prepare:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Github Info
+              run: |
+                  echo "GITHUB_ACTION: $GITHUB_ACTION"
+                  echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+                  echo "GITHUB_REF: $GITHUB_REF"
+                  echo "GITHUB_HEAD_REF: $GITHUB_HEAD_REF"
+                  echo "GITHUB_BASE_REF: $GITHUB_BASE_REF"
+                  echo "github.event_name: ${{ github.event_name }}"
+                  cat $GITHUB_EVENT_PATH
+
+            - name: Use Node.js 14.19.3
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14.19.3"
+
+            - uses: actions/checkout@v2
+
+            - name: Versions
+              run: |
+                  npm --versions
+                  node -v
+                  git version
+
+            - name: check package-lock
+              run: |
+                  npx package-lock-check
+
+            - name: Cache node modules
+              id: cache-nodemodules
+              uses: actions/cache@v2
+              with:
+                  path: ./node_modules
+                  key: ${{ runner.OS }}-node_modules-4-${{ hashFiles('./package-lock.json', '.github/workflows/build_and_test.yml') }}
+
+            - name: npm install
+              if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+              run: npm install
+
+            - name: Prepare workspace
+              run: |
+                  tar czf /tmp/workspace.tar.gz .
+
+            - uses: actions/upload-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp/workspace.tar.gz
+
+    lint:
+        runs-on: ubuntu-latest
+        needs: prepare
+
+        steps:
+            - name: Use Node.js 14.19.3
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14.19.3"
+
+            - uses: actions/download-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp
+
+            - name: Decompress workspace
+              run: |
+                  tar xzf /tmp/workspace.tar.gz .
+
+            - name: Lint TypeScript Code
+              run: npm run lint
+
+    test:
+        runs-on: ubuntu-latest
+        needs: prepare
+
+        steps:
+            - name: Use Node.js 14.19.3
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14.19.3"
+
+            - uses: actions/download-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp
+
+            - name: Decompress workspace
+              run: |
+                  tar xzf /tmp/workspace.tar.gz .
+
+            - name: Test TypeScript Code
+              run: npm run unit-tests
+
+    build:
+        runs-on: ubuntu-latest
+        needs:
+            - lint
+            - test
+
+        steps:
+            - name: Use Node.js 14.19.3
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14.19.3"
+
+            - uses: actions/download-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp
+
+            - name: Decompress workspace
+              run: |
+                  tar xzf /tmp/workspace.tar.gz .
+
+            - name: Compile TypeScript into JavaScript
+              run: npm run compile
+
+            - name: Prepare workspace
+              run: |
+                  tar czf /tmp/workspace.tar.gz .
+
+            - uses: actions/upload-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp/workspace.tar.gz
+
+    publish:
+        runs-on: ubuntu-latest
+        if: github.event_name == 'release' || github.event_name == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
+        needs: build
+
+        steps:
+            - name: Use Node.js 14.19.3
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "14.19.3"
+
+            - uses: actions/download-artifact@v2
+              with:
+                  name: workspace
+                  path: /tmp
+
+            - name: Decompress workspace
+              run: |
+                  tar xzf /tmp/workspace.tar.gz .
+
+            - name: Authenticate with registry
+              env:
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+              run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+
+            - name: Publish package
+              run: |
+                  if [[ '${{ github.event_name }}' = 'release' ]]; then
+                      npm publish --tag latest
+                  else
+                      # Add build number to the end of the version
+                      npm version --no-git-tag-version "$(node -p "require('./package.json').version").${{ github.event.number }}"
+
+                      GIT_BRANCH="${GITHUB_REF#*heads/}"
+                      if [[ $GIT_BRANCH == 'alpha' ]]; then
+                          npm run go-publish-alpha
+                      else
+                          npm run go-publish-beta
+                      fi;
+                  fi;
