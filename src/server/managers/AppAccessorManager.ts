@@ -23,6 +23,7 @@ import {
     MessageRead,
     Modify,
     Notifier,
+    OAuthAppsReader,
     Persistence,
     PersistenceRead,
     Reader,
@@ -168,8 +169,21 @@ export class AppAccessorManager {
             const upload = new UploadRead(this.bridges.getUploadBridge(), appId);
             const cloud = new CloudWorkspaceRead(this.bridges.getCloudWorkspaceBridge(), appId);
             const videoConf = new VideoConferenceRead(this.bridges.getVideoConferenceBridge(), appId);
+            const oauthApps = new OAuthAppsReader(this.bridges.getOAuthAppsBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf));
+            this.readers.set(appId, new Reader(
+                env,
+                msg,
+                persist,
+                room,
+                user,
+                noti,
+                livechat,
+                upload,
+                cloud,
+                videoConf,
+                oauthApps,
+            ));
         }
 
         return this.readers.get(appId);
