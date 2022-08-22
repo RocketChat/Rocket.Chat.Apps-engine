@@ -40,6 +40,9 @@ export class ModifyCreator implements IModifyCreator {
         return this.uploadCreator;
     }
 
+    /**
+     * @deprecated please prefer the rocket.chat/ui-kit components
+     */
     public getBlockBuilder(): BlockBuilder {
         return new BlockBuilder(this.appId);
     }

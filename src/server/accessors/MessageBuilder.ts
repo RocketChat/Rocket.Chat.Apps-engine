@@ -1,3 +1,4 @@
+import { Block } from '@rocket.chat/ui-kit';
 import { IMessageBuilder } from '../../definition/accessors';
 import { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
@@ -173,7 +174,7 @@ export class MessageBuilder implements IMessageBuilder {
         return this.msg;
     }
 
-    public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
+    public addBlocks(blocks: BlockBuilder | Array<IBlock | Block>) {
         if (!Array.isArray(this.msg.blocks)) {
             this.msg.blocks = [];
         }
@@ -187,7 +188,7 @@ export class MessageBuilder implements IMessageBuilder {
         return this;
     }
 
-    public setBlocks(blocks: BlockBuilder | Array<IBlock>) {
+    public setBlocks(blocks: BlockBuilder | Array<IBlock | Block>) {
         if (blocks instanceof BlockBuilder) {
             this.msg.blocks = blocks.getBlocks();
         } else {

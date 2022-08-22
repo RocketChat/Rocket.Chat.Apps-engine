@@ -1,3 +1,4 @@
+import { Block } from '@rocket.chat/ui-kit';
 import { IMessage, IMessageAttachment } from '../messages';
 import { RocketChatAssociationModel } from '../metadata';
 import { IRoom } from '../rooms';
@@ -208,19 +209,19 @@ export interface IMessageBuilder {
      * Adds a block collection to the message's
      * own collection
      */
-    addBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+    addBlocks(blocks: BlockBuilder | Array<IBlock | Block>): IMessageBuilder;
 
     /**
      * Sets the block collection of the message
      *
      * @param blocks
      */
-    setBlocks(blocks: BlockBuilder | Array<IBlock>): IMessageBuilder;
+    setBlocks(blocks: BlockBuilder | Array<IBlock | Block>): IMessageBuilder;
 
     /**
      * Gets the block collection of the message
      */
-    getBlocks(): Array<IBlock>;
+    getBlocks(): Array<IBlock | Block>;
 
     /**
      * Adds a custom field to the message.
