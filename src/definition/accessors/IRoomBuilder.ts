@@ -68,18 +68,6 @@ export interface IRoomBuilder {
     getCreator(): IUser;
 
     /**
-     * Archives/Unarchives the room
-     *
-     * @param archived archive status of room
-     */
-    setArchived(archived: IRoom['isArchived']): IRoomBuilder;
-
-    /**
-     * Gets the archive status of room
-     */
-    getArchived(): IRoom['isArchived'];
-
-    /**
      * Adds a user to the room, these are by username until further notice.
      *
      * @param username the user's username to add to the room

@@ -14,13 +14,6 @@ export class RoomBuilder implements IRoomBuilder {
         this.room = (data ? data : { customFields: {} }) as IRoom;
         this.members = new Array<string>();
     }
-    public setArchived(archived: IRoom['isArchived']): IRoomBuilder {
-        this.room.isArchived = archived;
-        return this;
-    }
-    public getArchived(): IRoom['isArchived'] {
-        return this.room.isArchived;
-    }
 
     public setData(data: Partial<IRoom>): IRoomBuilder {
         delete data.id;
