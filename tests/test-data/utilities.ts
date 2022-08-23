@@ -96,6 +96,7 @@ export class TestData {
             slugifiedName: slugifiedName ? slugifiedName : 'testing-room',
             displayName: 'Testing Room',
             type: RoomType.CHANNEL,
+            isArchived: false,
             creator: TestData.getUser(),
             usernames: [TestData.getUser().username],
             isDefault: true,
@@ -121,39 +122,41 @@ export class TestData {
             emoji: ':see_no_evil:',
             avatarUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
             alias: 'Testing Bot',
-            attachments: [{
-                collapsed: false,
-                color: '#00b2b2',
-                text: 'Just an attachment that is used for testing',
-                timestamp: new Date(),
-                timestampLink: 'https://google.com/',
-                thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                author: {
-                    name: 'Author Name',
-                    link: 'https://github.com/graywolf336',
-                    icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                },
-                title: {
-                    value: 'Attachment Title',
-                    link: 'https://github.com/RocketChat',
-                    displayDownloadLink: false,
-                },
-                imageUrl: 'https://rocket.chat/images/default/logo.svg',
-                audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
-                videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
-                fields: [
-                    {
-                        short: true,
-                        title: 'Test',
-                        value: 'Testing out something or other',
+            attachments: [
+                {
+                    collapsed: false,
+                    color: '#00b2b2',
+                    text: 'Just an attachment that is used for testing',
+                    timestamp: new Date(),
+                    timestampLink: 'https://google.com/',
+                    thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
+                    author: {
+                        name: 'Author Name',
+                        link: 'https://github.com/graywolf336',
+                        icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
                     },
-                    {
-                        short: true,
-                        title: 'Another Test',
-                        value: '[Link](https://google.com/) something and this and that.',
+                    title: {
+                        value: 'Attachment Title',
+                        link: 'https://github.com/RocketChat',
+                        displayDownloadLink: false,
                     },
-                ],
-            }],
+                    imageUrl: 'https://rocket.chat/images/default/logo.svg',
+                    audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
+                    videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
+                    fields: [
+                        {
+                            short: true,
+                            title: 'Test',
+                            value: 'Testing out something or other',
+                        },
+                        {
+                            short: true,
+                            title: 'Another Test',
+                            value: '[Link](https://google.com/) something and this and that.',
+                        },
+                    ],
+                },
+            ],
         };
     }
 
@@ -173,7 +176,14 @@ export class TestData {
                     items: new Array(),
                 } as ISlashCommandPreview);
             },
-            executePreviewItem: (item: ISlashCommandPreviewItem, context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+            executePreviewItem: (
+                item: ISlashCommandPreviewItem,
+                context: SlashCommandContext,
+                read: IRead,
+                modify: IModify,
+                http: IHttp,
+                persis: IPersistence,
+            ): Promise<void> => {
                 return Promise.resolve();
             },
         };
@@ -183,14 +193,23 @@ export class TestData {
         return {
             visibility,
             security,
-            endpoints: [{
-                path,
-                get(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
-                    return Promise.resolve({
-                        status: HttpStatusCode.OK,
-                    });
+            endpoints: [
+                {
+                    path,
+                    get(
+                        request: IApiRequest,
+                        endpoint: IApiEndpointInfo,
+                        read: IRead,
+                        modify: IModify,
+                        http: IHttp,
+                        persis: IPersistence,
+                    ): Promise<IApiResponse> {
+                        return Promise.resolve({
+                            status: HttpStatusCode.OK,
+                        });
+                    },
                 },
-            }],
+            ],
         };
     }
 
@@ -350,10 +369,19 @@ export class TestData {
     }
 
     public static getMockApp(id: string, name: string): ProxiedApp {
-        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
-            getName() { return 'testing'; },
-            getID() { return 'testing'; },
-        } as App, (mod: string) => mod);
+        return new ProxiedApp(
+            {} as AppManager,
+            { status: AppStatus.UNKNOWN } as IAppStorageItem,
+            {
+                getName() {
+                    return 'testing';
+                },
+                getID() {
+                    return 'testing';
+                },
+            } as App,
+            (mod: string) => mod,
+        );
     }
 }
 

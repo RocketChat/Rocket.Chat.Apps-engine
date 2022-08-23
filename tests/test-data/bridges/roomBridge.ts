@@ -43,4 +43,12 @@ export class TestsRoomBridge extends RoomBridge {
     public delete(roomId: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
+
+    protected archiveRoom(room: IRoom, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
+
+    protected unarchiveRoom(room: IRoom, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
 }

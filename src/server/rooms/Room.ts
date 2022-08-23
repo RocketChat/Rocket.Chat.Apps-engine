@@ -9,6 +9,7 @@ export class Room implements IRoom {
     public displayName?: string;
     public slugifiedName: string;
     public type: RoomType;
+    public isArchived: boolean;
     public creator: IUser;
     public isDefault?: boolean;
     public isReadOnly?: boolean;

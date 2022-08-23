@@ -5,6 +5,7 @@ import { IUser } from '../../definition/users';
 
 export class RoomBuilder implements IRoomBuilder {
     public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+
     protected room: IRoom;
     private members: Array<string>;
 
@@ -140,11 +141,11 @@ export class RoomBuilder implements IRoomBuilder {
     }
 
     public getCustomFields(): { [key: string]: object } {
-      return this.room.customFields;
+        return this.room.customFields;
     }
 
     public getUserIds(): Array<string> {
-      return this.room.userIds;
+        return this.room.userIds;
     }
 
     public getRoom(): IRoom {
