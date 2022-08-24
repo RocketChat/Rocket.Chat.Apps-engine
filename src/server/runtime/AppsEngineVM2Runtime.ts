@@ -1,3 +1,4 @@
+import * as path from 'path';
 import * as timers from 'timers';
 import { NodeVM, NodeVMOptions } from 'vm2';
 import { App } from '../../definition/App';
@@ -33,7 +34,10 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             vmOptions.require = {
                 external: ['@rocket.chat/apps-engine', 'uuid'],
                 builtin: ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'],
-                resolve: (moduleName, p) => (console.log(`Resolving ${moduleName} from ${p}`), moduleName),
+                resolve: (moduleName, p) => {
+                    console.log('Resolving '.concat(moduleName, ' from ').concat(p));
+                    return path.resolve(p + '/npm/node_modules/' + moduleName);
+                },
                 context: 'sandbox',
             };
 
