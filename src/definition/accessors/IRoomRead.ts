@@ -61,4 +61,28 @@ export interface IRoomRead {
      * @returns the room
      */
     getDirectByUsernames(usernames: Array<string>): Promise<IRoom>;
+
+    /**
+     * Get an iterator of the moderators of a given room
+     *
+     * @param roomId the room's id
+     * @returns an iterator for the moderator users in the room
+     */
+    getModerators(roomId: string): Promise<Array<IUser>>;
+
+    /**
+     * Get an iterator of the owners of a given room
+     *
+     * @param roomId the room's id
+     * @returns an iterator for the owner users in the room
+     */
+    getOwners(roomId: string): Promise<Array<IUser>>;
+
+    /**
+     * Get an iterator of the leaders of a given room
+     *
+     * @param roomId the room's id
+     * @returns an iterator for the leader users in the room
+     */
+    getLeaders(roomId: string): Promise<Array<IUser>>;
 }

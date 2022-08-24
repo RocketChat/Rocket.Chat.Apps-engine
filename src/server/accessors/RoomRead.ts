@@ -6,7 +6,7 @@ import { IUser } from '../../definition/users';
 import { RoomBridge } from '../bridges';
 
 export class RoomRead implements IRoomRead {
-    constructor(private roomBridge: RoomBridge, private appId: string) { }
+    constructor(private roomBridge: RoomBridge, private appId: string) {}
 
     public getById(id: string): Promise<IRoom> {
         return this.roomBridge.doGetById(id, this.appId);
@@ -34,5 +34,17 @@ export class RoomRead implements IRoomRead {
 
     public getDirectByUsernames(usernames: Array<string>): Promise<IRoom> {
         return this.roomBridge.doGetDirectByUsernames(usernames, this.appId);
+    }
+
+    public getModerators(roomId: string): Promise<Array<IUser>> {
+        return this.roomBridge.doGetModerators(roomId, this.appId);
+    }
+
+    public getOwners(roomId: string): Promise<Array<IUser>> {
+        return this.roomBridge.doGetOwners(roomId, this.appId);
+    }
+
+    public getLeaders(roomId: string): Promise<Array<IUser>> {
+        return this.roomBridge.doGetLeaders(roomId, this.appId);
     }
 }
