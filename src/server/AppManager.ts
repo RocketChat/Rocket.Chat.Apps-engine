@@ -10,8 +10,15 @@ import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './comp
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
-    AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager, AppVideoConfProviderManager,
+    AppAccessorManager,
+    AppApiManager,
+    AppExternalComponentManager,
+    AppLicenseManager,
+    AppListenerManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -66,7 +73,6 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
-
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {

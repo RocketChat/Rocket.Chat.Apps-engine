@@ -11,6 +11,7 @@ import {
     IUserRead,
     IVideoConferenceRead,
 } from '../../definition/accessors';
+import { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
 
 export class Reader implements IRead {
     constructor(
@@ -24,8 +25,9 @@ export class Reader implements IRead {
         private upload: IUploadRead,
         private cloud: ICloudWorkspaceRead,
         private videoConf: IVideoConferenceRead,
-    ) { }
 
+        private oauthApps: IOAuthAppsReader,
+    ) { }
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
     }
@@ -64,5 +66,9 @@ export class Reader implements IRead {
 
     public getVideoConferenceReader(): IVideoConferenceRead {
         return this.videoConf;
+    }
+
+    public getOAuthAppsReader(): IOAuthAppsReader {
+        return this.oauthApps;
     }
 }
