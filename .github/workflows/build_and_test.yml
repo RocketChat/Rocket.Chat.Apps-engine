@@ -7,6 +7,7 @@ on:
     push:
         branches:
             - "alpha"
+            - "improvement/vm2-poc"
 
 jobs:
     prepare:
