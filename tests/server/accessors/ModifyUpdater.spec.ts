@@ -73,6 +73,10 @@ export class ModifyUpdaterTestFixture {
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
+        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid editor assigned to the message.');
+        msgBd.setEditor(TestData.getUser());
+        Expect(msg.editor).toBeDefined();
+
         const msgBriSpy = SpyOn(this.mockMessageBridge, 'doUpdate');
         Expect(await mc.finish(msgBd)).not.toBeDefined();
         Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);

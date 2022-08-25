@@ -29,7 +29,7 @@ export class ModifyUpdater implements IModifyUpdater {
     public async message(messageId: string, updater: IUser): Promise<IMessageBuilder> {
         const msg = await this.bridges.getMessageBridge().doGetById(messageId, this.appId);
 
-        return new MessageBuilder(msg);
+        return new MessageBuilder(msg).setEditor(updater);
     }
 
     public async room(roomId: string, updater: IUser): Promise<IRoomBuilder> {
@@ -58,6 +58,10 @@ export class ModifyUpdater implements IModifyUpdater {
 
         if (!result.sender || !result.sender.id) {
             throw new Error('Invalid sender assigned to the message.');
+        }
+
+        if (!result.editor || !result.editor.id) {
+            throw new Error('Invalid editor assigned to the message.');
         }
 
         return this.bridges.getMessageBridge().doUpdate(result, this.appId);
