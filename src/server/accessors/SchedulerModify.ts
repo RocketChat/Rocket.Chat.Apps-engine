@@ -21,10 +21,10 @@ export class SchedulerModify implements ISchedulerModify {
     }
 
     public async cancelJob(jobId: string): Promise<void> {
-        this.bridge.doCancelJob(createProcessorId(jobId, this.appId), this.appId);
+        return this.bridge.doCancelJob(createProcessorId(jobId, this.appId), this.appId);
     }
 
     public async cancelAllJobs(): Promise<void> {
-        this.bridge.doCancelAllJobs(this.appId);
+        return this.bridge.doCancelAllJobs(this.appId);
     }
 }
