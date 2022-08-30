@@ -18,6 +18,7 @@ import {
     VideoConferenceBridge,
 } from '../../../src/server/bridges';
 import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
+import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
@@ -28,6 +29,7 @@ import { TestsHttpBridge } from './httpBridge';
 import { TestsInternalBridge } from './internalBridge';
 import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
+import { TestOAuthAppsBridge } from './OAuthAppsBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
@@ -56,6 +58,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly schedulerBridge: TestSchedulerBridge;
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
     private readonly videoConfBridge: TestsVideoConferenceBridge;
+    private readonly oauthBridge: OAuthAppsBridge;
 
     constructor() {
         super();
@@ -77,6 +80,8 @@ export class TestsAppBridges extends AppBridges {
         this.schedulerBridge = new TestSchedulerBridge();
         this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
         this.videoConfBridge = new TestsVideoConferenceBridge();
+        this.oauthBridge = new TestOAuthAppsBridge();
+
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -153,5 +158,9 @@ export class TestsAppBridges extends AppBridges {
 
     public getVideoConferenceBridge(): VideoConferenceBridge {
         return this.videoConfBridge;
+    }
+
+    public getOAuthAppsBridge(): OAuthAppsBridge {
+        return this.oauthBridge;
     }
 }
