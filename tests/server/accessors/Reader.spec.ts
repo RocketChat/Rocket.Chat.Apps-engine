@@ -1,5 +1,17 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { ICloudWorkspaceRead, IEnvironmentRead, ILivechatRead, IMessageRead, INotifier, IPersistenceRead, IRoomRead, IUploadRead, IUserRead, IVideoConferenceRead } from '../../../src/definition/accessors';
+import {
+    ICloudWorkspaceRead,
+    IEnvironmentRead,
+    ILivechatRead,
+    IMessageRead,
+    INotifier,
+    IPersistenceRead,
+    IRoomRead,
+    IUploadRead,
+    IUserRead,
+    IVideoConferenceRead,
+} from '../../../src/definition/accessors';
+import { IOAuthAppsReader } from '../../../src/definition/accessors/IOAuthAppsReader';
 
 import { Reader } from '../../../src/server/accessors';
 
@@ -14,6 +26,7 @@ export class ReaderAccessorTestFixture {
     private upload: IUploadRead;
     private cloud: ICloudWorkspaceRead;
     private videoConf: IVideoConferenceRead;
+    private oauthApps: IOAuthAppsReader;
 
     @SetupFixture
     public setupFixture() {
@@ -27,13 +40,41 @@ export class ReaderAccessorTestFixture {
         this.upload = {} as IUploadRead;
         this.cloud = {} as ICloudWorkspaceRead;
         this.videoConf = {} as IVideoConferenceRead;
+        this.oauthApps = {} as IOAuthAppsReader;
     }
 
     @Test()
     public useReader() {
-        Expect(() => new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload, this.cloud, this.videoConf)).not.toThrow();
+        Expect(
+            () =>
+                new Reader(
+                    this.env,
+                    this.msg,
+                    this.pr,
+                    this.rm,
+                    this.ur,
+                    this.ni,
+                    this.livechat,
+                    this.upload,
+                    this.cloud,
+                    this.videoConf,
+                    this.oauthApps,
+                ),
+        ).not.toThrow();
 
-        const rd = new Reader(this.env, this.msg, this.pr, this.rm, this.ur, this.ni, this.livechat, this.upload, this.cloud, this.videoConf);
+        const rd = new Reader(
+            this.env,
+            this.msg,
+            this.pr,
+            this.rm,
+            this.ur,
+            this.ni,
+            this.livechat,
+            this.upload,
+            this.cloud,
+            this.videoConf,
+            this.oauthApps,
+        );
         Expect(rd.getEnvironmentReader()).toBeDefined();
         Expect(rd.getMessageReader()).toBeDefined();
         Expect(rd.getNotifier()).toBeDefined();
