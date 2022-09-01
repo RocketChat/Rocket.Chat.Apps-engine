@@ -1,3 +1,4 @@
+import { Block } from '@rocket.chat/ui-kit';
 import { IRoom } from '../rooms';
 import { IBlock } from '../uikit';
 import { IUser, IUserLookup } from '../users';
@@ -24,7 +25,7 @@ export interface IMessage {
     groupable?: boolean;
     parseUrls?: boolean;
     customFields?: { [key: string]: any };
-    blocks?: Array<IBlock>;
+    blocks?: Array<IBlock | Block>;
     starred?: Array<{ _id: string }>;
     pinned?: boolean;
     pinnedAt?: Date;

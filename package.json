@@ -56,6 +56,7 @@
   },
   "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
   "devDependencies": {
+    "@rocket.chat/ui-kit": "^0.32.0-dev.59",
     "@types/adm-zip": "^0.5.0",
     "@types/lodash.clonedeep": "^4.5.7",
     "@types/nedb": "^1.8.12",
@@ -92,6 +93,9 @@
     "semver": "^5.7.1",
     "stack-trace": "0.0.10",
     "uuid": "^3.4.0"
+  },
+  "peerDependencies": {
+    "@rocket.chat/ui-kit": "next"
   },
   "nyc": {
     "include": [
