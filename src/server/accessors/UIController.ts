@@ -1,6 +1,6 @@
 import { IUIController } from '../../definition/accessors';
-import { IUIKitErrorInteractionParam, IUIKitInteractionParam } from '../../definition/accessors/IUIController';
-import { UIKitInteractionType } from '../../definition/uikit';
+import { IUIKitErrorInteractionParam, IUIKitInteractionParam, IUIKitSurfaceViewParam } from '../../definition/accessors/IUIController';
+import { UIKitInteractionType, UIKitSurfaceType } from '../../definition/uikit';
 import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
@@ -15,44 +15,50 @@ export class UIController implements IUIController {
         this.uiInteractionBridge = bridges.getUiInteractionBridge();
     }
 
+    /**
+     * @deprecated please prefer the `openSurfaceView` method
+     */
     public openModalView(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const interactionContext = {
-            ...context,
-            type: UIKitInteractionType.MODAL_OPEN,
-            appId: this.appId,
-        };
-
-        return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+        return this.openModal(view, context, user);
     }
 
+    /**
+     * @deprecated please prefer the `updateSurfaceView` method
+     */
     public updateModalView(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const interactionContext = {
-            ...context,
-            type: UIKitInteractionType.MODAL_UPDATE,
-            appId: this.appId,
-        };
-
-        return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
+        return this.openModal(view, context, user, true);
     }
 
+    /**
+     * @deprecated please prefer the `openSurfaceView` method
+     */
     public openContextualBarView(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const interactionContext = {
-            ...context,
-            type: UIKitInteractionType.CONTEXTUAL_BAR_OPEN,
-            appId: this.appId,
-        };
-
-        return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
+        return this.openContextualBar(view, context, user);
     }
 
+    /**
+     * @deprecated please prefer the `updateSurfaceView` method
+     */
     public updateContextualBarView(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const interactionContext = {
-            ...context,
-            type: UIKitInteractionType.CONTEXTUAL_BAR_UPDATE,
-            appId: this.appId,
-        };
+        return this.openContextualBar(view, context, user, true);
+    }
 
-        return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
+    public openSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
+        switch (view.type) {
+            case UIKitSurfaceType.CONTEXTUAL_BAR:
+                return this.openContextualBar(view, context, user);
+            case UIKitSurfaceType.MODAL:
+                return this.openModal(view, context, user);
+        }
+    }
+
+    public updateSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
+        switch (view.type) {
+            case UIKitSurfaceType.CONTEXTUAL_BAR:
+                return this.openContextualBar(view, context, user, true);
+            case UIKitSurfaceType.MODAL:
+                return this.openModal(view, context, user, true);
+        }
     }
 
     public setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser) {
@@ -63,5 +69,32 @@ export class UIController implements IUIController {
         };
 
         return this.uiInteractionBridge.doNotifyUser(user, formatErrorInteraction(errorInteraction, interactionContext), this.appId);
+    }
+
+    private openContextualBar(view: IUIKitContextualBarViewParam, context: IUIKitInteractionParam, user: IUser, isUpdate = false): Promise<void> {
+        let type = UIKitInteractionType.CONTEXTUAL_BAR_OPEN;
+        if (isUpdate) {
+            type = UIKitInteractionType.CONTEXTUAL_BAR_UPDATE;
+        }
+        const interactionContext = {
+            ...context,
+            type,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
+    }
+    private openModal(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser, isUpdate = false): Promise<void> {
+        let type = UIKitInteractionType.MODAL_OPEN;
+        if (isUpdate) {
+            type = UIKitInteractionType.MODAL_UPDATE;
+        }
+        const interactionContext = {
+            ...context,
+            type,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
 }
