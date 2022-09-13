@@ -353,7 +353,8 @@ export class TestData {
         return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
             getName() { return 'testing'; },
             getID() { return 'testing'; },
-        } as App, ((mod: string) => mod) as any);
+            getRuntime() { return ({ runInSandbox: (mod: string) => mod }); },
+        } as unknown as App, { runInSandbox: (mod: string) => mod } as any);
     }
 }
 

@@ -29,8 +29,8 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             },
         };
 
-        const resolve = sandbox.require;
-        if (sandbox?.require instanceof Function) {
+        const resolve = sandbox && sandbox.require;
+        if (resolve instanceof Function) {
             vmOptions.require = {
                 external: ['@rocket.chat/apps-engine', 'uuid'],
                 builtin: ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'],
@@ -43,11 +43,10 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
 
             delete sandbox.require;
         }
-
         const vm = new NodeVM(vmOptions);
+
         const app = (vm.run(code, {
             filename: options?.filename || 'app.js',
-            // TODO: Missing type declaration. Only way to require modules manually
             require: (mod: string) => resolve(mod, vm.require.bind(vm)),
         } as any));
         // Get first exported object, vm2 does not return the last value when it's an assignment as intern vm
