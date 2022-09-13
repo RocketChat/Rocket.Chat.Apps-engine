@@ -1,3 +1,5 @@
+import { Block } from '@rocket.chat/ui-kit';
+import { v4 as uuid } from 'uuid';
 import {
     IDiscussionBuilder,
     ILivechatCreator,
@@ -12,7 +14,7 @@ import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
 import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
-import { BlockBuilder } from '../../definition/uikit';
+import { BlockBuilder, IBlock } from '../../definition/uikit';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
 import { DiscussionBuilder } from './DiscussionBuilder';
@@ -114,6 +116,10 @@ export class ModifyCreator implements IModifyCreator {
             result.sender = appUser;
         }
 
+        if (result.blocks?.length) {
+            result.blocks = this._assignIds(result.blocks);
+        }
+
         return this.bridges.getMessageBridge().doCreate(result, this.appId);
     }
 
@@ -209,4 +215,24 @@ export class ModifyCreator implements IModifyCreator {
 
         return this.bridges.getVideoConferenceBridge().doCreate(videoConference, this.appId);
     }
+
+    private _assignIds(blocks: Array<IBlock | Block>): Array<IBlock | Block> {
+        blocks.forEach((block: (IBlock | Block) & { appId?: string, blockId?: string, elements?: Array<any> }) => {
+             if (!block.appId) {
+                 block.appId = this.appId;
+             }
+             if (!block.blockId) {
+                 block.blockId = uuid();
+             }
+             if (block.elements) {
+                 block.elements.forEach((element) => {
+                     if (!element.actionId) {
+                         element.actionId = uuid();
+                     }
+                 });
+             }
+         });
+
+        return blocks;
+     }
 }

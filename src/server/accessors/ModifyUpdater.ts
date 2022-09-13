@@ -1,7 +1,10 @@
+import { Block } from '@rocket.chat/ui-kit';
+import { v4 as uuid } from 'uuid';
 import { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
 import { IUserUpdater } from '../../definition/accessors/IUserUpdater';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
+import { IBlock } from '../../definition/uikit';
 import { IUser } from '../../definition/users';
 import { AppBridges } from '../bridges';
 import { LivechatUpdater } from './LivechatUpdater';
@@ -60,6 +63,10 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid sender assigned to the message.');
         }
 
+        if (result.blocks?.length) {
+            result.blocks = this._assignIds(result.blocks);
+        }
+
         return this.bridges.getMessageBridge().doUpdate(result, this.appId);
     }
 
@@ -89,5 +96,25 @@ export class ModifyUpdater implements IModifyUpdater {
         }
 
         return this.bridges.getRoomBridge().doUpdate(result, builder.getMembersToBeAddedUsernames(), this.appId);
+    }
+
+    private _assignIds(blocks: Array<IBlock | Block>): Array<IBlock | Block> {
+       blocks.forEach((block: (IBlock | Block) & { appId?: string, blockId?: string, elements?: Array<any> }) => {
+            if (!block.appId) {
+                block.appId = this.appId;
+            }
+            if (!block.blockId) {
+                block.blockId = uuid();
+            }
+            if (block.elements) {
+                block.elements.forEach((element) => {
+                    if (!element.actionId) {
+                        element.actionId = uuid();
+                    }
+                });
+            }
+        });
+
+       return blocks;
     }
 }
