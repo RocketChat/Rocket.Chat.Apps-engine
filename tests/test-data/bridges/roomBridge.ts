@@ -43,4 +43,16 @@ export class TestsRoomBridge extends RoomBridge {
     public delete(roomId: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
+
+    public getLeaders(roomId: string, appId: string): Promise<Array<IUser>> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getModerators(roomId: string, appId: string): Promise<Array<IUser>> {
+        throw new Error('Method not implemented.');
+    }
+
+    public getOwners(roomId: string, appId: string): Promise<Array<IUser>> {
+        throw new Error('Method not implemented.');
+    }
 }
