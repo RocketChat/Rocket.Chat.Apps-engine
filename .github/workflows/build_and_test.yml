@@ -7,7 +7,6 @@ on:
     push:
         branches:
             - "alpha"
-            - "improvement/vm2-poc"
 
 jobs:
     prepare:
@@ -140,7 +139,7 @@ jobs:
 
     publish:
         runs-on: ubuntu-latest
-        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/improvement/vm2-poc'
+        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
         needs: build
 
         steps:
@@ -175,8 +174,6 @@ jobs:
                       GIT_BRANCH="${GITHUB_REF#*heads/}"
                       if [[ $GIT_BRANCH == 'alpha' ]]; then
                           npm run go-publish-alpha
-                      elif [[ $GIT_BRANCH == 'improvement/vm2-poc' ]]; then
-                          npm publish --tag vm2
                       else
                           npm run go-publish-beta
                       fi;
