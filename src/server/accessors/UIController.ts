@@ -1,12 +1,11 @@
-import { Block } from '@rocket.chat/ui-kit';
-import { v4 as uuid } from 'uuid';
 import { IUIController } from '../../definition/accessors';
 import { IUIKitErrorInteractionParam, IUIKitInteractionParam, IUIKitSurfaceViewParam } from '../../definition/accessors/IUIController';
-import { IBlock, UIKitInteractionType, UIKitSurfaceType } from '../../definition/uikit';
+import { UIKitInteractionType, UIKitSurfaceType } from '../../definition/uikit';
 import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, UiInteractionBridge } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
 
 export class UIController implements IUIController {
     private readonly uiInteractionBridge: UiInteractionBridge;
@@ -46,7 +45,9 @@ export class UIController implements IUIController {
     }
 
     public openSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const viewWithIds = this.assignIds(view);
+        const blocks = UIHelper.assignIds(view.blocks, this.appId);
+        const viewWithIds = {...view, blocks};
+
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
                 return this.openContextualBar(viewWithIds, context, user);
@@ -56,7 +57,9 @@ export class UIController implements IUIController {
     }
 
     public updateSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
-        const viewWithIds = this.assignIds(view);
+        const blocks = UIHelper.assignIds(view.blocks, this.appId);
+        const viewWithIds = {...view, blocks};
+
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
                 return this.openContextualBar(viewWithIds, context, user, true);
@@ -102,23 +105,4 @@ export class UIController implements IUIController {
         return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
 
-    private assignIds(view: IUIKitSurfaceViewParam): IUIKitSurfaceViewParam {
-        view.blocks.forEach((block: (IBlock | Block) & { appId?: string, blockId?: string, elements?: Array<any> }) => {
-            if (!block.appId) {
-                block.appId = this.appId;
-            }
-            if (!block.blockId) {
-                block.blockId = uuid();
-            }
-            if (block.elements) {
-                block.elements.forEach((element) => {
-                    if (!element.actionId) {
-                        element.actionId = uuid();
-                    }
-                });
-            }
-        });
-
-        return view;
-    }
 }
