@@ -1,6 +1,5 @@
 // tslint:disable:max-line-length
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
-import * as vm from 'vm';
 
 import { RequestMethod } from '../../../src/definition/accessors';
 import { IApi, IApiRequest } from '../../../src/definition/api';
@@ -14,6 +13,7 @@ import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSche
 import { AppApi } from '../../../src/server/managers/AppApi';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
 import { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
@@ -32,6 +32,11 @@ export class AppApiManagerTestFixture {
         this.mockBridges = new TestsAppBridges();
 
         this.mockApp = {
+            getRuntime() {
+                return {
+                    runInSandbox: () => Promise.resolve(true),
+                } as AppsEngineRuntime;
+            },
             getID() {
                 return 'testing';
             },
@@ -40,13 +45,6 @@ export class AppApiManagerTestFixture {
             },
             hasMethod(method: AppMethod): boolean {
                 return true;
-            },
-            makeContext(data: object): vm.Context {
-                return {} as vm.Context;
-            },
-            runInContext(codeToRun: string, context: vm.Context): any {
-                return AppApiManagerTestFixture.doThrow ?
-                    Promise.reject('You told me so') : Promise.resolve();
             },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);
@@ -186,7 +184,6 @@ export class AppApiManagerTestFixture {
         ascm.addApi('testing', TestData.getApi('api3'));
         ascm.registerApis('testing');
 
-        SpyOn(this.mockApp, 'runInContext');
         const request: IApiRequest = {
             method: RequestMethod.GET,
             headers: {},
@@ -200,8 +197,6 @@ export class AppApiManagerTestFixture {
         await Expect(async () => await ascm.executeApi('testing', 'api1', request)).not.toThrowAsync();
         await Expect(async () => await ascm.executeApi('testing', 'api2', request)).not.toThrowAsync();
         await Expect(async () => await ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
-
-        Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(3);
     }
 
     @Test()

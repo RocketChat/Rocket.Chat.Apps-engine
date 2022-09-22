@@ -32,7 +32,7 @@ export class AppVideoConfProvider {
             return true;
         }
 
-        return await this.runTheCode(AppMethod._VIDEOCONF_IS_CONFIGURED, logStorage, accessors, []) as boolean;
+        return !!await this.runTheCode(AppMethod._VIDEOCONF_IS_CONFIGURED, logStorage, accessors, []) as boolean;
     }
 
     public async runGenerateUrl(
@@ -64,7 +64,7 @@ export class AppVideoConfProvider {
             return;
         }
 
-        const runContext = this.app.makeContext({
+        const runContext = {
             provider: this.provider,
             args: [
                 ...runContextArgs,
@@ -73,15 +73,15 @@ export class AppVideoConfProvider {
                 accessors.getHttp(this.app.getID()),
                 accessors.getPersistence(this.app.getID()),
             ],
-        });
+        };
 
         const logger = this.app.setupLogger(method);
         logger.debug(`Executing ${ method } on video conference provider...`);
 
         let result: string | undefined;
         try {
-            const runCode = `provider.${ method }.apply(provider, args)`;
-            result = await this.app.runInContext(runCode, runContext);
+            const runCode = `module.exports = provider.${ method }.apply(provider, args)`;
+            result = await this.app.getRuntime().runInSandbox(runCode, runContext);
             logger.debug(`Video Conference Provider's ${ method } was successfully executed.`);
         } catch (e) {
             logger.error(e);
