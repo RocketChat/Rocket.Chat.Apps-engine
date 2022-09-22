@@ -5,6 +5,7 @@ import { formatContextualBarInteraction, formatErrorInteraction, formatModalInte
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, UiInteractionBridge } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
 
 export class UIController implements IUIController {
     private readonly uiInteractionBridge: UiInteractionBridge;
@@ -44,20 +45,26 @@ export class UIController implements IUIController {
     }
 
     public openSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
+        const blocks = UIHelper.assignIds(view.blocks, this.appId);
+        const viewWithIds = {...view, blocks};
+
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
-                return this.openContextualBar(view, context, user);
+                return this.openContextualBar(viewWithIds, context, user);
             case UIKitSurfaceType.MODAL:
-                return this.openModal(view, context, user);
+                return this.openModal(viewWithIds, context, user);
         }
     }
 
     public updateSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
+        const blocks = UIHelper.assignIds(view.blocks, this.appId);
+        const viewWithIds = {...view, blocks};
+
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
-                return this.openContextualBar(view, context, user, true);
+                return this.openContextualBar(viewWithIds, context, user, true);
             case UIKitSurfaceType.MODAL:
-                return this.openModal(view, context, user, true);
+                return this.openModal(viewWithIds, context, user, true);
         }
     }
 
@@ -97,4 +104,5 @@ export class UIController implements IUIController {
 
         return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
+
 }

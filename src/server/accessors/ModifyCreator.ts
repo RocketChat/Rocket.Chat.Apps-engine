@@ -15,6 +15,7 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
 import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
@@ -112,6 +113,10 @@ export class ModifyCreator implements IModifyCreator {
             }
 
             result.sender = appUser;
+        }
+
+        if (result.blocks?.length) {
+            result.blocks = UIHelper.assignIds(result.blocks, this.appId);
         }
 
         return this.bridges.getMessageBridge().doCreate(result, this.appId);
