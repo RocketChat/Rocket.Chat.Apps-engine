@@ -25,7 +25,7 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             timeout: options?.timeout,
             sandbox: {
                 ...AppsEngineVM2Runtime.defaultNodeVMOptions.sandbox,
-                ...sandbox || {},
+                ...(sandbox || {}),
             },
         };
 
@@ -35,7 +35,6 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
                 external: ['@rocket.chat/apps-engine', 'uuid'],
                 builtin: ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'],
                 resolve: (moduleName, p) => {
-                    console.log('Resolving '.concat(moduleName, ' from ').concat(p));
                     return path.resolve(p + '/npm/node_modules/' + moduleName);
                 },
                 context: 'sandbox',
@@ -45,10 +44,10 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
         }
         const vm = new NodeVM(vmOptions);
 
-        const app = (vm.run(code, {
+        const app = vm.run(code, {
             filename: options?.filename || 'app.js',
             require: (mod: string) => resolve(mod, vm.require.bind(vm)),
-        } as any));
+        } as any);
         // Get first exported object, vm2 does not return the last value when it's an assignment as intern vm
         // so we use the first exported value as the class.
         return options?.returnAllExports ? app : app && app[Object.keys(app)[0]];
@@ -75,11 +74,13 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
         });
 
         // Clean up the sandbox after the code has run
-        this.vm.setGlobals(Object.keys(sandbox).reduce((acc, key) => {
-            acc[key] = undefined;
+        this.vm.setGlobals(
+            Object.keys(sandbox).reduce((acc, key) => {
+                acc[key] = undefined;
 
-            return acc;
-        }, {} as typeof sandbox));
+                return acc;
+            }, {} as typeof sandbox),
+        );
 
         return result;
     }
