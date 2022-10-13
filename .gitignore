@@ -55,3 +55,4 @@ jspm_packages
 /lib
 
 .DS_Store
+.idea/

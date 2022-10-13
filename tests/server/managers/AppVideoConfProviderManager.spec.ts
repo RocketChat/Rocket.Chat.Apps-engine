@@ -1,4 +1,4 @@
-import { AsyncTest, Expect, Setup, SetupFixture, Teardown, Test } from 'alsatian';
+import { AsyncTest, Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
@@ -220,6 +220,8 @@ export class AppVideoConfProviderManagerTestFixture {
         const statusFull = await manager.isFullyConfigured('full');
         await Expect(statusFull).toBe(true);
 
+        SpyOn(AppVideoConfProvider.prototype, 'runIsFullyConfigured').andReturn(false);
+
         const statusInvalid = await manager.isFullyConfigured('invalid');
         await Expect(statusInvalid).toBe(false);
     }
@@ -232,6 +234,7 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const call = TestData.getVideoConfData();
 
+        SpyOn(AppVideoConfProvider.prototype, 'runGenerateUrl').andReturn('test/first-call');
         const url = await manager.generateUrl('test', call);
         await Expect(url).toBe('test/first-call');
     }
@@ -247,14 +250,28 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const call = TestData.getVideoConfData();
 
-        const url = await manager.generateUrl('test', call);
-        await Expect(url).toBe('test/first-call');
+        const cases: any = [
+            {
+                name: 'test', call,
+                runGenerateUrl: 'test/first-call',
+                result: 'test/first-call',
+            },
+            {
+                name: 'test2', call,
+                runGenerateUrl: 'test2/first-call',
+                result: 'test2/first-call',
+            },
+            {
+                name: 'differentProvider', call,
+                runGenerateUrl: 'differentProvider/first-call',
+                result: 'differentProvider/first-call',
+            },
+        ];
 
-        const url2 = await manager.generateUrl('test2', call);
-        await Expect(url2).toBe('test2/first-call');
-
-        const url3 = await manager.generateUrl('differentProvider', call);
-        await Expect(url3).toBe('differentProvider/first-call');
+        for (const c of cases ) {
+            SpyOn(AppVideoConfProvider.prototype, 'runGenerateUrl').andReturn(c.runGenerateUrl);
+            await Expect(await manager.generateUrl(c.name, c.call)).toBe(c.result);
+        }
     }
 
     @AsyncTest()
@@ -288,7 +305,6 @@ export class AppVideoConfProviderManagerTestFixture {
         await Expect(async () => await manager.customizeUrl('test', call, user, {}))
             .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
     }
-
     @AsyncTest()
     public async customizeUrl() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
@@ -298,8 +314,24 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
-        await Expect(await manager.customizeUrl('test', call, user, {})).toBe('test/first-call#caller');
-        await Expect(await manager.customizeUrl('test', call, undefined, {})).toBe('test/first-call#');
+        const cases: any = [
+            {
+                name: 'test', call, user, options: {},
+                runCustomizeUrl: 'test/first-call#caller',
+                result: 'test/first-call#caller',
+            },
+            {
+                name: 'test', call, user: undefined, options: {},
+                runCustomizeUrl: 'test/first-call#',
+                result: 'test/first-call#',
+            },
+        ];
+
+        for (const c of cases ) {
+            SpyOn(AppVideoConfProvider.prototype, 'runCustomizeUrl').andReturn(c.runCustomizeUrl);
+            await Expect(await manager.customizeUrl(c.name, c.call, c.user, c.options)).toBe(c.result);
+        }
+
     }
 
     @AsyncTest()
@@ -314,14 +346,43 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
-        await Expect(await manager.customizeUrl('test', call, user, {})).toBe('test/first-call#caller');
-        await Expect(await manager.customizeUrl('test', call, undefined, {})).toBe('test/first-call#');
+        const cases = [
+            {
+                name: 'test', call, user, options: {},
+                runCustomizeUrl: 'test/first-call#caller',
+                result: 'test/first-call#caller',
+            },
+            {
+                name: 'test', call, user: undefined, options: {},
+                runCustomizeUrl: 'test/first-call#',
+                result: 'test/first-call#',
+            },
+            {
+                name: 'test2', call, user, options: {},
+                runCustomizeUrl: 'test2/first-call#caller',
+                result: 'test2/first-call#caller',
+            },
+            {
+                name: 'test2', call, user: undefined, options: {},
+                runCustomizeUrl: 'test2/first-call#',
+                result: 'test2/first-call#',
+            },
+            {
+                name: 'differentProvider', call, user, options: {},
+                runCustomizeUrl: 'differentProvider/first-call#caller',
+                result: 'differentProvider/first-call#caller',
+            },
+            {
+                name: 'differentProvider', call, user: undefined, options: {},
+                runCustomizeUrl: 'differentProvider/first-call#',
+                result: 'differentProvider/first-call#',
+            },
+        ];
 
-        await Expect(await manager.customizeUrl('test2', call, user, {})).toBe('test2/first-call#caller');
-        await Expect(await manager.customizeUrl('test2', call, undefined, {})).toBe('test2/first-call#');
-
-        await Expect(await manager.customizeUrl('differentProvider', call, user, {})).toBe('differentProvider/first-call#caller');
-        await Expect(await manager.customizeUrl('differentProvider', call, undefined, {})).toBe('differentProvider/first-call#');
+        for (const c of cases ) {
+            SpyOn(AppVideoConfProvider.prototype, 'runCustomizeUrl').andReturn(c.runCustomizeUrl);
+            await Expect(await manager.customizeUrl(c.name, c.call, c.user, c.options)).toBe(c.result);
+        }
     }
 
     @AsyncTest()
