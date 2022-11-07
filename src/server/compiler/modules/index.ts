@@ -44,8 +44,8 @@ const proxyHandlers = {
     querystring: defaultHandler,
 };
 
-export function requireNativeModule(module: AllowedInternalModules, appId: string) {
-    const requiredModule = require(module);
+export function requireNativeModule(module: AllowedInternalModules, appId: string, requirer: any) {
+    const requiredModule = requirer(module);
 
     return new Proxy(
         requiredModule,

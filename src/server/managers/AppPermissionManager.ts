@@ -1,7 +1,7 @@
 import { IPermission } from '../../definition/permissions/IPermission';
 import { getPermissionsByAppId } from '../AppManager';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
-import { ROCKETCHAT_APP_EXECUTION_PREFIX } from '../ProxiedApp';
+import { APPS_ENGINE_RUNTIME_FILE_PREFIX } from '../runtime/AppsEngineRuntime';
 
 export class AppPermissionManager {
     /**
@@ -33,7 +33,7 @@ export class AppPermissionManager {
 
     private static getCallStack(): string {
         const stack = new Error().stack.toString().split('\n');
-        const appStackIndex = stack.findIndex((position) => position.includes(ROCKETCHAT_APP_EXECUTION_PREFIX));
+        const appStackIndex = stack.findIndex((position) => position.includes(APPS_ENGINE_RUNTIME_FILE_PREFIX));
 
         return stack.slice(4, appStackIndex).join('\n');
     }

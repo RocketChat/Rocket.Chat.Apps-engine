@@ -1,6 +1,6 @@
 {
   "name": "@rocket.chat/apps-engine",
-  "version": "1.33.0-alpha",
+  "version": "1.35.0-alpha",
   "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
   "main": "index",
   "typings": "index",
@@ -91,7 +91,8 @@
     "lodash.clonedeep": "^4.5.0",
     "semver": "^5.7.1",
     "stack-trace": "0.0.10",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "vm2": "^3.9.11"
   },
   "nyc": {
     "include": [

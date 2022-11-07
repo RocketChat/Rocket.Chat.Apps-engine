@@ -1,7 +1,6 @@
 // tslint:disable:max-line-length
 
 import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
-import * as vm from 'vm';
 import { AppStatus } from '../../../src/definition/AppStatus';
 import { AppMethod } from '../../../src/definition/metadata';
 import { ISlashCommandPreviewItem, SlashCommandContext } from '../../../src/definition/slashcommands';
@@ -18,6 +17,7 @@ import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { Room } from '../../../src/server/rooms/Room';
+import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
 import { AppLogStorage } from '../../../src/server/storage';
 
 export class AppSlashCommandManagerTestFixture {
@@ -33,6 +33,9 @@ export class AppSlashCommandManagerTestFixture {
         this.mockBridges = new TestsAppBridges();
 
         this.mockApp = {
+            getRuntime() {
+                return {} as AppsEngineRuntime;
+            },
             getID() {
                 return 'testing';
             },
@@ -41,13 +44,6 @@ export class AppSlashCommandManagerTestFixture {
             },
             hasMethod(method: AppMethod): boolean {
                 return true;
-            },
-            makeContext(data: object): vm.Context {
-                return {} as vm.Context;
-            },
-            runInContext(codeToRun: string, context: vm.Context): any {
-                return AppSlashCommandManagerTestFixture.doThrow ?
-                    Promise.reject('You told me so') : Promise.resolve();
             },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);
@@ -345,7 +341,6 @@ export class AppSlashCommandManagerTestFixture {
         ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
 
         const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), []);
-        SpyOn(this.mockApp, 'runInContext');
 
         await Expect(async () => await ascm.executeCommand('nope', context)).not.toThrowAsync();
         await Expect(async () => await ascm.executeCommand('it-exists', context)).not.toThrowAsync();
@@ -368,8 +363,6 @@ export class AppSlashCommandManagerTestFixture {
         AppSlashCommandManagerTestFixture.doThrow = true;
         await Expect(async () => await ascm.executeCommand('command', context)).not.toThrowAsync();
         AppSlashCommandManagerTestFixture.doThrow = false;
-
-        Expect(this.mockApp.runInContext).toHaveBeenCalled().exactly(4);
     }
 
     @AsyncTest()

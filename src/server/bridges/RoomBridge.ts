@@ -55,8 +55,13 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
-    public async doCreateDiscussion(room: IRoom, parentMessage: IMessage | undefined,
-                                    reply: string | undefined, members: Array<string>, appId: string): Promise<string> {
+    public async doCreateDiscussion(
+        room: IRoom,
+        parentMessage: IMessage | undefined,
+        reply: string | undefined,
+        members: Array<string>,
+        appId: string,
+    ): Promise<string> {
         if (this.hasWritePermission(appId)) {
             return this.createDiscussion(room, parentMessage, reply, members, appId);
         }
@@ -68,6 +73,24 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    public async doGetModerators(roomId: string, appId: string): Promise<Array<IUser>> {
+        if (this.hasReadPermission(appId)) {
+            return this.getModerators(roomId, appId);
+        }
+    }
+
+    public async doGetOwners(roomId: string, appId: string): Promise<Array<IUser>> {
+        if (this.hasReadPermission(appId)) {
+            return this.getOwners(roomId, appId);
+        }
+    }
+
+    public async doGetLeaders(roomId: string, appId: string): Promise<Array<IUser>> {
+        if (this.hasReadPermission(appId)) {
+            return this.getLeaders(roomId, appId);
+        }
+    }
+
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
     protected abstract getById(roomId: string, appId: string): Promise<IRoom>;
     protected abstract getByName(roomName: string, appId: string): Promise<IRoom>;
@@ -76,19 +99,29 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract getDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined>;
     protected abstract getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     protected abstract update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
-    protected abstract createDiscussion(room: IRoom, parentMessage: IMessage | undefined,
-                                        reply: string | undefined, members: Array<string>, appId: string): Promise<string>;
+    protected abstract createDiscussion(
+        room: IRoom,
+        parentMessage: IMessage | undefined,
+        reply: string | undefined,
+        members: Array<string>,
+        appId: string,
+    ): Promise<string>;
     protected abstract delete(room: string, appId: string): Promise<void>;
+    protected abstract getModerators(roomId: string, appId: string): Promise<Array<IUser>>;
+    protected abstract getOwners(roomId: string, appId: string): Promise<Array<IUser>>;
+    protected abstract getLeaders(roomId: string, appId: string): Promise<Array<IUser>>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.room.write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.room.write],
+            }),
+        );
 
         return false;
     }
@@ -98,10 +131,12 @@ export abstract class RoomBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.room.read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.room.read],
+            }),
+        );
 
         return false;
     }

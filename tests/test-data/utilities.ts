@@ -321,11 +321,40 @@ export class TestData {
         };
     }
 
+    public static getOAuthApp(isToCreate: boolean) {
+
+        const OAuthApp = {
+            _id : '4526fcab-b068-4dcc-b208-4fff599165b0',
+            name : 'name-test',
+            active : true,
+            clientId : 'clientId-test',
+            clientSecret : 'clientSecret-test',
+            redirectUri : 'redirectUri-test',
+            appId : 'app-123',
+            _createdAt : '2022-07-11T14:30:48.937Z',
+            _createdBy : {
+                _id : 'Em5TQwMD4P7AmTs73',
+                username : 'testa.bot',
+            },
+            _updatedAt : '2022-07-11T14:30:48.937Z',
+        };
+
+        if (isToCreate) {
+            delete OAuthApp._id;
+            delete OAuthApp._createdAt;
+            delete OAuthApp._createdBy;
+            delete OAuthApp._updatedAt;
+            delete OAuthApp.appId;
+        }
+        return OAuthApp;
+    }
+
     public static getMockApp(id: string, name: string): ProxiedApp {
         return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
             getName() { return 'testing'; },
             getID() { return 'testing'; },
-        } as App, (mod: string) => mod);
+            getRuntime() { return ({ runInSandbox: (mod: string) => mod }); },
+        } as unknown as App, { runInSandbox: (mod: string) => mod } as any);
     }
 }
 

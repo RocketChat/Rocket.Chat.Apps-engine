@@ -10,14 +10,22 @@ import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './comp
 import { InvalidLicenseError } from './errors';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
-    AppAccessorManager, AppApiManager, AppExternalComponentManager, AppLicenseManager, AppListenerManager, AppSchedulerManager, AppSettingsManager,
-    AppSlashCommandManager, AppVideoConfProviderManager,
+    AppAccessorManager,
+    AppApiManager,
+    AppExternalComponentManager,
+    AppLicenseManager,
+    AppListenerManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
+import { AppsEngineEmptyRuntime } from './runtime/AppsEngineEmptyRuntime';
 import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 
@@ -37,6 +45,10 @@ export interface IAppManagerDeps {
     logStorage: AppLogStorage;
     bridges: AppBridges;
     sourceStorage: AppSourceStorage;
+}
+
+interface IPurgeAppConfigOpts {
+    keepScheduledJobs?: boolean;
 }
 
 export class AppManager {
@@ -61,7 +73,6 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
-
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -230,7 +241,7 @@ export class AppManager {
                 app.getLogger().error(e);
                 this.logStorage.storeEntries(app.getID(), app.getLogger());
 
-                const prl = new ProxiedApp(this, item, app, () => '');
+                const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
                 this.apps.set(item.id, prl);
                 aff.setApp(prl);
             }
@@ -412,7 +423,7 @@ export class AppManager {
                 .catch((e) => console.warn('Error while disabling:', e));
         }
 
-        await this.purgeAppConfig(app, true);
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
 
         await app.setStatus(status, silent);
 
@@ -637,7 +648,7 @@ export class AppManager {
             return appPackageOrInstance;
         })();
 
-        await this.purgeAppConfig(app);
+        await this.purgeAppConfig(app, { keepScheduledJobs: true });
 
         this.apps.set(app.getID(), app);
 
@@ -866,8 +877,8 @@ export class AppManager {
         return result;
     }
 
-    private async purgeAppConfig(app: ProxiedApp, isDisabled: boolean = false) {
-        if (!isDisabled) {
+    private async purgeAppConfig(app: ProxiedApp, opts: IPurgeAppConfigOpts = {}) {
+        if (!opts.keepScheduledJobs) {
             await this.schedulerManager.cleanUp(app.getID());
         }
         this.listenerManager.unregisterListeners(app);
