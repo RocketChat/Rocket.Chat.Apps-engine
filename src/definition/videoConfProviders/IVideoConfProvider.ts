@@ -1,3 +1,6 @@
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IBlock } from '../uikit';
+import { VideoConference } from '../videoConferences/IVideoConference';
 import { IVideoConferenceUser } from '../videoConferences/IVideoConferenceUser';
 import { IVideoConferenceOptions } from './IVideoConferenceOptions';
 import { VideoConfData, VideoConfDataExtended } from './VideoConfData';
@@ -18,14 +21,43 @@ export interface IVideoConfProvider {
     };
 
     // Optional function that can be used to determine if the provider is ready to use or still needs to be configured
-    isFullyConfigured?(): Promise<boolean>;
+    isFullyConfigured?(read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<boolean>;
+
+    // Optional function to run when a new video conference is created on this provider
+    onNewVideoConference?(call: VideoConference, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
+
+    // Optional function to run when a video conference from this provider is changed by rocket.chat
+    onVideoConferenceChanged?(call: VideoConference, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
+
+    // Optional function to run when a new user joins a video conference from this provider
+    onUserJoin?(call: VideoConference, user: IVideoConferenceUser | undefined, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
+
+    // Optional function to run when the 'info' button of a video conference is clicked - must return blocks for a UiKit modal
+    // #ToDo: Fix the IBlock definition to allow all possible blocks.
+    // For now apps will need to use `unknown` in the result since the blocks aren't compatible with apps-engine custom `IBlock` type.
+    getVideoConferenceInfo?(
+        call: VideoConference,
+        user: IVideoConferenceUser | undefined,
+        read: IRead,
+        modify: IModify,
+        http: IHttp,
+        persis: IPersistence,
+    ): Promise<Array<IBlock>>;
 
     /**
      * The function which gets called when a new video conference url is requested
      */
-    generateUrl(call: VideoConfData): Promise<string>;
+    generateUrl(call: VideoConfData, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<string>;
     /**
      * The function which gets called whenever a user join url is requested
      */
-    customizeUrl(call: VideoConfDataExtended, user?: IVideoConferenceUser, options?: IVideoConferenceOptions): Promise<string>;
+    customizeUrl(
+        call: VideoConfDataExtended,
+        user: IVideoConferenceUser | undefined,
+        options: IVideoConferenceOptions | undefined,
+        read: IRead,
+        modify: IModify,
+        http: IHttp,
+        persis: IPersistence,
+    ): Promise<string>;
 }
