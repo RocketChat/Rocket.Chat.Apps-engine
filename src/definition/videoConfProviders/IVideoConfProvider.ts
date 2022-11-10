@@ -33,8 +33,6 @@ export interface IVideoConfProvider {
     onUserJoin?(call: VideoConference, user: IVideoConferenceUser | undefined, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
 
     // Optional function to run when the 'info' button of a video conference is clicked - must return blocks for a UiKit modal
-    // #ToDo: Fix the IBlock definition to allow all possible blocks.
-    // For now apps will need to use `unknown` in the result since the blocks aren't compatible with apps-engine custom `IBlock` type.
     getVideoConferenceInfo?(
         call: VideoConference,
         user: IVideoConferenceUser | undefined,
