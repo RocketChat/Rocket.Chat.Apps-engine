@@ -30,8 +30,8 @@ export class OAuth2Client implements IOAuth2Client {
     private defaultContents = {
         success:  '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
                         <h1 style="text-align: center; font-family: Helvetica Neue;">\
-                            Authorization went successfully<br>\
-                            You can close this tab now<br>\
+                            Authorization successful.<br>\
+                            You may now close this tab.<br>\
                         </h1>\
                     </div>',
         failed: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
@@ -75,6 +75,16 @@ export class OAuth2Client implements IOAuth2Client {
                 required: true,
                 packageValue: '',
                 i18nLabel: `${this.config.alias}-oauth-client-secret`,
+            }),
+
+            configuration.settings.provideSetting({
+                id: `${this.config.alias}-request-content-type`,
+                type: SettingType.STRING,
+                public: true,
+                required: false,
+                packageValue: '',
+                values: [{key:"0", i18nLabel:"No"},{key:"1", i18nLabel:"Yes"}],
+                i18nLabel: `Does your API requests require x-www-form-urlencoded content type?`,
             }),
         ]);
     }
@@ -307,6 +317,12 @@ export class OAuth2Client implements IOAuth2Client {
                 .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
             const url = new URL(accessTokenUrl, siteUrl);
+            
+            const content_type = await this.app
+            .getAccessors()
+            .reader.getEnvironmentReader()
+            .getSettings()
+            .getValueById(`${this.config.alias}-request-content-type`);
 
             url.searchParams.set('client_id', clientId);
             url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
@@ -315,8 +331,20 @@ export class OAuth2Client implements IOAuth2Client {
             url.searchParams.set('access_type', 'offline');
             url.searchParams.set('grant_type', GrantType.AuthorizationCode);
 
+            let body = `client_id=${clientId}`;
+            body += `&scope=${this.config.defaultScopes.join(' ')}`;
+            body += `&code=${code}`;
+            body += `&redirect_uri=${redirectUri}`;
+            body += `&grant_type=authorization_code`;
+            body += `&client_secret=${clientSecret}`;
+            body = encodeURI(body);
+    
+
             const { content, statusCode } = await http.post(url.href, {
-                headers: { Accept: 'application/json' },
+                headers: { Accept: 'application/json',
+                 'Content-Type': 'application/x-www-form-urlencoded'
+            },
+                content: body
             });
 
             // If provider had a server error, nothing we can do
