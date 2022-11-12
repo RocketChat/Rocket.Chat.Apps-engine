@@ -76,16 +76,6 @@ export class OAuth2Client implements IOAuth2Client {
                 packageValue: '',
                 i18nLabel: `${this.config.alias}-oauth-client-secret`,
             }),
-
-            configuration.settings.provideSetting({
-                id: `${this.config.alias}-request-content-type`,
-                type: SettingType.STRING,
-                public: true,
-                required: false,
-                packageValue: '',
-                values: [{key:"0", i18nLabel:"No"},{key:"1", i18nLabel:"Yes"}],
-                i18nLabel: `Does your API requests require x-www-form-urlencoded content type?`,
-            }),
         ]);
     }
 
@@ -186,7 +176,20 @@ export class OAuth2Client implements IOAuth2Client {
             url.searchParams.set('refresh_token', tokenInfo.refreshToken);
             url.searchParams.set('grant_type', GrantType.RefreshToken);
 
-            const { content, statusCode } = await this.app.getAccessors().http.post(url.href);
+            let body = `client_id=${clientId}`;
+            body += `&scope=${this.config.defaultScopes.join(' ')}`;
+            body += `&refresh_token=${tokenInfo.refreshToken}`;
+            body += `&redirect_uri=${redirectUri}`;
+            body += `&grant_type=${GrantType.RefreshToken}`;
+            body += `&client_secret=${clientSecret}`;
+            body = encodeURI(body);
+
+            const { content, statusCode } = await this.app.getAccessors().http.post(url.href,{
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                content: body
+            });
 
             if (statusCode !== 200) {
                 throw new Error('Request to provider was unsuccessful. Check logs for more information');
@@ -228,7 +231,15 @@ export class OAuth2Client implements IOAuth2Client {
 
             url.searchParams.set('token', tokenInfo?.token);
 
-            const result = await this.app.getAccessors().http.post(url.href);
+            let body = `token=${tokenInfo.token}`;
+            body = encodeURI(body);
+
+            const result = await this.app.getAccessors().http.post(url.href,{
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                content: body
+            });
 
             if (result.statusCode !== 200) {
                 throw new Error('Provider did not allow token to be revoked');
@@ -317,12 +328,6 @@ export class OAuth2Client implements IOAuth2Client {
                 .getValueById(`${this.config.alias}-oauth-clientsecret`);
 
             const url = new URL(accessTokenUrl, siteUrl);
-            
-            const content_type = await this.app
-            .getAccessors()
-            .reader.getEnvironmentReader()
-            .getSettings()
-            .getValueById(`${this.config.alias}-request-content-type`);
 
             url.searchParams.set('client_id', clientId);
             url.searchParams.set('redirect_uri', `${siteUrl}/${redirectUri}`);
@@ -335,7 +340,7 @@ export class OAuth2Client implements IOAuth2Client {
             body += `&scope=${this.config.defaultScopes.join(' ')}`;
             body += `&code=${code}`;
             body += `&redirect_uri=${redirectUri}`;
-            body += `&grant_type=authorization_code`;
+            body += `&grant_type=${GrantType.AuthorizationCode}`;
             body += `&client_secret=${clientSecret}`;
             body = encodeURI(body);
     
