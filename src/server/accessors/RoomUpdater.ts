@@ -14,4 +14,8 @@ export class RoomUpdater implements IRoomUpdater {
     public async unmuteUser(room: IRoom, executor: IUser, user: IUser) {
         return this.bridges.getRoomBridge().doUnmuteUser(room.id, executor.id, user.id, this.appId);
     }
+
+    public async hideRoom(room: IRoom, executor: IUser): Promise<void> {
+        return this.bridges.getRoomBridge().doHideRoom(room.id, executor.id, this.appId);
+    }
 }
