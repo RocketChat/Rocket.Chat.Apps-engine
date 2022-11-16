@@ -6,7 +6,8 @@ on:
     pull_request:
     push:
         branches:
-            - "alpha"
+            - 'alpha'
+            - 'new/video/info'
 
 jobs:
     prepare:
@@ -26,7 +27,7 @@ jobs:
             - name: Use Node.js 14.19.3
               uses: actions/setup-node@v2
               with:
-                  node-version: "14.19.3"
+                  node-version: '14.19.3'
 
             - uses: actions/checkout@v2
 
@@ -68,7 +69,7 @@ jobs:
             - name: Use Node.js 14.19.3
               uses: actions/setup-node@v2
               with:
-                  node-version: "14.19.3"
+                  node-version: '14.19.3'
 
             - uses: actions/download-artifact@v2
               with:
@@ -90,7 +91,7 @@ jobs:
             - name: Use Node.js 14.19.3
               uses: actions/setup-node@v2
               with:
-                  node-version: "14.19.3"
+                  node-version: '14.19.3'
 
             - uses: actions/download-artifact@v2
               with:
@@ -114,7 +115,7 @@ jobs:
             - name: Use Node.js 14.19.3
               uses: actions/setup-node@v2
               with:
-                  node-version: "14.19.3"
+                  node-version: '14.19.3'
 
             - uses: actions/download-artifact@v2
               with:
@@ -139,14 +140,14 @@ jobs:
 
     publish:
         runs-on: ubuntu-latest
-        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
+        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/new/video/info'
         needs: build
 
         steps:
             - name: Use Node.js 14.19.3
               uses: actions/setup-node@v2
               with:
-                  node-version: "14.19.3"
+                  node-version: '14.19.3'
 
             - uses: actions/download-artifact@v2
               with:
@@ -174,6 +175,8 @@ jobs:
                       GIT_BRANCH="${GITHUB_REF#*heads/}"
                       if [[ $GIT_BRANCH == 'alpha' ]]; then
                           npm run go-publish-alpha
+                      elif [[ $GIT_BRANCH == 'new/video/info' ]]; then
+                          npm publish --tag videoconf
                       else
                           npm run go-publish-beta
                       fi;
