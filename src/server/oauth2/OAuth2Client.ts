@@ -176,7 +176,20 @@ export class OAuth2Client implements IOAuth2Client {
             url.searchParams.set('refresh_token', tokenInfo.refreshToken);
             url.searchParams.set('grant_type', GrantType.RefreshToken);
 
-            const { content, statusCode } = await this.app.getAccessors().http.post(url.href);
+            let body = `client_id=${clientId}`;
+            body += `&scope=${this.config.defaultScopes.join(' ')}`;
+            body += `&refresh_token=${tokenInfo.refreshToken}`;
+            body += `&redirect_uri=${redirectUri}`;
+            body += `&grant_type=${GrantType.RefreshToken}`;
+            body += `&client_secret=${clientSecret}`;
+            body = encodeURI(body);
+
+            const { content, statusCode } = await this.app.getAccessors().http.post(url.href, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                content: body,
+            });
 
             if (statusCode !== 200) {
                 throw new Error('Request to provider was unsuccessful. Check logs for more information');
@@ -218,7 +231,15 @@ export class OAuth2Client implements IOAuth2Client {
 
             url.searchParams.set('token', tokenInfo?.token);
 
-            const result = await this.app.getAccessors().http.post(url.href);
+            let body = `token=${tokenInfo.token}`;
+            body = encodeURI(body);
+
+            const result = await this.app.getAccessors().http.post(url.href, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                content: body,
+            });
 
             if (result.statusCode !== 200) {
                 throw new Error('Provider did not allow token to be revoked');
@@ -315,8 +336,19 @@ export class OAuth2Client implements IOAuth2Client {
             url.searchParams.set('access_type', 'offline');
             url.searchParams.set('grant_type', GrantType.AuthorizationCode);
 
+            let body = `client_id=${clientId}`;
+            body += `&scope=${this.config.defaultScopes.join(' ')}`;
+            body += `&code=${code}`;
+            body += `&redirect_uri=${redirectUri}`;
+            body += `&grant_type=${GrantType.AuthorizationCode}`;
+            body += `&client_secret=${clientSecret}`;
+            body = encodeURI(body);
+
             const { content, statusCode } = await http.post(url.href, {
-                headers: { Accept: 'application/json' },
+                headers: { 'Accept': 'application/json',
+                 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+                content: body,
             });
 
             // If provider had a server error, nothing we can do
@@ -385,7 +417,6 @@ export class OAuth2Client implements IOAuth2Client {
             true, // we want to create the record if it doesn't exist
         );
     }
-
     private async removeToken({
         userId,
         persis,
