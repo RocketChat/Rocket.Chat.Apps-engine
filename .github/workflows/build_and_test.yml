@@ -176,7 +176,7 @@ jobs:
                       if [[ $GIT_BRANCH == 'alpha' ]]; then
                           npm run go-publish-alpha
                       elif [[ $GIT_BRANCH == 'new/video/info' ]]; then
-                          npm publish --tag videoconf
+                          npm publish --tag videoconf --access public
                       else
                           npm run go-publish-beta
                       fi;
