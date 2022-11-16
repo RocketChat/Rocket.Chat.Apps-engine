@@ -184,11 +184,11 @@ export class OAuth2Client implements IOAuth2Client {
             body += `&client_secret=${clientSecret}`;
             body = encodeURI(body);
 
-            const { content, statusCode } = await this.app.getAccessors().http.post(url.href,{
+            const { content, statusCode } = await this.app.getAccessors().http.post(url.href, {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                content: body
+                content: body,
             });
 
             if (statusCode !== 200) {
@@ -234,11 +234,11 @@ export class OAuth2Client implements IOAuth2Client {
             let body = `token=${tokenInfo.token}`;
             body = encodeURI(body);
 
-            const result = await this.app.getAccessors().http.post(url.href,{
+            const result = await this.app.getAccessors().http.post(url.href, {
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                content: body
+                content: body,
             });
 
             if (result.statusCode !== 200) {
@@ -343,13 +343,12 @@ export class OAuth2Client implements IOAuth2Client {
             body += `&grant_type=${GrantType.AuthorizationCode}`;
             body += `&client_secret=${clientSecret}`;
             body = encodeURI(body);
-    
 
             const { content, statusCode } = await http.post(url.href, {
-                headers: { Accept: 'application/json',
-                 'Content-Type': 'application/x-www-form-urlencoded'
+                headers: { 'Accept': 'application/json',
+                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-                content: body
+                content: body,
             });
 
             // If provider had a server error, nothing we can do
