@@ -14,6 +14,7 @@
         "go-publish": "gulp publish",
         "go-publish-beta": "gulp publish-beta",
         "go-publish-alpha": "gulp publish-alpha",
+        "go-publish-videoconf": "gulp publish-videoconf",
         "unit-tests": "NODE_ENV=test ts-node ./tests/runner.ts",
         "gen-doc": "typedoc --excludePrivate --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
     },
