@@ -30,8 +30,8 @@ export class OAuth2Client implements IOAuth2Client {
     private defaultContents = {
         success:  '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
                         <h1 style="text-align: center; font-family: Helvetica Neue;">\
-                            Authorization successful.<br>\
-                            You may now close this tab.<br>\
+                            Authorization went successfully<br>\
+                            You can now close this tab now<br>\
                         </h1>\
                     </div>',
         failed: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
