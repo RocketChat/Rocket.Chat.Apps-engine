@@ -417,7 +417,6 @@ export class OAuth2Client implements IOAuth2Client {
             true, // we want to create the record if it doesn't exist
         );
     }
-
     private async removeToken({
         userId,
         persis,
