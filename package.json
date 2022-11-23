@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.36.0-videoconf",
+    "version": "1.36.0-alpha.0",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
@@ -14,7 +14,6 @@
         "go-publish": "gulp publish",
         "go-publish-beta": "gulp publish-beta",
         "go-publish-alpha": "gulp publish-alpha",
-        "go-publish-videoconf": "gulp publish-videoconf",
         "unit-tests": "NODE_ENV=test ts-node ./tests/runner.ts",
         "gen-doc": "typedoc --excludePrivate --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
     },
