@@ -1,4 +1,6 @@
 import { AppMethod } from '../../definition/metadata';
+import { IBlock } from '../../definition/uikit';
+import { VideoConference } from '../../definition/videoConferences';
 import { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
 
@@ -53,12 +55,47 @@ export class AppVideoConfProvider {
         return await this.runTheCode(AppMethod._VIDEOCONF_CUSTOMIZE_URL, logStorage, accessors, [call, user, options]) as string;
     }
 
+    public async runOnNewVideoConference(
+      call: VideoConference,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<void> {
+        await this.runTheCode(AppMethod._VIDEOCONF_NEW, logStorage, accessors, [call]);
+    }
+
+    public async runOnVideoConferenceChanged(
+      call: VideoConference,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<void> {
+        await this.runTheCode(AppMethod._VIDEOCONF_CHANGED, logStorage, accessors, [call]);
+    }
+
+    public async runOnUserJoin(
+      call: VideoConference,
+      user: IVideoConferenceUser | undefined,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<void> {
+        await this.runTheCode(AppMethod._VIDEOCONF_USER_JOINED, logStorage, accessors, [call, user]);
+    }
+
+    public async runGetVideoConferenceInfo(
+      call: VideoConference,
+      user: IVideoConferenceUser | undefined,
+      logStorage: AppLogStorage,
+      accessors: AppAccessorManager,
+    ): Promise<Array<IBlock> | undefined> {
+        return await this.runTheCode(AppMethod._VIDEOCONF_GET_INFO, logStorage, accessors, [call, user]) as Array<IBlock> | undefined;
+    }
+
     private async runTheCode(
-      method: AppMethod._VIDEOCONF_GENERATE_URL | AppMethod._VIDEOCONF_CUSTOMIZE_URL | AppMethod._VIDEOCONF_IS_CONFIGURED,
+      method: AppMethod._VIDEOCONF_GENERATE_URL | AppMethod._VIDEOCONF_CUSTOMIZE_URL | AppMethod._VIDEOCONF_IS_CONFIGURED |
+      AppMethod._VIDEOCONF_NEW | AppMethod._VIDEOCONF_CHANGED | AppMethod._VIDEOCONF_GET_INFO | AppMethod._VIDEOCONF_USER_JOINED,
       logStorage: AppLogStorage,
       accessors: AppAccessorManager,
       runContextArgs: Array<any>,
-    ): Promise<string | boolean | undefined> {
+    ): Promise<string | boolean | Array<IBlock> | undefined> {
         // Ensure the provider has the property before going on
         if (typeof this.provider[method] !== 'function') {
             return;
