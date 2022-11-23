@@ -81,7 +81,3 @@ gulp.task('publish-beta', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
 gulp.task('publish-alpha', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
     'npm publish --access public --tag alpha'
 ])));
-
-gulp.task('publish-videoconf', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
-    'npm publish --access public --tag videoconf'
-])));
