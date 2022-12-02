@@ -1,3 +1,5 @@
+import { IBlock } from '../../definition/uikit';
+import { VideoConference } from '../../definition/videoConferences';
 import { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
 import { AppManager } from '../AppManager';
@@ -26,7 +28,7 @@ export class AppVideoConfProviderManager {
     }
     public canProviderBeTouchedBy(appId: string, providerName: string): boolean {
         const key = providerName.toLowerCase().trim();
-        return key && (!this.providerApps.has(key) || this.providerApps.get(key) === appId);
+        return (key && (!this.providerApps.has(key) || this.providerApps.get(key) === appId)) || false;
     }
     public isAlreadyDefined(providerName: string): boolean {
         const search = providerName.toLowerCase().trim();
@@ -62,7 +64,7 @@ export class AppVideoConfProviderManager {
             this.videoConfProviders.set(appId, new Map<string, AppVideoConfProvider>());
         }
 
-        this.videoConfProviders.get(appId).set(providerName, new AppVideoConfProvider(app, provider));
+        this.videoConfProviders.get(appId)!.set(providerName, new AppVideoConfProvider(app, provider));
         this.linkAppProvider(appId, providerName);
     }
 
@@ -86,7 +88,7 @@ export class AppVideoConfProviderManager {
             return;
         }
 
-        const appProviders = this.videoConfProviders.get(appId);
+        const appProviders = this.videoConfProviders.get(appId)!;
         for (const [, providerInfo] of appProviders) {
             this.unregisterProvider(appId, providerInfo);
         }
@@ -101,6 +103,42 @@ export class AppVideoConfProviderManager {
         }
 
         return providerInfo.runIsFullyConfigured(this.manager.getLogStorage(), this.accessors);
+    }
+
+    public async onNewVideoConference(providerName: string, call: VideoConference): Promise<void> {
+        const providerInfo = this.retrieveProviderInfo(providerName);
+        if (!providerInfo) {
+            throw new VideoConfProviderNotRegisteredError(providerName);
+        }
+
+        return providerInfo.runOnNewVideoConference(call, this.manager.getLogStorage(), this.accessors);
+    }
+
+    public async onVideoConferenceChanged(providerName: string, call: VideoConference): Promise<void> {
+        const providerInfo = this.retrieveProviderInfo(providerName);
+        if (!providerInfo) {
+            throw new VideoConfProviderNotRegisteredError(providerName);
+        }
+
+        return providerInfo.runOnVideoConferenceChanged(call, this.manager.getLogStorage(), this.accessors);
+    }
+
+    public async onUserJoin(providerName: string, call: VideoConference, user?: IVideoConferenceUser): Promise<void> {
+        const providerInfo = this.retrieveProviderInfo(providerName);
+        if (!providerInfo) {
+            throw new VideoConfProviderNotRegisteredError(providerName);
+        }
+
+        return providerInfo.runOnUserJoin(call, user, this.manager.getLogStorage(), this.accessors);
+    }
+
+    public async getVideoConferenceInfo(providerName: string, call: VideoConference, user?: IVideoConferenceUser): Promise<Array<IBlock> | undefined> {
+        const providerInfo = this.retrieveProviderInfo(providerName);
+        if (!providerInfo) {
+            throw new VideoConfProviderNotRegisteredError(providerName);
+        }
+
+        return providerInfo.runGetVideoConferenceInfo(call, user, this.manager.getLogStorage(), this.accessors);
     }
 
     public async generateUrl(providerName: string, call: VideoConfData): Promise<string> {
@@ -134,7 +172,7 @@ export class AppVideoConfProviderManager {
                 continue;
             }
 
-            const provider = providers.get(key);
+            const provider = providers.get(key)!;
             if (provider.isRegistered) {
                 return provider;
             }
@@ -158,6 +196,9 @@ export class AppVideoConfProviderManager {
 
         info.isRegistered = false;
 
-        this.videoConfProviders.get(appId).delete(key);
+        const map = this.videoConfProviders.get(appId);
+        if (map) {
+            map.delete(key);
+        }
     }
 }

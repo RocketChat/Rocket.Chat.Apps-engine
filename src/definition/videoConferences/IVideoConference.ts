@@ -1,7 +1,8 @@
-import { IVideoConferenceUser } from './IVideoConferenceUser';
+import type { IVideoConferenceUser } from './IVideoConferenceUser';
 
 export type VideoConferenceMember = IVideoConferenceUser & {
     ts: Date;
+    avatarETag?: string;
 };
 
 export enum VideoConferenceStatus {
@@ -33,6 +34,8 @@ export interface IVideoConference {
 
     providerName: string;
     providerData?: Record<string, any>;
+
+    ringing?: boolean;
 }
 
 export interface IDirectVideoConference extends IVideoConference {
