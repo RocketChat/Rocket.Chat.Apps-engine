@@ -63,23 +63,21 @@ export class AppSchedulerManager {
                 return;
             }
 
-            const context = app.makeContext({
-                processor,
-                args: [
-                    jobContext,
-                    this.accessors.getReader(appId),
-                    this.accessors.getModifier(appId),
-                    this.accessors.getHttp(appId),
-                    this.accessors.getPersistence(appId),
-                ],
-            });
-
             const logger = app.setupLogger(AppMethod._JOB_PROCESSOR);
             logger.debug(`Job processor ${processor.id} is being executed...`);
 
             try {
-                const codeToRun = `processor.processor.apply(null, args)`;
-                await app.runInContext(codeToRun, context);
+                const codeToRun = `module.exports = processor.processor.apply(null, args)`;
+                await app.getRuntime().runInSandbox(codeToRun, {
+                    processor,
+                    args: [
+                        jobContext,
+                        this.accessors.getReader(appId),
+                        this.accessors.getModifier(appId),
+                        this.accessors.getHttp(appId),
+                        this.accessors.getPersistence(appId),
+                    ],
+                });
                 logger.debug(`Job processor ${processor.id} was sucessfully executed`);
             } catch (e) {
                 logger.error(e);

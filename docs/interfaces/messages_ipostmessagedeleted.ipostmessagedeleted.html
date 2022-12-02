@@ -103,13 +103,13 @@
 					<a name="checkpostmessagedeleted" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> check<wbr>Post<wbr>Message<wbr>Deleted</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Post<wbr>Message<wbr>Deleted<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a>, read<span class="tsd-signature-symbol">: </span><a href="accessors_iread.iread.html" class="tsd-signature-type" data-tsd-kind="Interface">IRead</a>, http<span class="tsd-signature-symbol">: </span><a href="accessors_ihttp.ihttp.html" class="tsd-signature-type" data-tsd-kind="Interface">IHttp</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Post<wbr>Message<wbr>Deleted<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a>, read<span class="tsd-signature-symbol">: </span><a href="accessors_iread.iread.html" class="tsd-signature-type" data-tsd-kind="Interface">IRead</a>, http<span class="tsd-signature-symbol">: </span><a href="accessors_ihttp.ihttp.html" class="tsd-signature-type" data-tsd-kind="Interface">IHttp</a>, context<span class="tsd-signature-symbol">: </span><a href="messages_imessagedeletecontext.imessagedeletecontext.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageDeleteContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/messages/IPostMessageDeleted.ts#L16">src/definition/messages/IPostMessageDeleted.ts:16</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/02c549d/src/definition/messages/IPostMessageDeleted.ts#L18">src/definition/messages/IPostMessageDeleted.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -124,7 +124,7 @@
 								<li>
 									<h5>message: <a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The message which was deleted</p>
+										<p>The deleted message</p>
 									</div>
 								</li>
 								<li>
@@ -139,6 +139,12 @@
 										<p>An accessor to the outside world</p>
 									</div>
 								</li>
+								<li>
+									<h5>context: <a href="messages_imessagedeletecontext.imessagedeletecontext.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageDeleteContext</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The context of the message which was deleted</p>
+									</div>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 							<p>whether to run the executor function</p>
@@ -149,13 +155,13 @@
 					<a name="executepostmessagedeleted" class="tsd-anchor"></a>
 					<h3>execute<wbr>Post<wbr>Message<wbr>Deleted</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">execute<wbr>Post<wbr>Message<wbr>Deleted<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a>, read<span class="tsd-signature-symbol">: </span><a href="accessors_iread.iread.html" class="tsd-signature-type" data-tsd-kind="Interface">IRead</a>, http<span class="tsd-signature-symbol">: </span><a href="accessors_ihttp.ihttp.html" class="tsd-signature-type" data-tsd-kind="Interface">IHttp</a>, persistence<span class="tsd-signature-symbol">: </span><a href="accessors_ipersistence.ipersistence.html" class="tsd-signature-type" data-tsd-kind="Interface">IPersistence</a>, modify<span class="tsd-signature-symbol">: </span><a href="accessors_imodify.imodify.html" class="tsd-signature-type" data-tsd-kind="Interface">IModify</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">execute<wbr>Post<wbr>Message<wbr>Deleted<span class="tsd-signature-symbol">(</span>message<span class="tsd-signature-symbol">: </span><a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a>, read<span class="tsd-signature-symbol">: </span><a href="accessors_iread.iread.html" class="tsd-signature-type" data-tsd-kind="Interface">IRead</a>, http<span class="tsd-signature-symbol">: </span><a href="accessors_ihttp.ihttp.html" class="tsd-signature-type" data-tsd-kind="Interface">IHttp</a>, persistence<span class="tsd-signature-symbol">: </span><a href="accessors_ipersistence.ipersistence.html" class="tsd-signature-type" data-tsd-kind="Interface">IPersistence</a>, modify<span class="tsd-signature-symbol">: </span><a href="accessors_imodify.imodify.html" class="tsd-signature-type" data-tsd-kind="Interface">IModify</a>, context<span class="tsd-signature-symbol">: </span><a href="messages_imessagedeletecontext.imessagedeletecontext.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageDeleteContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/6312db7/src/definition/messages/IPostMessageDeleted.ts#L26">src/definition/messages/IPostMessageDeleted.ts:26</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/02c549d/src/definition/messages/IPostMessageDeleted.ts#L29">src/definition/messages/IPostMessageDeleted.ts:29</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -168,7 +174,7 @@
 								<li>
 									<h5>message: <a href="messages_imessage.imessage.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessage</a></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>The message which was deleted</p>
+										<p>The deleted message</p>
 									</div>
 								</li>
 								<li>
@@ -191,6 +197,12 @@
 								</li>
 								<li>
 									<h5>modify: <a href="accessors_imodify.imodify.html" class="tsd-signature-type" data-tsd-kind="Interface">IModify</a></h5>
+								</li>
+								<li>
+									<h5>context: <a href="messages_imessagedeletecontext.imessagedeletecontext.html" class="tsd-signature-type" data-tsd-kind="Interface">IMessageDeleteContext</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The context of the message which was deleted</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>

@@ -5,6 +5,7 @@ import { AppInterface, IAppInfo } from '../../../src/definition/metadata';
 import { AppManager } from '../../../src/server/AppManager';
 import { AppFabricationFulfillment } from '../../../src/server/compiler';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import { AppsEngineEmptyRuntime } from '../../../src/server/runtime/AppsEngineEmptyRuntime';
 import { IAppStorageItem } from '../../../src/server/storage';
 
 export class AppFabricationFulfillmentTestFixture {
@@ -39,7 +40,12 @@ export class AppFabricationFulfillmentTestFixture {
         Expect(() => aff.setImplementedInterfaces(expectedInter)).not.toThrow();
         Expect(aff.getImplementedInferfaces()).toEqual(expectedInter);
 
-        const fakeApp = new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {} as App, (mod: string) => mod);
+        const fakeApp = new ProxiedApp(
+            {} as AppManager,
+            { status: AppStatus.UNKNOWN } as IAppStorageItem,
+            {} as App,
+            new AppsEngineEmptyRuntime(null),
+        );
         Expect(() => aff.setApp(fakeApp)).not.toThrow();
         Expect(aff.getApp()).toEqual(fakeApp);
     }
