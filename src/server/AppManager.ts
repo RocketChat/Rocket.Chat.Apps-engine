@@ -1,4 +1,6 @@
 import { Buffer } from 'buffer';
+import { createHash } from 'crypto';
+import * as jose from 'jose';
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod, IAppInfo } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
@@ -601,6 +603,8 @@ export class AppManager {
             return aff;
         }
 
+        const signature = await this.getAppSignature(descriptor, result.info.id);
+        descriptor.signature = signature;
         const stored = await this.appMetadataStorage.update(descriptor);
 
         const app = this.getCompiler().toSandBox(this, descriptor, result);
@@ -871,6 +875,8 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
+            const signature = await this.getAppSignature(storageItem, app.getID());
+            storageItem.signature = signature;
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
@@ -964,6 +970,9 @@ export class AppManager {
             storageItem.status = status;
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
+            const signature = await this.getAppSignature(storageItem, app.getID());
+            storageItem.signature = signature;
+
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
@@ -1032,6 +1041,30 @@ export class AppManager {
 
         return result;
     }
+
+    private checksum(str: string, alg = 'SHA256'): string {
+        return createHash(alg).update(str).digest('hex');
+    }
+
+    private stringifyOrdered(obj: any): string {
+        return JSON.stringify(obj, Object.keys(obj).sort());
+    }
+
+    private async getAppSignature(obj: any, appId: string): Promise<string> {
+        const descriptorString = this.stringifyOrdered(obj);
+        const calg = 'SHA256';
+        const alg = 'RS512';
+        const checksum = this.checksum(descriptorString, calg);
+        const pkeyString = await AppManager.Instance.getBridges().getInternalFederationBridge().getPrivateKey();
+        const privateKey = await jose.importPKCS8(pkeyString, alg);
+        const signature = await new jose.SignJWT({ checksum, calg })
+            .setProtectedHeader({ alg })
+            .setIssuedAt()
+            .sign(privateKey);
+
+        return signature;
+    }
+
 }
 
 export const getPermissionsByAppId = (appId: string) => {
