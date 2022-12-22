@@ -72,38 +72,30 @@ export class AppSlashCommand {
             return;
         }
 
-        const runContext = this.app.makeContext({
-            slashCommand: this.slashCommand,
-            args: [
-                ...runContextArgs,
-                context,
-                accessors.getReader(this.app.getID()),
-                accessors.getModifier(this.app.getID()),
-                accessors.getHttp(this.app.getID()),
-                accessors.getPersistence(this.app.getID()),
-            ],
-        });
-
         const logger = this.app.setupLogger(method);
         logger.debug(`${ command }'s ${ method } is being executed...`, context);
 
-        let result: void | ISlashCommandPreview;
         try {
-            const runCode = `slashCommand.${ method }.apply(slashCommand, args)`;
-            result = await this.app.runInContext(runCode, runContext);
+            const runCode = `module.exports = slashCommand.${ method }.apply(slashCommand, args)`;
+            const result = await this.app.getRuntime().runInSandbox(runCode, {
+                slashCommand: this.slashCommand,
+                args: [
+                    ...runContextArgs,
+                    context,
+                    accessors.getReader(this.app.getID()),
+                    accessors.getModifier(this.app.getID()),
+                    accessors.getHttp(this.app.getID()),
+                    accessors.getPersistence(this.app.getID()),
+                ],
+            });
+
             logger.debug(`${ command }'s ${ method } was successfully executed.`);
+            return result;
         } catch (e) {
             logger.error(e);
             logger.debug(`${ command }'s ${ method } was unsuccessful.`);
-        }
-
-        try {
+        } finally {
             await logStorage.storeEntries(this.app.getID(), logger);
-        } catch (e) {
-            // Don't care, at the moment.
-            // TODO: Evaluate to determine if we do care
         }
-
-        return result;
     }
 }

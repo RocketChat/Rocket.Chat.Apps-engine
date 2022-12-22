@@ -31,23 +31,23 @@ function lint_ts() {
 
 function compile_ts() {
     return tsp.src().pipe(sourcemaps.init())
-            .pipe(tsp())
-            .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest('.'));
+        .pipe(tsp())
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('.'));
 }
 
 function update_ts_definition_version() {
     const { version } = JSON.parse(fs.readFileSync('./package.json'));
 
     return gulp.src('src/definition/package.json')
-            .pipe(bump({ version }))
-            .pipe(gulp.dest('src/definition/'));
+        .pipe(bump({ version }))
+        .pipe(gulp.dest('src/definition/'));
 }
 
 //Tasks for getting it ready and publishing
 function ts_definition_module_files() {
     return gulp.src(['LICENSE', 'src/definition/package.json'])
-            .pipe(gulp.dest('definition/'));
+        .pipe(gulp.dest('definition/'));
 }
 
 function watch() {

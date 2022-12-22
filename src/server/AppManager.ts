@@ -25,6 +25,7 @@ import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
+import { AppsEngineEmptyRuntime } from './runtime/AppsEngineEmptyRuntime';
 import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 
@@ -240,7 +241,7 @@ export class AppManager {
                 app.getLogger().error(e);
                 this.logStorage.storeEntries(app.getID(), app.getLogger());
 
-                const prl = new ProxiedApp(this, item, app, () => '');
+                const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
                 this.apps.set(item.id, prl);
                 aff.setApp(prl);
             }
