@@ -26,7 +26,7 @@ function clean_generated() {
 }
 
 function lint_ts() {
-    return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
+    return shell.task(['npm run lint']);
 }
 
 function compile_ts() {

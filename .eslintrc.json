@@ -1,5 +1,5 @@
 {
-    "extends": "eslint:recommended",
+    "extends": ["@rocket.chat/eslint-config"],
     "env": {
         "browser": false,
         "commonjs": true,
