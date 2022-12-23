@@ -1,89 +1,101 @@
-import { AppManager } from '../AppManager';
-import { UserBridge } from '../bridges';
-import { IInternalUserBridge } from '../bridges/IInternalUserBridge';
+import type { AppManager } from '../AppManager';
+import type { UserBridge } from '../bridges';
+import type { IInternalUserBridge } from '../bridges/IInternalUserBridge';
 import { InvalidLicenseError } from '../errors';
-import { IMarketplaceInfo } from '../marketplace';
-import { AppLicenseValidationResult } from '../marketplace/license';
+import type { IMarketplaceInfo } from '../marketplace';
 import { Crypto } from '../marketplace/license';
+import type { AppLicenseValidationResult } from '../marketplace/license';
 import { MarketplacePurchaseType } from '../marketplace/MarketplacePurchaseType';
 
 enum LicenseVersion {
-    v1 = 1,
+	v1 = 1,
 }
 
 export class AppLicenseManager {
-    private readonly crypto: Crypto;
-    private readonly userBridge: UserBridge;
-    constructor(private readonly manager: AppManager) {
-        this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
-        this.userBridge = this.manager.getBridges().getUserBridge();
-    }
+	private readonly crypto: Crypto;
 
-    public async validate(validationResult: AppLicenseValidationResult, appMarketplaceInfo?: IMarketplaceInfo): Promise<void> {
-        if (!appMarketplaceInfo || appMarketplaceInfo.purchaseType !== MarketplacePurchaseType.PurchaseTypeSubscription) {
-            return;
-        }
+	private readonly userBridge: UserBridge;
 
-        validationResult.setValidated(true);
+	constructor(private readonly manager: AppManager) {
+		this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
+		this.userBridge = this.manager.getBridges().getUserBridge();
+	}
 
-        const encryptedLicense = appMarketplaceInfo.subscriptionInfo.license.license;
+	public async validate(validationResult: AppLicenseValidationResult, appMarketplaceInfo?: IMarketplaceInfo): Promise<void> {
+		if (!appMarketplaceInfo || appMarketplaceInfo.purchaseType !== MarketplacePurchaseType.PurchaseTypeSubscription) {
+			return;
+		}
 
-        if (!encryptedLicense) {
-            validationResult.addError('license', 'License for app is invalid');
+		validationResult.setValidated(true);
 
-            throw new InvalidLicenseError(validationResult);
-        }
+		const encryptedLicense = appMarketplaceInfo.subscriptionInfo.license.license;
 
-        let license;
-        try {
-            license = await this.crypto.decryptLicense(encryptedLicense) as any;
-        } catch (err) {
-            validationResult.addError('publicKey', err.message);
+		if (!encryptedLicense) {
+			validationResult.addError('license', 'License for app is invalid');
 
-            throw new InvalidLicenseError(validationResult);
-        }
+			throw new InvalidLicenseError(validationResult);
+		}
 
-        switch (license.version) {
-            case LicenseVersion.v1:
-                await this.validateV1(appMarketplaceInfo, license, validationResult);
-                break;
-        }
-    }
+		let license;
+		try {
+			license = (await this.crypto.decryptLicense(encryptedLicense)) as any;
+		} catch (err) {
+			validationResult.addError('publicKey', err.message);
 
-    private async validateV1(appMarketplaceInfo: IMarketplaceInfo, license: any, validationResult: AppLicenseValidationResult): Promise<void> {
-        if (license.isBundle && (!appMarketplaceInfo.bundledIn || !appMarketplaceInfo.bundledIn.find((value) => value.bundleId === license.appId))) {
-            validationResult.addError('bundle', 'License issued for a bundle that does not contain the app');
-        } else if (!license.isBundle && license.appId !== appMarketplaceInfo.id) {
-            validationResult.addError('appId', `License hasn't been issued for this app`);
-        }
+			throw new InvalidLicenseError(validationResult);
+		}
 
-        const renewal = new Date(license.renewalDate);
-        const expire = new Date(license.expireDate);
-        const now = new Date();
+		switch (license.version) {
+			case LicenseVersion.v1:
+				await this.validateV1(appMarketplaceInfo, license, validationResult);
+				break;
+		}
+	}
 
-        if (expire < now) {
-            validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
-        }
+	private async validateV1(
+		appMarketplaceInfo: IMarketplaceInfo,
+		license: any,
+		validationResult: AppLicenseValidationResult,
+	): Promise<void> {
+		if (
+			license.isBundle &&
+			(!appMarketplaceInfo.bundledIn || !appMarketplaceInfo.bundledIn.find((value) => value.bundleId === license.appId))
+		) {
+			validationResult.addError('bundle', 'License issued for a bundle that does not contain the app');
+		} else if (!license.isBundle && license.appId !== appMarketplaceInfo.id) {
+			validationResult.addError('appId', `License hasn't been issued for this app`);
+		}
 
-        const currentActiveUsers = await (this.userBridge as UserBridge & IInternalUserBridge).getActiveUserCount();
+		const renewal = new Date(license.renewalDate);
+		const expire = new Date(license.expireDate);
+		const now = new Date();
 
-        if (license.maxSeats < currentActiveUsers) {
-            validationResult.addError('maxSeats', 'License does not accomodate the current amount of active users. Please increase the number of seats');
-        }
+		if (expire < now) {
+			validationResult.addError('expire', 'License is no longer valid and needs to be renewed');
+		}
 
-        if (validationResult.hasErrors) {
-            throw new InvalidLicenseError(validationResult);
-        }
+		const currentActiveUsers = await (this.userBridge as UserBridge & IInternalUserBridge).getActiveUserCount();
 
-        if (renewal < now) {
-            validationResult.addWarning('renewal', 'License has expired and needs to be renewed');
-        }
+		if (license.maxSeats < currentActiveUsers) {
+			validationResult.addError(
+				'maxSeats',
+				'License does not accomodate the current amount of active users. Please increase the number of seats',
+			);
+		}
 
-        if (license.seats < currentActiveUsers) {
-            validationResult.addWarning(
-                'seats',
-                'License does not have enough seats to accommodate the current amount of active users. Please increase the number of seats',
-            );
-        }
-    }
+		if (validationResult.hasErrors) {
+			throw new InvalidLicenseError(validationResult);
+		}
+
+		if (renewal < now) {
+			validationResult.addWarning('renewal', 'License has expired and needs to be renewed');
+		}
+
+		if (license.seats < currentActiveUsers) {
+			validationResult.addWarning(
+				'seats',
+				'License does not have enough seats to accommodate the current amount of active users. Please increase the number of seats',
+			);
+		}
+	}
 }

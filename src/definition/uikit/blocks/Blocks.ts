@@ -1,63 +1,63 @@
-import { AccessoryElements, IBlockElement, IImageElement, IInputElement } from './Elements';
-import { ITextObject } from './Objects';
+import type { AccessoryElements, IBlockElement, IImageElement, IInputElement } from './Elements';
+import type { ITextObject } from './Objects';
 
 export enum BlockType {
-    SECTION = 'section',
-    DIVIDER = 'divider',
-    IMAGE = 'image',
-    ACTIONS = 'actions',
-    CONTEXT = 'context',
-    INPUT = 'input',
-    CONDITIONAL = 'conditional',
+	SECTION = 'section',
+	DIVIDER = 'divider',
+	IMAGE = 'image',
+	ACTIONS = 'actions',
+	CONTEXT = 'context',
+	INPUT = 'input',
+	CONDITIONAL = 'conditional',
 }
 
 export interface IBlock {
-    type: BlockType;
-    appId?: string;
-    blockId?: string;
+	type: BlockType;
+	appId?: string;
+	blockId?: string;
 }
 
 export interface ISectionBlock extends IBlock {
-    type: BlockType.SECTION;
-    text: ITextObject;
-    accessory?: AccessoryElements;
+	type: BlockType.SECTION;
+	text: ITextObject;
+	accessory?: AccessoryElements;
 }
 
 export interface IImageBlock extends IBlock {
-    type: BlockType.IMAGE;
-    imageUrl: string;
-    altText: string;
-    title?: ITextObject;
+	type: BlockType.IMAGE;
+	imageUrl: string;
+	altText: string;
+	title?: ITextObject;
 }
 
 export interface IDividerBlock extends IBlock {
-    type: BlockType.DIVIDER;
+	type: BlockType.DIVIDER;
 }
 
 export interface IActionsBlock extends IBlock {
-    type: BlockType.ACTIONS;
-    elements: Array<IBlockElement>;
+	type: BlockType.ACTIONS;
+	elements: Array<IBlockElement>;
 }
 
 export interface IContextBlock extends IBlock {
-    type: BlockType.CONTEXT;
-    elements: Array<ITextObject | IImageElement>;
+	type: BlockType.CONTEXT;
+	elements: Array<ITextObject | IImageElement>;
 }
 
 export interface IInputBlock extends IBlock {
-    type: BlockType.INPUT;
-    element: IInputElement;
-    label: ITextObject;
-    optional?: boolean;
+	type: BlockType.INPUT;
+	element: IInputElement;
+	label: ITextObject;
+	optional?: boolean;
 }
 
 export enum ConditionalBlockFiltersEngine {
-    ROCKETCHAT = 'rocket.chat',
-    LIVECHAT = 'livechat',
+	ROCKETCHAT = 'rocket.chat',
+	LIVECHAT = 'livechat',
 }
 
 export interface IConditionalBlockFilters {
-    engine?: Array<ConditionalBlockFiltersEngine>;
+	engine?: Array<ConditionalBlockFiltersEngine>;
 }
 
 /**
@@ -78,7 +78,7 @@ export interface IConditionalBlockFilters {
  *      leave it blank to show the block in both engines
  */
 export interface IConditionalBlock extends IBlock {
-    type: BlockType.CONDITIONAL;
-    when?: IConditionalBlockFilters;
-    render: Array<IBlock>;
+	type: BlockType.CONDITIONAL;
+	when?: IConditionalBlockFilters;
+	render: Array<IBlock>;
 }

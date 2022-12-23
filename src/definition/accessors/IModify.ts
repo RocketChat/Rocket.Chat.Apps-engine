@@ -1,39 +1,39 @@
-import { IModifyCreator } from './IModifyCreator';
-import { IModifyDeleter } from './IModifyDeleter';
-import { IModifyExtender } from './IModifyExtender';
-import { IModifyUpdater } from './IModifyUpdater';
-import { INotifier } from './INotifier';
-import { IOAuthAppsModify } from './IOAuthAppsModify';
-import { ISchedulerModify } from './ISchedulerModify';
-import { IUIController } from './IUIController';
+import type { IModifyCreator } from './IModifyCreator';
+import type { IModifyDeleter } from './IModifyDeleter';
+import type { IModifyExtender } from './IModifyExtender';
+import type { IModifyUpdater } from './IModifyUpdater';
+import type { INotifier } from './INotifier';
+import type { IOAuthAppsModify } from './IOAuthAppsModify';
+import type { ISchedulerModify } from './ISchedulerModify';
+import type { IUIController } from './IUIController';
 
 export interface IModify {
-    getCreator(): IModifyCreator;
+	getCreator(): IModifyCreator;
 
-    getDeleter(): IModifyDeleter;
+	getDeleter(): IModifyDeleter;
 
-    getExtender(): IModifyExtender;
+	getExtender(): IModifyExtender;
 
-    getUpdater(): IModifyUpdater;
+	getUpdater(): IModifyUpdater;
 
-    /**
-     * Gets the accessor for sending notifications to a user or users in a room.
-     *
-     * @returns the notifier accessor
-     */
-    getNotifier(): INotifier;
-    /**
-     * Gets the accessor for interacting with the UI
-     */
-    getUiController(): IUIController;
+	/**
+	 * Gets the accessor for sending notifications to a user or users in a room.
+	 *
+	 * @returns the notifier accessor
+	 */
+	getNotifier(): INotifier;
+	/**
+	 * Gets the accessor for interacting with the UI
+	 */
+	getUiController(): IUIController;
 
-    /**
-     * Gets the accessor for creating scheduled jobs
-     */
-    getScheduler(): ISchedulerModify;
+	/**
+	 * Gets the accessor for creating scheduled jobs
+	 */
+	getScheduler(): ISchedulerModify;
 
-    /**
-     * Gets the accessor for creating OAuth apps
-     */
-    getOAuthAppsModifier(): IOAuthAppsModify;
+	/**
+	 * Gets the accessor for creating OAuth apps
+	 */
+	getOAuthAppsModifier(): IOAuthAppsModify;
 }

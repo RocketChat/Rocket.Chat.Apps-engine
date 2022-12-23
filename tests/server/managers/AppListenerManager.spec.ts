@@ -1,44 +1,44 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
+
 import { AppInterface } from '../../../src/definition/metadata';
-import { AppManager } from '../../../src/server/AppManager';
+import type { AppManager } from '../../../src/server/AppManager';
 import { AppListenerManager } from '../../../src/server/managers';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class AppListenerManagerTestFixture {
-    private mockApp: ProxiedApp;
-    private mockManager: AppManager;
+	private mockApp: ProxiedApp;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockApp = {
-            getID() {
-                return 'testing';
-            },
-            getImplementationList() {
-                return {
-                    [AppInterface.IPostMessageSent]: true,
-                } as { [inte: string]: boolean };
-            },
-        } as ProxiedApp;
+	private mockManager: AppManager;
 
-        this.mockManager = {
-            getAccessorManager() {
-                return;
-            },
-            getOneById(appId: string) {
-                return this.mockApp;
-            },
-        } as AppManager;
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.mockApp = {
+			getID() {
+				return 'testing';
+			},
+			getImplementationList() {
+				return {
+					[AppInterface.IPostMessageSent]: true,
+				} as { [inte: string]: boolean };
+			},
+		} as ProxiedApp;
 
-    @Test()
-    public basicAppListenerManager() {
-        Expect(() => new AppListenerManager(this.mockManager)).not.toThrow();
+		this.mockManager = {
+			getAccessorManager() {},
+			getOneById(appId: string) {
+				return this.mockApp;
+			},
+		} as AppManager;
+	}
 
-        const alm = new AppListenerManager(this.mockManager);
+	@Test()
+	public basicAppListenerManager() {
+		Expect(() => new AppListenerManager(this.mockManager)).not.toThrow();
 
-        Expect(alm.getListeners(AppInterface.IPostMessageSent).length).toBe(0);
-        Expect(() => alm.registerListeners(this.mockApp)).not.toThrow();
-        Expect(alm.getListeners(AppInterface.IPostMessageSent).length).toBe(1);
-    }
+		const alm = new AppListenerManager(this.mockManager);
+
+		Expect(alm.getListeners(AppInterface.IPostMessageSent).length).toBe(0);
+		Expect(() => alm.registerListeners(this.mockApp)).not.toThrow();
+		Expect(alm.getListeners(AppInterface.IPostMessageSent).length).toBe(1);
+	}
 }

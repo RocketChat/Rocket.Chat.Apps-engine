@@ -1,220 +1,222 @@
-import { IMessageBuilder } from '../../definition/accessors';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import type { IMessageBuilder } from '../../definition/accessors';
+import type { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom } from '../../definition/rooms';
-import { BlockBuilder, IBlock } from '../../definition/uikit';
-import { IUser } from '../../definition/users';
+import type { IRoom } from '../../definition/rooms';
+import type { IBlock } from '../../definition/uikit';
+import { BlockBuilder } from '../../definition/uikit';
+import type { IUser } from '../../definition/users';
 
 export class MessageBuilder implements IMessageBuilder {
-    public kind: RocketChatAssociationModel.MESSAGE;
-    private msg: IMessage;
+	public kind: RocketChatAssociationModel.MESSAGE;
 
-    constructor(message?: IMessage) {
-        this.kind = RocketChatAssociationModel.MESSAGE;
-        this.msg = message ? message : ({} as IMessage);
-    }
+	private msg: IMessage;
 
-    public setData(data: IMessage): IMessageBuilder {
-        delete data.id;
-        this.msg = data;
+	constructor(message?: IMessage) {
+		this.kind = RocketChatAssociationModel.MESSAGE;
+		this.msg = message || ({} as IMessage);
+	}
 
-        return this;
-    }
+	public setData(data: IMessage): IMessageBuilder {
+		delete data.id;
+		this.msg = data;
 
-    public setUpdateData(data: IMessage, editor: IUser): IMessageBuilder {
-        this.msg = data;
-        this.msg.editor = editor;
-        this.msg.editedAt = new Date();
+		return this;
+	}
 
-        return this;
-    }
+	public setUpdateData(data: IMessage, editor: IUser): IMessageBuilder {
+		this.msg = data;
+		this.msg.editor = editor;
+		this.msg.editedAt = new Date();
 
-    public setThreadId(threadId: string): IMessageBuilder {
-        this.msg.threadId = threadId;
+		return this;
+	}
 
-        return this;
-    }
+	public setThreadId(threadId: string): IMessageBuilder {
+		this.msg.threadId = threadId;
 
-    public getThreadId(): string {
-        return this.msg.threadId;
-    }
+		return this;
+	}
 
-    public setRoom(room: IRoom): IMessageBuilder {
-        this.msg.room = room;
-        return this;
-    }
+	public getThreadId(): string {
+		return this.msg.threadId;
+	}
 
-    public getRoom(): IRoom {
-        return this.msg.room;
-    }
+	public setRoom(room: IRoom): IMessageBuilder {
+		this.msg.room = room;
+		return this;
+	}
 
-    public setSender(sender: IUser): IMessageBuilder {
-        this.msg.sender = sender;
-        return this;
-    }
+	public getRoom(): IRoom {
+		return this.msg.room;
+	}
 
-    public getSender(): IUser {
-        return this.msg.sender;
-    }
+	public setSender(sender: IUser): IMessageBuilder {
+		this.msg.sender = sender;
+		return this;
+	}
 
-    public setText(text: string): IMessageBuilder {
-        this.msg.text = text;
-        return this;
-    }
+	public getSender(): IUser {
+		return this.msg.sender;
+	}
 
-    public getText(): string {
-        return this.msg.text;
-    }
+	public setText(text: string): IMessageBuilder {
+		this.msg.text = text;
+		return this;
+	}
 
-    public setEmojiAvatar(emoji: string): IMessageBuilder {
-        this.msg.emoji = emoji;
-        return this;
-    }
+	public getText(): string {
+		return this.msg.text;
+	}
 
-    public getEmojiAvatar(): string {
-        return this.msg.emoji;
-    }
+	public setEmojiAvatar(emoji: string): IMessageBuilder {
+		this.msg.emoji = emoji;
+		return this;
+	}
 
-    public setAvatarUrl(avatarUrl: string): IMessageBuilder {
-        this.msg.avatarUrl = avatarUrl;
-        return this;
-    }
+	public getEmojiAvatar(): string {
+		return this.msg.emoji;
+	}
 
-    public getAvatarUrl(): string {
-        return this.msg.avatarUrl;
-    }
+	public setAvatarUrl(avatarUrl: string): IMessageBuilder {
+		this.msg.avatarUrl = avatarUrl;
+		return this;
+	}
 
-    public setUsernameAlias(alias: string): IMessageBuilder {
-        this.msg.alias = alias;
-        return this;
-    }
+	public getAvatarUrl(): string {
+		return this.msg.avatarUrl;
+	}
 
-    public getUsernameAlias(): string {
-        return this.msg.alias;
-    }
+	public setUsernameAlias(alias: string): IMessageBuilder {
+		this.msg.alias = alias;
+		return this;
+	}
 
-    public addAttachment(attachment: IMessageAttachment): IMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+	public getUsernameAlias(): string {
+		return this.msg.alias;
+	}
 
-        this.msg.attachments.push(attachment);
-        return this;
-    }
+	public addAttachment(attachment: IMessageAttachment): IMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-    public setAttachments(attachments: Array<IMessageAttachment>): IMessageBuilder {
-        this.msg.attachments = attachments;
-        return this;
-    }
+		this.msg.attachments.push(attachment);
+		return this;
+	}
 
-    public getAttachments(): Array<IMessageAttachment> {
-        return this.msg.attachments;
-    }
+	public setAttachments(attachments: Array<IMessageAttachment>): IMessageBuilder {
+		this.msg.attachments = attachments;
+		return this;
+	}
 
-    public replaceAttachment(position: number, attachment: IMessageAttachment): IMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+	public getAttachments(): Array<IMessageAttachment> {
+		return this.msg.attachments;
+	}
 
-        if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to replace.`);
-        }
+	public replaceAttachment(position: number, attachment: IMessageAttachment): IMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-        this.msg.attachments[position] = attachment;
-        return this;
-    }
+		if (!this.msg.attachments[position]) {
+			throw new Error(`No attachment found at the index of "${position}" to replace.`);
+		}
 
-    public removeAttachment(position: number): IMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+		this.msg.attachments[position] = attachment;
+		return this;
+	}
 
-        if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to remove.`);
-        }
+	public removeAttachment(position: number): IMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-        this.msg.attachments.splice(position, 1);
+		if (!this.msg.attachments[position]) {
+			throw new Error(`No attachment found at the index of "${position}" to remove.`);
+		}
 
-        return this;
-    }
+		this.msg.attachments.splice(position, 1);
 
-    public setEditor(user: IUser): IMessageBuilder {
-        this.msg.editor = user;
-        return this;
-    }
+		return this;
+	}
 
-    public getEditor(): IUser {
-        return this.msg.editor;
-    }
+	public setEditor(user: IUser): IMessageBuilder {
+		this.msg.editor = user;
+		return this;
+	}
 
-    public setGroupable(groupable: boolean): IMessageBuilder {
-        this.msg.groupable = groupable;
-        return this;
-    }
+	public getEditor(): IUser {
+		return this.msg.editor;
+	}
 
-    public getGroupable(): boolean {
-        return this.msg.groupable;
-    }
+	public setGroupable(groupable: boolean): IMessageBuilder {
+		this.msg.groupable = groupable;
+		return this;
+	}
 
-    public setParseUrls(parseUrls: boolean): IMessageBuilder {
-        this.msg.parseUrls = parseUrls;
-        return this;
-    }
+	public getGroupable(): boolean {
+		return this.msg.groupable;
+	}
 
-    public getParseUrls(): boolean {
-        return this.msg.parseUrls;
-    }
+	public setParseUrls(parseUrls: boolean): IMessageBuilder {
+		this.msg.parseUrls = parseUrls;
+		return this;
+	}
 
-    public getMessage(): IMessage {
-        if (!this.msg.room) {
-            throw new Error('The "room" property is required.');
-        }
+	public getParseUrls(): boolean {
+		return this.msg.parseUrls;
+	}
 
-        return this.msg;
-    }
+	public getMessage(): IMessage {
+		if (!this.msg.room) {
+			throw new Error('The "room" property is required.');
+		}
 
-    public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
-        if (!Array.isArray(this.msg.blocks)) {
-            this.msg.blocks = [];
-        }
+		return this.msg;
+	}
 
-        if (blocks instanceof BlockBuilder) {
-            this.msg.blocks.push(...blocks.getBlocks());
-        } else {
-            this.msg.blocks.push(...blocks);
-        }
+	public addBlocks(blocks: BlockBuilder | Array<IBlock>) {
+		if (!Array.isArray(this.msg.blocks)) {
+			this.msg.blocks = [];
+		}
 
-        return this;
-    }
+		if (blocks instanceof BlockBuilder) {
+			this.msg.blocks.push(...blocks.getBlocks());
+		} else {
+			this.msg.blocks.push(...blocks);
+		}
 
-    public setBlocks(blocks: BlockBuilder | Array<IBlock>) {
-        if (blocks instanceof BlockBuilder) {
-            this.msg.blocks = blocks.getBlocks();
-        } else {
-            this.msg.blocks = blocks;
-        }
+		return this;
+	}
 
-        return this;
-    }
+	public setBlocks(blocks: BlockBuilder | Array<IBlock>) {
+		if (blocks instanceof BlockBuilder) {
+			this.msg.blocks = blocks.getBlocks();
+		} else {
+			this.msg.blocks = blocks;
+		}
 
-    public getBlocks() {
-        return this.msg.blocks;
-    }
+		return this;
+	}
 
-    public addCustomField(key: string, value: any): IMessageBuilder {
-        if (!this.msg.customFields) {
-            this.msg.customFields = {};
-        }
+	public getBlocks() {
+		return this.msg.blocks;
+	}
 
-        if (this.msg.customFields[key]) {
-            throw new Error(`The message already contains a custom field by the key: ${ key }`);
-        }
+	public addCustomField(key: string, value: any): IMessageBuilder {
+		if (!this.msg.customFields) {
+			this.msg.customFields = {};
+		}
 
-        if (key.includes('.')) {
-            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
-        }
+		if (this.msg.customFields[key]) {
+			throw new Error(`The message already contains a custom field by the key: ${key}`);
+		}
 
-        this.msg.customFields[key] = value;
-        return this;
-    }
+		if (key.includes('.')) {
+			throw new Error(`The given key contains a period, which is not allowed. Key: ${key}`);
+		}
+
+		this.msg.customFields[key] = value;
+		return this;
+	}
 }

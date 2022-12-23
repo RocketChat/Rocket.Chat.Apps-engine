@@ -1,67 +1,72 @@
-import { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
-import { AppManager } from '../AppManager';
-import { AppActivationBridge } from '../bridges';
+import type { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
+import type { AppManager } from '../AppManager';
+import type { AppActivationBridge } from '../bridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { AppPermissionManager } from './AppPermissionManager';
 
 export class UIActionButtonManager {
-    private readonly activationBridge: AppActivationBridge;
-    private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
+	private readonly activationBridge: AppActivationBridge;
 
-    constructor(manager: AppManager) {
-        this.activationBridge = manager.getBridges().getAppActivationBridge();
-    }
+	private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
 
-    public registerActionButton(appId: string, button: IUIActionButtonDescriptor) {
-        if (!this.hasPermission(appId)) {
-            return false;
-        }
+	constructor(manager: AppManager) {
+		this.activationBridge = manager.getBridges().getAppActivationBridge();
+	}
 
-        if (!this.registeredActionButtons.has(appId)) {
-            this.registeredActionButtons.set(appId, new Map());
-        }
+	public registerActionButton(appId: string, button: IUIActionButtonDescriptor) {
+		if (!this.hasPermission(appId)) {
+			return false;
+		}
 
-        this.registeredActionButtons.get(appId).set(button.actionId, button);
+		if (!this.registeredActionButtons.has(appId)) {
+			this.registeredActionButtons.set(appId, new Map());
+		}
 
-        this.activationBridge.doActionsChanged();
+		this.registeredActionButtons.get(appId).set(button.actionId, button);
 
-        return true;
-    }
+		this.activationBridge.doActionsChanged();
 
-    public clearAppActionButtons(appId: string) {
-        this.registeredActionButtons.set(appId, new Map());
-        this.activationBridge.doActionsChanged();
-    }
+		return true;
+	}
 
-    public getAppActionButtons(appId: string) {
-        return this.registeredActionButtons.get(appId);
-    }
+	public clearAppActionButtons(appId: string) {
+		this.registeredActionButtons.set(appId, new Map());
+		this.activationBridge.doActionsChanged();
+	}
 
-    public getAllActionButtons() {
-        const buttonList: Array<IUIActionButton> = [];
+	public getAppActionButtons(appId: string) {
+		return this.registeredActionButtons.get(appId);
+	}
 
-        // Flatten map to a simple list of all buttons
-        this.registeredActionButtons.forEach((appButtons, appId) => appButtons
-             .forEach((button) => buttonList.push({
-                 ...button,
-                 appId,
-             })),
-        );
+	public getAllActionButtons() {
+		const buttonList: Array<IUIActionButton> = [];
 
-        return buttonList;
-    }
+		// Flatten map to a simple list of all buttons
+		this.registeredActionButtons.forEach((appButtons, appId) =>
+			appButtons.forEach((button) =>
+				buttonList.push({
+					...button,
+					appId,
+				}),
+			),
+		);
 
-    private hasPermission(appId: string) {
-        if (AppPermissionManager.hasPermission(appId, AppPermissions.ui.registerButtons)) {
-            return true;
-        }
+		return buttonList;
+	}
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.ui.registerButtons],
-        }));
+	private hasPermission(appId: string) {
+		if (AppPermissionManager.hasPermission(appId, AppPermissions.ui.registerButtons)) {
+			return true;
+		}
 
-        return false;
-    }
+		AppPermissionManager.notifyAboutError(
+			new PermissionDeniedError({
+				appId,
+				missingPermissions: [AppPermissions.ui.registerButtons],
+			}),
+		);
+
+		return false;
+	}
 }

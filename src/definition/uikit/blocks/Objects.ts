@@ -1,12 +1,12 @@
 export enum TextObjectType {
-    MARKDOWN = 'mrkdwn',
-    PLAINTEXT = 'plain_text',
+	MARKDOWN = 'mrkdwn',
+	PLAINTEXT = 'plain_text',
 }
 
 export interface ITextObject {
-    type: TextObjectType;
-    text: string;
-    emoji?: boolean;
+	type: TextObjectType;
+	text: string;
+	emoji?: boolean;
 }
 
 // export interface IConfirmationDialogObject {
@@ -17,8 +17,8 @@ export interface ITextObject {
 // }
 
 export interface IOptionObject {
-    text: ITextObject;
-    value: string;
+	text: ITextObject;
+	value: string;
 
-    url?: string;
+	url?: string;
 }

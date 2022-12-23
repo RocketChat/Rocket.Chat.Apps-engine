@@ -1,28 +1,28 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
-import { IApi } from '../../../src/definition/api';
-import { IApiEndpoint } from '../../../src/definition/api/IApiEndpoint';
+import type { IApi } from '../../../src/definition/api';
+import type { IApiEndpoint } from '../../../src/definition/api/IApiEndpoint';
 import { AppApi } from '../../../src/server/managers/AppApi';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class AppApiRegistrationTestFixture {
-    private mockApp: ProxiedApp;
+	private mockApp: ProxiedApp;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockApp = {
-            getID() {
-                return 'id';
-            },
-        } as ProxiedApp;
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.mockApp = {
+			getID() {
+				return 'id';
+			},
+		} as ProxiedApp;
+	}
 
-    @Test()
-    public ensureAppApi() {
-        Expect(() => new AppApi(this.mockApp, {} as IApi, {} as IApiEndpoint)).not.toThrow();
+	@Test()
+	public ensureAppApi() {
+		Expect(() => new AppApi(this.mockApp, {} as IApi, {} as IApiEndpoint)).not.toThrow();
 
-        const ascr = new AppApi(this.mockApp, {} as IApi, {} as IApiEndpoint);
-        Expect(ascr.app).toBeDefined();
-        Expect(ascr.api).toBeDefined();
-    }
+		const ascr = new AppApi(this.mockApp, {} as IApi, {} as IApiEndpoint);
+		Expect(ascr.app).toBeDefined();
+		Expect(ascr.api).toBeDefined();
+	}
 }

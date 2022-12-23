@@ -1,15 +1,15 @@
-import {
-    IModify,
-    IModifyCreator,
-    IModifyDeleter,
-    IModifyExtender,
-    IModifyUpdater,
-    INotifier,
-    ISchedulerModify,
-    IUIController,
+import type {
+	IModify,
+	IModifyCreator,
+	IModifyDeleter,
+	IModifyExtender,
+	IModifyUpdater,
+	INotifier,
+	ISchedulerModify,
+	IUIController,
 } from '../../definition/accessors';
-import { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
-import { AppBridges } from '../bridges';
+import type { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
+import type { AppBridges } from '../bridges';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyDeleter } from './ModifyDeleter';
 import { ModifyExtender } from './ModifyExtender';
@@ -20,55 +20,62 @@ import { SchedulerModify } from './SchedulerModify';
 import { UIController } from './UIController';
 
 export class Modify implements IModify {
-    private creator: IModifyCreator;
-    private deleter: IModifyDeleter;
-    private updater: IModifyUpdater;
-    private extender: IModifyExtender;
-    private notifier: INotifier;
-    private uiController: IUIController;
-    private scheduler: ISchedulerModify;
-    private oauthApps: IOAuthAppsModify;
+	private creator: IModifyCreator;
 
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) {
-        this.creator = new ModifyCreator(this.bridges, this.appId);
-        this.deleter = new ModifyDeleter(this.bridges, this.appId);
-        this.updater = new ModifyUpdater(this.bridges, this.appId);
-        this.extender = new ModifyExtender(this.bridges, this.appId);
-        this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
-        this.uiController = new UIController(this.appId, this.bridges);
-        this.scheduler = new SchedulerModify(this.bridges.getSchedulerBridge(), this.appId);
-        this.oauthApps = new OAuthAppsModify(this.bridges.getOAuthAppsBridge(), this.appId);
-    }
+	private deleter: IModifyDeleter;
 
-    public getCreator(): IModifyCreator {
-        return this.creator;
-    }
+	private updater: IModifyUpdater;
 
-    public getDeleter(): IModifyDeleter {
-        return this.deleter;
-    }
+	private extender: IModifyExtender;
 
-    public getUpdater(): IModifyUpdater {
-        return this.updater;
-    }
+	private notifier: INotifier;
 
-    public getExtender(): IModifyExtender {
-        return this.extender;
-    }
+	private uiController: IUIController;
 
-    public getNotifier(): INotifier {
-        return this.notifier;
-    }
+	private scheduler: ISchedulerModify;
 
-    public getUiController(): IUIController {
-        return this.uiController;
-    }
+	private oauthApps: IOAuthAppsModify;
 
-    public getScheduler(): ISchedulerModify {
-        return this.scheduler;
-    }
+	constructor(private readonly bridges: AppBridges, private readonly appId: string) {
+		this.creator = new ModifyCreator(this.bridges, this.appId);
+		this.deleter = new ModifyDeleter(this.bridges, this.appId);
+		this.updater = new ModifyUpdater(this.bridges, this.appId);
+		this.extender = new ModifyExtender(this.bridges, this.appId);
+		this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
+		this.uiController = new UIController(this.appId, this.bridges);
+		this.scheduler = new SchedulerModify(this.bridges.getSchedulerBridge(), this.appId);
+		this.oauthApps = new OAuthAppsModify(this.bridges.getOAuthAppsBridge(), this.appId);
+	}
 
-    public getOAuthAppsModifier() {
-        return this.oauthApps;
-    }
+	public getCreator(): IModifyCreator {
+		return this.creator;
+	}
+
+	public getDeleter(): IModifyDeleter {
+		return this.deleter;
+	}
+
+	public getUpdater(): IModifyUpdater {
+		return this.updater;
+	}
+
+	public getExtender(): IModifyExtender {
+		return this.extender;
+	}
+
+	public getNotifier(): INotifier {
+		return this.notifier;
+	}
+
+	public getUiController(): IUIController {
+		return this.uiController;
+	}
+
+	public getScheduler(): ISchedulerModify {
+		return this.scheduler;
+	}
+
+	public getOAuthAppsModifier() {
+		return this.oauthApps;
+	}
 }

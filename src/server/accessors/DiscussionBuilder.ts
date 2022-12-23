@@ -1,45 +1,47 @@
-import { IDiscussionBuilder } from '../../definition/accessors';
-import { IMessage } from '../../definition/messages';
+import type { IDiscussionBuilder } from '../../definition/accessors';
+import type { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
-import { IRoom } from '../../definition/rooms/IRoom';
+import type { IRoom } from '../../definition/rooms/IRoom';
 import { RoomBuilder } from './RoomBuilder';
 
 export class DiscussionBuilder extends RoomBuilder implements IDiscussionBuilder {
-    public kind: RocketChatAssociationModel.DISCUSSION;
-    private reply: string;
-    private parentMessage: IMessage;
+	public kind: RocketChatAssociationModel.DISCUSSION;
 
-    constructor(data?: Partial<IRoom>) {
-        super(data);
-        this.kind = RocketChatAssociationModel.DISCUSSION;
-        this.room.type = RoomType.PRIVATE_GROUP;
-    }
+	private reply: string;
 
-    public setParentRoom(parentRoom: IRoom): IDiscussionBuilder {
-        this.room.parentRoom = parentRoom;
-        return this;
-    }
+	private parentMessage: IMessage;
 
-    public getParentRoom(): IRoom {
-        return this.room.parentRoom;
-    }
+	constructor(data?: Partial<IRoom>) {
+		super(data);
+		this.kind = RocketChatAssociationModel.DISCUSSION;
+		this.room.type = RoomType.PRIVATE_GROUP;
+	}
 
-    public setReply(reply: string): IDiscussionBuilder {
-        this.reply = reply;
-        return this;
-    }
+	public setParentRoom(parentRoom: IRoom): IDiscussionBuilder {
+		this.room.parentRoom = parentRoom;
+		return this;
+	}
 
-    public getReply(): string {
-        return this.reply;
-    }
+	public getParentRoom(): IRoom {
+		return this.room.parentRoom;
+	}
 
-    public setParentMessage(parentMessage: IMessage): IDiscussionBuilder {
-        this.parentMessage = parentMessage;
-        return this;
-    }
+	public setReply(reply: string): IDiscussionBuilder {
+		this.reply = reply;
+		return this;
+	}
 
-    public getParentMessage(): IMessage {
-        return this.parentMessage;
-    }
+	public getReply(): string {
+		return this.reply;
+	}
+
+	public setParentMessage(parentMessage: IMessage): IDiscussionBuilder {
+		this.parentMessage = parentMessage;
+		return this;
+	}
+
+	public getParentMessage(): IMessage {
+		return this.parentMessage;
+	}
 }

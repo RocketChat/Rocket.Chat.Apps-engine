@@ -1,64 +1,83 @@
-import { ApiBridge } from './ApiBridge';
-import { AppActivationBridge } from './AppActivationBridge';
-import { AppDetailChangesBridge } from './AppDetailChangesBridge';
-import { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
-import { CommandBridge } from './CommandBridge';
-import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
-import { HttpBridge } from './HttpBridge';
-import { IInternalBridge } from './IInternalBridge';
-import { IListenerBridge } from './IListenerBridge';
-import { LivechatBridge } from './LivechatBridge';
-import { MessageBridge } from './MessageBridge';
-import { OAuthAppsBridge } from './OAuthAppsBridge';
-import { PersistenceBridge } from './PersistenceBridge';
-import { RoomBridge } from './RoomBridge';
-import { SchedulerBridge } from './SchedulerBridge';
-import { ServerSettingBridge } from './ServerSettingBridge';
-import { UiInteractionBridge } from './UiInteractionBridge';
-import { UploadBridge } from './UploadBridge';
-import { UserBridge } from './UserBridge';
+import type { ApiBridge } from './ApiBridge';
+import type { AppActivationBridge } from './AppActivationBridge';
+import type { AppDetailChangesBridge } from './AppDetailChangesBridge';
+import type { CloudWorkspaceBridge } from './CloudWorkspaceBridge';
+import type { CommandBridge } from './CommandBridge';
+import type { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
+import type { HttpBridge } from './HttpBridge';
+import type { IInternalBridge } from './IInternalBridge';
+import type { IListenerBridge } from './IListenerBridge';
+import type { LivechatBridge } from './LivechatBridge';
+import type { MessageBridge } from './MessageBridge';
+import type { OAuthAppsBridge } from './OAuthAppsBridge';
+import type { PersistenceBridge } from './PersistenceBridge';
+import type { RoomBridge } from './RoomBridge';
+import type { SchedulerBridge } from './SchedulerBridge';
+import type { ServerSettingBridge } from './ServerSettingBridge';
+import type { UiInteractionBridge } from './UiInteractionBridge';
+import type { UploadBridge } from './UploadBridge';
+import type { UserBridge } from './UserBridge';
 import type { VideoConferenceBridge } from './VideoConferenceBridge';
 
-export type Bridge = CommandBridge
-            | ApiBridge
-            | AppDetailChangesBridge
-            | EnvironmentalVariableBridge
-            | HttpBridge
-            | IListenerBridge
-            | LivechatBridge
-            | MessageBridge
-            | PersistenceBridge
-            | AppActivationBridge
-            | RoomBridge
-            | IInternalBridge
-            | ServerSettingBridge
-            | UploadBridge
-            | UserBridge
-            | UiInteractionBridge
-            | SchedulerBridge
-            | VideoConferenceBridge
-            | OAuthAppsBridge;
+export type Bridge =
+	| CommandBridge
+	| ApiBridge
+	| AppDetailChangesBridge
+	| EnvironmentalVariableBridge
+	| HttpBridge
+	| IListenerBridge
+	| LivechatBridge
+	| MessageBridge
+	| PersistenceBridge
+	| AppActivationBridge
+	| RoomBridge
+	| IInternalBridge
+	| ServerSettingBridge
+	| UploadBridge
+	| UserBridge
+	| UiInteractionBridge
+	| SchedulerBridge
+	| VideoConferenceBridge
+	| OAuthAppsBridge;
 
 export abstract class AppBridges {
-    public abstract getCommandBridge(): CommandBridge;
-    public abstract getApiBridge(): ApiBridge;
-    public abstract getAppDetailChangesBridge(): AppDetailChangesBridge;
-    public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;
-    public abstract getHttpBridge(): HttpBridge;
-    public abstract getListenerBridge(): IListenerBridge;
-    public abstract getLivechatBridge(): LivechatBridge;
-    public abstract getMessageBridge(): MessageBridge;
-    public abstract getPersistenceBridge(): PersistenceBridge;
-    public abstract getAppActivationBridge(): AppActivationBridge;
-    public abstract getRoomBridge(): RoomBridge;
-    public abstract getInternalBridge(): IInternalBridge;
-    public abstract getServerSettingBridge(): ServerSettingBridge;
-    public abstract getUploadBridge(): UploadBridge;
-    public abstract getUserBridge(): UserBridge;
-    public abstract getUiInteractionBridge(): UiInteractionBridge;
-    public abstract getSchedulerBridge(): SchedulerBridge;
-    public abstract getCloudWorkspaceBridge(): CloudWorkspaceBridge;
-    public abstract getVideoConferenceBridge(): VideoConferenceBridge;
-    public abstract getOAuthAppsBridge(): OAuthAppsBridge;
+	public abstract getCommandBridge(): CommandBridge;
 
+	public abstract getApiBridge(): ApiBridge;
+
+	public abstract getAppDetailChangesBridge(): AppDetailChangesBridge;
+
+	public abstract getEnvironmentalVariableBridge(): EnvironmentalVariableBridge;
+
+	public abstract getHttpBridge(): HttpBridge;
+
+	public abstract getListenerBridge(): IListenerBridge;
+
+	public abstract getLivechatBridge(): LivechatBridge;
+
+	public abstract getMessageBridge(): MessageBridge;
+
+	public abstract getPersistenceBridge(): PersistenceBridge;
+
+	public abstract getAppActivationBridge(): AppActivationBridge;
+
+	public abstract getRoomBridge(): RoomBridge;
+
+	public abstract getInternalBridge(): IInternalBridge;
+
+	public abstract getServerSettingBridge(): ServerSettingBridge;
+
+	public abstract getUploadBridge(): UploadBridge;
+
+	public abstract getUserBridge(): UserBridge;
+
+	public abstract getUiInteractionBridge(): UiInteractionBridge;
+
+	public abstract getSchedulerBridge(): SchedulerBridge;
+
+	public abstract getCloudWorkspaceBridge(): CloudWorkspaceBridge;
+
+	public abstract getVideoConferenceBridge(): VideoConferenceBridge;
+
+	public abstract getOAuthAppsBridge(): OAuthAppsBridge;
 }

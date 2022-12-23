@@ -1,6 +1,6 @@
 import { OAuth2Client } from '../../server/oauth2/OAuth2Client';
-import { App } from '../App';
-import { IOAuth2ClientOptions } from './IOAuth2';
+import type { App } from '../App';
+import type { IOAuth2ClientOptions } from './IOAuth2';
 
 /**
  * Placeholder factory for OAuth2Client in case
@@ -11,5 +11,5 @@ import { IOAuth2ClientOptions } from './IOAuth2';
  * @returns OAuth2Client instance
  */
 export function createOAuth2Client(app: App, options: IOAuth2ClientOptions): OAuth2Client {
-    return new OAuth2Client(app, options);
+	return new OAuth2Client(app, options);
 }

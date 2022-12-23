@@ -1,4 +1,4 @@
-import { IUser } from './IUser';
+import type { IUser } from './IUser';
 
 /**
  * The context of execution for the following events:
@@ -6,14 +6,14 @@ import { IUser } from './IUser';
  * - IPostUserDeleted
  */
 export interface IUserContext {
-    /**
-     * The user that was affected by
-     * update
-     */
-    user: IUser;
-    /**
-     * The user that performed the
-     * updates
-     */
-    performedBy?: IUser;
+	/**
+	 * The user that was affected by
+	 * update
+	 */
+	user: IUser;
+	/**
+	 * The user that performed the
+	 * updates
+	 */
+	performedBy?: IUser;
 }

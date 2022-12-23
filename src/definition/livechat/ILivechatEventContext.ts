@@ -1,7 +1,7 @@
-import { IUser } from '../users';
-import { ILivechatRoom } from './ILivechatRoom';
+import type { IUser } from '../users';
+import type { ILivechatRoom } from './ILivechatRoom';
 
 export interface ILivechatEventContext {
-    agent: IUser;
-    room: ILivechatRoom;
+	agent: IUser;
+	room: ILivechatRoom;
 }

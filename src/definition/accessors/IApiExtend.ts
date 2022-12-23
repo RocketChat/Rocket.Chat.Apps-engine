@@ -1,4 +1,4 @@
-import { IApi } from '../api';
+import type { IApi } from '../api';
 
 /**
  * This accessor provides methods for adding a custom api.
@@ -6,11 +6,11 @@ import { IApi } from '../api';
  */
 
 export interface IApiExtend {
-    /**
-     * Adds an api which can be called by external services lateron.
-     * Should an api already exists an error will be thrown.
-     *
-     * @param api the command information
-     */
-    provideApi(api: IApi): Promise<void>;
+	/**
+	 * Adds an api which can be called by external services lateron.
+	 * Should an api already exists an error will be thrown.
+	 *
+	 * @param api the command information
+	 */
+	provideApi(api: IApi): Promise<void>;
 }

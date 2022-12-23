@@ -1,8 +1,8 @@
-import { IUser } from '../users';
-import { ILivechatRoom } from './ILivechatRoom';
+import type { IUser } from '../users';
+import type { ILivechatRoom } from './ILivechatRoom';
 
 export interface ILivechatTransferData {
-    currentRoom: ILivechatRoom;
-    targetAgent?: IUser;
-    targetDepartment?: string;
+	currentRoom: ILivechatRoom;
+	targetAgent?: IUser;
+	targetDepartment?: string;
 }

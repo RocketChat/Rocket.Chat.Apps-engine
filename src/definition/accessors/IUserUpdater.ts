@@ -1,4 +1,4 @@
-import { IUser } from '../users/IUser';
+import type { IUser } from '../users/IUser';
 
 /**
  * Updating a user is a more granular approach, since
@@ -10,8 +10,8 @@ import { IUser } from '../users/IUser';
  * power and "take hold" of a server, for instance.
  */
 export interface IUserUpdater {
-    updateStatusText(user: IUser, statusText: IUser['statusText']): Promise<boolean>;
-    updateStatus(user: IUser, statusText: IUser['statusText'], status: IUser['status']): Promise<boolean>;
-    updateBio(user: IUser, bio: IUser['bio']): Promise<boolean>;
-    updateCustomFields(user: IUser, customFields: IUser['customFields']): Promise<boolean>;
+	updateStatusText(user: IUser, statusText: IUser['statusText']): Promise<boolean>;
+	updateStatus(user: IUser, statusText: IUser['statusText'], status: IUser['status']): Promise<boolean>;
+	updateBio(user: IUser, bio: IUser['bio']): Promise<boolean>;
+	updateCustomFields(user: IUser, customFields: IUser['customFields']): Promise<boolean>;
 }

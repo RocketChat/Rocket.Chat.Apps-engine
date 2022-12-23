@@ -1,7 +1,7 @@
-import { IRoomBuilder } from '.';
-import { IMessage } from '../messages';
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom } from '../rooms';
+import type { IRoomBuilder } from '.';
+import type { IMessage } from '../messages';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IRoom } from '../rooms';
 
 /**
  * Interface for building out a room.
@@ -9,18 +9,17 @@ import { IRoom } from '../rooms';
  * be able to successfully save the room object.
  */
 export interface IDiscussionBuilder extends IRoomBuilder {
+	kind: RocketChatAssociationModel.DISCUSSION;
 
-    kind: RocketChatAssociationModel.DISCUSSION;
+	setParentRoom(parentRoom: IRoom): IDiscussionBuilder;
 
-    setParentRoom(parentRoom: IRoom): IDiscussionBuilder;
+	getParentRoom(): IRoom;
 
-    getParentRoom(): IRoom;
+	setParentMessage(parentMessage: IMessage): IDiscussionBuilder;
 
-    setParentMessage(parentMessage: IMessage): IDiscussionBuilder;
+	getParentMessage(): IMessage;
 
-    getParentMessage(): IMessage;
+	setReply(reply: string): IDiscussionBuilder;
 
-    setReply(reply: string): IDiscussionBuilder;
-
-    getReply(): string;
+	getReply(): string;
 }

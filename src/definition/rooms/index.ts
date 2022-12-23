@@ -8,14 +8,14 @@ import { IRoom } from './IRoom';
 import { RoomType } from './RoomType';
 
 export {
-    IRoom,
-    RoomType,
-    IPostRoomCreate,
-    IPostRoomDeleted,
-    IPreRoomCreateExtend,
-    IPreRoomCreateModify,
-    IPreRoomCreatePrevent,
-    IPreRoomDeletePrevent,
+	IRoom,
+	RoomType,
+	IPostRoomCreate,
+	IPostRoomDeleted,
+	IPreRoomCreateExtend,
+	IPreRoomCreateModify,
+	IPreRoomCreatePrevent,
+	IPreRoomDeletePrevent,
 };
 
 export * from './IPreRoomUserJoined';

@@ -1,27 +1,29 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IEnvironmentalVariableRead, IServerSettingRead, ISettingRead } from '../../../src/definition/accessors';
 
+import type { IEnvironmentalVariableRead, IServerSettingRead, ISettingRead } from '../../../src/definition/accessors';
 import { EnvironmentRead } from '../../../src/server/accessors';
 
 export class EnvironmentReadTestFixture {
-    private evr: IEnvironmentalVariableRead;
-    private ssr: IServerSettingRead;
-    private sr: ISettingRead;
+	private evr: IEnvironmentalVariableRead;
 
-    @SetupFixture
-    public setupFixture() {
-        this.evr = {} as IEnvironmentalVariableRead;
-        this.ssr = {} as IServerSettingRead;
-        this.sr = {} as ISettingRead;
-    }
+	private ssr: IServerSettingRead;
 
-    @Test()
-    public useEnvironmentRead() {
-        Expect(() => new EnvironmentRead(this.sr, this.ssr, this.evr)).not.toThrow();
+	private sr: ISettingRead;
 
-        const er = new EnvironmentRead(this.sr, this.ssr, this.evr);
-        Expect(er.getSettings()).toBeDefined();
-        Expect(er.getServerSettings()).toBeDefined();
-        Expect(er.getEnvironmentVariables()).toBeDefined();
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.evr = {} as IEnvironmentalVariableRead;
+		this.ssr = {} as IServerSettingRead;
+		this.sr = {} as ISettingRead;
+	}
+
+	@Test()
+	public useEnvironmentRead() {
+		Expect(() => new EnvironmentRead(this.sr, this.ssr, this.evr)).not.toThrow();
+
+		const er = new EnvironmentRead(this.sr, this.ssr, this.evr);
+		Expect(er.getSettings()).toBeDefined();
+		Expect(er.getServerSettings()).toBeDefined();
+		Expect(er.getEnvironmentVariables()).toBeDefined();
+	}
 }

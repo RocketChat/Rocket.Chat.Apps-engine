@@ -1,4 +1,3 @@
-
 export interface IVisitorEmail {
-    address: string;
+	address: string;
 }

@@ -1,220 +1,242 @@
 // tslint:disable:max-line-length
-import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+import type { FunctionSpy, RestorableFunctionSpy } from 'alsatian';
+import { AsyncTest, Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 
 import { RequestMethod } from '../../../src/definition/accessors';
-import { IApi, IApiRequest } from '../../../src/definition/api';
+import type { IApi, IApiRequest } from '../../../src/definition/api';
 import { AppStatus } from '../../../src/definition/AppStatus';
-import { AppMethod } from '../../../src/definition/metadata';
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
+import type { AppMethod } from '../../../src/definition/metadata';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
 import { PathAlreadyExistsError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
+import type {
+	AppExternalComponentManager,
+	AppSchedulerManager,
+	AppSlashCommandManager,
+	AppVideoConfProviderManager,
+} from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { AppApi } from '../../../src/server/managers/AppApi';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
-import { AppLogStorage } from '../../../src/server/storage';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
+import type { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 export class AppApiManagerTestFixture {
-    public static doThrow: boolean = false;
-    private mockBridges: TestsAppBridges;
-    private mockApp: ProxiedApp;
-    private mockAccessors: AppAccessorManager;
-    private mockManager: AppManager;
-    private spies: Array<RestorableFunctionSpy>;
+	public static doThrow = false;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockBridges = new TestsAppBridges();
+	private mockBridges: TestsAppBridges;
 
-        this.mockApp = {
-            getRuntime() {
-                return {
-                    runInSandbox: () => Promise.resolve(true),
-                } as AppsEngineRuntime;
-            },
-            getID() {
-                return 'testing';
-            },
-            getStatus() {
-                return AppStatus.AUTO_ENABLED;
-            },
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
-            setupLogger(method: AppMethod): AppConsole {
-                return new AppConsole(method);
-            },
-        } as ProxiedApp;
+	private mockApp: ProxiedApp;
 
-        const bri = this.mockBridges;
-        const app = this.mockApp;
-        this.mockManager = {
-            getBridges(): AppBridges {
-                return bri;
-            },
-            getCommandManager() {
-                return {} as AppSlashCommandManager;
-            },
-            getExternalComponentManager() {
-                return {} as AppExternalComponentManager;
-            },
-            getApiManager() {
-                return {} as AppApiManager;
-            },
-            getOneById(appId: string): ProxiedApp {
-                return appId === 'failMePlease' ? undefined : app;
-            },
-            getLogStorage(): AppLogStorage {
-                return new TestsAppLogStorage();
-            },
-            getSchedulerManager() {
-                return {} as AppSchedulerManager;
-            },
-            getUIActionButtonManager() {
-                return {} as UIActionButtonManager;
-            },
-            getVideoConfProviderManager() {
-                return {} as AppVideoConfProviderManager;
-            },
-        } as AppManager;
+	private mockAccessors: AppAccessorManager;
 
-        this.mockAccessors = new AppAccessorManager(this.mockManager);
-        const ac = this.mockAccessors;
-        this.mockManager.getAccessorManager = function _getAccessorManager(): AppAccessorManager {
-            return ac;
-        };
-    }
+	private mockManager: AppManager;
 
-    @Setup
-    public setup() {
-        this.mockBridges = new TestsAppBridges();
-        const bri = this.mockBridges;
-        this.mockManager.getBridges = function _refreshedGetBridges(): AppBridges {
-            return bri;
-        };
+	private spies: Array<RestorableFunctionSpy>;
 
-        this.spies = new Array<RestorableFunctionSpy>();
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doRegisterApi'));
-        this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doUnregisterApis'));
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.mockBridges = new TestsAppBridges();
 
-    @Teardown
-    public teardown() {
-        this.spies.forEach((s) => s.restore());
-    }
+		this.mockApp = {
+			getRuntime() {
+				return {
+					runInSandbox: () => Promise.resolve(true),
+				} as AppsEngineRuntime;
+			},
+			getID() {
+				return 'testing';
+			},
+			getStatus() {
+				return AppStatus.AUTO_ENABLED;
+			},
+			hasMethod(method: AppMethod): boolean {
+				return true;
+			},
+			setupLogger(method: AppMethod): AppConsole {
+				return new AppConsole(method);
+			},
+		} as ProxiedApp;
 
-    @Test()
-    public basicAppApiManager() {
-        Expect(() => new AppApiManager({} as AppManager)).toThrow();
-        Expect(() => new AppApiManager(this.mockManager)).not.toThrow();
+		const bri = this.mockBridges;
+		const app = this.mockApp;
+		this.mockManager = {
+			getBridges(): AppBridges {
+				return bri;
+			},
+			getCommandManager() {
+				return {} as AppSlashCommandManager;
+			},
+			getExternalComponentManager() {
+				return {} as AppExternalComponentManager;
+			},
+			getApiManager() {
+				return {} as AppApiManager;
+			},
+			getOneById(appId: string): ProxiedApp {
+				return appId === 'failMePlease' ? undefined : app;
+			},
+			getLogStorage(): AppLogStorage {
+				return new TestsAppLogStorage();
+			},
+			getSchedulerManager() {
+				return {} as AppSchedulerManager;
+			},
+			getUIActionButtonManager() {
+				return {} as UIActionButtonManager;
+			},
+			getVideoConfProviderManager() {
+				return {} as AppVideoConfProviderManager;
+			},
+		} as AppManager;
 
-        const ascm = new AppApiManager(this.mockManager);
-        Expect((ascm as any).manager).toBe(this.mockManager);
-        Expect((ascm as any).bridge).toBe(this.mockBridges.getApiBridge());
-        Expect((ascm as any).accessors).toBe(this.mockManager.getAccessorManager());
-        Expect((ascm as any).providedApis).toBeDefined();
-        Expect((ascm as any).providedApis.size).toBe(0);
-    }
+		this.mockAccessors = new AppAccessorManager(this.mockManager);
+		const ac = this.mockAccessors;
+		this.mockManager.getAccessorManager = function _getAccessorManager(): AppAccessorManager {
+			return ac;
+		};
+	}
 
-    @Test()
-    public registerApi() {
-        const ascm = new AppApiManager(this.mockManager);
+	@Setup
+	public setup() {
+		this.mockBridges = new TestsAppBridges();
+		const bri = this.mockBridges;
+		this.mockManager.getBridges = function _refreshedGetBridges(): AppBridges {
+			return bri;
+		};
 
-        const api: IApi = TestData.getApi('path');
-        const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
+		this.spies = new Array<RestorableFunctionSpy>();
+		this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doRegisterApi'));
+		this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doUnregisterApis'));
+	}
 
-        Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrow();
-        Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing');
-    }
+	@Teardown
+	public teardown() {
+		this.spies.forEach((s) => s.restore());
+	}
 
-    @Test()
-    public addApi() {
-        const api = TestData.getApi('apipath');
-        const ascm = new AppApiManager(this.mockManager);
+	@Test()
+	public basicAppApiManager() {
+		Expect(() => new AppApiManager({} as AppManager)).toThrow();
+		Expect(() => new AppApiManager(this.mockManager)).not.toThrow();
 
-        Expect(() => ascm.addApi('testing', api)).not.toThrow();
-        Expect(this.mockBridges.getApiBridge().apis.size).toBe(1);
-        Expect((ascm as any).providedApis.size).toBe(1);
-        Expect((ascm as any).providedApis.get('testing').get('apipath').api).toBe(api);
+		const ascm = new AppApiManager(this.mockManager);
+		Expect((ascm as any).manager).toBe(this.mockManager);
+		Expect((ascm as any).bridge).toBe(this.mockBridges.getApiBridge());
+		Expect((ascm as any).accessors).toBe(this.mockManager.getAccessorManager());
+		Expect((ascm as any).providedApis).toBeDefined();
+		Expect((ascm as any).providedApis.size).toBe(0);
+	}
 
-        Expect(() => ascm.addApi('testing', api)).toThrowError(PathAlreadyExistsError, 'The api path "apipath" already exists in the system.');
+	@Test()
+	public registerApi() {
+		const ascm = new AppApiManager(this.mockManager);
 
-        Expect(() => ascm.addApi('failMePlease', TestData.getApi('yet-another'))).toThrowError(Error, 'App must exist in order for an api to be added.');
-        Expect(() => ascm.addApi('testing', TestData.getApi('another-api'))).not.toThrow();
-        Expect((ascm as any).providedApis.size).toBe(1);
-        Expect((ascm as any).providedApis.get('testing').size).toBe(2);
-    }
+		const api: IApi = TestData.getApi('path');
+		const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
 
-    @Test()
-    public registerApis() {
-        const ascm = new AppApiManager(this.mockManager);
+		Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrow();
+		Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing');
+	}
 
-        SpyOn(ascm, 'registerApi');
+	@Test()
+	public addApi() {
+		const api = TestData.getApi('apipath');
+		const ascm = new AppApiManager(this.mockManager);
 
-        ascm.addApi('testing', TestData.getApi('apipath'));
-        const regInfo = (ascm as any).providedApis.get('testing').get('apipath') as AppApi;
+		Expect(() => ascm.addApi('testing', api)).not.toThrow();
+		Expect(this.mockBridges.getApiBridge().apis.size).toBe(1);
+		Expect((ascm as any).providedApis.size).toBe(1);
+		Expect((ascm as any).providedApis.get('testing').get('apipath').api).toBe(api);
 
-        Expect(() => ascm.registerApis('non-existant')).not.toThrow();
-        Expect(() => ascm.registerApis('testing')).not.toThrow();
-        Expect((ascm as any).registerApi as FunctionSpy).toHaveBeenCalledWith('testing', regInfo).exactly(1);
-        Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
-    }
+		Expect(() => ascm.addApi('testing', api)).toThrowError(
+			PathAlreadyExistsError,
+			'The api path "apipath" already exists in the system.',
+		);
 
-    @Test()
-    public unregisterApis() {
-        const ascm = new AppApiManager(this.mockManager);
+		Expect(() => ascm.addApi('failMePlease', TestData.getApi('yet-another'))).toThrowError(
+			Error,
+			'App must exist in order for an api to be added.',
+		);
+		Expect(() => ascm.addApi('testing', TestData.getApi('another-api'))).not.toThrow();
+		Expect((ascm as any).providedApis.size).toBe(1);
+		Expect((ascm as any).providedApis.get('testing').size).toBe(2);
+	}
 
-        ascm.addApi('testing', TestData.getApi('apipath'));
+	@Test()
+	public registerApis() {
+		const ascm = new AppApiManager(this.mockManager);
 
-        Expect(() => ascm.unregisterApis('non-existant')).not.toThrow();
-        Expect(() => ascm.unregisterApis('testing')).not.toThrow();
-        Expect(this.mockBridges.getApiBridge().doUnregisterApis).toHaveBeenCalled().exactly(1);
-    }
+		SpyOn(ascm, 'registerApi');
 
-    @AsyncTest()
-    public async executeApis() {
-        const ascm = new AppApiManager(this.mockManager);
-        ascm.addApi('testing', TestData.getApi('api1'));
-        ascm.addApi('testing', TestData.getApi('api2'));
-        ascm.addApi('testing', TestData.getApi('api3'));
-        ascm.registerApis('testing');
+		ascm.addApi('testing', TestData.getApi('apipath'));
+		const regInfo = (ascm as any).providedApis.get('testing').get('apipath') as AppApi;
 
-        const request: IApiRequest = {
-            method: RequestMethod.GET,
-            headers: {},
-            query: {},
-            params: {},
-            content: '',
-        };
+		Expect(() => ascm.registerApis('non-existant')).not.toThrow();
+		Expect(() => ascm.registerApis('testing')).not.toThrow();
+		Expect((ascm as any).registerApi as FunctionSpy)
+			.toHaveBeenCalledWith('testing', regInfo)
+			.exactly(1);
+		Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
+	}
 
-        await Expect(async () => await ascm.executeApi('testing', 'nope', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'not-exists', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api1', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api2', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
-    }
+	@Test()
+	public unregisterApis() {
+		const ascm = new AppApiManager(this.mockManager);
 
-    @Test()
-    public listApis() {
-        const ascm = new AppApiManager(this.mockManager);
+		ascm.addApi('testing', TestData.getApi('apipath'));
 
-        Expect(ascm.listApis('testing')).toEqual([]);
+		Expect(() => ascm.unregisterApis('non-existant')).not.toThrow();
+		Expect(() => ascm.unregisterApis('testing')).not.toThrow();
+		Expect(this.mockBridges.getApiBridge().doUnregisterApis).toHaveBeenCalled().exactly(1);
+	}
 
-        ascm.addApi('testing', TestData.getApi('api1'));
-        ascm.registerApis('testing');
+	@AsyncTest()
+	public async executeApis() {
+		const ascm = new AppApiManager(this.mockManager);
+		ascm.addApi('testing', TestData.getApi('api1'));
+		ascm.addApi('testing', TestData.getApi('api2'));
+		ascm.addApi('testing', TestData.getApi('api3'));
+		ascm.registerApis('testing');
 
-        Expect(() => ascm.listApis('testing')).not.toThrow();
-        Expect(ascm.listApis('testing')).not.toEqual([]);
-        Expect(ascm.listApis('testing')).toEqual([{
-            path: 'api1',
-            computedPath: '/api/apps/public/testing/api1',
-            methods: ['get'],
-            examples: {},
-        }]);
-    }
+		const request: IApiRequest = {
+			method: RequestMethod.GET,
+			headers: {},
+			query: {},
+			params: {},
+			content: '',
+		};
+
+		await Expect(async () => await ascm.executeApi('testing', 'nope', request)).not.toThrowAsync();
+		await Expect(async () => await ascm.executeApi('testing', 'not-exists', request)).not.toThrowAsync();
+		await Expect(async () => await ascm.executeApi('testing', 'api1', request)).not.toThrowAsync();
+		await Expect(async () => await ascm.executeApi('testing', 'api2', request)).not.toThrowAsync();
+		await Expect(async () => await ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
+	}
+
+	@Test()
+	public listApis() {
+		const ascm = new AppApiManager(this.mockManager);
+
+		Expect(ascm.listApis('testing')).toEqual([]);
+
+		ascm.addApi('testing', TestData.getApi('api1'));
+		ascm.registerApis('testing');
+
+		Expect(() => ascm.listApis('testing')).not.toThrow();
+		Expect(ascm.listApis('testing')).not.toEqual([]);
+		Expect(ascm.listApis('testing')).toEqual([
+			{
+				path: 'api1',
+				computedPath: '/api/apps/public/testing/api1',
+				methods: ['get'],
+				examples: {},
+			},
+		]);
+	}
 }

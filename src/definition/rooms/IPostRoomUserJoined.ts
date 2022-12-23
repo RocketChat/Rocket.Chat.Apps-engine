@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
 
 /**
  * Event interface that allows an app to
@@ -15,5 +15,11 @@ import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
  * - IPreRoomUserJoined
  */
 export interface IPostRoomUserJoined {
-    executePostRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence, modify?: IModify): Promise<void>;
+	executePostRoomUserJoined(
+		context: IRoomUserJoinedContext,
+		read: IRead,
+		http: IHttp,
+		persistence: IPersistence,
+		modify?: IModify,
+	): Promise<void>;
 }

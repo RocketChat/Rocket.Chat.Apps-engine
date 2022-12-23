@@ -1,61 +1,69 @@
 // tslint:disable:max-classes-per-file
-import { IUIKitActionButtonIncomingInteraction, IUIKitBaseIncomingInteraction, IUIKitBlockIncomingInteraction, IUIKitViewCloseIncomingInteraction, IUIKitViewSubmitIncomingInteraction } from './UIKitIncomingInteractionTypes';
+import type {
+	IUIKitActionButtonIncomingInteraction,
+	IUIKitBaseIncomingInteraction,
+	IUIKitBlockIncomingInteraction,
+	IUIKitViewCloseIncomingInteraction,
+	IUIKitViewSubmitIncomingInteraction,
+} from './UIKitIncomingInteractionTypes';
 import { UIKitInteractionResponder } from './UIKitInteractionResponder';
 
 export abstract class UIKitInteractionContext {
-    private baseContext: IUIKitBaseIncomingInteraction;
-    private responder: UIKitInteractionResponder;
-    constructor(baseContext: IUIKitBaseIncomingInteraction) {
-        const { appId, actionId, room, user, triggerId } = baseContext;
+	private baseContext: IUIKitBaseIncomingInteraction;
 
-        this.baseContext = { appId, actionId, room, user, triggerId };
+	private responder: UIKitInteractionResponder;
 
-        this.responder = new UIKitInteractionResponder(this.baseContext);
-    }
+	constructor(baseContext: IUIKitBaseIncomingInteraction) {
+		const { appId, actionId, room, user, triggerId } = baseContext;
 
-    public getInteractionResponder() {
-        return this.responder;
-    }
+		this.baseContext = { appId, actionId, room, user, triggerId };
 
-    public abstract getInteractionData(): IUIKitBaseIncomingInteraction;
+		this.responder = new UIKitInteractionResponder(this.baseContext);
+	}
+
+	public getInteractionResponder() {
+		return this.responder;
+	}
+
+	public abstract getInteractionData(): IUIKitBaseIncomingInteraction;
 }
 
 export class UIKitBlockInteractionContext extends UIKitInteractionContext {
-    constructor(private readonly interactionData: IUIKitBlockIncomingInteraction) {
-        super(interactionData);
-    }
+	constructor(private readonly interactionData: IUIKitBlockIncomingInteraction) {
+		super(interactionData);
+	}
 
-    public getInteractionData(): IUIKitBlockIncomingInteraction {
-        return this.interactionData;
-    }
+	public getInteractionData(): IUIKitBlockIncomingInteraction {
+		return this.interactionData;
+	}
 }
 
 export class UIKitViewSubmitInteractionContext extends UIKitInteractionContext {
-    constructor(private readonly interactionData: IUIKitViewSubmitIncomingInteraction) {
-        super(interactionData);
-    }
+	constructor(private readonly interactionData: IUIKitViewSubmitIncomingInteraction) {
+		super(interactionData);
+	}
 
-    public getInteractionData(): IUIKitViewSubmitIncomingInteraction {
-        return this.interactionData;
-    }
+	public getInteractionData(): IUIKitViewSubmitIncomingInteraction {
+		return this.interactionData;
+	}
 }
 
 export class UIKitViewCloseInteractionContext extends UIKitInteractionContext {
-    constructor(private readonly interactionData: IUIKitViewCloseIncomingInteraction) {
-        super(interactionData);
-    }
+	constructor(private readonly interactionData: IUIKitViewCloseIncomingInteraction) {
+		super(interactionData);
+	}
 
-    public getInteractionData(): IUIKitViewCloseIncomingInteraction {
-        return this.interactionData;
-    }
+	public getInteractionData(): IUIKitViewCloseIncomingInteraction {
+		return this.interactionData;
+	}
 }
 
 export class UIKitActionButtonInteractionContext extends UIKitInteractionContext {
-    constructor(private readonly interactionData: IUIKitActionButtonIncomingInteraction) {
-        super(interactionData);
-    }
+	constructor(private readonly interactionData: IUIKitActionButtonIncomingInteraction) {
+		super(interactionData);
+	}
 
-    public getInteractionData(): IUIKitActionButtonIncomingInteraction {
-        return this.interactionData;
-    }
+	public getInteractionData(): IUIKitActionButtonIncomingInteraction {
+		return this.interactionData;
+	}
 }

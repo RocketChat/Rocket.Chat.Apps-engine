@@ -1,54 +1,56 @@
-
 export class AppLicenseValidationResult {
-    private errors: {[key: string]: string} = {};
-    private warnings: {[key: string]: string} = {};
-    private validated: boolean = false;
-    private appId: string;
+	private errors: { [key: string]: string } = {};
 
-    public addError(field: string, message: string): void {
-        this.errors[field] = message;
-    }
+	private warnings: { [key: string]: string } = {};
 
-    public addWarning(field: string, message: string): void {
-        this.warnings[field] = message;
-    }
+	private validated = false;
 
-    public get hasErrors(): boolean {
-        return !!Object.keys(this.errors).length;
-    }
+	private appId: string;
 
-    public get hasWarnings(): boolean {
-        return !!Object.keys(this.warnings).length;
-    }
+	public addError(field: string, message: string): void {
+		this.errors[field] = message;
+	}
 
-    public get hasBeenValidated(): boolean {
-        return this.validated;
-    }
+	public addWarning(field: string, message: string): void {
+		this.warnings[field] = message;
+	}
 
-    public setValidated(validated: boolean): void {
-        this.validated = validated;
-    }
+	public get hasErrors(): boolean {
+		return !!Object.keys(this.errors).length;
+	}
 
-    public setAppId(appId: string): void {
-        this.appId = appId;
-    }
+	public get hasWarnings(): boolean {
+		return !!Object.keys(this.warnings).length;
+	}
 
-    public getAppId(): string {
-        return this.appId;
-    }
+	public get hasBeenValidated(): boolean {
+		return this.validated;
+	}
 
-    public getErrors(): object {
-        return this.errors;
-    }
+	public setValidated(validated: boolean): void {
+		this.validated = validated;
+	}
 
-    public getWarnings(): object {
-        return this.warnings;
-    }
+	public setAppId(appId: string): void {
+		this.appId = appId;
+	}
 
-    public toJSON(): object {
-        return {
-            errors: this.errors,
-            warnings: this.warnings,
-        };
-    }
+	public getAppId(): string {
+		return this.appId;
+	}
+
+	public getErrors(): object {
+		return this.errors;
+	}
+
+	public getWarnings(): object {
+		return this.warnings;
+	}
+
+	public toJSON(): object {
+		return {
+			errors: this.errors,
+			warnings: this.warnings,
+		};
+	}
 }

@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
 
 /**
  * Event interface that allows an app to
@@ -14,5 +14,5 @@ import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
  * check the `IPreRoomCreate` events
  */
 export interface IPreRoomUserJoined {
-    executePreRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+	executePreRoomUserJoined(context: IRoomUserJoinedContext, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
 }

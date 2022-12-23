@@ -1,13 +1,13 @@
-import { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
-import { IEnvironmentRead } from './IEnvironmentRead';
-import { ILivechatRead } from './ILivechatRead';
-import { IMessageRead } from './IMessageRead';
-import { INotifier } from './INotifier';
-import { IOAuthAppsReader } from './IOAuthAppsReader';
-import { IPersistenceRead } from './IPersistenceRead';
-import { IRoomRead } from './IRoomRead';
-import { IUploadRead } from './IUploadRead';
-import { IUserRead } from './IUserRead';
+import type { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
+import type { IEnvironmentRead } from './IEnvironmentRead';
+import type { ILivechatRead } from './ILivechatRead';
+import type { IMessageRead } from './IMessageRead';
+import type { INotifier } from './INotifier';
+import type { IOAuthAppsReader } from './IOAuthAppsReader';
+import type { IPersistenceRead } from './IPersistenceRead';
+import type { IRoomRead } from './IRoomRead';
+import type { IUploadRead } from './IUploadRead';
+import type { IUserRead } from './IUserRead';
 import type { IVideoConferenceRead } from './IVideoConferenceRead';
 
 /**
@@ -16,29 +16,29 @@ import type { IVideoConferenceRead } from './IVideoConferenceRead';
  * It is safe to be injected in multiple places, idempotent and extensible
  */
 export interface IRead {
-    /** Gets the IEnvironmentRead instance, contains settings and environmental variables. */
-    getEnvironmentReader(): IEnvironmentRead;
+	/** Gets the IEnvironmentRead instance, contains settings and environmental variables. */
+	getEnvironmentReader(): IEnvironmentRead;
 
-    /** Gets the IMessageRead instance. */
-    getMessageReader(): IMessageRead;
+	/** Gets the IMessageRead instance. */
+	getMessageReader(): IMessageRead;
 
-    /** Gets the IPersistenceRead instance. */
-    getPersistenceReader(): IPersistenceRead;
+	/** Gets the IPersistenceRead instance. */
+	getPersistenceReader(): IPersistenceRead;
 
-    /** Gets the IRoomRead instance. */
-    getRoomReader(): IRoomRead;
+	/** Gets the IRoomRead instance. */
+	getRoomReader(): IRoomRead;
 
-    /** Gets the IUserRead instance. */
-    getUserReader(): IUserRead;
+	/** Gets the IUserRead instance. */
+	getUserReader(): IUserRead;
 
-    /** Gets the INotifier for notifying users/rooms. */
-    getNotifier(): INotifier;
+	/** Gets the INotifier for notifying users/rooms. */
+	getNotifier(): INotifier;
 
-    getLivechatReader(): ILivechatRead;
-    getUploadReader(): IUploadRead;
-    getCloudWorkspaceReader(): ICloudWorkspaceRead;
+	getLivechatReader(): ILivechatRead;
+	getUploadReader(): IUploadRead;
+	getCloudWorkspaceReader(): ICloudWorkspaceRead;
 
-    getVideoConferenceReader(): IVideoConferenceRead;
+	getVideoConferenceReader(): IVideoConferenceRead;
 
-    getOAuthAppsReader(): IOAuthAppsReader;
+	getOAuthAppsReader(): IOAuthAppsReader;
 }

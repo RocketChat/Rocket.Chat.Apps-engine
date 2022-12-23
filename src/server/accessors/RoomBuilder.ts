@@ -1,153 +1,155 @@
-import { IRoomBuilder } from '../../definition/accessors';
+import type { IRoomBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom, RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
+import type { IRoom, RoomType } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
 
 export class RoomBuilder implements IRoomBuilder {
-    public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
-    protected room: IRoom;
-    private members: Array<string>;
+	public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
 
-    constructor(data?: Partial<IRoom>) {
-        this.kind = RocketChatAssociationModel.ROOM;
-        this.room = (data ? data : { customFields: {} }) as IRoom;
-        this.members = new Array<string>();
-    }
+	protected room: IRoom;
 
-    public setData(data: Partial<IRoom>): IRoomBuilder {
-        delete data.id;
-        this.room = data as IRoom;
+	private members: Array<string>;
 
-        return this;
-    }
+	constructor(data?: Partial<IRoom>) {
+		this.kind = RocketChatAssociationModel.ROOM;
+		this.room = (data || { customFields: {} }) as IRoom;
+		this.members = new Array<string>();
+	}
 
-    public setDisplayName(name: string): IRoomBuilder {
-        this.room.displayName = name;
-        return this;
-    }
+	public setData(data: Partial<IRoom>): IRoomBuilder {
+		delete data.id;
+		this.room = data as IRoom;
 
-    public getDisplayName(): string {
-        return this.room.displayName;
-    }
+		return this;
+	}
 
-    public setSlugifiedName(name: string): IRoomBuilder {
-        this.room.slugifiedName = name;
-        return this;
-    }
+	public setDisplayName(name: string): IRoomBuilder {
+		this.room.displayName = name;
+		return this;
+	}
 
-    public getSlugifiedName(): string {
-        return this.room.slugifiedName;
-    }
+	public getDisplayName(): string {
+		return this.room.displayName;
+	}
 
-    public setType(type: RoomType): IRoomBuilder {
-        this.room.type = type;
-        return this;
-    }
+	public setSlugifiedName(name: string): IRoomBuilder {
+		this.room.slugifiedName = name;
+		return this;
+	}
 
-    public getType(): RoomType {
-        return this.room.type;
-    }
+	public getSlugifiedName(): string {
+		return this.room.slugifiedName;
+	}
 
-    public setCreator(creator: IUser): IRoomBuilder {
-        this.room.creator = creator;
-        return this;
-    }
+	public setType(type: RoomType): IRoomBuilder {
+		this.room.type = type;
+		return this;
+	}
 
-    public getCreator(): IUser {
-        return this.room.creator;
-    }
+	public getType(): RoomType {
+		return this.room.type;
+	}
 
-    /**
-     * @deprecated
-     */
-    public addUsername(username: string): IRoomBuilder {
-        this.addMemberToBeAddedByUsername(username);
-        return this;
-    }
+	public setCreator(creator: IUser): IRoomBuilder {
+		this.room.creator = creator;
+		return this;
+	}
 
-    /**
-     * @deprecated
-     */
-    public setUsernames(usernames: Array<string>): IRoomBuilder {
-        this.setMembersToBeAddedByUsernames(usernames);
-        return this;
-    }
+	public getCreator(): IUser {
+		return this.room.creator;
+	}
 
-    /**
-     * @deprecated
-     */
-    public getUsernames(): Array<string> {
-        const usernames = this.getMembersToBeAddedUsernames();
-        if (usernames && usernames.length > 0) {
-            return usernames;
-        }
-        return this.room.usernames || [];
-    }
+	/**
+	 * @deprecated
+	 */
+	public addUsername(username: string): IRoomBuilder {
+		this.addMemberToBeAddedByUsername(username);
+		return this;
+	}
 
-    public addMemberToBeAddedByUsername(username: string): IRoomBuilder {
-        this.members.push(username);
-        return this;
-    }
+	/**
+	 * @deprecated
+	 */
+	public setUsernames(usernames: Array<string>): IRoomBuilder {
+		this.setMembersToBeAddedByUsernames(usernames);
+		return this;
+	}
 
-    public setMembersToBeAddedByUsernames(usernames: Array<string>): IRoomBuilder {
-        this.members = usernames;
-        return this;
-    }
+	/**
+	 * @deprecated
+	 */
+	public getUsernames(): Array<string> {
+		const usernames = this.getMembersToBeAddedUsernames();
+		if (usernames && usernames.length > 0) {
+			return usernames;
+		}
+		return this.room.usernames || [];
+	}
 
-    public getMembersToBeAddedUsernames(): Array<string> {
-        return this.members;
-    }
+	public addMemberToBeAddedByUsername(username: string): IRoomBuilder {
+		this.members.push(username);
+		return this;
+	}
 
-    public setDefault(isDefault: boolean): IRoomBuilder {
-        this.room.isDefault = isDefault;
-        return this;
-    }
+	public setMembersToBeAddedByUsernames(usernames: Array<string>): IRoomBuilder {
+		this.members = usernames;
+		return this;
+	}
 
-    public getIsDefault(): boolean {
-        return this.room.isDefault;
-    }
+	public getMembersToBeAddedUsernames(): Array<string> {
+		return this.members;
+	}
 
-    public setReadOnly(isReadOnly: boolean): IRoomBuilder {
-        this.room.isReadOnly = isReadOnly;
-        return this;
-    }
+	public setDefault(isDefault: boolean): IRoomBuilder {
+		this.room.isDefault = isDefault;
+		return this;
+	}
 
-    public getIsReadOnly(): boolean {
-        return this.room.isReadOnly;
-    }
+	public getIsDefault(): boolean {
+		return this.room.isDefault;
+	}
 
-    public setDisplayingOfSystemMessages(displaySystemMessages: boolean): IRoomBuilder {
-        this.room.displaySystemMessages = displaySystemMessages;
-        return this;
-    }
+	public setReadOnly(isReadOnly: boolean): IRoomBuilder {
+		this.room.isReadOnly = isReadOnly;
+		return this;
+	}
 
-    public getDisplayingOfSystemMessages(): boolean {
-        return this.room.displaySystemMessages;
-    }
+	public getIsReadOnly(): boolean {
+		return this.room.isReadOnly;
+	}
 
-    public addCustomField(key: string, value: object): IRoomBuilder {
-        if (typeof this.room.customFields !== 'object') {
-            this.room.customFields = {};
-        }
+	public setDisplayingOfSystemMessages(displaySystemMessages: boolean): IRoomBuilder {
+		this.room.displaySystemMessages = displaySystemMessages;
+		return this;
+	}
 
-        this.room.customFields[key] = value;
-        return this;
-    }
+	public getDisplayingOfSystemMessages(): boolean {
+		return this.room.displaySystemMessages;
+	}
 
-    public setCustomFields(fields: { [key: string]: object }): IRoomBuilder {
-        this.room.customFields = fields;
-        return this;
-    }
+	public addCustomField(key: string, value: object): IRoomBuilder {
+		if (typeof this.room.customFields !== 'object') {
+			this.room.customFields = {};
+		}
 
-    public getCustomFields(): { [key: string]: object } {
-      return this.room.customFields;
-    }
+		this.room.customFields[key] = value;
+		return this;
+	}
 
-    public getUserIds(): Array<string> {
-      return this.room.userIds;
-    }
+	public setCustomFields(fields: { [key: string]: object }): IRoomBuilder {
+		this.room.customFields = fields;
+		return this;
+	}
 
-    public getRoom(): IRoom {
-        return this.room;
-    }
+	public getCustomFields(): { [key: string]: object } {
+		return this.room.customFields;
+	}
+
+	public getUserIds(): Array<string> {
+		return this.room.userIds;
+	}
+
+	public getRoom(): IRoom {
+		return this.room;
+	}
 }

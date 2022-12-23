@@ -1,69 +1,74 @@
-import { IAppInfo } from '../../definition/metadata';
+import type { IAppInfo } from '../../definition/metadata';
 import { AppLicenseValidationResult } from '../marketplace/license';
-import { ProxiedApp } from '../ProxiedApp';
+import type { ProxiedApp } from '../ProxiedApp';
 
 export class AppFabricationFulfillment {
-    public info: IAppInfo;
-    public app: ProxiedApp;
-    public implemented: { [int: string]: boolean };
-    public licenseValidationResult: AppLicenseValidationResult;
-    public storageError: string;
-    public appUserError: object;
+	public info: IAppInfo;
 
-    constructor() {
-        this.licenseValidationResult = new AppLicenseValidationResult();
-    }
+	public app: ProxiedApp;
 
-    public setAppInfo(information: IAppInfo): void {
-        this.info = information;
-        this.licenseValidationResult.setAppId(information.id);
-    }
+	public implemented: { [int: string]: boolean };
 
-    public getAppInfo(): IAppInfo {
-        return this.info;
-    }
+	public licenseValidationResult: AppLicenseValidationResult;
 
-    public setApp(application: ProxiedApp): void {
-        this.app = application;
-    }
+	public storageError: string;
 
-    public getApp(): ProxiedApp {
-        return this.app;
-    }
+	public appUserError: object;
 
-    public setImplementedInterfaces(interfaces: { [int: string]: boolean }): void {
-        this.implemented = interfaces;
-    }
+	constructor() {
+		this.licenseValidationResult = new AppLicenseValidationResult();
+	}
 
-    public getImplementedInferfaces(): { [int: string]: boolean } {
-        return this.implemented;
-    }
+	public setAppInfo(information: IAppInfo): void {
+		this.info = information;
+		this.licenseValidationResult.setAppId(information.id);
+	}
 
-    public setStorageError(errorMessage: string): void {
-        this.storageError = errorMessage;
-    }
+	public getAppInfo(): IAppInfo {
+		return this.info;
+	}
 
-    public setAppUserError(error: object): void {
-        this.appUserError = error;
-    }
+	public setApp(application: ProxiedApp): void {
+		this.app = application;
+	}
 
-    public getStorageError(): string {
-        return this.storageError;
-    }
+	public getApp(): ProxiedApp {
+		return this.app;
+	}
 
-    public getAppUserError(): object {
-        return this.appUserError;
-    }
+	public setImplementedInterfaces(interfaces: { [int: string]: boolean }): void {
+		this.implemented = interfaces;
+	}
 
-    public hasStorageError(): boolean {
-        return !!this.storageError;
-    }
+	public getImplementedInferfaces(): { [int: string]: boolean } {
+		return this.implemented;
+	}
 
-    public hasAppUserError(): boolean {
-        return !!this.appUserError;
-    }
+	public setStorageError(errorMessage: string): void {
+		this.storageError = errorMessage;
+	}
 
-    public getLicenseValidationResult(): AppLicenseValidationResult {
-        return this.licenseValidationResult;
-    }
+	public setAppUserError(error: object): void {
+		this.appUserError = error;
+	}
+
+	public getStorageError(): string {
+		return this.storageError;
+	}
+
+	public getAppUserError(): object {
+		return this.appUserError;
+	}
+
+	public hasStorageError(): boolean {
+		return !!this.storageError;
+	}
+
+	public hasAppUserError(): boolean {
+		return !!this.appUserError;
+	}
+
+	public getLicenseValidationResult(): AppLicenseValidationResult {
+		return this.licenseValidationResult;
+	}
 }

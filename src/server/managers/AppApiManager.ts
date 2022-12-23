@@ -1,10 +1,10 @@
 import { HttpStatusCode } from '../../definition/accessors';
-import { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
+import type { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
 import { AppStatusUtils } from '../../definition/AppStatus';
-import { AppManager } from '../AppManager';
-import { ApiBridge } from '../bridges';
+import type { AppManager } from '../AppManager';
+import type { ApiBridge } from '../bridges';
 import { PathAlreadyExistsError } from '../errors';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { AppAccessorManager } from './AppAccessorManager';
 import { AppApi } from './AppApi';
 
 /**
@@ -15,149 +15,151 @@ import { AppApi } from './AppApi';
  * only then will that App's api's be enabled.
  */
 export class AppApiManager {
-    private readonly bridge: ApiBridge;
-    private readonly accessors: AppAccessorManager;
-    // Variable that contains the api's which have been provided by apps.
-    // The key of the top map is app id and the key of the inner map is the path
-    private providedApis: Map<string, Map<string, AppApi>>;
+	private readonly bridge: ApiBridge;
 
-    constructor(private readonly manager: AppManager) {
-        this.bridge = this.manager.getBridges().getApiBridge();
-        this.accessors = this.manager.getAccessorManager();
-        this.providedApis = new Map<string, Map<string, AppApi>>();
-    }
+	private readonly accessors: AppAccessorManager;
 
-    /**
-     * Adds an to *be* registered. This will *not register* it with the
-     * bridged system yet as this is only called on an App's
-     * `initialize` method and an App might not get enabled.
-     * When adding an api, it can *not* already exist in the system.
-     *
-     * @param appId the app's id which the api belongs to
-     * @param api the api to add to the system
-     */
-    public addApi(appId: string, api: IApi): void {
-        if (api.endpoints.length === 0) {
-            throw new Error('Invalid Api parameter provided, endpoints must contain, at least, one IApiEndpoint.');
-        }
+	// Variable that contains the api's which have been provided by apps.
+	// The key of the top map is app id and the key of the inner map is the path
+	private providedApis: Map<string, Map<string, AppApi>>;
 
-        const app = this.manager.getOneById(appId);
-        if (!app) {
-            throw new Error('App must exist in order for an api to be added.');
-        }
+	constructor(private readonly manager: AppManager) {
+		this.bridge = this.manager.getBridges().getApiBridge();
+		this.accessors = this.manager.getAccessorManager();
+		this.providedApis = new Map<string, Map<string, AppApi>>();
+	}
 
-        // Verify the api's path doesn't exist already
-        if (this.providedApis.get(appId)) {
-            api.endpoints.forEach((endpoint) => {
-                if (this.providedApis.get(appId).has(endpoint.path)) {
-                    throw new PathAlreadyExistsError(endpoint.path);
-                }
-            });
-        }
+	/**
+	 * Adds an to *be* registered. This will *not register* it with the
+	 * bridged system yet as this is only called on an App's
+	 * `initialize` method and an App might not get enabled.
+	 * When adding an api, it can *not* already exist in the system.
+	 *
+	 * @param appId the app's id which the api belongs to
+	 * @param api the api to add to the system
+	 */
+	public addApi(appId: string, api: IApi): void {
+		if (api.endpoints.length === 0) {
+			throw new Error('Invalid Api parameter provided, endpoints must contain, at least, one IApiEndpoint.');
+		}
 
-        if (!this.providedApis.has(appId)) {
-            this.providedApis.set(appId, new Map<string, AppApi>());
-        }
+		const app = this.manager.getOneById(appId);
+		if (!app) {
+			throw new Error('App must exist in order for an api to be added.');
+		}
 
-        api.endpoints.forEach((endpoint) => {
-            this.providedApis.get(appId).set(endpoint.path, new AppApi(app, api, endpoint));
-        });
-    }
+		// Verify the api's path doesn't exist already
+		if (this.providedApis.get(appId)) {
+			api.endpoints.forEach((endpoint) => {
+				if (this.providedApis.get(appId).has(endpoint.path)) {
+					throw new PathAlreadyExistsError(endpoint.path);
+				}
+			});
+		}
 
-    /**
-     * Registers all of the api's for the provided app inside
-     * of the bridged system which then enables them.
-     *
-     * @param appId The app's id of which to register it's api's with the bridged system
-     */
-    public registerApis(appId: string): void {
-        if (!this.providedApis.has(appId)) {
-            return;
-        }
+		if (!this.providedApis.has(appId)) {
+			this.providedApis.set(appId, new Map<string, AppApi>());
+		}
 
-        this.bridge.doUnregisterApis(appId);
-        for (const [, apiapp] of this.providedApis.get(appId).entries()) {
-            this.registerApi(appId, apiapp);
-        }
-    }
+		api.endpoints.forEach((endpoint) => {
+			this.providedApis.get(appId).set(endpoint.path, new AppApi(app, api, endpoint));
+		});
+	}
 
-    /**
-     * Unregisters the api's from the system.
-     *
-     * @param appId the appId for the api's to purge
-     */
-    public unregisterApis(appId: string): void {
-        if (this.providedApis.has(appId)) {
-            this.bridge.doUnregisterApis(appId);
+	/**
+	 * Registers all of the api's for the provided app inside
+	 * of the bridged system which then enables them.
+	 *
+	 * @param appId The app's id of which to register it's api's with the bridged system
+	 */
+	public registerApis(appId: string): void {
+		if (!this.providedApis.has(appId)) {
+			return;
+		}
 
-            this.providedApis.delete(appId);
-        }
-    }
+		this.bridge.doUnregisterApis(appId);
+		for (const [, apiapp] of this.providedApis.get(appId).entries()) {
+			this.registerApi(appId, apiapp);
+		}
+	}
 
-    /**
-     * Executes an App's api.
-     *
-     * @param appId the app which is providing the api
-     * @param path the path to be executed in app's api's
-     * @param request the request data to be evaluated byt the app
-     */
-    public async executeApi(appId: string, path: string, request: IApiRequest): Promise<IApiResponse> {
-        const api = this.providedApis.get(appId).get(path);
+	/**
+	 * Unregisters the api's from the system.
+	 *
+	 * @param appId the appId for the api's to purge
+	 */
+	public unregisterApis(appId: string): void {
+		if (this.providedApis.has(appId)) {
+			this.bridge.doUnregisterApis(appId);
 
-        if (!api) {
-            return {
-                status: HttpStatusCode.NOT_FOUND,
-            };
-        }
+			this.providedApis.delete(appId);
+		}
+	}
 
-        const app = this.manager.getOneById(appId);
+	/**
+	 * Executes an App's api.
+	 *
+	 * @param appId the app which is providing the api
+	 * @param path the path to be executed in app's api's
+	 * @param request the request data to be evaluated byt the app
+	 */
+	public async executeApi(appId: string, path: string, request: IApiRequest): Promise<IApiResponse> {
+		const api = this.providedApis.get(appId).get(path);
 
-        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
-            // Just in case someone decides to do something they shouldn't
-            // let's ensure the app actually exists
-            return {
-                status: HttpStatusCode.NOT_FOUND,
-            };
-        }
+		if (!api) {
+			return {
+				status: HttpStatusCode.NOT_FOUND,
+			};
+		}
 
-        return api.runExecutor(request, this.manager.getLogStorage(), this.accessors);
-    }
+		const app = this.manager.getOneById(appId);
 
-    /**
-     * Return a list of api's for a certain app
-     *
-     * @param appId the app which is providing the api
-     */
-    public listApis(appId: string): Array<IApiEndpointMetadata> {
-        const apis = this.providedApis.get(appId);
+		if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
+			// Just in case someone decides to do something they shouldn't
+			// let's ensure the app actually exists
+			return {
+				status: HttpStatusCode.NOT_FOUND,
+			};
+		}
 
-        if (!apis) {
-            return [];
-        }
+		return api.runExecutor(request, this.manager.getLogStorage(), this.accessors);
+	}
 
-        const result = [];
+	/**
+	 * Return a list of api's for a certain app
+	 *
+	 * @param appId the app which is providing the api
+	 */
+	public listApis(appId: string): Array<IApiEndpointMetadata> {
+		const apis = this.providedApis.get(appId);
 
-        for (const api of apis.values()) {
-            const metadata: IApiEndpointMetadata = {
-                path: api.endpoint.path,
-                computedPath: api.computedPath,
-                methods: api.implementedMethods,
-                examples: api.endpoint.examples || {},
-            };
+		if (!apis) {
+			return [];
+		}
 
-            result.push(metadata);
-        }
+		const result = [];
 
-        return result;
-    }
+		for (const api of apis.values()) {
+			const metadata: IApiEndpointMetadata = {
+				path: api.endpoint.path,
+				computedPath: api.computedPath,
+				methods: api.implementedMethods,
+				examples: api.endpoint.examples || {},
+			};
 
-    /**
-     * Actually goes and provide's the bridged system with the api information.
-     *
-     * @param appId the app which is providing the api
-     * @param info the api's registration information
-     */
-    private registerApi(appId: string, api: AppApi): void {
-        this.bridge.doRegisterApi(api, appId);
-    }
+			result.push(metadata);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Actually goes and provide's the bridged system with the api information.
+	 *
+	 * @param appId the app which is providing the api
+	 * @param info the api's registration information
+	 */
+	private registerApi(appId: string, api: AppApi): void {
+		this.bridge.doRegisterApi(api, appId);
+	}
 }

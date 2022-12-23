@@ -1,135 +1,142 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { IMessage } from '../../../src/definition/messages';
-import { IRoom, RoomType } from '../../../src/definition/rooms';
 
-import { ILivechatRoom } from '../../../src/definition/livechat/ILivechatRoom';
+import type { IMessage } from '../../../src/definition/messages';
+import type { IRoom } from '../../../src/definition/rooms';
+import { RoomType } from '../../../src/definition/rooms';
+import type { ILivechatRoom } from '../../../src/definition/livechat/ILivechatRoom';
 import { MessageBuilder, ModifyUpdater, RoomBuilder } from '../../../src/server/accessors';
-import { AppBridges, MessageBridge, RoomBridge } from '../../../src/server/bridges';
+import type { AppBridges, MessageBridge, RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyUpdaterTestFixture {
-    private mockAppId: string;
-    private mockRoomBridge: RoomBridge;
-    private mockMessageBridge: MessageBridge;
-    private mockAppBridge: AppBridges;
+	private mockAppId: string;
 
-    @SetupFixture
-    public setupFixture() {
-        this.mockAppId = 'testing-app';
+	private mockRoomBridge: RoomBridge;
 
-        this.mockRoomBridge = {
-            doGetById(roomId: string, appId: string): Promise<IRoom> {
-                return Promise.resolve(TestData.getRoom());
-            },
-            doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-        } as RoomBridge;
+	private mockMessageBridge: MessageBridge;
 
-        this.mockMessageBridge = {
-            doGetById(msgId: string, appId: string): Promise<IMessage> {
-                return Promise.resolve(TestData.getMessage());
-            },
-            doUpdate(msg: IMessage, appId: string): Promise<void> {
-                return Promise.resolve();
-            },
-        } as MessageBridge;
+	private mockAppBridge: AppBridges;
 
-        const rmBridge = this.mockRoomBridge;
-        const msgBridge = this.mockMessageBridge;
-        this.mockAppBridge = {
-            getMessageBridge() {
-                return msgBridge;
-            },
-            getRoomBridge() {
-                return rmBridge;
-            },
-        } as AppBridges;
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.mockAppId = 'testing-app';
 
-    @AsyncTest()
-    public async basicModifyUpdater() {
-        Expect(() => new ModifyUpdater(this.mockAppBridge, this.mockAppId)).not.toThrow();
+		this.mockRoomBridge = {
+			doGetById(roomId: string, appId: string): Promise<IRoom> {
+				return Promise.resolve(TestData.getRoom());
+			},
+			doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
+				return Promise.resolve();
+			},
+		} as RoomBridge;
 
-        const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
-        Expect(mc.message('msgId', TestData.getUser())).toBeDefined();
-        Expect(mc.room('roomId', TestData.getUser())).toBeDefined();
+		this.mockMessageBridge = {
+			doGetById(msgId: string, appId: string): Promise<IMessage> {
+				return Promise.resolve(TestData.getMessage());
+			},
+			doUpdate(msg: IMessage, appId: string): Promise<void> {
+				return Promise.resolve();
+			},
+		} as MessageBridge;
 
-        await Expect(async () => await mc.finish({} as any)).toThrowErrorAsync(Error, 'Invalid builder passed to the ModifyUpdater.finish function.');
-    }
+		const rmBridge = this.mockRoomBridge;
+		const msgBridge = this.mockMessageBridge;
+		this.mockAppBridge = {
+			getMessageBridge() {
+				return msgBridge;
+			},
+			getRoomBridge() {
+				return rmBridge;
+			},
+		} as AppBridges;
+	}
 
-    @AsyncTest()
-    public async msgModifyUpdater() {
-        const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
+	@AsyncTest()
+	public async basicModifyUpdater() {
+		Expect(() => new ModifyUpdater(this.mockAppBridge, this.mockAppId)).not.toThrow();
 
-        const msg = { } as IMessage;
-        const msgBd = new MessageBuilder(msg);
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
-        msgBd.setRoom(TestData.getRoom());
-        Expect(msg.room).toBeDefined();
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid message, can\'t update a message without an id.');
-        msg.id = 'testing-msg';
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
-        msgBd.setSender(TestData.getUser());
-        Expect(msg.sender).toBeDefined();
+		const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
+		Expect(mc.message('msgId', TestData.getUser())).toBeDefined();
+		Expect(mc.room('roomId', TestData.getUser())).toBeDefined();
 
-        const msgBriSpy = SpyOn(this.mockMessageBridge, 'doUpdate');
-        Expect(await mc.finish(msgBd)).not.toBeDefined();
-        Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
-        msgBriSpy.restore();
-    }
+		await Expect(async () => await mc.finish({} as any)).toThrowErrorAsync(
+			Error,
+			'Invalid builder passed to the ModifyUpdater.finish function.',
+		);
+	}
 
-    @AsyncTest()
-    public async roomModifyUpdater() {
-        const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
+	@AsyncTest()
+	public async msgModifyUpdater() {
+		const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
 
-        const room = {} as IRoom;
-        const roomBd = new RoomBuilder(room);
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid room, can not update a room without an id.');
-        room.id = 'testing-room';
+		const msg = {} as IMessage;
+		const msgBd = new MessageBuilder(msg);
+		await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
+		msgBd.setRoom(TestData.getRoom());
+		Expect(msg.room).toBeDefined();
+		await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, "Invalid message, can't update a message without an id.");
+		msg.id = 'testing-msg';
+		await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
+		msgBd.setSender(TestData.getUser());
+		Expect(msg.sender).toBeDefined();
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
-        roomBd.setType(RoomType.CHANNEL);
-        Expect(room.type).toBe(RoomType.CHANNEL);
+		const msgBriSpy = SpyOn(this.mockMessageBridge, 'doUpdate');
+		Expect(await mc.finish(msgBd)).not.toBeDefined();
+		Expect(msgBriSpy).toHaveBeenCalledWith(msg, this.mockAppId);
+		msgBriSpy.restore();
+	}
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
-        roomBd.setCreator(TestData.getUser());
-        Expect(room.creator).toBeDefined();
+	@AsyncTest()
+	public async roomModifyUpdater() {
+		const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
-        roomBd.setSlugifiedName('testing-room');
-        Expect(room.slugifiedName).toBe('testing-room');
+		const room = {} as IRoom;
+		const roomBd = new RoomBuilder(room);
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid room, can not update a room without an id.');
+		room.id = 'testing-room';
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
-        roomBd.setDisplayName('Display Name');
-        Expect(room.displayName).toBe('Display Name');
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
+		roomBd.setType(RoomType.CHANNEL);
+		Expect(room.type).toBe(RoomType.CHANNEL);
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
-        Expect(await mc.finish(roomBd)).not.toBeDefined();
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
-        roomBriSpy.restore();
-    }
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
+		roomBd.setCreator(TestData.getUser());
+		Expect(room.creator).toBeDefined();
 
-    @AsyncTest()
-    public async livechatRoomModifyUpdater() {
-        const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
+		roomBd.setSlugifiedName('testing-room');
+		Expect(room.slugifiedName).toBe('testing-room');
 
-        const room = {} as ILivechatRoom;
-        const roomBd = new RoomBuilder(room);
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid room, can not update a room without an id.');
-        room.id = 'testing-room';
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
+		roomBd.setDisplayName('Display Name');
+		Expect(room.displayName).toBe('Display Name');
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
-        roomBd.setType(RoomType.LIVE_CHAT);
-        Expect(room.type).toBe(RoomType.LIVE_CHAT);
+		const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
+		Expect(await mc.finish(roomBd)).not.toBeDefined();
+		Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
+		roomBriSpy.restore();
+	}
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
-        roomBd.setDisplayName('Display Name');
-        Expect(room.displayName).toBe('Display Name');
+	@AsyncTest()
+	public async livechatRoomModifyUpdater() {
+		const mc = new ModifyUpdater(this.mockAppBridge, this.mockAppId);
 
-        const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
-        Expect(await mc.finish(roomBd)).not.toBeDefined();
-        Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
-        roomBriSpy.restore();
-    }
+		const room = {} as ILivechatRoom;
+		const roomBd = new RoomBuilder(room);
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid room, can not update a room without an id.');
+		room.id = 'testing-room';
+
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
+		roomBd.setType(RoomType.LIVE_CHAT);
+		Expect(room.type).toBe(RoomType.LIVE_CHAT);
+
+		await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
+		roomBd.setDisplayName('Display Name');
+		Expect(room.displayName).toBe('Display Name');
+
+		const roomBriSpy = SpyOn(this.mockRoomBridge, 'doUpdate');
+		Expect(await mc.finish(roomBd)).not.toBeDefined();
+		Expect(roomBriSpy).toHaveBeenCalledWith(room, roomBd.getMembersToBeAddedUsernames(), this.mockAppId);
+		roomBriSpy.restore();
+	}
 }

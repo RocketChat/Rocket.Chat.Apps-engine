@@ -1,74 +1,75 @@
-import {
-    ICloudWorkspaceRead,
-    IEnvironmentRead,
-    ILivechatRead,
-    IMessageRead,
-    INotifier,
-    IPersistenceRead,
-    IRead,
-    IRoomRead,
-    IUploadRead,
-    IUserRead,
-    IVideoConferenceRead,
+import type {
+	ICloudWorkspaceRead,
+	IEnvironmentRead,
+	ILivechatRead,
+	IMessageRead,
+	INotifier,
+	IPersistenceRead,
+	IRead,
+	IRoomRead,
+	IUploadRead,
+	IUserRead,
+	IVideoConferenceRead,
 } from '../../definition/accessors';
-import { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
+import type { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
 
 export class Reader implements IRead {
-    constructor(
-        private env: IEnvironmentRead,
-        private message: IMessageRead,
-        private persist: IPersistenceRead,
-        private room: IRoomRead,
-        private user: IUserRead,
-        private noti: INotifier,
-        private livechat: ILivechatRead,
-        private upload: IUploadRead,
-        private cloud: ICloudWorkspaceRead,
-        private videoConf: IVideoConferenceRead,
+	constructor(
+		private env: IEnvironmentRead,
+		private message: IMessageRead,
+		private persist: IPersistenceRead,
+		private room: IRoomRead,
+		private user: IUserRead,
+		private noti: INotifier,
+		private livechat: ILivechatRead,
+		private upload: IUploadRead,
+		private cloud: ICloudWorkspaceRead,
+		private videoConf: IVideoConferenceRead,
 
-        private oauthApps: IOAuthAppsReader,
-    ) { }
-    public getEnvironmentReader(): IEnvironmentRead {
-        return this.env;
-    }
+		private oauthApps: IOAuthAppsReader,
+	) {}
 
-    public getMessageReader(): IMessageRead {
-        return this.message;
-    }
+	public getEnvironmentReader(): IEnvironmentRead {
+		return this.env;
+	}
 
-    public getPersistenceReader(): IPersistenceRead {
-        return this.persist;
-    }
+	public getMessageReader(): IMessageRead {
+		return this.message;
+	}
 
-    public getRoomReader(): IRoomRead {
-        return this.room;
-    }
+	public getPersistenceReader(): IPersistenceRead {
+		return this.persist;
+	}
 
-    public getUserReader(): IUserRead {
-        return this.user;
-    }
+	public getRoomReader(): IRoomRead {
+		return this.room;
+	}
 
-    public getNotifier(): INotifier {
-        return this.noti;
-    }
+	public getUserReader(): IUserRead {
+		return this.user;
+	}
 
-    public getLivechatReader(): ILivechatRead {
-        return this.livechat;
-    }
+	public getNotifier(): INotifier {
+		return this.noti;
+	}
 
-    public getUploadReader(): IUploadRead {
-        return this.upload;
-    }
+	public getLivechatReader(): ILivechatRead {
+		return this.livechat;
+	}
 
-    public getCloudWorkspaceReader(): ICloudWorkspaceRead {
-        return this.cloud;
-    }
+	public getUploadReader(): IUploadRead {
+		return this.upload;
+	}
 
-    public getVideoConferenceReader(): IVideoConferenceRead {
-        return this.videoConf;
-    }
+	public getCloudWorkspaceReader(): ICloudWorkspaceRead {
+		return this.cloud;
+	}
 
-    public getOAuthAppsReader(): IOAuthAppsReader {
-        return this.oauthApps;
-    }
+	public getVideoConferenceReader(): IVideoConferenceRead {
+		return this.videoConf;
+	}
+
+	public getOAuthAppsReader(): IOAuthAppsReader {
+		return this.oauthApps;
+	}
 }

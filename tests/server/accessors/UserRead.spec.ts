@@ -1,47 +1,49 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { IUser } from '../../../src/definition/users';
 
+import type { IUser } from '../../../src/definition/users';
 import { UserRead } from '../../../src/server/accessors';
-import { UserBridge } from '../../../src/server/bridges';
+import type { UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class UserReadAccessorTestFixture {
-    private user: IUser;
-    private mockUserBridge: UserBridge;
-    private mockAppId: 'test-appId';
+	private user: IUser;
 
-    @SetupFixture
-    public setupFixture() {
-        this.user = TestData.getUser();
+	private mockUserBridge: UserBridge;
 
-        const theUser = this.user;
-        this.mockUserBridge = {
-            doGetById(id, appId): Promise<IUser> {
-                return Promise.resolve(theUser);
-            },
-            doGetByUsername(id, appId): Promise<IUser> {
-                return Promise.resolve(theUser);
-            },
-            doGetAppUser(appId?: string): Promise<IUser> {
-                return Promise.resolve(theUser);
-            },
-        } as UserBridge;
-    }
+	private mockAppId: 'test-appId';
 
-    @AsyncTest()
-    public async expectDataFromMessageRead() {
-        Expect(() => new UserRead(this.mockUserBridge, 'testing-app')).not.toThrow();
+	@SetupFixture
+	public setupFixture() {
+		this.user = TestData.getUser();
 
-        const ur = new UserRead(this.mockUserBridge, 'testing-app');
+		const theUser = this.user;
+		this.mockUserBridge = {
+			doGetById(id, appId): Promise<IUser> {
+				return Promise.resolve(theUser);
+			},
+			doGetByUsername(id, appId): Promise<IUser> {
+				return Promise.resolve(theUser);
+			},
+			doGetAppUser(appId?: string): Promise<IUser> {
+				return Promise.resolve(theUser);
+			},
+		} as UserBridge;
+	}
 
-        Expect(await ur.getById('fake')).toBeDefined();
-        Expect(await ur.getById('fake')).toEqual(this.user);
+	@AsyncTest()
+	public async expectDataFromMessageRead() {
+		Expect(() => new UserRead(this.mockUserBridge, 'testing-app')).not.toThrow();
 
-        Expect(await ur.getByUsername('username')).toBeDefined();
-        Expect(await ur.getByUsername('username')).toEqual(this.user);
+		const ur = new UserRead(this.mockUserBridge, 'testing-app');
 
-        Expect(await ur.getAppUser(this.mockAppId)).toBeDefined();
-        Expect(await ur.getAppUser(this.mockAppId)).toEqual(this.user);
-        Expect(await ur.getAppUser()).toEqual(this.user);
-    }
+		Expect(await ur.getById('fake')).toBeDefined();
+		Expect(await ur.getById('fake')).toEqual(this.user);
+
+		Expect(await ur.getByUsername('username')).toBeDefined();
+		Expect(await ur.getByUsername('username')).toEqual(this.user);
+
+		Expect(await ur.getAppUser(this.mockAppId)).toBeDefined();
+		Expect(await ur.getAppUser(this.mockAppId)).toEqual(this.user);
+		Expect(await ur.getAppUser()).toEqual(this.user);
+	}
 }

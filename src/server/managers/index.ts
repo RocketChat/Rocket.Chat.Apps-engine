@@ -1,4 +1,4 @@
-import { AppAccessorManager} from './AppAccessorManager';
+import { AppAccessorManager } from './AppAccessorManager';
 import { AppApiManager } from './AppApiManager';
 import { AppExternalComponentManager } from './AppExternalComponentManager';
 import { AppLicenseManager } from './AppLicenseManager';
@@ -9,13 +9,13 @@ import { AppSlashCommandManager } from './AppSlashCommandManager';
 import { AppVideoConfProviderManager } from './AppVideoConfProviderManager';
 
 export {
-    AppAccessorManager,
-    AppLicenseManager,
-    AppListenerManager,
-    AppExternalComponentManager,
-    AppSettingsManager,
-    AppSlashCommandManager,
-    AppApiManager,
-    AppSchedulerManager,
-    AppVideoConfProviderManager,
+	AppAccessorManager,
+	AppLicenseManager,
+	AppListenerManager,
+	AppExternalComponentManager,
+	AppSettingsManager,
+	AppSlashCommandManager,
+	AppApiManager,
+	AppSchedulerManager,
+	AppVideoConfProviderManager,
 };

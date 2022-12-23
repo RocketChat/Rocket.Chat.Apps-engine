@@ -1,10 +1,10 @@
-import { IModifyDeleter } from '../../definition/accessors';
-import { AppBridges } from '../bridges';
+import type { IModifyDeleter } from '../../definition/accessors';
+import type { AppBridges } from '../bridges';
 
 export class ModifyDeleter implements IModifyDeleter {
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
+	constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
 
-    public async deleteRoom(roomId: string): Promise<void> {
-        return this.bridges.getRoomBridge().doDelete(roomId, this.appId);
-    }
+	public async deleteRoom(roomId: string): Promise<void> {
+		return this.bridges.getRoomBridge().doDelete(roomId, this.appId);
+	}
 }

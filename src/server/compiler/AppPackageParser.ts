@@ -1,156 +1,162 @@
-import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import * as AdmZip from 'adm-zip';
 import * as semver from 'semver';
 import * as uuidv4 from 'uuid/v4';
 
 import { AppImplements } from '.';
-import { IAppInfo } from '../../definition/metadata/IAppInfo';
+import type { IAppInfo } from '../../definition/metadata/IAppInfo';
 import { RequiredApiVersionError } from '../errors';
-import { IParseAppPackageResult } from './IParseAppPackageResult';
+import type { IParseAppPackageResult } from './IParseAppPackageResult';
 
 export class AppPackageParser {
-    // tslint:disable-next-line:max-line-length
-    public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
-    private appsEngineVersion: string;
+	// tslint:disable-next-line:max-line-length
+	public static uuid4Regex = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 
-    constructor() {
-        this.appsEngineVersion = this.getEngineVersion();
-    }
+	private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
 
-    public async unpackageApp(appPackage: Buffer): Promise<IParseAppPackageResult> {
-        const zip = new AdmZip(appPackage);
-        const infoZip = zip.getEntry('app.json');
-        let info: IAppInfo;
+	private appsEngineVersion: string;
 
-        if (infoZip && !infoZip.isDirectory) {
-            try {
-                info = JSON.parse(infoZip.getData().toString()) as IAppInfo;
+	constructor() {
+		this.appsEngineVersion = this.getEngineVersion();
+	}
 
-                if (!AppPackageParser.uuid4Regex.test(info.id)) {
-                    info.id = uuidv4();
-                    console.warn('WARNING: We automatically generated a uuid v4 id for',
-                        info.name, 'since it did not provide us an id. This is NOT',
-                        'recommended as the same App can be installed several times.');
-                }
-            } catch (e) {
-                throw new Error('Invalid App package. The "app.json" file is not valid json.');
-            }
-        } else {
-            throw new Error('Invalid App package. No "app.json" file.');
-        }
+	public async unpackageApp(appPackage: Buffer): Promise<IParseAppPackageResult> {
+		const zip = new AdmZip(appPackage);
+		const infoZip = zip.getEntry('app.json');
+		let info: IAppInfo;
 
-        info.classFile = info.classFile.replace('.ts', '.js');
+		if (infoZip && !infoZip.isDirectory) {
+			try {
+				info = JSON.parse(infoZip.getData().toString()) as IAppInfo;
 
-        if (!semver.satisfies(this.appsEngineVersion, info.requiredApiVersion)) {
-            throw new RequiredApiVersionError(info, this.appsEngineVersion);
-        }
+				if (!AppPackageParser.uuid4Regex.test(info.id)) {
+					info.id = uuidv4();
+					console.warn(
+						'WARNING: We automatically generated a uuid v4 id for',
+						info.name,
+						'since it did not provide us an id. This is NOT',
+						'recommended as the same App can be installed several times.',
+					);
+				}
+			} catch (e) {
+				throw new Error('Invalid App package. The "app.json" file is not valid json.');
+			}
+		} else {
+			throw new Error('Invalid App package. No "app.json" file.');
+		}
 
-        // Load all of the TypeScript only files
-        const files: { [s: string]: string } = {};
+		info.classFile = info.classFile.replace('.ts', '.js');
 
-        zip.getEntries().filter((entry) => !entry.isDirectory && entry.entryName.endsWith('.js')).forEach((entry) => {
-            const norm = path.normalize(entry.entryName);
+		if (!semver.satisfies(this.appsEngineVersion, info.requiredApiVersion)) {
+			throw new RequiredApiVersionError(info, this.appsEngineVersion);
+		}
 
-            // Files which start with `.` are supposed to be hidden
-            if (norm.startsWith('.')) {
-                return;
-            }
+		// Load all of the TypeScript only files
+		const files: { [s: string]: string } = {};
 
-            files[norm] = entry.getData().toString();
-        });
+		zip.getEntries()
+			.filter((entry) => !entry.isDirectory && entry.entryName.endsWith('.js'))
+			.forEach((entry) => {
+				const norm = path.normalize(entry.entryName);
 
-        // Ensure that the main class file exists
-        if (!files[path.normalize(info.classFile)]) {
-            throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
-        }
+				// Files which start with `.` are supposed to be hidden
+				if (norm.startsWith('.')) {
+					return;
+				}
 
-        const languageContent = this.getLanguageContent(zip);
+				files[norm] = entry.getData().toString();
+			});
 
-        // Get the icon's content
-        const iconFile = this.getIconFile(zip, info.iconFile);
-        if (iconFile) {
-            info.iconFileContent = iconFile;
-        }
+		// Ensure that the main class file exists
+		if (!files[path.normalize(info.classFile)]) {
+			throw new Error(`Invalid App package. Could not find the classFile (${info.classFile}) file.`);
+		}
 
-        const implemented = new AppImplements();
+		const languageContent = this.getLanguageContent(zip);
 
-        if (Array.isArray(info.implements)) {
-            info.implements.forEach((interfaceName) => implemented.doesImplement(interfaceName));
-        }
+		// Get the icon's content
+		const iconFile = this.getIconFile(zip, info.iconFile);
+		if (iconFile) {
+			info.iconFileContent = iconFile;
+		}
 
-        return {
-            info,
-            files,
-            languageContent,
-            implemented,
-        };
-    }
+		const implemented = new AppImplements();
 
-    private getLanguageContent(zip: AdmZip): { [key: string]: object } {
-        const languageContent: { [key: string]: object } = {};
+		if (Array.isArray(info.implements)) {
+			info.implements.forEach((interfaceName) => implemented.doesImplement(interfaceName));
+		}
 
-        zip.getEntries().filter((entry) =>
-            !entry.isDirectory &&
-            entry.entryName.startsWith('i18n/') &&
-            entry.entryName.endsWith('.json'))
-        .forEach((entry) => {
-            const entrySplit = entry.entryName.split('/');
-            const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
+		return {
+			info,
+			files,
+			languageContent,
+			implemented,
+		};
+	}
 
-            let content;
-            try {
-                content = JSON.parse(entry.getData().toString());
-            } catch (e) {
-                // Failed to parse it, maybe warn them? idk yet
-            }
+	private getLanguageContent(zip: AdmZip): { [key: string]: object } {
+		const languageContent: { [key: string]: object } = {};
 
-            languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
-        });
+		zip.getEntries()
+			.filter((entry) => !entry.isDirectory && entry.entryName.startsWith('i18n/') && entry.entryName.endsWith('.json'))
+			.forEach((entry) => {
+				const entrySplit = entry.entryName.split('/');
+				const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
 
-        return languageContent;
-    }
+				let content;
+				try {
+					content = JSON.parse(entry.getData().toString());
+				} catch (e) {
+					// Failed to parse it, maybe warn them? idk yet
+				}
 
-    private getIconFile(zip: AdmZip, filePath: string): string {
-        if (!filePath) {
-            return undefined;
-        }
+				languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
+			});
 
-        const ext = path.extname(filePath);
-        if (!this.allowedIconExts.includes(ext)) {
-            return undefined;
-        }
+		return languageContent;
+	}
 
-        const entry = zip.getEntry(filePath);
+	private getIconFile(zip: AdmZip, filePath: string): string {
+		if (!filePath) {
+			return undefined;
+		}
 
-        if (!entry) {
-            return undefined;
-        }
+		const ext = path.extname(filePath);
+		if (!this.allowedIconExts.includes(ext)) {
+			return undefined;
+		}
 
-        if (entry.isDirectory) {
-            return undefined;
-        }
+		const entry = zip.getEntry(filePath);
 
-        const base64 = entry.getData().toString('base64');
+		if (!entry) {
+			return undefined;
+		}
 
-        return `data:image/${ ext.replace('.', '') };base64,${ base64 }`;
-    }
+		if (entry.isDirectory) {
+			return undefined;
+		}
 
-    private getEngineVersion(): string {
-        const devLocation = path.join(__dirname, '../../../package.json');
-        const prodLocation = path.join(__dirname, '../../package.json');
+		const base64 = entry.getData().toString('base64');
 
-        let info: { version: string };
+		return `data:image/${ext.replace('.', '')};base64,${base64}`;
+	}
 
-        if (fs.existsSync(devLocation)) {
-            info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
-        } else if (fs.existsSync(prodLocation)) {
-            info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
-        } else {
-            throw new Error('Could not find the Apps TypeScript Definition Package Version!');
-        }
+	private getEngineVersion(): string {
+		const devLocation = path.join(__dirname, '../../../package.json');
+		const prodLocation = path.join(__dirname, '../../package.json');
 
-        return info.version.replace(/^[^0-9]/, '').split('-')[0];
-    }
+		let info: { version: string };
+
+		if (fs.existsSync(devLocation)) {
+			info = JSON.parse(fs.readFileSync(devLocation, 'utf8'));
+		} else if (fs.existsSync(prodLocation)) {
+			info = JSON.parse(fs.readFileSync(prodLocation, 'utf8'));
+		} else {
+			throw new Error('Could not find the Apps TypeScript Definition Package Version!');
+		}
+
+		return info.version.replace(/^[^0-9]/, '').split('-')[0];
+	}
 }

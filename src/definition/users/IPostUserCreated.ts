@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IUserContext } from './IUserContext';
+import type { IUserContext } from './IUserContext';
 
 /**
  * Event interface that allows an app to
@@ -11,11 +11,11 @@ import { IUserContext } from './IUserContext';
  * user has been saved to the database.
  */
 export interface IPostUserCreated {
-    [AppMethod.EXECUTE_POST_USER_CREATED](
-        context: IUserContext,
-        read: IRead,
-        http: IHttp,
-        persis: IPersistence,
-        modify: IModify,
-    ): Promise<void>;
+	[AppMethod.EXECUTE_POST_USER_CREATED](
+		context: IUserContext,
+		read: IRead,
+		http: IHttp,
+		persis: IPersistence,
+		modify: IModify,
+	): Promise<void>;
 }

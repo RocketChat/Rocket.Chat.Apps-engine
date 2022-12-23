@@ -1,5 +1,5 @@
-import { IUser } from '../users';
+import type { IUser } from '../users';
 
 export interface IAppInstallationContext {
-    user: IUser;
+	user: IUser;
 }

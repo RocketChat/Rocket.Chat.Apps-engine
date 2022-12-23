@@ -1,189 +1,191 @@
-import { ILivechatMessageBuilder, IMessageBuilder } from '../../definition/accessors';
-import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IVisitor } from '../../definition/livechat/IVisitor';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import type { ILivechatMessageBuilder, IMessageBuilder } from '../../definition/accessors';
+import type { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
+import type { IVisitor } from '../../definition/livechat/IVisitor';
+import type { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom, RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
+import type { IRoom } from '../../definition/rooms';
+import { RoomType } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
 import { MessageBuilder } from './MessageBuilder';
 
 export class LivechatMessageBuilder implements ILivechatMessageBuilder {
-    public kind: RocketChatAssociationModel.LIVECHAT_MESSAGE;
-    private msg: ILivechatMessage;
+	public kind: RocketChatAssociationModel.LIVECHAT_MESSAGE;
 
-    constructor(message?: ILivechatMessage) {
-        this.kind = RocketChatAssociationModel.LIVECHAT_MESSAGE;
-        this.msg = message ? message : ({} as ILivechatMessage);
-    }
+	private msg: ILivechatMessage;
 
-    public setData(data: ILivechatMessage): ILivechatMessageBuilder {
-        delete data.id;
-        this.msg = data;
+	constructor(message?: ILivechatMessage) {
+		this.kind = RocketChatAssociationModel.LIVECHAT_MESSAGE;
+		this.msg = message || ({} as ILivechatMessage);
+	}
 
-        return this;
-    }
+	public setData(data: ILivechatMessage): ILivechatMessageBuilder {
+		delete data.id;
+		this.msg = data;
 
-    public setRoom(room: IRoom): ILivechatMessageBuilder {
-        this.msg.room = room;
-        return this;
-    }
+		return this;
+	}
 
-    public getRoom(): IRoom {
-        return this.msg.room;
-    }
+	public setRoom(room: IRoom): ILivechatMessageBuilder {
+		this.msg.room = room;
+		return this;
+	}
 
-    public setSender(sender: IUser): ILivechatMessageBuilder {
-        this.msg.sender = sender;
-        delete this.msg.visitor;
+	public getRoom(): IRoom {
+		return this.msg.room;
+	}
 
-        return this;
-    }
+	public setSender(sender: IUser): ILivechatMessageBuilder {
+		this.msg.sender = sender;
+		delete this.msg.visitor;
 
-    public getSender(): IUser {
-        return this.msg.sender;
-    }
+		return this;
+	}
 
-    public setText(text: string): ILivechatMessageBuilder {
-        this.msg.text = text;
-        return this;
-    }
+	public getSender(): IUser {
+		return this.msg.sender;
+	}
 
-    public getText(): string {
-        return this.msg.text;
-    }
+	public setText(text: string): ILivechatMessageBuilder {
+		this.msg.text = text;
+		return this;
+	}
 
-    public setEmojiAvatar(emoji: string): ILivechatMessageBuilder {
-        this.msg.emoji = emoji;
-        return this;
-    }
+	public getText(): string {
+		return this.msg.text;
+	}
 
-    public getEmojiAvatar(): string {
-        return this.msg.emoji;
-    }
+	public setEmojiAvatar(emoji: string): ILivechatMessageBuilder {
+		this.msg.emoji = emoji;
+		return this;
+	}
 
-    public setAvatarUrl(avatarUrl: string): ILivechatMessageBuilder {
-        this.msg.avatarUrl = avatarUrl;
-        return this;
-    }
+	public getEmojiAvatar(): string {
+		return this.msg.emoji;
+	}
 
-    public getAvatarUrl(): string {
-        return this.msg.avatarUrl;
-    }
+	public setAvatarUrl(avatarUrl: string): ILivechatMessageBuilder {
+		this.msg.avatarUrl = avatarUrl;
+		return this;
+	}
 
-    public setUsernameAlias(alias: string): ILivechatMessageBuilder {
-        this.msg.alias = alias;
-        return this;
-    }
+	public getAvatarUrl(): string {
+		return this.msg.avatarUrl;
+	}
 
-    public getUsernameAlias(): string {
-        return this.msg.alias;
-    }
+	public setUsernameAlias(alias: string): ILivechatMessageBuilder {
+		this.msg.alias = alias;
+		return this;
+	}
 
-    public addAttachment(attachment: IMessageAttachment): ILivechatMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+	public getUsernameAlias(): string {
+		return this.msg.alias;
+	}
 
-        this.msg.attachments.push(attachment);
-        return this;
-    }
+	public addAttachment(attachment: IMessageAttachment): ILivechatMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-    public setAttachments(attachments: Array<IMessageAttachment>): ILivechatMessageBuilder {
-        this.msg.attachments = attachments;
-        return this;
-    }
+		this.msg.attachments.push(attachment);
+		return this;
+	}
 
-    public getAttachments(): Array<IMessageAttachment> {
-        return this.msg.attachments;
-    }
+	public setAttachments(attachments: Array<IMessageAttachment>): ILivechatMessageBuilder {
+		this.msg.attachments = attachments;
+		return this;
+	}
 
-    public replaceAttachment(position: number, attachment: IMessageAttachment): ILivechatMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+	public getAttachments(): Array<IMessageAttachment> {
+		return this.msg.attachments;
+	}
 
-        if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to replace.`);
-        }
+	public replaceAttachment(position: number, attachment: IMessageAttachment): ILivechatMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-        this.msg.attachments[position] = attachment;
-        return this;
-    }
+		if (!this.msg.attachments[position]) {
+			throw new Error(`No attachment found at the index of "${position}" to replace.`);
+		}
 
-    public removeAttachment(position: number): ILivechatMessageBuilder {
-        if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
-        }
+		this.msg.attachments[position] = attachment;
+		return this;
+	}
 
-        if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to remove.`);
-        }
+	public removeAttachment(position: number): ILivechatMessageBuilder {
+		if (!this.msg.attachments) {
+			this.msg.attachments = new Array<IMessageAttachment>();
+		}
 
-        this.msg.attachments.splice(position, 1);
+		if (!this.msg.attachments[position]) {
+			throw new Error(`No attachment found at the index of "${position}" to remove.`);
+		}
 
-        return this;
-    }
+		this.msg.attachments.splice(position, 1);
 
-    public setEditor(user: IUser): ILivechatMessageBuilder {
-        this.msg.editor = user;
-        return this;
-    }
+		return this;
+	}
 
-    public getEditor(): IUser {
-        return this.msg.editor;
-    }
+	public setEditor(user: IUser): ILivechatMessageBuilder {
+		this.msg.editor = user;
+		return this;
+	}
 
-    public setGroupable(groupable: boolean): ILivechatMessageBuilder {
-        this.msg.groupable = groupable;
-        return this;
-    }
+	public getEditor(): IUser {
+		return this.msg.editor;
+	}
 
-    public getGroupable(): boolean {
-        return this.msg.groupable;
-    }
+	public setGroupable(groupable: boolean): ILivechatMessageBuilder {
+		this.msg.groupable = groupable;
+		return this;
+	}
 
-    public setParseUrls(parseUrls: boolean): ILivechatMessageBuilder {
-        this.msg.parseUrls = parseUrls;
-        return this;
-    }
+	public getGroupable(): boolean {
+		return this.msg.groupable;
+	}
 
-    public getParseUrls(): boolean {
-        return this.msg.parseUrls;
-    }
+	public setParseUrls(parseUrls: boolean): ILivechatMessageBuilder {
+		this.msg.parseUrls = parseUrls;
+		return this;
+	}
 
-    public setToken(token: string): ILivechatMessageBuilder {
-        this.msg.token = token;
-        return this;
-    }
+	public getParseUrls(): boolean {
+		return this.msg.parseUrls;
+	}
 
-    public getToken(): string {
-        return this.msg.token;
-    }
+	public setToken(token: string): ILivechatMessageBuilder {
+		this.msg.token = token;
+		return this;
+	}
 
-    public setVisitor(visitor: IVisitor): ILivechatMessageBuilder {
-        this.msg.visitor = visitor;
-        delete this.msg.sender;
+	public getToken(): string {
+		return this.msg.token;
+	}
 
-        return this;
-    }
+	public setVisitor(visitor: IVisitor): ILivechatMessageBuilder {
+		this.msg.visitor = visitor;
+		delete this.msg.sender;
 
-    public getVisitor(): IVisitor {
-        return this.msg.visitor;
-    }
+		return this;
+	}
 
-    public getMessage(): ILivechatMessage {
-        if (!this.msg.room) {
-            throw new Error('The "room" property is required.');
-        }
+	public getVisitor(): IVisitor {
+		return this.msg.visitor;
+	}
 
-        if (this.msg.room.type !== RoomType.LIVE_CHAT) {
-            throw new Error('The room is not a Livechat room');
-        }
+	public getMessage(): ILivechatMessage {
+		if (!this.msg.room) {
+			throw new Error('The "room" property is required.');
+		}
 
-        return this.msg;
-    }
+		if (this.msg.room.type !== RoomType.LIVE_CHAT) {
+			throw new Error('The room is not a Livechat room');
+		}
 
-    public getMessageBuilder(): IMessageBuilder {
-        return new MessageBuilder(this.msg as IMessage);
-    }
+		return this.msg;
+	}
+
+	public getMessageBuilder(): IMessageBuilder {
+		return new MessageBuilder(this.msg as IMessage);
+	}
 }

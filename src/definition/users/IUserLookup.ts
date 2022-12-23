@@ -1,4 +1,4 @@
 export interface IUserLookup {
-  _id: string;
-  username: string;
+	_id: string;
+	username: string;
 }

@@ -1,59 +1,58 @@
-import {
-    IHttpExtend,
-    IHttpPreRequestHandler,
-    IHttpPreResponseHandler,
-} from '../../definition/accessors';
+import type { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler } from '../../definition/accessors';
 
 export class HttpExtend implements IHttpExtend {
-    private headers: Map<string, string>;
-    private params: Map<string, string>;
-    private requests: Array<IHttpPreRequestHandler>;
-    private responses: Array<IHttpPreResponseHandler>;
+	private headers: Map<string, string>;
 
-    constructor() {
-        this.headers = new Map<string, string>();
-        this.params = new Map<string, string>();
-        this.requests = new Array<IHttpPreRequestHandler>();
-        this.responses = new Array<IHttpPreResponseHandler>();
-    }
+	private params: Map<string, string>;
 
-    public provideDefaultHeader(key: string, value: string): void {
-        this.headers.set(key, value);
-    }
+	private requests: Array<IHttpPreRequestHandler>;
 
-    public provideDefaultHeaders(headers: { [key: string]: string; }): void {
-        Object.keys(headers).forEach((key) => this.headers.set(key, headers[key]));
-    }
+	private responses: Array<IHttpPreResponseHandler>;
 
-    public provideDefaultParam(key: string, value: string): void {
-        this.params.set(key, value);
-    }
+	constructor() {
+		this.headers = new Map<string, string>();
+		this.params = new Map<string, string>();
+		this.requests = new Array<IHttpPreRequestHandler>();
+		this.responses = new Array<IHttpPreResponseHandler>();
+	}
 
-    public provideDefaultParams(params: { [key: string]: string; }): void {
-        Object.keys(params).forEach((key) => this.params.set(key, params[key]));
-    }
+	public provideDefaultHeader(key: string, value: string): void {
+		this.headers.set(key, value);
+	}
 
-    public providePreRequestHandler(handler: IHttpPreRequestHandler): void {
-        this.requests.push(handler);
-    }
+	public provideDefaultHeaders(headers: { [key: string]: string }): void {
+		Object.keys(headers).forEach((key) => this.headers.set(key, headers[key]));
+	}
 
-    public providePreResponseHandler(handler: IHttpPreResponseHandler): void {
-        this.responses.push(handler);
-    }
+	public provideDefaultParam(key: string, value: string): void {
+		this.params.set(key, value);
+	}
 
-    public getDefaultHeaders(): Map<string, string> {
-        return new Map<string, string>(this.headers);
-    }
+	public provideDefaultParams(params: { [key: string]: string }): void {
+		Object.keys(params).forEach((key) => this.params.set(key, params[key]));
+	}
 
-    public getDefaultParams(): Map<string, string> {
-        return new Map<string, string>(this.params);
-    }
+	public providePreRequestHandler(handler: IHttpPreRequestHandler): void {
+		this.requests.push(handler);
+	}
 
-    public getPreRequestHandlers(): Array<IHttpPreRequestHandler> {
-        return Array.from(this.requests);
-    }
+	public providePreResponseHandler(handler: IHttpPreResponseHandler): void {
+		this.responses.push(handler);
+	}
 
-    public getPreResponseHandlers(): Array<IHttpPreResponseHandler> {
-        return Array.from(this.responses);
-    }
+	public getDefaultHeaders(): Map<string, string> {
+		return new Map<string, string>(this.headers);
+	}
+
+	public getDefaultParams(): Map<string, string> {
+		return new Map<string, string>(this.params);
+	}
+
+	public getPreRequestHandlers(): Array<IHttpPreRequestHandler> {
+		return Array.from(this.requests);
+	}
+
+	public getPreResponseHandlers(): Array<IHttpPreResponseHandler> {
+		return Array.from(this.responses);
+	}
 }

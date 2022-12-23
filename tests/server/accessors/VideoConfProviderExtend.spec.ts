@@ -1,38 +1,38 @@
 import { AsyncTest, Expect, Test } from 'alsatian';
-import { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 
+import type { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 import { VideoConfProviderExtend } from '../../../src/server/accessors';
-import { AppVideoConfProviderManager } from '../../../src/server/managers';
+import type { AppVideoConfProviderManager } from '../../../src/server/managers';
 
 export class VideoConfProviderExtendAccessorTestFixture {
-    @Test()
-    public basicVideoConfProviderExtend() {
-        Expect(() => new VideoConfProviderExtend({} as AppVideoConfProviderManager, 'testing')).not.toThrow();
-    }
+	@Test()
+	public basicVideoConfProviderExtend() {
+		Expect(() => new VideoConfProviderExtend({} as AppVideoConfProviderManager, 'testing')).not.toThrow();
+	}
 
-    @AsyncTest()
-    public async provideProviderToVideoConfProviderExtend(): Promise<void> {
-        let providerAdded: IVideoConfProvider | undefined;
-        const mockManager: AppVideoConfProviderManager = {
-            addProvider(appId: string, provider: IVideoConfProvider) {
-                providerAdded = provider;
-            },
-        } as AppVideoConfProviderManager;
+	@AsyncTest()
+	public async provideProviderToVideoConfProviderExtend(): Promise<void> {
+		let providerAdded: IVideoConfProvider | undefined;
+		const mockManager: AppVideoConfProviderManager = {
+			addProvider(appId: string, provider: IVideoConfProvider) {
+				providerAdded = provider;
+			},
+		} as AppVideoConfProviderManager;
 
-        const se = new VideoConfProviderExtend(mockManager, 'testing');
+		const se = new VideoConfProviderExtend(mockManager, 'testing');
 
-        const mockProvider: IVideoConfProvider = {
-            name: 'test',
+		const mockProvider: IVideoConfProvider = {
+			name: 'test',
 
-            async generateUrl(): Promise<string> {
-                return '';
-            },
-            async customizeUrl(): Promise<string> {
-                return '';
-            },
-        } as IVideoConfProvider;
+			async generateUrl(): Promise<string> {
+				return '';
+			},
+			async customizeUrl(): Promise<string> {
+				return '';
+			},
+		} as IVideoConfProvider;
 
-        await Expect(async () => await se.provideVideoConfProvider(mockProvider)).not.toThrowAsync();
-        Expect(providerAdded).toBe(mockProvider);
-    }
+		await Expect(async () => await se.provideVideoConfProvider(mockProvider)).not.toThrowAsync();
+		Expect(providerAdded).toBe(mockProvider);
+	}
 }

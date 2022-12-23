@@ -1,32 +1,34 @@
 // tslint:disable:max-classes-per-file
-import { IUIKitBaseIncomingInteraction } from '../UIKitIncomingInteractionTypes';
+import type { IUIKitBaseIncomingInteraction } from '../UIKitIncomingInteractionTypes';
 import { UIKitInteractionResponder } from '../UIKitInteractionResponder';
-import { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
+import type { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
 
 export abstract class UIKitLivechatInteractionContext {
-    private baseContext: IUIKitLivechatBaseIncomingInteraction;
-    private responder: UIKitInteractionResponder;
-    constructor(baseContext: IUIKitLivechatBaseIncomingInteraction) {
-        const { appId, actionId, room, visitor, triggerId } = baseContext;
+	private baseContext: IUIKitLivechatBaseIncomingInteraction;
 
-        this.baseContext = { appId, actionId, room, visitor, triggerId };
+	private responder: UIKitInteractionResponder;
 
-        this.responder = new UIKitInteractionResponder(this.baseContext as any as IUIKitBaseIncomingInteraction);
-    }
+	constructor(baseContext: IUIKitLivechatBaseIncomingInteraction) {
+		const { appId, actionId, room, visitor, triggerId } = baseContext;
 
-    public getInteractionResponder() {
-        return this.responder;
-    }
+		this.baseContext = { appId, actionId, room, visitor, triggerId };
 
-    public abstract getInteractionData(): IUIKitLivechatBaseIncomingInteraction;
+		this.responder = new UIKitInteractionResponder(this.baseContext as any as IUIKitBaseIncomingInteraction);
+	}
+
+	public getInteractionResponder() {
+		return this.responder;
+	}
+
+	public abstract getInteractionData(): IUIKitLivechatBaseIncomingInteraction;
 }
 
 export class UIKitLivechatBlockInteractionContext extends UIKitLivechatInteractionContext {
-    constructor(private readonly interactionData: IUIKitLivechatBlockIncomingInteraction) {
-        super(interactionData);
-    }
+	constructor(private readonly interactionData: IUIKitLivechatBlockIncomingInteraction) {
+		super(interactionData);
+	}
 
-    public getInteractionData(): IUIKitLivechatBlockIncomingInteraction {
-        return this.interactionData;
-    }
+	public getInteractionData(): IUIKitLivechatBlockIncomingInteraction {
+		return this.interactionData;
+	}
 }

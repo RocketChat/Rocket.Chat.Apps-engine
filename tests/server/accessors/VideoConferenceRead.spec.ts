@@ -1,33 +1,34 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { VideoConference } from '../../../src/definition/videoConferences';
 
+import type { VideoConference } from '../../../src/definition/videoConferences';
 import { VideoConferenceRead } from '../../../src/server/accessors';
-import { VideoConferenceBridge } from '../../../src/server/bridges';
+import type { VideoConferenceBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class VideoConferenceReadAccessorTestFixture {
-    private videoConference: VideoConference;
-    private mockVideoConfBridge: VideoConferenceBridge;
+	private videoConference: VideoConference;
 
-    @SetupFixture
-    public setupFixture() {
-        this.videoConference = TestData.getVideoConference();
+	private mockVideoConfBridge: VideoConferenceBridge;
 
-        const call = this.videoConference;
-        this.mockVideoConfBridge = {
-            doGetById(id, appId): Promise<VideoConference> {
-                return Promise.resolve(call);
-            },
-        } as VideoConferenceBridge;
-    }
+	@SetupFixture
+	public setupFixture() {
+		this.videoConference = TestData.getVideoConference();
 
-    @AsyncTest()
-    public async expectDataFromVideoConferenceRead() {
-        Expect(() => new VideoConferenceRead(this.mockVideoConfBridge, 'testing-app')).not.toThrow();
+		const call = this.videoConference;
+		this.mockVideoConfBridge = {
+			doGetById(id, appId): Promise<VideoConference> {
+				return Promise.resolve(call);
+			},
+		} as VideoConferenceBridge;
+	}
 
-        const read = new VideoConferenceRead(this.mockVideoConfBridge, 'testing-app');
+	@AsyncTest()
+	public async expectDataFromVideoConferenceRead() {
+		Expect(() => new VideoConferenceRead(this.mockVideoConfBridge, 'testing-app')).not.toThrow();
 
-        Expect(await read.getById('fake')).toBeDefined();
-        Expect(await read.getById('fake')).toBe(this.videoConference);
-    }
+		const read = new VideoConferenceRead(this.mockVideoConfBridge, 'testing-app');
+
+		Expect(await read.getById('fake')).toBeDefined();
+		Expect(await read.getById('fake')).toBe(this.videoConference);
+	}
 }
