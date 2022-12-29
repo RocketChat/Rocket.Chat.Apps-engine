@@ -2,7 +2,6 @@ import { IDepartment } from './IDepartment';
 import { ILivechatEventContext } from './ILivechatEventContext';
 import { ILivechatMessage } from './ILivechatMessage';
 import { ILivechatRoom } from './ILivechatRoom';
-import { ILivechatRoomClosedHandler } from './ILivechatRoomClosedHandler';
 import { ILivechatTransferData } from './ILivechatTransferData';
 import { ILivechatTransferEventContext, LivechatTransferEventType } from './ILivechatTransferEventContext';
 import { IPostLivechatAgentAssigned } from './IPostLivechatAgentAssigned';
@@ -27,7 +26,6 @@ export {
     IPostLivechatRoomClosed,
     IPostLivechatRoomSaved,
     IPostLivechatRoomTransferred,
-    ILivechatRoomClosedHandler,
     ILivechatTransferData,
     ILivechatTransferEventContext,
     IDepartment,

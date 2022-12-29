@@ -35,10 +35,6 @@ export enum AppInterface {
     // Livechat
     IPostLivechatRoomStarted = 'IPostLivechatRoomStarted',
     IPostLivechatRoomClosed = 'IPostLivechatRoomClosed',
-    /**
-     * @deprecated please use the AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED method
-     */
-    ILivechatRoomClosedHandler = 'ILivechatRoomClosedHandler',
     IPostLivechatAgentAssigned = 'IPostLivechatAgentAssigned',
     IPostLivechatAgentUnassigned = 'IPostLivechatAgentUnassigned',
     IPostLivechatRoomTransferred = 'IPostLivechatRoomTransferred',
