@@ -7,14 +7,8 @@ export interface ILivechatRead {
     /**
      * Gets online status of the livechat.
      * @param departmentId (optional) the id of the livechat department
-     * @deprecated use `isOnlineAsync` instead
      */
-    isOnline(departmentId?: string): boolean;
-    /**
-     * Gets online status of the livechat.
-     * @param departmentId (optional) the id of the livechat department
-     */
-    isOnlineAsync(departmentId?: string): Promise<boolean>;
+    isOnline(departmentId?: string): Promise<boolean>;
     getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>>;
     getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>>;
     getLivechatVisitorById(id: string): Promise<IVisitor | undefined>;

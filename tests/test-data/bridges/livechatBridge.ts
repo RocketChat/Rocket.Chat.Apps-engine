@@ -11,7 +11,7 @@ export class TestLivechatBridge extends LivechatBridge {
     public isOnline(departmentId?: string): boolean {
         throw new Error('Method not implemented');
     }
-    public isOnlineAsync(departmentId?: string): Promise<boolean> {
+    public isOnline(departmentId?: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
     public createMessage(message: ILivechatMessage, appId: string): Promise<string> {
