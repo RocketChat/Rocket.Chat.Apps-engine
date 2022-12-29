@@ -37,10 +37,6 @@ export class RoomBuilderAccessorTestFixture {
         Expect(room.creator).toEqual(TestData.getUser());
         Expect(rb.getCreator()).toEqual(TestData.getUser());
 
-        Expect(rb.setUsernames([])).toBe(rb);
-        Expect(room.usernames).not.toBeDefined();
-        Expect(rb.getUsernames()).toBeEmpty();
-
         Expect(rb.addMemberToBeAddedByUsername('testing.username')).toBe(rb);
         Expect(rb.getMembersToBeAddedUsernames()).not.toBeEmpty();
         Expect(rb.getMembersToBeAddedUsernames()[0]).toEqual('testing.username');

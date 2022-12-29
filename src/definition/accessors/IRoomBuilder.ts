@@ -68,14 +68,6 @@ export interface IRoomBuilder {
     getCreator(): IUser;
 
     /**
-     * Sets the usernames of who are joined to the room.
-     *
-     * @param usernames the list of usernames
-     * @deprecated in favor of `setMembersByUsernames`. This method will be removed on version 2.0.0
-     */
-    setUsernames(usernames: Array<string>): IRoomBuilder;
-
-    /**
      * Gets the usernames of users in the room.
      * @deprecated in favor of `getMembersUsernames`. This method will be removed on version 2.0.0
      */
