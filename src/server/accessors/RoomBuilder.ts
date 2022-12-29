@@ -57,17 +57,6 @@ export class RoomBuilder implements IRoomBuilder {
         return this.room.creator;
     }
 
-    /**
-     * @deprecated
-     */
-    public getUsernames(): Array<string> {
-        const usernames = this.getMembersToBeAddedUsernames();
-        if (usernames && usernames.length > 0) {
-            return usernames;
-        }
-        return this.room.usernames || [];
-    }
-
     public addMemberToBeAddedByUsername(username: string): IRoomBuilder {
         this.members.push(username);
         return this;
