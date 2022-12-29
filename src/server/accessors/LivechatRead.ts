@@ -29,15 +29,6 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.doFindRooms(visitor, departmentId, this.appId);
     }
 
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer the alternative methods to fetch visitors.
-     */
-    public getLivechatVisitors(query: object): Promise<Array<IVisitor>> {
-        return this.livechatBridge.doFindVisitors(query, this.appId);
-    }
-
     public getLivechatVisitorById(id: string): Promise<IVisitor | undefined> {
         return this.livechatBridge.doFindVisitorById(id, this.appId);
     }
