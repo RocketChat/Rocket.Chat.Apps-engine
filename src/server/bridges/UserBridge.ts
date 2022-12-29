@@ -17,7 +17,7 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
-    public async doGetAppUser(appId?: string): Promise<IUser | undefined> {
+    public async doGetAppUser(appId: string): Promise<IUser | undefined> {
         return this.getAppUser(appId);
     }
 
@@ -47,7 +47,7 @@ export abstract class UserBridge extends BaseBridge {
 
     protected abstract getById(id: string, appId: string): Promise<IUser>;
     protected abstract getByUsername(username: string, appId: string): Promise<IUser>;
-    protected abstract getAppUser(appId?: string): Promise<IUser | undefined>;
+    protected abstract getAppUser(appId: string): Promise<IUser | undefined>;
     protected abstract getActiveUserCount(): Promise<number>;
 
     protected abstract getUserUnreadMessageCount(uid: string): Promise<number>;

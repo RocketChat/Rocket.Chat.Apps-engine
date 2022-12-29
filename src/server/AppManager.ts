@@ -482,7 +482,6 @@ export class AppManager {
             undoSteps.push(() => this.removeAppUser(app));
         } catch (err) {
             aff.setAppUserError({
-                username: app.getAppUserUsername(),
                 message: 'Failed to create an app user for this app.',
             });
 
@@ -973,7 +972,7 @@ export class AppManager {
     }
 
     private async createAppUser(appInfo: IAppInfo): Promise<string> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(appInfo.id);
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser();
 
         if (appUser) {
             return appUser.id;
@@ -997,7 +996,7 @@ export class AppManager {
     }
 
     private async removeAppUser(app: ProxiedApp): Promise<boolean> {
-        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser(app.getID());
+        const appUser = await (this.bridges.getUserBridge() as IInternalUserBridge & UserBridge).getAppUser();
 
         if (!appUser) {
             return true;

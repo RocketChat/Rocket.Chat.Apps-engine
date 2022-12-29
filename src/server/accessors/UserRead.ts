@@ -13,8 +13,8 @@ export class UserRead implements IUserRead {
         return this.userBridge.doGetByUsername(username, this.appId);
     }
 
-    public getAppUser(appId: string = this.appId): Promise<IUser | undefined> {
-        return this.userBridge.doGetAppUser(appId);
+    public getAppUser(): Promise<IUser | undefined> {
+        return this.userBridge.doGetAppUser(this.appId);
     }
 
     public getUserUnreadMessageCount(uid: string): Promise<number> {
