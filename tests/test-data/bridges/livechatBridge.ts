@@ -8,9 +8,6 @@ export class TestLivechatBridge extends LivechatBridge {
     public findDepartmentsEnabledWithAgents(appId: string): Promise<Array<IDepartment>> {
         throw new Error('Method not implemented.');
     }
-    public isOnline(departmentId?: string): boolean {
-        throw new Error('Method not implemented');
-    }
     public isOnline(departmentId?: string): Promise<boolean> {
         throw new Error('Method not implemented');
     }
@@ -27,10 +24,6 @@ export class TestLivechatBridge extends LivechatBridge {
         throw new Error('Method not implemented');
     }
     public transferVisitor(visitor: IVisitor, transferData: ILivechatTransferData, appId: string): Promise<boolean> {
-        throw new Error('Method not implemented');
-    }
-    public findVisitors(query: object, appId: string): Promise<Array<IVisitor>> {
-        console.warn('The method AppLivechatBridge.findVisitors is deprecated. Please consider using its alternatives');
         throw new Error('Method not implemented');
     }
     public findVisitorById(id: string, appId: string): Promise<IVisitor | undefined> {

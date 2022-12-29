@@ -117,10 +117,6 @@ export class ProxiedApp implements IApp {
         return this.app.getNameSlug();
     }
 
-    public getAppUserUsername(): string {
-        return this.app.getAppUserUsername();
-    }
-
     public getID(): string {
         return this.app.getID();
     }

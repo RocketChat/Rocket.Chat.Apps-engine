@@ -146,12 +146,6 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract getMessageById(messageId: string, appId: string): Promise<ILivechatMessage>;
     protected abstract updateMessage(message: ILivechatMessage, appId: string): Promise<void>;
     protected abstract createVisitor(visitor: IVisitor, appId: string): Promise<string>;
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer other methods that fetch visitors.
-     */
-    protected abstract findVisitors(query: object, appId: string): Promise<Array<IVisitor>>;
     protected abstract findVisitorById(id: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract findVisitorByEmail(email: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract findVisitorByToken(token: string, appId: string): Promise<IVisitor | undefined>;
