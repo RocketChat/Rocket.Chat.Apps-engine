@@ -60,14 +60,6 @@ export class RoomBuilder implements IRoomBuilder {
     /**
      * @deprecated
      */
-    public addUsername(username: string): IRoomBuilder {
-        this.addMemberToBeAddedByUsername(username);
-        return this;
-    }
-
-    /**
-     * @deprecated
-     */
     public setUsernames(usernames: Array<string>): IRoomBuilder {
         this.setMembersToBeAddedByUsernames(usernames);
         return this;
