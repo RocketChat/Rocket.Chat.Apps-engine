@@ -13,7 +13,7 @@ export interface IApi {
      */
     security: ApiSecurity;
     /**
-     * Provide enpoints for this api registry
+     * Provide endpoints for this api registry
      */
     endpoints: Array<IApiEndpoint>;
 }
