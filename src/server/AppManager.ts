@@ -1063,7 +1063,21 @@ export class AppManager {
     }
 
     private stringifyOrdered(obj: any): string {
-        return JSON.stringify(obj, Object.keys(obj).filter((key) => key !== 'signature').sort());
+        const fieldsToIgnore = ['signature', '_updatedAt'];
+
+        const allKeys: Array<string> = [];
+        const seen: Record<string, unknown> = {};
+
+        JSON.stringify(obj, (key, value) => {
+            if (!(key in seen)) {
+                allKeys.push(key);
+                seen[key] = null;
+            }
+            return value;
+        });
+
+        const filteredKeys = allKeys.sort().filter((key) => !fieldsToIgnore.includes(key));
+        return JSON.stringify(obj, filteredKeys);
     }
 
     private async getAppSignature(obj: any, appId: string): Promise<string> {
