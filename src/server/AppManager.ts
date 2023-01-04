@@ -251,6 +251,25 @@ export class AppManager {
             affs.push(aff);
         }
 
+        for (const rl of this.apps.values()) {
+            const signature = rl.getStorageItem().signature;
+            const publicKeyString = await this.getBridges().getInternalFederationBridge().getPublicKey();
+            const publicKey = await jose.importSPKI(publicKeyString, 'pem');
+            try {
+                const { payload } = await jose.jwtVerify(signature, publicKey) as any;
+                const descriptionString = this.stringifyOrdered(rl.getStorageItem());
+                const checksum = this.checksum(descriptionString, payload.calg);
+
+                if (checksum !== payload.checksum) {
+                    throw new Error('invalid signature');
+                }
+
+            } catch (error) {
+                console.log('error', error);
+                await rl.setStatus(AppStatus.INVALID_INSTALLATION);
+            }
+        }
+
         // Let's initialize them
         for (const rl of this.apps.values()) {
             if (AppStatusUtils.isDisabled(rl.getStatus())) {
