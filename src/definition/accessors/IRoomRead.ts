@@ -63,6 +63,13 @@ export interface IRoomRead {
     getDirectByUsernames(usernames: Array<string>): Promise<IRoom>;
 
     /**
+     * Gets a direct room with all user ids
+     * @param userIds all user ids belonging to the direct room
+     * @returns the room
+     */
+    getDirectByUserIds(userIds: Array<string>): Promise<IRoom>;
+
+    /**
      * Get a list of the moderators of a given room
      *
      * @param roomId the room's id

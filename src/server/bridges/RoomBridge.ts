@@ -37,6 +37,12 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    public async doGetDirectByUserIds(userIds: Array<string>, appId: string): Promise<IRoom | undefined> {
+        if (this.hasReadPermission(appId)) {
+            return this.getDirectByUserIds(userIds, appId);
+        }
+    }
+
     public async doGetDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined> {
         if (this.hasReadPermission(appId)) {
             return this.getDirectByUsernames(usernames, appId);
@@ -97,6 +103,7 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract getCreatorById(roomId: string, appId: string): Promise<IUser | undefined>;
     protected abstract getCreatorByName(roomName: string, appId: string): Promise<IUser | undefined>;
     protected abstract getDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined>;
+    protected abstract getDirectByUserIds(userIds: Array<string>, appId: string): Promise<IRoom | undefined>;
     protected abstract getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
     protected abstract update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
     protected abstract createDiscussion(

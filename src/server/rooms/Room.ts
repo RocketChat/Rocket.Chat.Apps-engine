@@ -19,9 +19,6 @@ export class Room implements IRoom {
     public lastModifiedAt?: Date;
     public customFields?: { [key: string]: any };
     public userIds?: Array<string>;
-    // private _USERNAMES: Array<string>;
-
-    // private [PrivateManager]: AppManager;
 
     public constructor(room: IRoom, manager: AppManager) {
         Object.assign(this, room);
