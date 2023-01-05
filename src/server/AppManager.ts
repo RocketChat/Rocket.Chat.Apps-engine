@@ -265,7 +265,6 @@ export class AppManager {
                 }
 
             } catch (error) {
-                console.log('error', error);
                 await rl.setStatus(AppStatus.INVALID_INSTALLATION);
             }
         }
