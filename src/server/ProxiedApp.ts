@@ -1,5 +1,3 @@
-import * as vm from 'vm';
-
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
 import { AppStatus } from '../definition/AppStatus';
@@ -10,21 +8,25 @@ import { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
-import { Utilities } from './misc/Utilities';
+import { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import { IAppStorageItem } from './storage';
-
-export const ROCKETCHAT_APP_EXECUTION_PREFIX = '$RocketChat_App$';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
 
     private latestLicenseValidationResult: AppLicenseValidationResult;
 
-    constructor(private readonly manager: AppManager,
-                private storageItem: IAppStorageItem,
-                private readonly app: App,
-                private readonly customRequire: (mod: string) => {}) {
+    constructor(
+        private readonly manager: AppManager,
+        private storageItem: IAppStorageItem,
+        private readonly app: App,
+        private readonly runtime: AppsEngineRuntime,
+    ) {
         this.previousStatus = storageItem.status;
+    }
+
+    public getRuntime(): AppsEngineRuntime {
+        return this.runtime;
     }
 
     public getApp(): App {
@@ -51,25 +53,12 @@ export class ProxiedApp implements IApp {
         return typeof (this.app as any)[method] === 'function';
     }
 
-    public makeContext(data: object): vm.Context {
-        return Utilities.buildDefaultAppContext(Object.assign({}, {
-            require: this.customRequire,
-        }, data));
-    }
-
     public setupLogger(method: AppMethod): AppConsole {
         const logger = new AppConsole(method);
         // Set the logger to our new one
         (this.app as any).logger = logger;
 
         return logger;
-    }
-
-    public runInContext(codeToRun: string, context: vm.Context): any {
-        return vm.runInContext(codeToRun, context, {
-            timeout: 1000,
-            filename: `${ ROCKETCHAT_APP_EXECUTION_PREFIX }_${ this.getName() }.ts`,
-        });
     }
 
     public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
@@ -89,8 +78,10 @@ export class ProxiedApp implements IApp {
 
         let result;
         try {
-            // tslint:disable-next-line:max-line-length
-            result = await this.runInContext(`app.${method}.apply(app, args)`, this.makeContext({ app: this.app, args })) as Promise<any>;
+            result = await this.runtime.runInSandbox(
+                `module.exports = app.${method}.apply(app, args)`,
+                { app: this.app, args },
+            );
             logger.debug(`'${method}' was successfully called! The result is:`, result);
         } catch (e) {
             logger.error(e);

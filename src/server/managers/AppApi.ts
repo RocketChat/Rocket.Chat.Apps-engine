@@ -75,24 +75,22 @@ export class AppApi {
             hash: this.hash,
         };
 
-        const runContext = this.app.makeContext({
-            endpoint: this.endpoint,
-            args: [
-                request,
-                endpoint,
-                accessors.getReader(this.app.getID()),
-                accessors.getModifier(this.app.getID()),
-                accessors.getHttp(this.app.getID()),
-                accessors.getPersistence(this.app.getID()),
-            ],
-        });
-
         const logger = this.app.setupLogger(AppMethod._API_EXECUTOR);
         logger.debug(`${ path }'s ${ method } is being executed...`, request);
 
-        const runCode = `endpoint.${ method }.apply(endpoint, args)`;
+        const runCode = `module.exports = endpoint.${ method }.apply(endpoint, args)`;
         try {
-            const result: IApiResponse = await this.app.runInContext(runCode, runContext);
+            const result: IApiResponse = await this.app.getRuntime().runInSandbox(runCode, {
+                endpoint: this.endpoint,
+                args: [
+                    request,
+                    endpoint,
+                    accessors.getReader(this.app.getID()),
+                    accessors.getModifier(this.app.getID()),
+                    accessors.getHttp(this.app.getID()),
+                    accessors.getPersistence(this.app.getID()),
+                ],
+            });
             logger.debug(`${ path }'s ${ method } was successfully executed.`);
             logStorage.storeEntries(this.app.getID(), logger);
             return result;
