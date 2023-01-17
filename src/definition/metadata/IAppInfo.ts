@@ -1,3 +1,4 @@
+import { AppInstallationMethod } from '../AppInstallationMethod';
 import { IPermission } from '../permissions/IPermission';
 import { AppInterface } from './AppInterface';
 import { IAppAuthorInfo } from './IAppAuthorInfo';
@@ -6,6 +7,7 @@ export interface IAppInfo {
     id: string;
     name: string;
     nameSlug: string;
+    installationMethod : AppInstallationMethod;
     version: string;
     description: string;
     requiredApiVersion: string;

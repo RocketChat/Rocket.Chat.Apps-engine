@@ -11,6 +11,7 @@ import {
     IPersistence,
     IRead,
 } from './accessors';
+import { AppInstallationMethod } from './AppInstallationMethod';
 import { AppStatus } from './AppStatus';
 import { IApp } from './IApp';
 import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
@@ -115,6 +116,15 @@ export abstract class App implements IApp {
         return this.info.author;
     }
 
+    /**
+     * Gets the information regarding the method of installation used by user to install the App.
+     *
+     * @return installation method
+     */
+    public getInstallationMethod(): AppInstallationMethod {
+        return this.info.installationMethod;
+    }
+    
     /**
      * Gets the entirity of the App's information.
      *

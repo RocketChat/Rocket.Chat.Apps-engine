@@ -1,5 +1,6 @@
 import { IAppAccessors, ILogger } from '../definition/accessors';
 import { App } from '../definition/App';
+import { AppInstallationMethod } from '../definition/AppInstallationMethod';
 import { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
 import { IApp } from '../definition/IApp';
@@ -138,6 +139,10 @@ export class ProxiedApp implements IApp {
     }
     public getAuthorInfo(): IAppAuthorInfo {
         return this.app.getAuthorInfo();
+    }
+
+    public getInstallationMethod(): AppInstallationMethod {
+        return this.app.getInstallationMethod();
     }
 
     public getInfo(): IAppInfo {

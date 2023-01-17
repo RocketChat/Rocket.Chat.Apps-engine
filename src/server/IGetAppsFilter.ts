@@ -3,4 +3,5 @@ export interface IGetAppsFilter {
     name?: string | RegExp;
     enabled?: boolean;
     disabled?: boolean;
+    installationType?: 'public' | 'private';
 }

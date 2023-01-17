@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer';
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
+import { AppInstallationMethodUtils } from '../definition/AppInstallationMethod';
 import { AppMethod, IAppInfo } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
@@ -349,6 +350,14 @@ export class AppManager {
 
         if (typeof filter.ids !== 'undefined') {
             rls = rls.filter((rl) => filter.ids.includes(rl.getID()));
+        }
+
+        if (typeof filter.installationType === 'string') {
+            if (filter.installationType === 'public') {
+                rls = rls.filter(r1 => AppInstallationMethodUtils.isPublic(r1.getInstallationMethod()))
+            } else if (filter.installationType === 'private') {
+                rls = rls.filter(r1 => AppInstallationMethodUtils.isPrivate(r1.getInstallationMethod()))
+            }
         }
 
         if (typeof filter.name === 'string') {
