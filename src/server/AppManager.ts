@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
-import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppInstallationMethodUtils } from '../definition/AppInstallationMethod';
+import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod, IAppInfo } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
 import { IUser, UserType } from '../definition/users';
@@ -19,7 +19,7 @@ import {
     AppSchedulerManager,
     AppSettingsManager,
     AppSlashCommandManager,
-    AppVideoConfProviderManager,
+    AppVideoConfProviderManager
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
@@ -354,9 +354,9 @@ export class AppManager {
 
         if (typeof filter.installationType === 'string') {
             if (filter.installationType === 'public') {
-                rls = rls.filter(r1 => AppInstallationMethodUtils.isPublic(r1.getInstallationMethod()))
+                rls = rls.filter((r1) => AppInstallationMethodUtils.isPublic(r1.getInstallationMethod()));
             } else if (filter.installationType === 'private') {
-                rls = rls.filter(r1 => AppInstallationMethodUtils.isPrivate(r1.getInstallationMethod()))
+                rls = rls.filter((r1) => AppInstallationMethodUtils.isPrivate(r1.getInstallationMethod()));
             }
         }
 

@@ -7,7 +7,7 @@ export interface IAppInfo {
     id: string;
     name: string;
     nameSlug: string;
-    installationMethod : AppInstallationMethod;
+    installationMethod?: AppInstallationMethod;
     version: string;
     description: string;
     requiredApiVersion: string;
