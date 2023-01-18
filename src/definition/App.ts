@@ -124,7 +124,7 @@ export abstract class App implements IApp {
     public getInstallationMethod(): AppInstallationMethod {
         return this.info.installationMethod;
     }
-    
+
     /**
      * Gets the entirity of the App's information.
      *

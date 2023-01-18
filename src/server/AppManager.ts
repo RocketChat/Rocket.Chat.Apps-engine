@@ -19,7 +19,7 @@ import {
     AppSchedulerManager,
     AppSettingsManager,
     AppSlashCommandManager,
-    AppVideoConfProviderManager
+    AppVideoConfProviderManager,
 } from './managers';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
