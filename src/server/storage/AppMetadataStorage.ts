@@ -8,7 +8,7 @@ export abstract class AppMetadataStorage {
     }
 
     public abstract create(item: IAppStorageItem): Promise<IAppStorageItem>;
-    public abstract retrieveOne(id: string): Promise<IAppStorageItem>;
+    public abstract retrieveOne(id: string): Promise<IAppStorageItem | null>;
     public abstract retrieveAll(): Promise<Map<string, IAppStorageItem>>;
     public abstract update(item: IAppStorageItem): Promise<IAppStorageItem>;
     public abstract remove(id: string): Promise<{ success: boolean }>;

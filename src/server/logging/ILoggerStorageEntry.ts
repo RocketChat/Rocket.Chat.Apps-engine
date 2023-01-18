@@ -8,6 +8,7 @@ export interface ILoggerStorageEntry {
     startTime: Date;
     endTime: Date;
     totalTime: number;
+    instanceId?: string;
     // Internal value to be used for sorting
     _createdAt: Date;
 }
