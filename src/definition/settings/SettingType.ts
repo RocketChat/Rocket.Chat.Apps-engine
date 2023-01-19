@@ -7,4 +7,5 @@ export enum SettingType {
     SELECT = 'select',
     STRING = 'string',
     MULTI_SELECT = 'multiSelect',
+    PASSWORD = 'password',
 }
