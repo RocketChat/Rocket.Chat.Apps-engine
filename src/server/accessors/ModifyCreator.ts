@@ -1,3 +1,4 @@
+import { UserType } from './../../definition/users/UserType';
 import {
     IDiscussionBuilder,
     ILivechatCreator,
@@ -86,13 +87,29 @@ export class ModifyCreator implements IModifyCreator {
     public startCreateUser(data?: Partial<IUser>): IUserBuilder {
         if (data) {
             delete data.id;
+
+            delete data.emails; // we don't want to allow the app to set the emails for bot users
+
+            if (data.roles && data.roles.length) {
+                const roles = data.roles;
+                const hasRole = roles.map((role) => role.toLocaleLowerCase()).some((role) => role === 'admin' || role === 'owner' || role === 'moderator');
+
+                if (hasRole) {
+                    throw new Error('Invalid role assigned to the user. Should not be admin, owner or moderator.');
+                }
+            }
+
+            if (data.type && data.type.toLocaleLowerCase() !== UserType.BOT) {
+                throw new Error('Invalid type assigned to the user. Should be bot.');
+            }
         }
 
         return new UserBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder | IUserBuilder)
-        : Promise<string> {
+    public finish(
+        builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder | IUserBuilder,
+    ): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -194,13 +211,9 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid parentRoom assigned to the discussion.');
         }
 
-        return this.bridges.getRoomBridge().doCreateDiscussion(
-            room,
-            builder.getParentMessage(),
-            builder.getReply(),
-            builder.getMembersToBeAddedUsernames(),
-            this.appId,
-        );
+        return this.bridges
+            .getRoomBridge()
+            .doCreateDiscussion(room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), this.appId);
     }
 
     private _finishVideoConference(builder: IVideoConferenceBuilder): Promise<string> {
