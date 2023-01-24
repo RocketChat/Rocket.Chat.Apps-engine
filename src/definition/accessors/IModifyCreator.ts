@@ -2,6 +2,7 @@ import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { BlockBuilder } from '../uikit';
+import { IUser } from '../users';
 import { AppVideoConference } from '../videoConferences';
 import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { ILivechatCreator } from './ILivechatCreator';
@@ -9,6 +10,7 @@ import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
 import { IMessageBuilder } from './IMessageBuilder';
 import { IRoomBuilder } from './IRoomBuilder';
 import { IUploadCreator } from './IUploadCreator';
+import { IUserBuilder } from './IUserBuilder';
 import { IVideoConferenceBuilder } from './IVideoConferenceBuilder';
 
 export interface IModifyCreator {
@@ -72,10 +74,19 @@ export interface IModifyCreator {
     startVideoConference(data?: Partial<AppVideoConference>): IVideoConferenceBuilder;
 
     /**
+     * Starts the process for building a new user.
+     *
+     * @param data (optional) the initial data to pass into the builder,
+     *          the `id` property will be ignored
+     * @return an IUserBuilder instance
+     */
+    startCreateUser(data?: Partial<IUser>): IUserBuilder;
+
+    /**
      * Finishes the creating process, saving the object to the database.
      *
      * @param builder the builder instance
      * @return the resulting `id` of the resulting object
      */
-    finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder): Promise<string>;
+    finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder | IUserBuilder): Promise<string>;
 }
