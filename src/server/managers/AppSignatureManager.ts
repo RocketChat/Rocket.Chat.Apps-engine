@@ -55,7 +55,7 @@ export class AppSignatureManager {
     }
 
     private getFieldsForChecksum(obj: IAppStorageItem): string {
-        // These fields don't hold valuable information and should invalidate
+        // These fields don't hold valuable information and should NOT invalidate
         // the checksum
         const fieldsToIgnore = [
             '_id',
