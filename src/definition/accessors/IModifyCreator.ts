@@ -1,8 +1,8 @@
+import { IBotUser } from './../users/IBotUser';
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { BlockBuilder } from '../uikit';
-import { IUser } from '../users';
 import { AppVideoConference } from '../videoConferences';
 import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { ILivechatCreator } from './ILivechatCreator';
@@ -74,13 +74,13 @@ export interface IModifyCreator {
     startVideoConference(data?: Partial<AppVideoConference>): IVideoConferenceBuilder;
 
     /**
-     * Starts the process for building a new user.
+     * Starts the process for building a new bot user.
      *
      * @param data (optional) the initial data to pass into the builder,
      *          the `id` property will be ignored
      * @return an IUserBuilder instance
      */
-    startCreateUser(data?: Partial<IUser>): IUserBuilder;
+    startCreateBotUser(data?: Partial<IBotUser>): IUserBuilder;
 
     /**
      * Finishes the creating process, saving the object to the database.

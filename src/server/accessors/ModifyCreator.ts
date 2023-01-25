@@ -1,4 +1,5 @@
 import { UserType } from './../../definition/users/UserType';
+import { IBotUser } from './../../definition/users/IBotUser';
 import {
     IDiscussionBuilder,
     ILivechatCreator,
@@ -15,7 +16,6 @@ import { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
-import { IUser } from '../../definition/users';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
 import { DiscussionBuilder } from './DiscussionBuilder';
@@ -84,11 +84,9 @@ export class ModifyCreator implements IModifyCreator {
         return new VideoConferenceBuilder(data);
     }
 
-    public startCreateUser(data?: Partial<IUser>): IUserBuilder {
+    public startCreateBotUser(data?: Partial<IBotUser>): IUserBuilder {
         if (data) {
             delete data.id;
-
-            delete data.emails; // we don't want to allow the app to set the emails for bot users
 
             if (data.roles && data.roles.length) {
                 const roles = data.roles;
@@ -99,8 +97,8 @@ export class ModifyCreator implements IModifyCreator {
                 }
             }
 
-            if (data.type && data.type.toLocaleLowerCase() !== UserType.BOT) {
-                throw new Error('Invalid type assigned to the user. Should be bot.');
+            if (!data.type) {
+                data.type = UserType.BOT;
             }
         }
 
