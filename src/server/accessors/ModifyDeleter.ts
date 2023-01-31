@@ -1,6 +1,6 @@
-import type { IUser, UserType } from './../../definition/users';
 import { IModifyDeleter } from '../../definition/accessors';
 import { AppBridges } from '../bridges';
+import type { IUser, UserType } from './../../definition/users';
 
 export class ModifyDeleter implements IModifyDeleter {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {}

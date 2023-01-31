@@ -1,9 +1,9 @@
-import { IBotUser } from './../users/IBotUser';
 import { ILivechatMessage } from '../livechat';
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { BlockBuilder } from '../uikit';
 import { AppVideoConference } from '../videoConferences';
+import { IBotUser } from './../users/IBotUser';
 import { IDiscussionBuilder } from './IDiscussionBuilder';
 import { ILivechatCreator } from './ILivechatCreator';
 import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';

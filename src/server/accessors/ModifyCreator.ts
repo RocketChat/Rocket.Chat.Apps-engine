@@ -1,5 +1,3 @@
-import { UserType } from './../../definition/users/UserType';
-import { IBotUser } from './../../definition/users/IBotUser';
 import {
     IDiscussionBuilder,
     ILivechatCreator,
@@ -18,6 +16,8 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
+import { IBotUser } from './../../definition/users/IBotUser';
+import { UserType } from './../../definition/users/UserType';
 import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
