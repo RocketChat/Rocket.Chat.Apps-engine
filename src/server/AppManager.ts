@@ -1,6 +1,4 @@
 import { Buffer } from 'buffer';
-import { createHash } from 'crypto';
-import * as jose from 'jose';
 import { AppStatus, AppStatusUtils } from '../definition/AppStatus';
 import { AppMethod, IAppInfo } from '../definition/metadata';
 import { IPermission } from '../definition/permissions/IPermission';
@@ -10,6 +8,7 @@ import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge
 import { IInternalUserBridge } from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
+import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -22,6 +21,7 @@ import {
     AppSlashCommandManager,
     AppVideoConfProviderManager,
 } from './managers';
+import { AppSignatureManager } from './managers/AppSignatureManager';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
@@ -75,6 +75,7 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
+    private readonly signatureManager: AppSignatureManager;
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -121,6 +122,7 @@ export class AppManager {
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
+        this.signatureManager = new AppSignatureManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -195,6 +197,10 @@ export class AppManager {
 
     public getUIActionButtonManager(): UIActionButtonManager {
         return this.uiActionButtonManager;
+    }
+
+    public getSignatureManager(): AppSignatureManager {
+        return this.signatureManager;
     }
 
     /** Gets whether the Apps have been loaded or not. */
@@ -493,6 +499,7 @@ export class AppManager {
             return aff;
         }
 
+        descriptor.signature = await this.getSignatureManager().signApp(descriptor);
         const created = await this.appMetadataStorage.create(descriptor);
 
         if (!created) {
@@ -603,7 +610,7 @@ export class AppManager {
             return aff;
         }
 
-        descriptor.signature = await this.getAppSignature(descriptor, result.info.id);
+        descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
         const app = this.getCompiler().toSandBox(this, descriptor, result);
@@ -848,6 +855,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
@@ -864,6 +872,10 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
+            }
+
             await this.purgeAppConfig(app);
             result = false;
 
@@ -874,7 +886,6 @@ export class AppManager {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             storageItem.status = app.getStatus();
-            storageItem.signature = await this.getAppSignature(storageItem, app.getID());
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
@@ -925,6 +936,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
@@ -950,6 +962,10 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
+            }
+
             console.error(e);
         }
 
@@ -968,8 +984,6 @@ export class AppManager {
             storageItem.status = status;
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.signature = await this.getAppSignature(storageItem, app.getID());
-
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
@@ -1038,30 +1052,6 @@ export class AppManager {
 
         return result;
     }
-
-    private checksum(str: string, alg = 'SHA256'): string {
-        return createHash(alg).update(str).digest('hex');
-    }
-
-    private stringifyOrdered(obj: any): string {
-        return JSON.stringify(obj, Object.keys(obj).filter((key) => key !== 'signature').sort());
-    }
-
-    private async getAppSignature(obj: any, appId: string): Promise<string> {
-        const descriptorString = this.stringifyOrdered(obj);
-        const calg = 'SHA256';
-        const alg = 'RS512';
-        const checksum = this.checksum(descriptorString, calg);
-        const pkeyString = await this.getBridges().getInternalFederationBridge().getPrivateKey();
-        const privateKey = await jose.importPKCS8(pkeyString, alg);
-        const signature = await new jose.SignJWT({ checksum, calg })
-            .setProtectedHeader({ alg })
-            .setIssuedAt()
-            .sign(privateKey);
-
-        return signature;
-    }
-
 }
 
 export const getPermissionsByAppId = (appId: string) => {
