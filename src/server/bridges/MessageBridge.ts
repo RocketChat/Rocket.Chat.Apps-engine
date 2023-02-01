@@ -47,6 +47,11 @@ export abstract class MessageBridge extends BaseBridge {
             return this.getById(messageId, appId);
         }
     }
+    public async doDelete(messageId: string, appId: string): Promise<void> {
+        if (this.hasDeletePermission(appId)) {
+            return this.delete(messageId, appId);
+        }
+    }
 
     protected abstract create(message: IMessage, appId: string): Promise<string>;
     protected abstract update(message: IMessage, appId: string): Promise<void>;
@@ -54,6 +59,7 @@ export abstract class MessageBridge extends BaseBridge {
     protected abstract notifyRoom(room: IRoom, message: IMessage, appId: string): Promise<void>;
     protected abstract typing(options: ITypingDescriptor, appId: string): Promise<void>;
     protected abstract getById(messageId: string, appId: string): Promise<IMessage>;
+    protected abstract delete(messageId: string, appId: string): Promise<void>;
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {
@@ -76,6 +82,19 @@ export abstract class MessageBridge extends BaseBridge {
         AppPermissionManager.notifyAboutError(new PermissionDeniedError({
             appId,
             missingPermissions: [AppPermissions.message.write],
+        }));
+
+        return false;
+    }
+
+    private hasDeletePermission(appId: string): boolean {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.message.delete)) {
+            return true;
+        }
+
+        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
+            appId,
+            missingPermissions: [AppPermissions.message.delete],
         }));
 
         return false;

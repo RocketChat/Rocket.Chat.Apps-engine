@@ -7,4 +7,8 @@ export class ModifyDeleter implements IModifyDeleter {
     public async deleteRoom(roomId: string): Promise<void> {
         return this.bridges.getRoomBridge().doDelete(roomId, this.appId);
     }
+
+    public async deleteMessage(messageId: string): Promise<void> {
+        return this.bridges.getMessageBridge().doDelete(messageId, this.appId);
+    }
 }
