@@ -61,7 +61,7 @@ export class OAuth2Client implements IOAuth2Client {
         await Promise.all([
             configuration.settings.provideSetting({
                 id: `${this.config.alias}-oauth-client-id`,
-                type: SettingType.STRING,
+                type: SettingType.PASSWORD,
                 public: true,
                 required: true,
                 packageValue: '',
@@ -70,7 +70,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             configuration.settings.provideSetting({
                 id: `${this.config.alias}-oauth-clientsecret`,
-                type: SettingType.STRING,
+                type: SettingType.PASSWORD,
                 public: true,
                 required: true,
                 packageValue: '',
