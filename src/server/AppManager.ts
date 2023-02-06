@@ -883,7 +883,7 @@ export class AppManager {
         }
         this.listenerManager.unregisterListeners(app);
         this.listenerManager.lockEssentialEvents(app);
-        this.commandManager.unregisterCommands(app.getID());
+        await this.commandManager.unregisterCommands(app.getID());
         this.externalComponentManager.unregisterExternalComponents(app.getID());
         this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
@@ -950,7 +950,7 @@ export class AppManager {
         }
 
         if (enable) {
-            this.commandManager.registerCommands(app.getID());
+            await this.commandManager.registerCommands(app.getID());
             this.externalComponentManager.registerExternalComponents(app.getID());
             this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);

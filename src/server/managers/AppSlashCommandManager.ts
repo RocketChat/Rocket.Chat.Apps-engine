@@ -101,7 +101,7 @@ export class AppSlashCommandManager {
      * @param appId the app's id which the command belongs to
      * @param command the command to add to the system
      */
-    public addCommand(appId: string, command: ISlashCommand): void {
+    public async addCommand(appId: string, command: ISlashCommand): Promise<void> {
         command.command = command.command.toLowerCase().trim();
 
         // Ensure the app can touch this command
@@ -110,7 +110,7 @@ export class AppSlashCommandManager {
         }
 
         // Verify the command doesn't exist already
-        if (this.bridge.doDoesCommandExist(command.command, appId) || this.isAlreadyDefined(command.command)) {
+        if (await this.bridge.doDoesCommandExist(command.command, appId) || this.isAlreadyDefined(command.command)) {
             throw new CommandAlreadyExistsError(command.command);
         }
 
@@ -139,7 +139,7 @@ export class AppSlashCommandManager {
      * @param appId the app's id of the command to modify
      * @param command the modified command to replace the current one with
      */
-    public modifyCommand(appId: string, command: ISlashCommand): void {
+    public async modifyCommand(appId: string, command: ISlashCommand): Promise<void> {
         command.command = command.command.toLowerCase().trim();
 
         // Ensure the app can touch this command
@@ -155,12 +155,12 @@ export class AppSlashCommandManager {
         const hasNotProvidedIt = !this.providedCommands.has(appId) || !this.providedCommands.get(appId).has(command.command);
 
         // They haven't provided (added) it and the bridged system doesn't have it, error out
-        if (hasNotProvidedIt && !this.bridge.doDoesCommandExist(command.command, appId)) {
+        if (hasNotProvidedIt && !(await this.bridge.doDoesCommandExist(command.command, appId))) {
             throw new Error('You must first register a command before you can modify it.');
         }
 
         if (hasNotProvidedIt) {
-            this.bridge.doModifyCommand(command, appId);
+            await this.bridge.doModifyCommand(command, appId);
             const regInfo = new AppSlashCommand(app, command);
             regInfo.isDisabled = false;
             regInfo.isEnabled = true;
@@ -181,7 +181,7 @@ export class AppSlashCommandManager {
      * @param appId the id of the app enabling the command
      * @param command the command which is being enabled
      */
-    public enableCommand(appId: string, command: string): void {
+    public async enableCommand(appId: string, command: string): Promise<void> {
         const cmd = command.toLowerCase().trim();
 
         // Ensure the app can touch this command
@@ -204,11 +204,11 @@ export class AppSlashCommandManager {
             return;
         }
 
-        if (!this.bridge.doDoesCommandExist(cmd, appId)) {
+        if (!(await this.bridge.doDoesCommandExist(cmd, appId))) {
             throw new Error(`The command "${cmd}" does not exist to enable.`);
         }
 
-        this.bridge.doEnableCommand(cmd, appId);
+        await this.bridge.doEnableCommand(cmd, appId);
         this.setAsTouched(appId, cmd);
     }
 
@@ -221,7 +221,7 @@ export class AppSlashCommandManager {
      * @param appId the app's id which is disabling the command
      * @param command the command to disable in the bridged system
      */
-    public disableCommand(appId: string, command: string): void {
+    public async disableCommand(appId: string, command: string): Promise<void> {
         const cmd = command.toLowerCase().trim();
 
         // Ensure the app can touch this command
@@ -244,11 +244,11 @@ export class AppSlashCommandManager {
             return;
         }
 
-        if (!this.bridge.doDoesCommandExist(cmd, appId)) {
+        if (!(await this.bridge.doDoesCommandExist(cmd, appId))) {
             throw new Error(`The command "${cmd}" does not exist to disable.`);
         }
 
-        this.bridge.doDisableCommand(cmd, appId);
+        await this.bridge.doDisableCommand(cmd, appId);
         this.setAsTouched(appId, cmd);
     }
 
@@ -258,18 +258,18 @@ export class AppSlashCommandManager {
      *
      * @param appId The app's id of which to register it's commands with the bridged system
      */
-    public registerCommands(appId: string): void {
+    public async registerCommands(appId: string): Promise<void> {
         if (!this.providedCommands.has(appId)) {
             return;
         }
 
-        this.providedCommands.get(appId).forEach((r) => {
-            if (r.isDisabled) {
-                return;
+        const commands = this.providedCommands.get(appId);
+        for await (const [_, appSlashCommand] of commands) {
+            if (appSlashCommand.isDisabled) {
+                continue;
             }
-
-            this.registerCommand(appId, r);
-        });
+            await this.registerCommand(appId, appSlashCommand);
+        }
     }
 
     /**
@@ -278,15 +278,17 @@ export class AppSlashCommandManager {
      *
      * @param appId the appId for the commands to purge
      */
-    public unregisterCommands(appId: string): void {
+    public async unregisterCommands(appId: string): Promise<void> {
         if (this.providedCommands.has(appId)) {
-            this.providedCommands.get(appId).forEach((r) => {
-                this.bridge.doUnregisterCommand(r.slashCommand.command, appId);
-                this.touchedCommandsToApps.delete(r.slashCommand.command);
-                const ind = this.appsTouchedCommands.get(appId).indexOf(r.slashCommand.command);
+            const commands = this.providedCommands.get(appId);
+            for await (const [_, appSlashCommand] of commands) {
+                const cmd = appSlashCommand.slashCommand.command;
+                await this.bridge.doUnregisterCommand(cmd, appId);
+                this.touchedCommandsToApps.delete(cmd);
+                const ind = this.appsTouchedCommands.get(appId).indexOf(cmd);
                 this.appsTouchedCommands.get(appId).splice(ind, 1);
-                r.isRegistered = true;
-            });
+                appSlashCommand.isRegistered = true;
+            }
 
             this.providedCommands.delete(appId);
         }
@@ -453,8 +455,8 @@ export class AppSlashCommandManager {
      * @param appId the app which is providing the command
      * @param info the command's registration information
      */
-    private registerCommand(appId: string, info: AppSlashCommand): void {
-        this.bridge.doRegisterCommand(info.slashCommand, appId);
+    private async registerCommand(appId: string, info: AppSlashCommand): Promise<void> {
+        await this.bridge.doRegisterCommand(info.slashCommand, appId);
         info.hasBeenRegistered();
     }
 }
