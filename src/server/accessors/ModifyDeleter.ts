@@ -1,6 +1,6 @@
 import { IModifyDeleter } from '../../definition/accessors';
 import { AppBridges } from '../bridges';
-import type { IUser, UserType } from './../../definition/users';
+import { IUser, UserType } from './../../definition/users';
 
 export class ModifyDeleter implements IModifyDeleter {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
@@ -9,7 +9,7 @@ export class ModifyDeleter implements IModifyDeleter {
         return this.bridges.getRoomBridge().doDelete(roomId, this.appId);
     }
 
-    public async deleteBotUser(appId: Exclude<IUser['appId'], undefined>, type: UserType.BOT): Promise<boolean> {
-        return this.bridges.getUserBridge().doDeleteUsersCreatedByApp(appId, type);
+    public async deleteBotUsers(appId: Exclude<IUser['appId'], undefined>): Promise<boolean> {
+        return this.bridges.getUserBridge().doDeleteUsersCreatedByApp(appId, UserType.BOT);
     }
 }
