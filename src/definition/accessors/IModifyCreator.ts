@@ -80,7 +80,7 @@ export interface IModifyCreator {
      *          the `id` property will be ignored
      * @return an IUserBuilder instance
      */
-    startCreateBotUser(data?: Partial<IBotUser>): IUserBuilder;
+    startBotUser(data?: Partial<IBotUser>): IUserBuilder;
 
     /**
      * Finishes the creating process, saving the object to the database.

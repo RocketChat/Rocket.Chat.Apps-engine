@@ -84,7 +84,7 @@ export class ModifyCreator implements IModifyCreator {
         return new VideoConferenceBuilder(data);
     }
 
-    public startCreateBotUser(data?: Partial<IBotUser>): IUserBuilder {
+    public startBotUser(data?: Partial<IBotUser>): IUserBuilder {
         if (data) {
             delete data.id;
 
