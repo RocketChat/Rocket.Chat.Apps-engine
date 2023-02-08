@@ -21,6 +21,7 @@ export interface IAppStorageItem {
     implemented: { [int: string]: boolean };
     marketplaceInfo?: IMarketplaceInfo;
     permissionsGranted?: Array<IPermission>;
+    signature?: string;
     migrated?: boolean;
 }
 
