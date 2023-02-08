@@ -70,14 +70,14 @@ export class AppApiManager {
      *
      * @param appId The app's id of which to register it's api's with the bridged system
      */
-    public registerApis(appId: string): void {
+    public async registerApis(appId: string): Promise<void> {
         if (!this.providedApis.has(appId)) {
             return;
         }
 
-        this.bridge.doUnregisterApis(appId);
-        for (const [, apiapp] of this.providedApis.get(appId).entries()) {
-            this.registerApi(appId, apiapp);
+        await this.bridge.doUnregisterApis(appId);
+        for await (const [, apiApp] of this.providedApis.get(appId).entries()) {
+            await this.registerApi(appId, apiApp);
         }
     }
 
@@ -86,9 +86,9 @@ export class AppApiManager {
      *
      * @param appId the appId for the api's to purge
      */
-    public unregisterApis(appId: string): void {
+    public async unregisterApis(appId: string): Promise<void> {
         if (this.providedApis.has(appId)) {
-            this.bridge.doUnregisterApis(appId);
+            await this.bridge.doUnregisterApis(appId);
 
             this.providedApis.delete(appId);
         }
@@ -157,7 +157,7 @@ export class AppApiManager {
      * @param appId the app which is providing the api
      * @param info the api's registration information
      */
-    private registerApi(appId: string, api: AppApi): void {
-        this.bridge.doRegisterApi(api, appId);
+    private async registerApi(appId: string, api: AppApi): Promise<void> {
+        await this.bridge.doRegisterApi(api, appId);
     }
 }

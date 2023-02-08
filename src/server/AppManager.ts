@@ -885,7 +885,7 @@ export class AppManager {
         this.listenerManager.lockEssentialEvents(app);
         await this.commandManager.unregisterCommands(app.getID());
         this.externalComponentManager.unregisterExternalComponents(app.getID());
-        this.apiManager.unregisterApis(app.getID());
+        await this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
         this.videoConfProviderManager.unregisterProviders(app.getID());
@@ -952,7 +952,7 @@ export class AppManager {
         if (enable) {
             await this.commandManager.registerCommands(app.getID());
             this.externalComponentManager.registerExternalComponents(app.getID());
-            this.apiManager.registerApis(app.getID());
+            await this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
             this.listenerManager.releaseEssentialEvents(app);
             this.videoConfProviderManager.registerProviders(app.getID());
