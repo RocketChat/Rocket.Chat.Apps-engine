@@ -11,6 +11,7 @@ export interface IAppStorageItem {
     updatedAt?: Date;
     status: AppStatus;
     info: IAppInfo;
+    installationSource: AppInstallationSource;
     /**
      * The path that represents where the source of the app storaged.
      */
@@ -20,4 +21,11 @@ export interface IAppStorageItem {
     implemented: { [int: string]: boolean };
     marketplaceInfo?: IMarketplaceInfo;
     permissionsGranted?: Array<IPermission>;
+    signature?: string;
+    migrated?: boolean;
+}
+
+export enum AppInstallationSource {
+    MARKETPLACE = 'marketplace',
+    PRIVATE = 'private',
 }
