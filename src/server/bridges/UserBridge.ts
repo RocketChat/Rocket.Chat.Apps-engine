@@ -1,4 +1,4 @@
-import { IUser, IUserCreationOptions } from '../../definition/users';
+import type { IUser, IUserCreationOptions, UserType } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -45,6 +45,12 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
+    public async doDeleteUsersCreatedByApp(appId: string, type: UserType.BOT): Promise<boolean> {
+        if (this.hasWritePermission(appId)) {
+            return this.deleteUsersCreatedByApp(appId, type);
+        }
+    }
+
     protected abstract getById(id: string, appId: string): Promise<IUser>;
     protected abstract getByUsername(username: string, appId: string): Promise<IUser>;
     protected abstract getAppUser(appId?: string): Promise<IUser | undefined>;
@@ -79,15 +85,25 @@ export abstract class UserBridge extends BaseBridge {
      */
     protected abstract update(user: IUser, updates: Partial<IUser>, appId: string): Promise<boolean>;
 
+    /**
+     * Deletes all bot or app users created by the App.
+     * @param appId the App's ID.
+     * @param type the type of the user to be deleted.
+     * @returns true if any user was deleted, false otherwise.
+     */
+    protected abstract deleteUsersCreatedByApp(appId: string, type: UserType.APP | UserType.BOT): Promise<boolean>;
+
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.user.read)) {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.user.read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.user.read],
+            }),
+        );
 
         return false;
     }
@@ -97,10 +113,12 @@ export abstract class UserBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.user.write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.user.write],
+            }),
+        );
 
         return false;
     }
