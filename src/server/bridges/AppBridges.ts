@@ -6,7 +6,6 @@ import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { HttpBridge } from './HttpBridge';
 import { IInternalBridge } from './IInternalBridge';
-import { IInternalFederationBridge } from './IInternalFederationBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
@@ -53,7 +52,6 @@ export abstract class AppBridges {
     public abstract getAppActivationBridge(): AppActivationBridge;
     public abstract getRoomBridge(): RoomBridge;
     public abstract getInternalBridge(): IInternalBridge;
-    public abstract getInternalFederationBridge(): IInternalFederationBridge;
     public abstract getServerSettingBridge(): ServerSettingBridge;
     public abstract getUploadBridge(): UploadBridge;
     public abstract getUserBridge(): UserBridge;

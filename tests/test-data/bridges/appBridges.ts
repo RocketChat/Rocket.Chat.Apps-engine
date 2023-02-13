@@ -18,7 +18,6 @@ import {
     VideoConferenceBridge,
 } from '../../../src/server/bridges';
 import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
-import { IInternalFederationBridge } from '../../../src/server/bridges/IInternalFederationBridge';
 import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
@@ -28,7 +27,6 @@ import { TestsCommandBridge } from './commandBridge';
 import { TestsEnvironmentalVariableBridge } from './environmentalVariableBridge';
 import { TestsHttpBridge } from './httpBridge';
 import { TestsInternalBridge } from './internalBridge';
-import { TestsInternalFederationBridge } from './internalFederationBridge';
 import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
 import { TestOAuthAppsBridge } from './OAuthAppsBridge';
@@ -61,7 +59,6 @@ export class TestsAppBridges extends AppBridges {
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
     private readonly videoConfBridge: TestsVideoConferenceBridge;
     private readonly oauthBridge: OAuthAppsBridge;
-    private readonly internalFederationBridge: IInternalFederationBridge;
 
     constructor() {
         super();
@@ -84,7 +81,6 @@ export class TestsAppBridges extends AppBridges {
         this.cloudWorkspaceBridge = new TestAppCloudWorkspaceBridge();
         this.videoConfBridge = new TestsVideoConferenceBridge();
         this.oauthBridge = new TestOAuthAppsBridge();
-        this.internalFederationBridge = new TestsInternalFederationBridge();
 
     }
 
@@ -166,9 +162,5 @@ export class TestsAppBridges extends AppBridges {
 
     public getOAuthAppsBridge(): OAuthAppsBridge {
         return this.oauthBridge;
-    }
-
-    public getInternalFederationBridge(): IInternalFederationBridge {
-        return this.internalFederationBridge;
     }
 }

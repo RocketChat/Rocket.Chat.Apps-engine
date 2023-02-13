@@ -6,7 +6,6 @@ import { IApp } from '../definition/IApp';
 import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
-import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
 import { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
@@ -159,14 +158,6 @@ export class ProxiedApp implements IApp {
 
     public getLatestLicenseValidationResult(): AppLicenseValidationResult {
         return this.latestLicenseValidationResult;
-    }
-
-    public async validateInstallation(): Promise<void> {
-        try {
-            await this.manager.getSignatureManager().verifySignedApp(this.getStorageItem());
-        } catch (e) {
-            throw new InvalidInstallationError(e.message);
-        }
     }
 
     public validateLicense(): Promise<void> {
