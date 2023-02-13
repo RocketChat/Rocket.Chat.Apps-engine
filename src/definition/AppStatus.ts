@@ -18,10 +18,6 @@ export enum AppStatus {
      * The App was disable due to its license being invalid
      */
     INVALID_LICENSE_DISABLED = 'invalid_license_disabled',
-    /**
-     * The app was disabled due to an invalid installation or validation in its signature.
-     */
-    INVALID_INSTALLATION_DISABLED = 'invalid_installation_disabled',
     /** The App was disabled due to an unrecoverable error being thrown. */
     ERROR_DISABLED = 'error_disabled',
     /** The App was manually disabled by a user. */
@@ -49,7 +45,6 @@ export class AppStatusUtilsDef {
             case AppStatus.MANUALLY_DISABLED:
             case AppStatus.INVALID_SETTINGS_DISABLED:
             case AppStatus.INVALID_LICENSE_DISABLED:
-            case AppStatus.INVALID_INSTALLATION_DISABLED:
             case AppStatus.DISABLED:
                 return true;
             default:
