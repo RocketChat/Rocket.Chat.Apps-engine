@@ -13,7 +13,7 @@ export class TestsApiBridge extends ApiBridge {
         this.apis.get('appId').set('it-exists', TestData.getApi('it-exists'));
     }
 
-    public registerApi(api: AppApi, appId: string): void {
+    public async registerApi(api: AppApi, appId: string): Promise<void> {
         if (!this.apis.has(appId)) {
             this.apis.set(appId, new Map<string, IApi>());
         }
@@ -31,7 +31,7 @@ export class TestsApiBridge extends ApiBridge {
         }
     }
 
-    public unregisterApis(appId: string): void {
+    public async unregisterApis(appId: string): Promise<void> {
         this.apis.delete(appId);
     }
 }

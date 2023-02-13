@@ -5,13 +5,13 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class ApiBridge extends BaseBridge {
-   public doRegisterApi(api: AppApi, appId: string): void {
+   public async doRegisterApi(api: AppApi, appId: string): Promise<void> {
        if (this.hasDefaultPermission(appId)) {
            return this.registerApi(api, appId);
        }
     }
 
-   public doUnregisterApis(appId: string): void {
+   public async doUnregisterApis(appId: string): Promise<void> {
        if (this.hasDefaultPermission(appId)) {
            return this.unregisterApis(appId);
        }
@@ -23,14 +23,14 @@ export abstract class ApiBridge extends BaseBridge {
      * @param api the api to register
      * @param appId the id of the app calling this
      */
-    protected abstract registerApi(api: AppApi, appId: string): void;
+    protected abstract registerApi(api: AppApi, appId: string): Promise<void>;
 
     /**
      * Unregisters all provided api's of an app from the bridged system.
      *
      * @param appId the id of the app calling this
      */
-    protected abstract unregisterApis(appId: string): void;
+    protected abstract unregisterApis(appId: string): Promise<void>;
 
     private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.apis.default)) {
