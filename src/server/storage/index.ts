@@ -1,4 +1,4 @@
 export { AppLogStorage, IAppLogStorageFindOptions } from './AppLogStorage';
 export { AppMetadataStorage } from './AppMetadataStorage';
-export { IAppStorageItem } from './IAppStorageItem';
+export { IAppStorageItem, AppInstallationSource } from './IAppStorageItem';
 export { AppSourceStorage } from './AppSourceStorage';

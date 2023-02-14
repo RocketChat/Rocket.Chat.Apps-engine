@@ -167,178 +167,178 @@ export class AppSlashCommandManagerTestFixture {
         Expect((ascm as any).appsTouchedCommands.get('testing').length).toBe(1);
     }
 
-    @Test()
-    public registerCommand() {
+    @AsyncTest()
+    public async registerCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
         const regInfo = new AppSlashCommand(this.mockApp, TestData.getSlashCommand('command'));
 
-        Expect(() => (ascm as any).registerCommand('testing', regInfo)).not.toThrow();
+        await Expect(async () => await (ascm as any).registerCommand('testing', regInfo)).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doRegisterCommand).toHaveBeenCalledWith(regInfo.slashCommand, 'testing');
         Expect(regInfo.isRegistered).toBe(true);
         Expect(regInfo.isDisabled).toBe(false);
         Expect(regInfo.isEnabled).toBe(true);
     }
 
-    @Test()
-    public addCommand() {
+    @AsyncTest()
+    public async addCommand() {
         const cmd = TestData.getSlashCommand('my-cmd');
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.addCommand('testing', cmd)).not.toThrow();
+        await Expect(async () => ascm.addCommand('testing', cmd)).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().commands.size).toBe(1);
         Expect((ascm as any).providedCommands.size).toBe(1);
         Expect((ascm as any).touchedCommandsToApps.get('my-cmd')).toBe('testing');
         Expect((ascm as any).appsTouchedCommands.get('testing').length).toBe(1);
-        Expect(() => ascm.addCommand('another-app', cmd)).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
-        Expect(() => ascm.addCommand('testing', cmd)).toThrowError(CommandAlreadyExistsError, 'The command "my-cmd" already exists in the system.');
-        Expect(() => ascm.addCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowError(Error, 'App must exist in order for a command to be added.');
-        Expect(() => ascm.addCommand('testing', TestData.getSlashCommand('another-command'))).not.toThrow();
+        await Expect(async () => await ascm.addCommand('another-app', cmd)).toThrowErrorAsync(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
+        await Expect(async () => await ascm.addCommand('testing', cmd)).toThrowErrorAsync(CommandAlreadyExistsError, 'The command "my-cmd" already exists in the system.');
+        await Expect(async () => await ascm.addCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowErrorAsync(Error, 'App must exist in order for a command to be added.');
+        await Expect(async () => await ascm.addCommand('testing', TestData.getSlashCommand('another-command'))).not.toThrowAsync();
         Expect((ascm as any).providedCommands.size).toBe(1);
         Expect((ascm as any).providedCommands.get('testing').size).toBe(2);
-        Expect(() => ascm.addCommand('even-another-app', TestData.getSlashCommand('it-exists'))).toThrowError(CommandAlreadyExistsError, 'The command "it-exists" already exists in the system.');
+        await Expect(async () => await ascm.addCommand('even-another-app', TestData.getSlashCommand('it-exists'))).toThrowErrorAsync(CommandAlreadyExistsError, 'The command "it-exists" already exists in the system.');
     }
 
-    @Test()
-    public failToModifyAnotherAppsCommand() {
+    @AsyncTest()
+    public async failToModifyAnotherAppsCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('other-app', TestData.getSlashCommand('my-cmd'));
+        await ascm.addCommand('other-app', TestData.getSlashCommand('my-cmd'));
 
-        Expect(() => ascm.modifyCommand('testing', TestData.getSlashCommand('my-cmd'))).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
+        await Expect(async () => await ascm.modifyCommand('testing', TestData.getSlashCommand('my-cmd'))).toThrowErrorAsync(CommandHasAlreadyBeenTouchedError, 'The command "my-cmd" has already been touched by another App.');
     }
 
-    @Test()
-    public failToModifyNonExistantAppCommand() {
+    @AsyncTest()
+    public async failToModifyNonExistantAppCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.modifyCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowError(Error, 'App must exist in order to modify a command.');
+        await Expect(async () => await ascm.modifyCommand('failMePlease', TestData.getSlashCommand('yet-another'))).toThrowErrorAsync(Error, 'App must exist in order to modify a command.');
     }
 
-    @Test()
-    public modifyMyCommand() {
+    @AsyncTest()
+    public async modifyMyCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.modifyCommand('testing', TestData.getSlashCommand())).toThrowError(Error, 'You must first register a command before you can modify it.');
-        ascm.addCommand('testing', TestData.getSlashCommand('the-cmd'));
-        Expect(() => ascm.modifyCommand('testing', TestData.getSlashCommand('the-cmd'))).not.toThrow();
+        await Expect(async () => await ascm.modifyCommand('testing', TestData.getSlashCommand())).toThrowErrorAsync(Error, 'You must first register a command before you can modify it.');
+        await ascm.addCommand('testing', TestData.getSlashCommand('the-cmd'));
+        await Expect(async () => await ascm.modifyCommand('testing', TestData.getSlashCommand('the-cmd'))).not.toThrowAsync();
     }
 
-    @Test()
-    public modifySystemCommand() {
+    @AsyncTest()
+    public async modifySystemCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.modifyCommand('brand-new-id', TestData.getSlashCommand('it-exists'))).not.toThrow();
+        await Expect(async () =>  await ascm.modifyCommand('brand-new-id', TestData.getSlashCommand('it-exists'))).not.toThrowAsync();
         Expect((ascm as any).modifiedCommands.size).toBe(1);
         Expect((ascm as any).modifiedCommands.get('it-exists')).toBeDefined();
         Expect((ascm as any).touchedCommandsToApps.get('it-exists')).toBe('brand-new-id');
     }
 
-    @Test()
-    public enableMyCommand() {
+    @AsyncTest()
+    public async enableMyCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.enableCommand('testing', 'doesnt-exist')).toThrowError(Error, 'The command "doesnt-exist" does not exist to enable.');
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        Expect(() => ascm.enableCommand('testing', 'command')).not.toThrow();
+        await Expect(async () => await ascm.enableCommand('testing', 'doesnt-exist')).toThrowErrorAsync(Error, 'The command "doesnt-exist" does not exist to enable.');
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await Expect(async () => await ascm.enableCommand('testing', 'command')).not.toThrowAsync();
         Expect((ascm as any).providedCommands.get('testing').get('command').isDisabled).toBe(false);
         Expect((ascm as any).providedCommands.get('testing').get('command').isEnabled).toBe(true);
-        ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
         (ascm as any).providedCommands.get('testing').get('another-command').isRegistered = true;
-        Expect(() => ascm.enableCommand('testing', 'another-command')).not.toThrow();
+        await Expect(async () => await ascm.enableCommand('testing', 'another-command')).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(3);
     }
 
-    @Test()
-    public enableSystemCommand() {
+    @AsyncTest()
+    public async enableSystemCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.enableCommand('testing', 'it-exists')).not.toThrow();
+        await Expect(async () => await ascm.enableCommand('testing', 'it-exists')).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doEnableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
         Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(1);
     }
 
-    @Test()
-    public failToEnableAnotherAppsCommand() {
+    @AsyncTest()
+    public async failToEnableAnotherAppsCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('another-app', TestData.getSlashCommand('command'));
+        await ascm.addCommand('another-app', TestData.getSlashCommand('command'));
 
-        Expect(() => ascm.enableCommand('my-app', 'command')).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "command" has already been touched by another App.');
+        await Expect(async () => await ascm.enableCommand('my-app', 'command')).toThrowErrorAsync(CommandHasAlreadyBeenTouchedError, 'The command "command" has already been touched by another App.');
     }
 
-    @Test()
-    public disableMyCommand() {
+    @AsyncTest()
+    public async disableMyCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.disableCommand('testing', 'doesnt-exist')).toThrowError(Error, 'The command "doesnt-exist" does not exist to disable.');
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        Expect(() => ascm.disableCommand('testing', 'command')).not.toThrow();
+        await Expect(async () => await ascm.disableCommand('testing', 'doesnt-exist')).toThrowErrorAsync(Error, 'The command "doesnt-exist" does not exist to disable.');
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await Expect(async () => await ascm.disableCommand('testing', 'command')).not.toThrowAsync();
         Expect((ascm as any).providedCommands.get('testing').get('command').isDisabled).toBe(true);
         Expect((ascm as any).providedCommands.get('testing').get('command').isEnabled).toBe(false);
-        ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('another-command'));
         (ascm as any).providedCommands.get('testing').get('another-command').isRegistered = true;
-        Expect(() => ascm.disableCommand('testing', 'another-command')).not.toThrow();
+        await Expect(async () => await ascm.disableCommand('testing', 'another-command')).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(3);
     }
 
-    @Test()
-    public disableSystemCommand() {
+    @AsyncTest()
+    public async disableSystemCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        Expect(() => ascm.disableCommand('testing', 'it-exists')).not.toThrow();
+        await Expect(async () => await ascm.disableCommand('testing', 'it-exists')).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doDisableCommand).toHaveBeenCalledWith('it-exists', 'testing').exactly(1);
         Expect(this.mockBridges.getCommandBridge().doDoesCommandExist).toHaveBeenCalled().exactly(1);
     }
 
-    @Test()
-    public failToDisableAnotherAppsCommand() {
+    @AsyncTest()
+    public async failToDisableAnotherAppsCommand() {
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('another-app', TestData.getSlashCommand('command'));
+        await ascm.addCommand('another-app', TestData.getSlashCommand('command'));
 
-        Expect(() => ascm.disableCommand('my-app', 'command')).toThrowError(CommandHasAlreadyBeenTouchedError, 'The command "command" has already been touched by another App.');
+        await Expect(async () => await ascm.disableCommand('my-app', 'command')).toThrowErrorAsync(CommandHasAlreadyBeenTouchedError, 'The command "command" has already been touched by another App.');
     }
 
-    @Test()
-    public registerCommands() {
+    @AsyncTest()
+    public async registerCommands() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
         SpyOn(ascm, 'registerCommand');
 
-        ascm.addCommand('testing', TestData.getSlashCommand('enabled-command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('enabled-command'));
         const enabledRegInfo = (ascm as any).providedCommands.get('testing').get('enabled-command') as AppSlashCommand;
-        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
-        ascm.disableCommand('testing', 'disabled-command');
+        await ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        await ascm.disableCommand('testing', 'disabled-command');
         const disabledRegInfo = (ascm as any).providedCommands.get('testing').get('disabled-command') as AppSlashCommand;
 
-        Expect(() => ascm.registerCommands('non-existant')).not.toThrow();
-        Expect(() => ascm.registerCommands('testing')).not.toThrow();
+        await Expect(async () => await ascm.registerCommands('non-existant')).not.toThrowAsync();
+        await Expect(async () => await  ascm.registerCommands('testing')).not.toThrowAsync();
         Expect(enabledRegInfo.isRegistered).toBe(true);
         Expect(disabledRegInfo.isRegistered).toBe(false);
         Expect((ascm as any).registerCommand as FunctionSpy).toHaveBeenCalledWith('testing', enabledRegInfo).exactly(1);
         Expect(this.mockBridges.getCommandBridge().doRegisterCommand).toHaveBeenCalledWith(enabledRegInfo.slashCommand, 'testing').exactly(1);
     }
 
-    @Test()
-    public unregisterCommands() {
+    @AsyncTest()
+    public async unregisterCommands() {
         const ascm = new AppSlashCommandManager(this.mockManager);
 
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
 
-        Expect(() => ascm.unregisterCommands('non-existant')).not.toThrow();
-        Expect(() => ascm.unregisterCommands('testing')).not.toThrow();
+        await Expect(async () => await ascm.unregisterCommands('non-existant')).not.toThrowAsync();
+        await Expect(async () => await ascm.unregisterCommands('testing')).not.toThrowAsync();
         Expect(this.mockBridges.getCommandBridge().doUnregisterCommand).toHaveBeenCalled().exactly(1);
     }
 
     @AsyncTest()
     public async executeCommands() {
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
-        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
-        ascm.disableCommand('testing', 'not-registered');
-        ascm.registerCommands('testing');
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        await ascm.disableCommand('testing', 'not-registered');
+        await ascm.registerCommands('testing');
         (ascm as any).providedCommands.get('testing').get('disabled-command').isDisabled = true;
-        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+        await ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
 
         const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), []);
 
@@ -368,13 +368,13 @@ export class AppSlashCommandManagerTestFixture {
     @AsyncTest()
     public async getPreviews() {
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
-        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
-        ascm.disableCommand('testing', 'not-registered');
-        ascm.registerCommands('testing');
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        await ascm.disableCommand('testing', 'not-registered');
+        await ascm.registerCommands('testing');
         (ascm as any).providedCommands.get('testing').get('disabled-command').isDisabled = true;
-        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+        await ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
 
         const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), ['testing']);
 
@@ -403,13 +403,13 @@ export class AppSlashCommandManagerTestFixture {
     public async executePreview() {
         const previewItem = {} as ISlashCommandPreviewItem;
         const ascm = new AppSlashCommandManager(this.mockManager);
-        ascm.addCommand('testing', TestData.getSlashCommand('command'));
-        ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
-        ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
-        ascm.disableCommand('testing', 'not-registered');
-        ascm.registerCommands('testing');
+        await ascm.addCommand('testing', TestData.getSlashCommand('command'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('not-registered'));
+        await ascm.addCommand('testing', TestData.getSlashCommand('disabled-command'));
+        await ascm.disableCommand('testing', 'not-registered');
+        await ascm.registerCommands('testing');
         (ascm as any).providedCommands.get('testing').get('disabled-command').isDisabled = true;
-        ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
+        await ascm.modifyCommand('testing', TestData.getSlashCommand('it-exists'));
 
         const context = new SlashCommandContext(TestData.getUser(), TestData.getRoom(), ['testing']);
 

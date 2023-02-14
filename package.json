@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.36.0-alpha.0",
+    "version": "1.37.0-alpha",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
