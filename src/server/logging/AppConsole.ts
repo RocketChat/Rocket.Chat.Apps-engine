@@ -8,6 +8,7 @@ export class AppConsole implements ILogger {
     public static toStorageEntry(appId: string, logger: AppConsole): ILoggerStorageEntry {
         return {
             appId,
+            _id: Date.now().toString(),
             method: logger.getMethod(),
             entries: logger.getEntries(),
             startTime: logger.getStartTime(),
