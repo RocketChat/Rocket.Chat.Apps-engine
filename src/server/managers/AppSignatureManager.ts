@@ -65,6 +65,7 @@ export class AppSignatureManager {
             'createdAt',
             '_updatedAt',
             '_createdAt',
+            'settings',
         ];
 
         // TODO revisit algorithm
