@@ -7,6 +7,7 @@ import { CommandBridge } from './CommandBridge';
 import { EnvironmentalVariableBridge } from './EnvironmentalVariableBridge';
 import { HttpBridge, IHttpBridgeRequestInfo } from './HttpBridge';
 import { IInternalBridge } from './IInternalBridge';
+import { IInternalFederationBridge } from './IInternalFederationBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
@@ -41,4 +42,5 @@ export {
     SchedulerBridge,
     AppBridges,
     VideoConferenceBridge,
+    IInternalFederationBridge,
 };

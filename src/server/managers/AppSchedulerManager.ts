@@ -99,11 +99,11 @@ export class AppSchedulerManager {
     }
 
     public async cancelJob(jobId: string, appId: string): Promise<void> {
-        this.bridge.doCancelJob(createProcessorId(jobId, appId), appId);
+        return this.bridge.doCancelJob(createProcessorId(jobId, appId), appId);
     }
 
     public async cancelAllJobs(appId: string): Promise<void> {
-        this.bridge.doCancelAllJobs(appId);
+        return this.bridge.doCancelAllJobs(appId);
     }
 
     public async cleanUp(appId: string): Promise<void> {
