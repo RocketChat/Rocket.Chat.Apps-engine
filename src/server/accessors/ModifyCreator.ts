@@ -16,6 +16,7 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
 import { IBotUser } from './../../definition/users/IBotUser';
 import { UserType } from './../../definition/users/UserType';
 import { DiscussionBuilder } from './DiscussionBuilder';
@@ -44,6 +45,9 @@ export class ModifyCreator implements IModifyCreator {
         return this.uploadCreator;
     }
 
+    /**
+     * @deprecated please prefer the rocket.chat/ui-kit components
+     */
     public getBlockBuilder(): BlockBuilder {
         return new BlockBuilder(this.appId);
     }
@@ -138,6 +142,10 @@ export class ModifyCreator implements IModifyCreator {
             }
 
             result.sender = appUser;
+        }
+
+        if (result.blocks?.length) {
+            result.blocks = UIHelper.assignIds(result.blocks, this.appId);
         }
 
         return this.bridges.getMessageBridge().doCreate(result, this.appId);

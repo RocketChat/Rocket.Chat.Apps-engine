@@ -1,3 +1,4 @@
+import { Block, ButtonElement, TextObject } from '@rocket.chat/ui-kit';
 import { IBlock, IButtonElement, ITextObject } from './blocks';
 
 export enum UIKitSurfaceType {
@@ -10,10 +11,10 @@ export interface IUIKitSurface {
     appId: string;
     id: string;
     type: UIKitSurfaceType;
-    title: ITextObject;
-    blocks: Array<IBlock>;
-    close?: IButtonElement;
-    submit?: IButtonElement;
+    title: ITextObject | TextObject;
+    blocks: Array<IBlock | Block>;
+    close?: IButtonElement | ButtonElement;
+    submit?: IButtonElement | ButtonElement;
     state?: object;
     clearOnClose?: boolean;
     notifyOnClose?: boolean;
