@@ -15,19 +15,19 @@ export class TestsCommandBridge extends CommandBridge {
         this.commands.set('it-exists', TestData.getSlashCommand('it-exists').executor);
     }
 
-    public doesCommandExist(command: string, appId: string): boolean {
+    public async doesCommandExist(command: string, appId: string): Promise<boolean> {
         return this.commands.has(command);
     }
 
-    public enableCommand(command: string, appId: string): void {
+    public async enableCommand(command: string, appId: string): Promise<void> {
         return;
     }
 
-    public disableCommand(command: string, appId: string): void {
+    public async disableCommand(command: string, appId: string): Promise<void> {
         return;
     }
 
-    public modifyCommand(command: ISlashCommand, appId: string): void {
+    public async modifyCommand(command: ISlashCommand, appId: string): Promise<void> {
         return;
     }
 
@@ -35,7 +35,7 @@ export class TestsCommandBridge extends CommandBridge {
         return;
     }
 
-    public registerCommand(command: ISlashCommand, appId: string): void {
+    public async registerCommand(command: ISlashCommand, appId: string): Promise<void> {
         if (this.commands.has(command.command)) {
             throw new Error(`Command "${command.command}" has already been registered.`);
         }
@@ -43,7 +43,7 @@ export class TestsCommandBridge extends CommandBridge {
         this.commands.set(command.command, command.executor);
     }
 
-    public unregisterCommand(command: string, appId: string): void {
+    public async unregisterCommand(command: string, appId: string): Promise<void> {
         this.commands.delete(command);
     }
 }
