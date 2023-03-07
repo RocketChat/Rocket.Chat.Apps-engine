@@ -6,6 +6,7 @@ import { INotifier } from './INotifier';
 import { IOAuthAppsModify } from './IOAuthAppsModify';
 import { ISchedulerModify } from './ISchedulerModify';
 import { IUIController } from './IUIController';
+import { IModerationModify } from './IModerationModify';
 
 export interface IModify {
     getCreator(): IModifyCreator;
@@ -36,4 +37,9 @@ export interface IModify {
      * Gets the accessor for creating OAuth apps
      */
     getOAuthAppsModifier(): IOAuthAppsModify;
+    /**
+     * Gets the accessor for modifying moderation
+     * @returns the moderation accessor
+     */
+    getModerationModifier(): IModerationModify;
 }

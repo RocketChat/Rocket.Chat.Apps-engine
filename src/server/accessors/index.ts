@@ -42,6 +42,7 @@ import { VideoConferenceBuilder } from './VideoConferenceBuilder';
 import { VideoConferenceExtender } from './VideoConferenceExtend';
 import { VideoConferenceRead } from './VideoConferenceRead';
 import { VideoConfProviderExtend } from './VideoConfProviderExtend';
+import { ModerationModify } from './ModerationModify';
 
 export {
     ApiExtend,
@@ -58,6 +59,7 @@ export {
     MessageBuilder,
     MessageExtender,
     MessageRead,
+    ModerationModify,
     Modify,
     ModifyCreator,
     ModifyExtender,

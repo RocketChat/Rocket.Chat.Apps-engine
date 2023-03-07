@@ -11,6 +11,7 @@ import { IInternalFederationBridge } from './IInternalFederationBridge';
 import { IListenerBridge } from './IListenerBridge';
 import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
+import { ModerationBridge } from './ModerationBridge';
 import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
@@ -43,4 +44,5 @@ export {
     AppBridges,
     VideoConferenceBridge,
     IInternalFederationBridge,
+    ModerationBridge,
 };

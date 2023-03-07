@@ -18,6 +18,7 @@ import { Notifier } from './Notifier';
 import { OAuthAppsModify } from './OAuthAppsModify';
 import { SchedulerModify } from './SchedulerModify';
 import { UIController } from './UIController';
+import { ModerationModify } from './ModerationModify';
 
 export class Modify implements IModify {
     private creator: IModifyCreator;
@@ -28,6 +29,7 @@ export class Modify implements IModify {
     private uiController: IUIController;
     private scheduler: ISchedulerModify;
     private oauthApps: IOAuthAppsModify;
+    private moderation: ModerationModify;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
         this.creator = new ModifyCreator(this.bridges, this.appId);
@@ -38,6 +40,7 @@ export class Modify implements IModify {
         this.uiController = new UIController(this.appId, this.bridges);
         this.scheduler = new SchedulerModify(this.bridges.getSchedulerBridge(), this.appId);
         this.oauthApps = new OAuthAppsModify(this.bridges.getOAuthAppsBridge(), this.appId);
+        this.moderation = new ModerationModify(this.bridges.getModerationBridge(), this.appId);
     }
 
     public getCreator(): IModifyCreator {
@@ -70,5 +73,9 @@ export class Modify implements IModify {
 
     public getOAuthAppsModifier() {
         return this.oauthApps;
+    }
+
+    public getModerationModifier() {
+        return this.moderation;
     }
 }
