@@ -1,3 +1,4 @@
+import { IModerationModify } from './IModerationModify';
 import { IModifyCreator } from './IModifyCreator';
 import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
@@ -6,7 +7,6 @@ import { INotifier } from './INotifier';
 import { IOAuthAppsModify } from './IOAuthAppsModify';
 import { ISchedulerModify } from './ISchedulerModify';
 import { IUIController } from './IUIController';
-import { IModerationModify } from './IModerationModify';
 
 export interface IModify {
     getCreator(): IModifyCreator;

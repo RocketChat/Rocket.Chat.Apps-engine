@@ -10,6 +10,7 @@ import {
 } from '../../definition/accessors';
 import { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
 import { AppBridges } from '../bridges';
+import { ModerationModify } from './ModerationModify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyDeleter } from './ModifyDeleter';
 import { ModifyExtender } from './ModifyExtender';
@@ -18,7 +19,6 @@ import { Notifier } from './Notifier';
 import { OAuthAppsModify } from './OAuthAppsModify';
 import { SchedulerModify } from './SchedulerModify';
 import { UIController } from './UIController';
-import { ModerationModify } from './ModerationModify';
 
 export class Modify implements IModify {
     private creator: IModifyCreator;

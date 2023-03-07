@@ -12,6 +12,7 @@ import { LivechatRead } from './LivechatRead';
 import { MessageBuilder } from './MessageBuilder';
 import { MessageExtender } from './MessageExtender';
 import { MessageRead } from './MessageRead';
+import { ModerationModify } from './ModerationModify';
 import { Modify } from './Modify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyExtender } from './ModifyExtender';
@@ -42,7 +43,6 @@ import { VideoConferenceBuilder } from './VideoConferenceBuilder';
 import { VideoConferenceExtender } from './VideoConferenceExtend';
 import { VideoConferenceRead } from './VideoConferenceRead';
 import { VideoConfProviderExtend } from './VideoConfProviderExtend';
-import { ModerationModify } from './ModerationModify';
 
 export {
     ApiExtend,
