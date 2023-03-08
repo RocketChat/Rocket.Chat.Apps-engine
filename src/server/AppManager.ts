@@ -783,13 +783,14 @@ export class AppManager {
      * @param appId the id of the application to load
      */
     public async loadOne(appId: string): Promise<ProxiedApp> {
-        const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
+        const rl = this.apps.get(appId);
 
-        if (!item) {
+        if (!rl) {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        const rl = this.apps.get(item.id);
+        const item = rl.getStorageItem();
+
         await this.initializeApp(item, rl, false);
 
         if (!this.areRequiredSettingsSet(item)) {
