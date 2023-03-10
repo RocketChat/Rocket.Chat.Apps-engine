@@ -6,6 +6,7 @@ import {
     IModifyCreator,
     IRoomBuilder,
     IUploadCreator,
+    IUserBuilder,
     IVideoConferenceBuilder,
 } from '../../definition/accessors';
 import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
@@ -15,12 +16,16 @@ import { IRoom, RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
 import { AppVideoConference } from '../../definition/videoConferences';
 import { AppBridges } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
+import { IBotUser } from './../../definition/users/IBotUser';
+import { UserType } from './../../definition/users/UserType';
 import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
 import { UploadCreator } from './UploadCreator';
+import { UserBuilder } from './UserBuilder';
 import { VideoConferenceBuilder } from './VideoConferenceBuilder';
 
 export class ModifyCreator implements IModifyCreator {
@@ -40,6 +45,9 @@ export class ModifyCreator implements IModifyCreator {
         return this.uploadCreator;
     }
 
+    /**
+     * @deprecated please prefer the rocket.chat/ui-kit components
+     */
     public getBlockBuilder(): BlockBuilder {
         return new BlockBuilder(this.appId);
     }
@@ -80,7 +88,30 @@ export class ModifyCreator implements IModifyCreator {
         return new VideoConferenceBuilder(data);
     }
 
-    public finish(builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder): Promise<string> {
+    public startBotUser(data?: Partial<IBotUser>): IUserBuilder {
+        if (data) {
+            delete data.id;
+
+            if (data.roles && data.roles.length) {
+                const roles = data.roles;
+                const hasRole = roles.map((role) => role.toLocaleLowerCase()).some((role) => role === 'admin' || role === 'owner' || role === 'moderator');
+
+                if (hasRole) {
+                    throw new Error('Invalid role assigned to the user. Should not be admin, owner or moderator.');
+                }
+            }
+
+            if (!data.type) {
+                data.type = UserType.BOT;
+            }
+        }
+
+        return new UserBuilder(data);
+    }
+
+    public finish(
+        builder: IMessageBuilder | ILivechatMessageBuilder | IRoomBuilder | IDiscussionBuilder | IVideoConferenceBuilder | IUserBuilder,
+    ): Promise<string> {
         switch (builder.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 return this._finishMessage(builder);
@@ -92,6 +123,8 @@ export class ModifyCreator implements IModifyCreator {
                 return this._finishDiscussion(builder as IDiscussionBuilder);
             case RocketChatAssociationModel.VIDEO_CONFERENCE:
                 return this._finishVideoConference(builder);
+            case RocketChatAssociationModel.USER:
+                return this._finishUser(builder);
             default:
                 throw new Error('Invalid builder passed to the ModifyCreator.finish function.');
         }
@@ -109,6 +142,10 @@ export class ModifyCreator implements IModifyCreator {
             }
 
             result.sender = appUser;
+        }
+
+        if (result.blocks?.length) {
+            result.blocks = UIHelper.assignIds(result.blocks, this.appId);
         }
 
         return this.bridges.getMessageBridge().doCreate(result, this.appId);
@@ -180,13 +217,9 @@ export class ModifyCreator implements IModifyCreator {
             throw new Error('Invalid parentRoom assigned to the discussion.');
         }
 
-        return this.bridges.getRoomBridge().doCreateDiscussion(
-            room,
-            builder.getParentMessage(),
-            builder.getReply(),
-            builder.getMembersToBeAddedUsernames(),
-            this.appId,
-        );
+        return this.bridges
+            .getRoomBridge()
+            .doCreateDiscussion(room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), this.appId);
     }
 
     private _finishVideoConference(builder: IVideoConferenceBuilder): Promise<string> {
@@ -205,5 +238,11 @@ export class ModifyCreator implements IModifyCreator {
         }
 
         return this.bridges.getVideoConferenceBridge().doCreate(videoConference, this.appId);
+    }
+
+    private _finishUser(builder: IUserBuilder): Promise<string> {
+        const user = builder.getUser();
+
+        return this.bridges.getUserBridge().doCreate(user, this.appId);
     }
 }

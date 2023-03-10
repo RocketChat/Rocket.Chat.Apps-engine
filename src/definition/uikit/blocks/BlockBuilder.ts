@@ -33,6 +33,9 @@ type PlainTextInputElementParam = ElementFunctionParameter<IPlainTextInputElemen
 type StaticSelectElementParam = ElementFunctionParameter<IStaticSelectElement>;
 type MultiStaticSelectElementParam = ElementFunctionParameter<IMultiStaticSelectElement>;
 
+/**
+ * @deprecated please prefer the rocket.chat/ui-kit components
+ */
 export class BlockBuilder {
     private readonly blocks: Array<IBlock>;
 

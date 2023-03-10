@@ -5,37 +5,37 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class CommandBridge extends BaseBridge {
-    public doDoesCommandExist(command: string, appId: string): boolean {
+    public async doDoesCommandExist(command: string, appId: string): Promise<boolean> {
         if (this.hasDefaultPermission(appId)) {
             return this.doesCommandExist(command, appId);
         }
     }
 
-    public doEnableCommand(command: string, appId: string): void {
+    public async doEnableCommand(command: string, appId: string): Promise<void> {
         if (this.hasDefaultPermission(appId)) {
             return this.enableCommand(command, appId);
         }
     }
 
-    public doDisableCommand(command: string, appId: string): void {
+    public async doDisableCommand(command: string, appId: string): Promise<void> {
         if (this.hasDefaultPermission(appId)) {
             return this.disableCommand(command, appId);
         }
     }
 
-    public doModifyCommand(command: ISlashCommand, appId: string): void {
+    public async doModifyCommand(command: ISlashCommand, appId: string): Promise<void> {
         if (this.hasDefaultPermission(appId)) {
             return this.modifyCommand(command, appId);
         }
     }
 
-    public doRegisterCommand(command: ISlashCommand, appId: string): void {
+    public async doRegisterCommand(command: ISlashCommand, appId: string): Promise<void> {
         if (this.hasDefaultPermission(appId)) {
             return this.registerCommand(command, appId);
         }
     }
 
-    public doUnregisterCommand(command: string, appId: string): void {
+    public async doUnregisterCommand(command: string, appId: string): Promise<void> {
         if (this.hasDefaultPermission(appId)) {
             return this.unregisterCommand(command, appId);
         }
@@ -51,7 +51,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param appId the id of the app calling this
      * @returns whether the command is already in the system
      */
-    protected abstract doesCommandExist(command: string, appId: string): boolean;
+    protected abstract doesCommandExist(command: string, appId: string): Promise<boolean>;
 
     /**
      * Enables an existing command from the bridged system. The callee
@@ -62,7 +62,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param command the command to enable
      * @param appId the id of the app calling this
      */
-    protected abstract enableCommand(command: string, appId: string): void;
+    protected abstract enableCommand(command: string, appId: string): Promise<void>;
 
     /**
      * Disables an existing command from the bridged system, the callee must
@@ -72,7 +72,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param command the command which to disable
      * @param appId the id of the app calling this
      */
-    protected abstract disableCommand(command: string, appId: string): void;
+    protected abstract disableCommand(command: string, appId: string): Promise<void>;
 
     /**
      * Changes how a system slash command behaves, allows Apps to provide
@@ -81,7 +81,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param command the modified slash command
      * @param appId the id of the app calling this
      */
-    protected abstract modifyCommand(command: ISlashCommand, appId: string): void;
+    protected abstract modifyCommand(command: ISlashCommand, appId: string): Promise<void>;
 
     /**
      * Registers a command with the system which is being bridged.
@@ -90,7 +90,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param appId the id of the app calling this
      * @param toRun the executor which is called when the command is ran
      */
-    protected abstract registerCommand(command: ISlashCommand, appId: string): void;
+    protected abstract registerCommand(command: ISlashCommand, appId: string): Promise<void>;
 
     /**
      * Unregisters the provided command from the bridged system.
@@ -98,7 +98,7 @@ export abstract class CommandBridge extends BaseBridge {
      * @param command the command to unregister
      * @param appId the id of the app calling this
      */
-    protected abstract unregisterCommand(command: string, appId: string): void;
+    protected abstract unregisterCommand(command: string, appId: string): Promise<void>;
 
     private hasDefaultPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.command.default)) {

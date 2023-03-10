@@ -8,6 +8,7 @@ import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge
 import { IInternalUserBridge } from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
+import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -20,6 +21,7 @@ import {
     AppSlashCommandManager,
     AppVideoConfProviderManager,
 } from './managers';
+import { AppSignatureManager } from './managers/AppSignatureManager';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
@@ -28,6 +30,7 @@ import { ProxiedApp } from './ProxiedApp';
 import { AppsEngineEmptyRuntime } from './runtime/AppsEngineEmptyRuntime';
 import { AppLogStorage, AppMetadataStorage, IAppStorageItem } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
+import { AppInstallationSource } from './storage/IAppStorageItem';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -73,6 +76,7 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
+    private readonly signatureManager: AppSignatureManager;
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -119,6 +123,7 @@ export class AppManager {
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
+        this.signatureManager = new AppSignatureManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -195,6 +200,10 @@ export class AppManager {
         return this.uiActionButtonManager;
     }
 
+    public getSignatureManager(): AppSignatureManager {
+        return this.signatureManager;
+    }
+
     /** Gets whether the Apps have been loaded or not. */
     public areAppsLoaded(): boolean {
         return this.isLoaded;
@@ -209,22 +218,18 @@ export class AppManager {
      * Expect this to take some time, as it goes through a very
      * long process of loading all the Apps up.
      */
-    public async load(): Promise<Array<AppFabricationFulfillment>> {
+    public async load(): Promise<boolean> {
         // You can not load the AppManager system again
         // if it has already been loaded.
         if (this.isLoaded) {
-            return;
+            return true;
         }
 
         const items: Map<string, IAppStorageItem> = await this.appMetadataStorage.retrieveAll();
-        const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
         for (const item of items.values()) {
-            const aff = new AppFabricationFulfillment();
 
             try {
-                aff.setAppInfo(item.info);
-                aff.setImplementedInterfaces(item.implemented);
 
                 const appPackage = await this.appSourceStorage.fetch(item);
                 const unpackageResult = await this.getParser().unpackageApp(appPackage);
@@ -232,7 +237,6 @@ export class AppManager {
                 const app = this.getCompiler().toSandBox(this, item, unpackageResult);
 
                 this.apps.set(item.id, app);
-                aff.setApp(app);
             } catch (e) {
                 console.warn(`Error while compiling the App "${ item.info.name } (${ item.id })":`);
                 console.error(e);
@@ -243,14 +247,24 @@ export class AppManager {
 
                 const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
                 this.apps.set(item.id, prl);
-                aff.setApp(prl);
             }
-
-            affs.push(aff);
         }
+
+        return this.isLoaded = true;
+    }
+
+    public async enableAll(): Promise<Array<AppFabricationFulfillment>> {
+        const affs: Array<AppFabricationFulfillment> = new Array<AppFabricationFulfillment>();
 
         // Let's initialize them
         for (const rl of this.apps.values()) {
+            const aff = new AppFabricationFulfillment();
+
+            aff.setAppInfo(rl.getInfo());
+            aff.setImplementedInterfaces(rl.getImplementationList());
+            aff.setApp(rl);
+            affs.push(aff);
+
             if (AppStatusUtils.isDisabled(rl.getStatus())) {
                 // Usually if an App is disabled before it's initialized,
                 // then something (such as an error) occured while
@@ -261,7 +275,7 @@ export class AppManager {
                 continue;
             }
 
-            await this.initializeApp(items.get(rl.getID()), rl, false, true).catch(console.error);
+            await this.initializeApp(rl.getStorageItem(), rl, false, true).catch(console.error);
         }
 
         // Let's ensure the required settings are all set
@@ -279,14 +293,13 @@ export class AppManager {
         // but are not currently disabled.
         for (const app of this.apps.values()) {
             if (!AppStatusUtils.isDisabled(app.getStatus()) && AppStatusUtils.isEnabled(app.getPreviousStatus())) {
-                await this.enableApp(items.get(app.getID()), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
+                await this.enableApp(app.getStorageItem(), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
             } else if (!AppStatusUtils.isError(app.getStatus())) {
                 this.listenerManager.lockEssentialEvents(app);
                 this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
         }
 
-        this.isLoaded = true;
         return affs;
     }
 
@@ -456,6 +469,7 @@ export class AppManager {
             status: AppStatus.UNKNOWN,
             settings: {},
             implemented: result.implemented.getValues(),
+            installationSource: !!marketplaceInfo ? AppInstallationSource.MARKETPLACE : AppInstallationSource.PRIVATE,
             marketplaceInfo,
             permissionsGranted,
             languageContent: result.languageContent,
@@ -491,6 +505,7 @@ export class AppManager {
             return aff;
         }
 
+        descriptor.signature = await this.getSignatureManager().signApp(descriptor);
         const created = await this.appMetadataStorage.create(descriptor);
 
         if (!created) {
@@ -601,6 +616,7 @@ export class AppManager {
             return aff;
         }
 
+        descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
         const app = this.getCompiler().toSandBox(this, descriptor, result);
@@ -766,22 +782,15 @@ export class AppManager {
      *
      * @param appId the id of the application to load
      */
-    protected async loadOne(appId: string): Promise<ProxiedApp> {
-        if (this.apps.get(appId)) {
-            return this.apps.get(appId);
-        }
+    public async loadOne(appId: string): Promise<ProxiedApp> {
+        const rl = this.apps.get(appId);
 
-        const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
-        const appPackage = await this.appSourceStorage.fetch(item);
-        const unpackageResult = await this.getParser().unpackageApp(appPackage);
-
-        if (!item) {
+        if (!rl) {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        this.apps.set(item.id, this.getCompiler().toSandBox(this, item, unpackageResult));
+        const item = rl.getStorageItem();
 
-        const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
 
         if (!this.areRequiredSettingsSet(item)) {
@@ -845,6 +854,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
@@ -859,6 +869,10 @@ export class AppManager {
 
             if (e instanceof InvalidLicenseError) {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
+            }
+
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
             }
 
             await this.purgeAppConfig(app);
@@ -883,9 +897,9 @@ export class AppManager {
         }
         this.listenerManager.unregisterListeners(app);
         this.listenerManager.lockEssentialEvents(app);
-        this.commandManager.unregisterCommands(app.getID());
+        await this.commandManager.unregisterCommands(app.getID());
         this.externalComponentManager.unregisterExternalComponents(app.getID());
-        this.apiManager.unregisterApis(app.getID());
+        await this.apiManager.unregisterApis(app.getID());
         this.accessorManager.purifyApp(app.getID());
         this.uiActionButtonManager.clearAppActionButtons(app.getID());
         this.videoConfProviderManager.unregisterProviders(app.getID());
@@ -921,6 +935,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
@@ -946,13 +961,17 @@ export class AppManager {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
 
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
+            }
+
             console.error(e);
         }
 
         if (enable) {
-            this.commandManager.registerCommands(app.getID());
+            await this.commandManager.registerCommands(app.getID());
             this.externalComponentManager.registerExternalComponents(app.getID());
-            this.apiManager.registerApis(app.getID());
+            await this.apiManager.registerApis(app.getID());
             this.listenerManager.registerListeners(app);
             this.listenerManager.releaseEssentialEvents(app);
             this.videoConfProviderManager.registerProviders(app.getID());

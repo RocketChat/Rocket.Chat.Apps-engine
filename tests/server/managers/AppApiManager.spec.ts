@@ -121,14 +121,14 @@ export class AppApiManagerTestFixture {
         Expect((ascm as any).providedApis.size).toBe(0);
     }
 
-    @Test()
-    public registerApi() {
+    @AsyncTest()
+    public async registerApi() {
         const ascm = new AppApiManager(this.mockManager);
 
         const api: IApi = TestData.getApi('path');
         const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
 
-        Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrow();
+        await Expect(async () => await (ascm as any).registerApi('testing', regInfo)).not.toThrowAsync();
         Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing');
     }
 
@@ -150,8 +150,8 @@ export class AppApiManagerTestFixture {
         Expect((ascm as any).providedApis.get('testing').size).toBe(2);
     }
 
-    @Test()
-    public registerApis() {
+    @AsyncTest()
+    public async registerApis() {
         const ascm = new AppApiManager(this.mockManager);
 
         SpyOn(ascm, 'registerApi');
@@ -159,20 +159,20 @@ export class AppApiManagerTestFixture {
         ascm.addApi('testing', TestData.getApi('apipath'));
         const regInfo = (ascm as any).providedApis.get('testing').get('apipath') as AppApi;
 
-        Expect(() => ascm.registerApis('non-existant')).not.toThrow();
-        Expect(() => ascm.registerApis('testing')).not.toThrow();
+        await Expect(async () => await ascm.registerApis('non-existant')).not.toThrowAsync();
+        await Expect(async () => await ascm.registerApis('testing')).not.toThrowAsync();
         Expect((ascm as any).registerApi as FunctionSpy).toHaveBeenCalledWith('testing', regInfo).exactly(1);
         Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
     }
 
-    @Test()
-    public unregisterApis() {
+    @AsyncTest()
+    public async unregisterApis() {
         const ascm = new AppApiManager(this.mockManager);
 
         ascm.addApi('testing', TestData.getApi('apipath'));
 
-        Expect(() => ascm.unregisterApis('non-existant')).not.toThrow();
-        Expect(() => ascm.unregisterApis('testing')).not.toThrow();
+        await Expect(async () => await ascm.unregisterApis('non-existant')).not.toThrowAsync();
+        await Expect(async () => await ascm.unregisterApis('testing')).not.toThrowAsync();
         Expect(this.mockBridges.getApiBridge().doUnregisterApis).toHaveBeenCalled().exactly(1);
     }
 
