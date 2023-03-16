@@ -11,4 +11,19 @@
  * that a user cannot perform some action, e.g.
  * join a room
  */
-export class AppsEngineException extends Error {}
+export class AppsEngineException extends Error {
+    public name = 'AppsEngineException';
+    public message: string;
+
+    constructor(message: string) {
+        super();
+        this.message = message;
+    }
+
+    public getErrorInfo() {
+        return {
+            name: this.name,
+            message: this.message,
+        };
+    }
+}
