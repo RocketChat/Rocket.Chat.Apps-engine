@@ -15,7 +15,7 @@ export class AppsEngineException extends Error {
     public name = 'AppsEngineException';
     public message: string;
 
-    constructor(message: string) {
+    constructor(message?: string) {
         super();
         this.message = message;
     }
