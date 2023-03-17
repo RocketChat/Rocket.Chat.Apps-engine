@@ -1,5 +1,4 @@
-import { UserType } from './../users/UserType';
-import type { IUser } from '../users';
+import type { IUser, UserType } from '../users';
 
 export interface IModifyDeleter {
     deleteRoom(roomId: string): Promise<void>;
