@@ -64,8 +64,7 @@ export class ProxiedApp implements IApp {
 
     public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
-            throw new Error(`The App ${this.app.getName()} (${this.app.getID()}`
-                + ` does not have the method: "${method}"`);
+            throw new Error(`The App ${this.app.getName()} (${this.app.getID()}` + ` does not have the method: "${method}"`);
         }
 
         // tslint:disable-next-line
@@ -79,16 +78,14 @@ export class ProxiedApp implements IApp {
 
         let result;
         try {
-            result = await this.runtime.runInSandbox(
-                `module.exports = app.${method}.apply(app, args)`,
-                { app: this.app, args },
-            );
+            result = await this.runtime.runInSandbox(`module.exports = app.${method}.apply(app, args)`, { app: this.app, args });
             logger.debug(`'${method}' was successfully called! The result is:`, result);
         } catch (e) {
             logger.error(e);
             logger.debug(`'${method}' was unsuccessful.`);
 
-            if (e instanceof AppsEngineException) {
+            const errorInfo = new AppsEngineException(e.message).getErrorInfo();
+            if (e.name === errorInfo.name) {
                 throw e;
             }
         } finally {
