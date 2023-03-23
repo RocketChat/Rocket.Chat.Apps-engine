@@ -554,7 +554,6 @@ export class AppManager {
         // Then let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
 
-
         return app;
     }
 
