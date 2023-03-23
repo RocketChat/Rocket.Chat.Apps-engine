@@ -92,8 +92,9 @@ export class ModifyCreator implements IModifyCreator {
         if (data) {
             delete data.id;
 
-            if (data.roles && data.roles.length) {
-                const roles = data.roles;
+            const roles = data.roles;
+
+            if (roles && roles.length) {
                 const hasRole = roles.map((role) => role.toLocaleLowerCase()).some((role) => role === 'admin' || role === 'owner' || role === 'moderator');
 
                 if (hasRole) {
