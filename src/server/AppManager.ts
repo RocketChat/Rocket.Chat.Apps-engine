@@ -547,12 +547,13 @@ export class AppManager {
         const app = this.apps.get(id);
         const { user } = uninstallationParameters;
 
+        // First
         await this.uninstallApp(app, user);
+        await this.removeLocal(id);
 
-        // Let everyone know that the App has been removed
+        // Then let everyone know that the App has been removed
         await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
 
-        await this.removeLocal(id);
 
         return app;
     }
