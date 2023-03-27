@@ -83,8 +83,8 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifydeleter.html#deletebotusers" class="tsd-kind-icon">delete<wbr>Bot<wbr>Users</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifydeleter.html#deleteroom" class="tsd-kind-icon">delete<wbr>Room</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="accessors.imodifydeleter.html#deleteusers" class="tsd-kind-icon">delete<wbr>Users</a></li>
 							</ul>
 						</section>
 					</div>
@@ -92,29 +92,6 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="deletebotusers" class="tsd-anchor"></a>
-					<h3>delete<wbr>Bot<wbr>Users</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">delete<wbr>Bot<wbr>Users<span class="tsd-signature-symbol">(</span>appId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/c773461/src/definition/accessors/IModifyDeleter.ts#L6">src/definition/accessors/IModifyDeleter.ts:6</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>appId: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
 					<a name="deleteroom" class="tsd-anchor"></a>
 					<h3>delete<wbr>Room</h3>
@@ -125,7 +102,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/c773461/src/definition/accessors/IModifyDeleter.ts#L4">src/definition/accessors/IModifyDeleter.ts:4</a></li>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/aeef74b/src/definition/accessors/IModifyDeleter.ts#L4">src/definition/accessors/IModifyDeleter.ts:4</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -135,6 +112,32 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="deleteusers" class="tsd-anchor"></a>
+					<h3>delete<wbr>Users</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">delete<wbr>Users<span class="tsd-signature-symbol">(</span>appId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, userType<span class="tsd-signature-symbol">: </span><a href="../enums/users_usertype.usertype.html#app" class="tsd-signature-type" data-tsd-kind="Enumeration member">APP</a><span class="tsd-signature-symbol"> | </span><a href="../enums/users_usertype.usertype.html#bot" class="tsd-signature-type" data-tsd-kind="Enumeration member">BOT</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/aeef74b/src/definition/accessors/IModifyDeleter.ts#L6">src/definition/accessors/IModifyDeleter.ts:6</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>appId: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>userType: <a href="../enums/users_usertype.usertype.html#app" class="tsd-signature-type" data-tsd-kind="Enumeration member">APP</a><span class="tsd-signature-symbol"> | </span><a href="../enums/users_usertype.usertype.html#bot" class="tsd-signature-type" data-tsd-kind="Enumeration member">BOT</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -159,10 +162,10 @@
 						<a href="accessors.imodifydeleter.html" class="tsd-kind-icon">IModify<wbr>Deleter</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accessors.imodifydeleter.html#deletebotusers" class="tsd-kind-icon">delete<wbr>Bot<wbr>Users</a>
+								<a href="accessors.imodifydeleter.html#deleteroom" class="tsd-kind-icon">delete<wbr>Room</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="accessors.imodifydeleter.html#deleteroom" class="tsd-kind-icon">delete<wbr>Room</a>
+								<a href="accessors.imodifydeleter.html#deleteusers" class="tsd-kind-icon">delete<wbr>Users</a>
 							</li>
 						</ul>
 					</li>

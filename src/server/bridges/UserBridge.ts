@@ -45,7 +45,7 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
-    public async doDeleteUsersCreatedByApp(appId: string, type: UserType.BOT): Promise<boolean> {
+    public async doDeleteUsersCreatedByApp(appId: string, type: UserType.BOT | UserType.APP): Promise<boolean> {
         if (this.hasWritePermission(appId)) {
             return this.deleteUsersCreatedByApp(appId, type);
         }
