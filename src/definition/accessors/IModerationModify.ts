@@ -5,5 +5,5 @@ export interface IModerationModify {
      * @param messageId the messageId to report
      * @param description the description of the report
      */
-    report(appId: string, messageId: string, description: string): Promise<void>;
+    report(messageId: string, description: string, userId: string, appId: string): Promise<void>;
 }
