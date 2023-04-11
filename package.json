@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.38.0",
+    "version": "1.38.1-alpha",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
@@ -94,7 +94,7 @@
         "semver": "^5.7.1",
         "stack-trace": "0.0.10",
         "uuid": "^3.4.0",
-        "vm2": "^3.9.11"
+        "vm2": "^3.9.16"
     },
     "peerDependencies": {
         "@rocket.chat/ui-kit": "next"
