@@ -26,19 +26,4 @@ export abstract class ModerationBridge extends BaseBridge {
 
         return false;
     }
-
-    // private hasReadPermission(appId: string): boolean {
-    //     if (AppPermissionManager.hasPermission(appId, AppPermissions.moderation.read)) {
-    //         return true;
-    //     }
-
-    //     AppPermissionManager.notifyAboutError(
-    //         new PermissionDeniedError({
-    //             appId,
-    //             missingPermissions: [AppPermissions.moderation.read],
-    //         }),
-    //     );
-
-    //     return false;
-    // }
 }
