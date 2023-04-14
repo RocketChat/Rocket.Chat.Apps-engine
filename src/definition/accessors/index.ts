@@ -52,3 +52,4 @@ export * from './IVideoConferenceBuilder';
 export * from './IVideoConferenceExtend';
 export * from './IVideoConferenceRead';
 export * from './IVideoConfProvidersExtend';
+export * from './IModerationModify';
