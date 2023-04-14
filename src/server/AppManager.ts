@@ -8,6 +8,7 @@ import { IInternalPersistenceBridge } from './bridges/IInternalPersistenceBridge
 import { IInternalUserBridge } from './bridges/IInternalUserBridge';
 import { AppCompiler, AppFabricationFulfillment, AppPackageParser } from './compiler';
 import { InvalidLicenseError } from './errors';
+import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { IGetAppsFilter } from './IGetAppsFilter';
 import {
     AppAccessorManager,
@@ -20,6 +21,7 @@ import {
     AppSlashCommandManager,
     AppVideoConfProviderManager,
 } from './managers';
+import { AppSignatureManager } from './managers/AppSignatureManager';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
@@ -74,6 +76,7 @@ export class AppManager {
     private readonly schedulerManager: AppSchedulerManager;
     private readonly uiActionButtonManager: UIActionButtonManager;
     private readonly videoConfProviderManager: AppVideoConfProviderManager;
+    private readonly signatureManager: AppSignatureManager;
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -120,6 +123,7 @@ export class AppManager {
         this.schedulerManager = new AppSchedulerManager(this);
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
+        this.signatureManager = new AppSignatureManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -194,6 +198,10 @@ export class AppManager {
 
     public getUIActionButtonManager(): UIActionButtonManager {
         return this.uiActionButtonManager;
+    }
+
+    public getSignatureManager(): AppSignatureManager {
+        return this.signatureManager;
     }
 
     /** Gets whether the Apps have been loaded or not. */
@@ -497,6 +505,7 @@ export class AppManager {
             return aff;
         }
 
+        descriptor.signature = await this.getSignatureManager().signApp(descriptor);
         const created = await this.appMetadataStorage.create(descriptor);
 
         if (!created) {
@@ -607,6 +616,7 @@ export class AppManager {
             return aff;
         }
 
+        descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
         const app = this.getCompiler().toSandBox(this, descriptor, result);
@@ -772,22 +782,15 @@ export class AppManager {
      *
      * @param appId the id of the application to load
      */
-    protected async loadOne(appId: string): Promise<ProxiedApp> {
-        if (this.apps.get(appId)) {
-            return this.apps.get(appId);
-        }
+    public async loadOne(appId: string): Promise<ProxiedApp> {
+        const rl = this.apps.get(appId);
 
-        const item: IAppStorageItem = await this.appMetadataStorage.retrieveOne(appId);
-        const appPackage = await this.appSourceStorage.fetch(item);
-        const unpackageResult = await this.getParser().unpackageApp(appPackage);
-
-        if (!item) {
+        if (!rl) {
             throw new Error(`No App found by the id of: "${ appId }"`);
         }
 
-        this.apps.set(item.id, this.getCompiler().toSandBox(this, item, unpackageResult));
+        const item = rl.getStorageItem();
 
-        const rl = this.apps.get(item.id);
         await this.initializeApp(item, rl, false);
 
         if (!this.areRequiredSettingsSet(item)) {
@@ -851,6 +854,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             await app.call(AppMethod.INITIALIZE, configExtend, envRead);
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
@@ -865,6 +869,10 @@ export class AppManager {
 
             if (e instanceof InvalidLicenseError) {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
+            }
+
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
             }
 
             await this.purgeAppConfig(app);
@@ -927,6 +935,7 @@ export class AppManager {
 
         try {
             await app.validateLicense();
+            await app.validateInstallation();
 
             enable = await app.call(AppMethod.ONENABLE,
                 this.getAccessorManager().getEnvironmentRead(storageItem.id),
@@ -950,6 +959,10 @@ export class AppManager {
 
             if (e instanceof InvalidLicenseError) {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
+            }
+
+            if (e instanceof InvalidInstallationError) {
+                status = AppStatus.INVALID_INSTALLATION_DISABLED;
             }
 
             console.error(e);

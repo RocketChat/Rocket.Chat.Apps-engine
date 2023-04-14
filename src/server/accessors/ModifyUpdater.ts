@@ -4,6 +4,7 @@ import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
 import { AppBridges } from '../bridges';
+import { UIHelper } from '../misc/UIHelper';
 import { LivechatUpdater } from './LivechatUpdater';
 import { MessageBuilder } from './MessageBuilder';
 import { RoomBuilder } from './RoomBuilder';
@@ -60,6 +61,11 @@ export class ModifyUpdater implements IModifyUpdater {
             throw new Error('Invalid sender assigned to the message.');
         }
 
+        if (result.blocks?.length) {
+            result.blocks = UIHelper.assignIds(result.blocks, this.appId);
+            // result.blocks = this._assignIds(result.blocks);
+        }
+
         return this.bridges.getMessageBridge().doUpdate(result, this.appId);
     }
 
@@ -90,4 +96,5 @@ export class ModifyUpdater implements IModifyUpdater {
 
         return this.bridges.getRoomBridge().doUpdate(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
+
 }

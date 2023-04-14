@@ -26,6 +26,8 @@ export interface IModifyCreator {
     getUploadCreator(): IUploadCreator;
 
     /**
+     * @deprecated please prefer the rocket.chat/ui-kit components
+     *
      * Gets a new instance of a BlockBuilder
      */
     getBlockBuilder(): BlockBuilder;

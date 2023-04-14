@@ -1,7 +1,7 @@
-import type { IUser } from '../users';
+import type { IUser, UserType } from '../users';
 
 export interface IModifyDeleter {
     deleteRoom(roomId: string): Promise<void>;
 
-    deleteBotUsers(appId: Exclude<IUser['appId'], undefined>): Promise<boolean>;
+    deleteUsers(appId: Exclude<IUser['appId'], undefined>, userType: UserType.APP | UserType.BOT): Promise<boolean>;
 }
