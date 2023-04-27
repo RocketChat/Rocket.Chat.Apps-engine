@@ -1,3 +1,4 @@
+import { IModerationModify } from './IModerationModify';
 import { IModifyCreator } from './IModifyCreator';
 import { IModifyDeleter } from './IModifyDeleter';
 import { IModifyExtender } from './IModifyExtender';
@@ -36,4 +37,9 @@ export interface IModify {
      * Gets the accessor for creating OAuth apps
      */
     getOAuthAppsModifier(): IOAuthAppsModify;
+    /**
+     * Gets the accessor for modifying moderation
+     * @returns the moderation accessor
+     */
+    getModerationModifier(): IModerationModify;
 }

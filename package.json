@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.37.0-alpha",
+    "version": "1.39.0-alpha",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
@@ -56,6 +56,7 @@
     },
     "homepage": "https://github.com/RocketChat/Rocket.Chat.Apps-engine#readme",
     "devDependencies": {
+        "@rocket.chat/ui-kit": "^0.31.22",
         "@types/adm-zip": "^0.5.0",
         "@types/lodash.clonedeep": "^4.5.7",
         "@types/nedb": "^1.8.12",
@@ -93,7 +94,10 @@
         "semver": "^5.7.1",
         "stack-trace": "0.0.10",
         "uuid": "^3.4.0",
-        "vm2": "^3.9.11"
+        "vm2": "^3.9.17"
+    },
+    "peerDependencies": {
+        "@rocket.chat/ui-kit": "next"
     },
     "nyc": {
         "include": [

@@ -9,7 +9,7 @@ export class ModifyDeleter implements IModifyDeleter {
         return this.bridges.getRoomBridge().doDelete(roomId, this.appId);
     }
 
-    public async deleteBotUsers(appId: Exclude<IUser['appId'], undefined>): Promise<boolean> {
-        return this.bridges.getUserBridge().doDeleteUsersCreatedByApp(appId, UserType.BOT);
+    public async deleteUsers(appId: Exclude<IUser['appId'], undefined>, userType: UserType.APP | UserType.BOT): Promise<boolean> {
+        return this.bridges.getUserBridge().doDeleteUsersCreatedByApp(appId, userType);
     }
 }

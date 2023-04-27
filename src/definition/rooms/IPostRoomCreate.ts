@@ -1,4 +1,4 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { IRoom } from './IRoom';
 
 /** Handler for after a room is created. */
@@ -23,5 +23,5 @@ export interface IPostRoomCreate {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    executePostRoomCreate(room: IRoom, read: IRead, http: IHttp, persistence: IPersistence): Promise<void>;
+    executePostRoomCreate(room: IRoom, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
 }
