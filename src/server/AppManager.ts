@@ -234,7 +234,7 @@ export class AppManager {
                 const appPackage = await this.appSourceStorage.fetch(item);
                 const unpackageResult = await this.getParser().unpackageApp(appPackage);
 
-                const app = this.getCompiler().toSandBox(this, item, unpackageResult);
+                const app = await this.getCompiler().toSandBox(this, item, unpackageResult);
 
                 this.apps.set(item.id, app);
             } catch (e) {
@@ -243,7 +243,7 @@ export class AppManager {
 
                 const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
                 app.getLogger().error(e);
-                this.logStorage.storeEntries(app.getID(), app.getLogger());
+                await this.logStorage.storeEntries(app.getID(), app.getLogger());
 
                 const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
                 this.apps.set(item.id, prl);
@@ -487,7 +487,7 @@ export class AppManager {
 
         // Now that is has all been compiled, let's get the
         // the App instance from the source.
-        const app = this.getCompiler().toSandBox(this, descriptor, result);
+        const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
         // Create a user for the app
         try {
@@ -547,12 +547,12 @@ export class AppManager {
         const app = this.apps.get(id);
         const { user } = uninstallationParameters;
 
+        // First remove the app
         await this.uninstallApp(app, user);
-
-        // Let everyone know that the App has been removed
-        await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
-
         await this.removeLocal(id);
+
+        // Then let everyone know that the App has been removed
+        await this.bridges.getAppActivationBridge().doAppRemoved(app).catch();
 
         return app;
     }
@@ -619,7 +619,7 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
-        const app = this.getCompiler().toSandBox(this, descriptor, result);
+        const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
         // Ensure there is an user for the app
         try {

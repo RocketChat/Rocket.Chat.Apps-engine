@@ -285,6 +285,9 @@ export class AppSlashCommandManager {
                 const cmd = appSlashCommand.slashCommand.command;
                 await this.bridge.doUnregisterCommand(cmd, appId);
                 this.touchedCommandsToApps.delete(cmd);
+                if (!this.appsTouchedCommands.has(appId)) {
+                    continue;
+                }
                 const ind = this.appsTouchedCommands.get(appId).indexOf(cmd);
                 this.appsTouchedCommands.get(appId).splice(ind, 1);
                 appSlashCommand.isRegistered = true;
