@@ -14,7 +14,7 @@ export class ModifyDeleter implements IModifyDeleter {
         return this.bridges.getUserBridge().doDeleteUsersCreatedByApp(appId, userType);
     }
 
-    public async deleteMessage(message: IMessage, user:IUser): Promise<void> {
+    public async deleteMessage(message: IMessage, user: IUser): Promise<void> {
         return this.bridges.getMessageBridge().doDelete(message, user, this.appId);
     }
 }

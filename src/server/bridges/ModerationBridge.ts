@@ -6,34 +6,27 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class ModerationBridge extends BaseBridge {
-    public async doReport(messageId: string, description: string, userId: string, appId: string): Promise<void> {
+    public async doReport(messageId: IMessage['id'], description: string, userId: string, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
             return this.report(messageId, description, userId, appId);
         }
     }
 
-    public async doDeleteMessage(message: IMessage, user: IUser, reason: string, action: string, appId: string): Promise<void> {
+    public async doDismissReportsByMessageId(messageId: IMessage['id'], reason: string, action: string, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
-            return this.deleteMessage(message, user, reason, action, appId);
+            return this.dismissReportsByMessageId(messageId, reason, action, appId);
         }
     }
 
-    public async doDeactivateUser(userId: IUser['id'], confirmRelinquish: boolean, reason: string, action: string, appId: string): Promise<void> {
+    public async doDismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
-            return this.deactivateUser(userId, confirmRelinquish, reason, action, appId);
-        }
-    }
-
-    public async doResetUserAvatar(userId: IUser['id'], appId: string): Promise<void> {
-        if (this.hasWritePermission(appId)) {
-            return this.resetUserAvatar(userId, appId);
+            return this.dismissReportsByUserId(userId, reason, action, appId);
         }
     }
 
     protected abstract report(messageId: string, description: string, userId: string, appId: string): Promise<void>;
-    protected abstract deleteMessage(message: IMessage, user: IUser, reason: string, action: string, appId: string): Promise<void>;
-    protected abstract deactivateUser(userId: IUser['id'], confirmRelinquish: boolean, reason: string, action: string, appId: string): Promise<void>;
-    protected abstract resetUserAvatar(userId: IUser['id'], appId: string): Promise<void>;
+    protected abstract dismissReportsByMessageId(messageId: string, reason: string, action: string, appId: string): Promise<void>;
+    protected abstract dismissReportsByUserId(userId: string, reason: string, action: string, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.moderation.write)) {

@@ -7,15 +7,11 @@ export class TestsModerationBridge extends ModerationBridge {
         throw new Error('Method not implemented.');
     }
 
-    public deleteMessage(message: IMessage, user: IUser, reason: string, action: string, appId: string): Promise<void> {
+    public dismissReportsByMessageId(messageId: IMessage['id'], reason: string, action: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    public deactivateUser(userId: IUser['id'], confirmRelinquish: boolean, reason: string, action: string, appId: string): Promise<void> {
-        throw new Error('Method not implemented.');
-    }
-
-    public resetUserAvatar(userId: string, appId: string): Promise<void> {
+    public dismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

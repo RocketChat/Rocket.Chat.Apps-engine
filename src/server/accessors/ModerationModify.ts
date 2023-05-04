@@ -10,15 +10,11 @@ export class ModerationModify implements IModerationModify {
         return this.moderationBridge.doReport(messageId, description, userId, appId);
     }
 
-    public deleteMessage(message: IMessage, user: IUser, reason: string, action: string, appId: string): Promise<void> {
-        return this.moderationBridge.doDeleteMessage(message, user, reason, action, appId);
+    public dismissReportsByMessageId(messageId: IMessage['id'], reason: string, action: string, appId: string): Promise<void> {
+        return this.moderationBridge.doDismissReportsByMessageId(messageId, reason, action, appId);
     }
 
-    public deactivateUser(userId: IUser['id'], confirmRelinquish: boolean, reason: string, action: string, appId: string): Promise<void> {
-        return this.moderationBridge.doDeactivateUser(userId, confirmRelinquish, reason, action, appId);
-    }
-
-    public resetUserAvatar(userId: string, appId: string): Promise<void> {
-        return this.moderationBridge.doResetUserAvatar(userId, appId);
+    public dismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void> {
+        return this.moderationBridge.doDismissReportsByUserId(userId, reason, action, appId);
     }
 }
