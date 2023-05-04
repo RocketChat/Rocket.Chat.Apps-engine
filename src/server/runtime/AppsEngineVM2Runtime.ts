@@ -83,7 +83,7 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
         );
 
         if (result.manager) {
-            delete result['manager'];
+            delete result.manager;
         }
 
         return result;
