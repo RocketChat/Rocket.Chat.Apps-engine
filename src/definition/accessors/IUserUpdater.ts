@@ -14,4 +14,5 @@ export interface IUserUpdater {
     updateStatus(user: IUser, statusText: IUser['statusText'], status: IUser['status']): Promise<boolean>;
     updateBio(user: IUser, bio: IUser['bio']): Promise<boolean>;
     updateCustomFields(user: IUser, customFields: IUser['customFields']): Promise<boolean>;
+    updateActiveStatus(userId: IUser['id'], confirmRelinquish: boolean): Promise<boolean>;
 }
