@@ -82,6 +82,10 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
             }, {} as typeof sandbox),
         );
 
+        if(result['manager']) {
+            delete result['manager'];
+        }
+
         return result;
     }
 }
