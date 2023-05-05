@@ -19,7 +19,19 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
         },
     };
 
-    public static runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
+    public static async runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
+        return new Promise((resolve, reject) => {
+            process.nextTick(() => {
+                try {
+                    resolve(this.runCodeSync(code, sandbox, options));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        });
+    }
+
+    public static runCodeSync(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
         const vmOptions = {
             ...AppsEngineVM2Runtime.defaultNodeVMOptions,
             timeout: options?.timeout,
@@ -65,23 +77,31 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
     }
 
     public async runInSandbox(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
-        sandbox ??= {};
+        return new Promise((resolve, reject) => {
+            process.nextTick(async () => {
+                try {
+                    sandbox ??= {};
 
-        this.vm.setGlobals(sandbox);
+                    this.vm.setGlobals(sandbox);
 
-        const result = await this.vm.run(code, {
-            filename: getFilenameForApp(options?.filename || this.app.getName()),
+                    const result = await this.vm.run(code, {
+                        filename: getFilenameForApp(options?.filename || this.app.getName()),
+                    });
+
+                    // Clean up the sandbox after the code has run
+                    this.vm.setGlobals(
+                        Object.keys(sandbox).reduce((acc, key) => {
+                            acc[key] = undefined;
+
+                            return acc;
+                        }, {} as typeof sandbox),
+                    );
+
+                    resolve(result);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         });
-
-        // Clean up the sandbox after the code has run
-        this.vm.setGlobals(
-            Object.keys(sandbox).reduce((acc, key) => {
-                acc[key] = undefined;
-
-                return acc;
-            }, {} as typeof sandbox),
-        );
-
-        return result;
     }
 }

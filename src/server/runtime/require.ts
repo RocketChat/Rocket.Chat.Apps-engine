@@ -61,7 +61,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
         const Runtime = getRuntime();
 
         // TODO: specify correct file name
-        return Runtime.runCode(files[filename], {
+        return Runtime.runCodeSync(files[filename], {
             require: buildCustomRequire(files, appId, path.dirname(filename) + '/'),
         }, {
             returnAllExports: true,

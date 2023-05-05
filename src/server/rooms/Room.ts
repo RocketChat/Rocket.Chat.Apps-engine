@@ -29,7 +29,7 @@ export class Room implements IRoom {
     public get usernames(): Array<string> {
         // Get usernames
         if (!this._USERNAMES) {
-            this._USERNAMES = this[PrivateManager].getBridges().getInternalBridge().doGetUsernamesOfRoomById(this.id);
+            this._USERNAMES = this[PrivateManager].getBridges().getInternalBridge().doGetUsernamesOfRoomByIdSync(this.id);
         }
 
         return this._USERNAMES;
@@ -67,6 +67,15 @@ export class Room implements IRoom {
             customFields: this.customFields,
             userIds: this.userIds,
         };
+    }
+
+    public async getUsernames(): Promise<Array<string>> {
+        // Get usernames
+        if (!this._USERNAMES) {
+            this._USERNAMES = await this[PrivateManager].getBridges().getInternalBridge().doGetUsernamesOfRoomById(this.id);
+        }
+
+        return this._USERNAMES;
     }
 
     public toJSON() {

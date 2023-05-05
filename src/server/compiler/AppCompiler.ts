@@ -32,7 +32,7 @@ export class AppCompiler {
         const Runtime = getRuntime();
 
         const customRequire = buildCustomRequire(files, storage.info.id);
-        const result = Runtime.runCode(files[path.normalize(storage.info.classFile)], {
+        const result = await Runtime.runCode(files[path.normalize(storage.info.classFile)], {
             require: customRequire,
         });
 
@@ -42,7 +42,7 @@ export class AppCompiler {
         }
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = Runtime.runCode('exports.app = new App(info, rcLogger, appAccessors);', {
+        const rl = await Runtime.runCode('exports.app = new App(info, rcLogger, appAccessors);', {
             rcLogger: logger,
             info: storage.info,
             App: result,
