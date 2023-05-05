@@ -22,7 +22,7 @@ export class UserUpdater implements IUserUpdater {
         return this.bridges.getUserBridge().doUpdate(user, { customFields }, this.appId);
     }
 
-    public async updateActiveStatus(userId: IUser['id'], confirmRelinquish: boolean) {
+    public async deactivate(userId: IUser['id'], confirmRelinquish: boolean) {
         return this.bridges.getUserBridge().doDeactivate(userId, confirmRelinquish, this.appId);
     }
 }
