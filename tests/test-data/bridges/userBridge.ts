@@ -38,4 +38,8 @@ export class TestsUserBridge extends UserBridge {
     protected getUserUnreadMessageCount(uid: string): Promise<number> {
         throw new Error('Method not implemented.');
     }
+
+    protected deactivate(userId: IUser['id'], confirmRelinquish: boolean, appId: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
 }
