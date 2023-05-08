@@ -9,8 +9,10 @@ export interface ISetting {
     packageValue: any;
     /** Will be the value of this setting. If nothing is set here, then the "packageValue" will be used. */
     /**
-     * If the setting type is ROOM_PICK, then the value will be an array of room ids.
-     * e.g. [ { _id: 'GENERAL' }, { _id: 'cFhgqGnZAY5dq85Z4' }
+     * If the setting type is ROOM_PICK, the value will be an array of room ids.
+     * @returns ```js
+     * [{_id: 'rid1'}, {_id: 'rid2'}]
+     * ```
      */
     value?: any;
     /** Whether this setting is required or not. */
