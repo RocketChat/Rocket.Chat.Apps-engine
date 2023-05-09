@@ -470,6 +470,8 @@ export class AppManager {
         const app = await this.getCompiler().toSandBox(this, storageItem, parsedPackage);
 
         this.apps.set(app.getID(), app);
+
+        await this.loadOne(appId)
     }
 
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
