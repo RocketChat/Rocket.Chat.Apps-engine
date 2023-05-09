@@ -23,7 +23,7 @@ export class TestsUserBridge extends UserBridge {
         throw new Error('Method not implemented.');
     }
 
-    public getAppUser(appId?: string): Promise<IUser> {
+    public getAppUser(appId: string): Promise<IUser> {
         throw new Error('Method not implemented.');
     }
 

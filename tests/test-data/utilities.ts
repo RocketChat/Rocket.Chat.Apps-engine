@@ -97,7 +97,6 @@ export class TestData {
             displayName: 'Testing Room',
             type: RoomType.CHANNEL,
             creator: TestData.getUser(),
-            usernames: [TestData.getUser().username],
             isDefault: true,
             isReadOnly: false,
             displaySystemMessages: true,

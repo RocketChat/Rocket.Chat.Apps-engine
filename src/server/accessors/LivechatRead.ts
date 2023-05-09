@@ -7,18 +7,8 @@ import { LivechatBridge } from '../bridges/LivechatBridge';
 export class LivechatRead implements ILivechatRead {
     constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) { }
 
-    /**
-     * @deprecated please use the `isOnlineAsync` method instead.
-     * In the next major, this method will be `async`
-     */
-    public isOnline(departmentId?: string): boolean {
-        console.warn('The `LivechatRead.isOnline` method is deprecated and won\'t behave as intended. Please use `LivechatRead.isOnlineAsync` instead');
-
+    public isOnline(departmentId?: string): Promise<boolean> {
         return this.livechatBridge.doIsOnline(departmentId, this.appId);
-    }
-
-    public isOnlineAsync(departmentId?: string): Promise<boolean> {
-        return this.livechatBridge.doIsOnlineAsync(departmentId, this.appId);
     }
 
     public getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>> {
@@ -27,15 +17,6 @@ export class LivechatRead implements ILivechatRead {
 
     public getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>> {
         return this.livechatBridge.doFindRooms(visitor, departmentId, this.appId);
-    }
-
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer the alternative methods to fetch visitors.
-     */
-    public getLivechatVisitors(query: object): Promise<Array<IVisitor>> {
-        return this.livechatBridge.doFindVisitors(query, this.appId);
     }
 
     public getLivechatVisitorById(id: string): Promise<IVisitor | undefined> {

@@ -238,11 +238,6 @@ export class AppListenerManager {
             // Livechat
             case AppInterface.IPostLivechatRoomStarted:
                 return this.executePostLivechatRoomStarted(data as ILivechatRoom);
-            /**
-             * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
-             */
-            case AppInterface.ILivechatRoomClosedHandler:
-                return this.executeLivechatRoomClosedHandler(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomClosed:
                 return this.executePostLivechatRoomClosed(data as ILivechatRoom);
             case AppInterface.IPostLivechatRoomSaved:
@@ -1052,26 +1047,6 @@ export class AppListenerManager {
             }
 
             await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
-        }
-    }
-
-    private async executeLivechatRoomClosedHandler(data: ILivechatRoom): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
-        for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
-            const app = this.manager.getOneById(appId);
-
-            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
-                continue;
-            }
-
-            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),

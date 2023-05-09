@@ -19,25 +19,6 @@ export class Room implements IRoom {
     public lastModifiedAt?: Date;
     public customFields?: { [key: string]: any };
     public userIds?: Array<string>;
-    private _USERNAMES: Array<string>;
-
-    private [PrivateManager]: AppManager;
-
-    /**
-     * @deprecated
-     */
-    public get usernames(): Array<string> {
-        // Get usernames
-        if (!this._USERNAMES) {
-            this._USERNAMES = this[PrivateManager].getBridges().getInternalBridge().doGetUsernamesOfRoomById(this.id);
-        }
-
-        return this._USERNAMES;
-    }
-
-    public set usernames(usernames) {
-        return;
-    }
 
     public constructor(room: IRoom, manager: AppManager) {
         Object.assign(this, room);

@@ -58,18 +58,6 @@ export abstract class App implements IApp {
     }
 
     /**
-     * Gets the username of this App's app user.
-     *
-     * @return {string} the username of the app user
-     *
-     * @deprecated This method will be removed in the next major version.
-     * Please use read.getUserReader().getAppUser() instead.
-     */
-    public getAppUserUsername(): string {
-        return `${ this.info.nameSlug }.bot`;
-    }
-
-    /**
      * Get the ID of this App, please see <link> for how to obtain an ID for your App.
      *
      * @return {number} the ID

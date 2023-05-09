@@ -57,33 +57,6 @@ export class RoomBuilder implements IRoomBuilder {
         return this.room.creator;
     }
 
-    /**
-     * @deprecated
-     */
-    public addUsername(username: string): IRoomBuilder {
-        this.addMemberToBeAddedByUsername(username);
-        return this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public setUsernames(usernames: Array<string>): IRoomBuilder {
-        this.setMembersToBeAddedByUsernames(usernames);
-        return this;
-    }
-
-    /**
-     * @deprecated
-     */
-    public getUsernames(): Array<string> {
-        const usernames = this.getMembersToBeAddedUsernames();
-        if (usernames && usernames.length > 0) {
-            return usernames;
-        }
-        return this.room.usernames || [];
-    }
-
     public addMemberToBeAddedByUsername(username: string): IRoomBuilder {
         this.members.push(username);
         return this;

@@ -28,6 +28,10 @@ export class TestsRoomBridge extends RoomBridge {
         throw new Error('Method not implemented');
     }
 
+    public getDirectByUserIds(userIds: Array<string>, appId: string): Promise<IRoom> {
+        throw new Error('Method not implemented');
+    }
+
     public getMembers(roomName: string, appId: string): Promise<Array<IUser>> {
         throw new Error('Method not implemented.');
     }

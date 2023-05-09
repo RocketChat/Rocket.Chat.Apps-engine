@@ -39,15 +39,9 @@ type LivechatMultiplePermissions = keyof Pick<
 >;
 
 export abstract class LivechatBridge extends BaseBridge {
-   public doIsOnline(departmentId?: string, appId?: string): boolean {
+   public async doIsOnline(departmentId?: string, appId?: string): Promise<boolean> {
        if (this.hasReadPermission(appId, 'livechat-status')) {
            return this.isOnline(departmentId, appId);
-       }
-    }
-
-   public async doIsOnlineAsync(departmentId?: string, appId?: string): Promise<boolean> {
-       if (this.hasReadPermission(appId, 'livechat-status')) {
-           return this.isOnlineAsync(departmentId, appId);
        }
     }
 
@@ -72,12 +66,6 @@ export abstract class LivechatBridge extends BaseBridge {
    public async doCreateVisitor(visitor: IVisitor, appId: string): Promise<string> {
        if (this.hasWritePermission(appId, 'livechat-visitor')) {
            return this.createVisitor(visitor, appId);
-       }
-    }
-
-   public async doFindVisitors(query: object, appId: string): Promise<Array<IVisitor>> {
-       if (this.hasReadPermission(appId, 'livechat-visitor')) {
-           return this.findVisitors(query, appId);
        }
     }
 
@@ -153,22 +141,11 @@ export abstract class LivechatBridge extends BaseBridge {
         }
     }
 
-    /**
-     * @deprecated please use the `isOnlineAsync` method instead.
-     * In the next major, this method will be `async`
-     */
-    protected abstract isOnline(departmentId?: string, appId?: string): boolean;
-    protected abstract isOnlineAsync(departmentId?: string, appId?: string): Promise<boolean>;
+    protected abstract isOnline(departmentId?: string, appId?: string): Promise<boolean>;
     protected abstract createMessage(message: ILivechatMessage, appId: string): Promise<string>;
     protected abstract getMessageById(messageId: string, appId: string): Promise<ILivechatMessage>;
     protected abstract updateMessage(message: ILivechatMessage, appId: string): Promise<void>;
     protected abstract createVisitor(visitor: IVisitor, appId: string): Promise<string>;
-    /**
-     * @deprecated This method does not adhere to the conversion practices applied
-     * elsewhere in the Apps-Engine and will be removed in the next major version.
-     * Prefer other methods that fetch visitors.
-     */
-    protected abstract findVisitors(query: object, appId: string): Promise<Array<IVisitor>>;
     protected abstract findVisitorById(id: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract findVisitorByEmail(email: string, appId: string): Promise<IVisitor | undefined>;
     protected abstract findVisitorByToken(token: string, appId: string): Promise<IVisitor | undefined>;
