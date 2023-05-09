@@ -471,7 +471,7 @@ export class AppManager {
 
         this.apps.set(app.getID(), app);
 
-        await this.loadOne(appId)
+        await this.loadOne(appId);
     }
 
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
