@@ -1,7 +1,8 @@
 import { Block } from '@rocket.chat/ui-kit';
 import { IMessage, IMessageAttachment, IMessageFile, IMessageReactions } from '../../definition/messages';
-import { IRoom } from '../../definition/rooms';
 import { IUser, IUserLookup } from '../../definition/users';
+import { Room } from '../rooms/Room';
+import { AppManager } from '../AppManager';
 
 export class Message implements IMessage {
     public id?: string;
@@ -20,7 +21,6 @@ export class Message implements IMessage {
     public parseUrls?: boolean;
     public customFields?: { [key: string]: any };
     public threadId?: string;
-    public room: IRoom;
     public file?: IMessageFile;
     public blocks?: Array<Block>;
     public starred?: Array<{ _id: string }>;
@@ -28,7 +28,16 @@ export class Message implements IMessage {
     public pinnedAt?: Date;
     public pinnedBy?: IUserLookup;
 
-    public constructor(message: IMessage) {
+    private _ROOM: Room;
+
+    public get room(): Room {
+        return this._ROOM;
+    }
+    public set room(room) {
+        this._ROOM = new Room(room, this.manager);
+    }
+
+    public constructor(message: IMessage, private manager: AppManager) {
         Object.assign(this, message);
     }
 
