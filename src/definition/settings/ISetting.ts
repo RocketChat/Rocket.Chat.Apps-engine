@@ -8,6 +8,12 @@ export interface ISetting {
     /** What is the default value (allows a reset button). */
     packageValue: any;
     /** Will be the value of this setting. If nothing is set here, then the "packageValue" will be used. */
+    /**
+     * If the setting type is ROOM_PICK, the value will be an array of room ids.
+     * @returns ```js
+     * [{_id: 'rid1'}, {_id: 'rid2'}]
+     * ```
+     */
     value?: any;
     /** Whether this setting is required or not. */
     required: boolean;
