@@ -1,8 +1,8 @@
 import { Block } from '@rocket.chat/ui-kit';
 import { IMessage, IMessageAttachment, IMessageFile, IMessageReactions } from '../../definition/messages';
 import { IUser, IUserLookup } from '../../definition/users';
-import { Room } from '../rooms/Room';
 import { AppManager } from '../AppManager';
+import { Room } from '../rooms/Room';
 
 export class Message implements IMessage {
     public id?: string;
