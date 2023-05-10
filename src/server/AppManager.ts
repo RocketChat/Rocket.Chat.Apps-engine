@@ -453,6 +453,27 @@ export class AppManager {
         return true;
     }
 
+    public async addLocal(appId: string): Promise<void> {
+        const storageItem = await this.appMetadataStorage.retrieveOne(appId);
+
+        if (!storageItem) {
+            throw new Error(`App with id ${appId} couldn't be found`);
+        }
+
+        const appPackage = await this.appSourceStorage.fetch(storageItem);
+
+        if (!appPackage) {
+            throw new Error(`Package file for app "${storageItem.info.name}" (${appId}) couldn't be found`);
+        }
+
+        const parsedPackage = await this.getParser().unpackageApp(appPackage);
+        const app = await this.getCompiler().toSandBox(this, storageItem, parsedPackage);
+
+        this.apps.set(app.getID(), app);
+
+        await this.loadOne(appId);
+    }
+
     public async add(appPackage: Buffer, installationParameters: IAppInstallParameters): Promise<AppFabricationFulfillment> {
         const { enable = true, marketplaceInfo, permissionsGranted, user } = installationParameters;
 
