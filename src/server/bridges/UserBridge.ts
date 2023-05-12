@@ -51,6 +51,12 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
+    public async doDeactivate(userId: IUser['id'], confirmRelinquish: boolean, appId: string): Promise<boolean> {
+        if (this.hasWritePermission(appId)) {
+            return this.deactivate(userId, confirmRelinquish, appId);
+        }
+    }
+
     protected abstract getById(id: string, appId: string): Promise<IUser>;
     protected abstract getByUsername(username: string, appId: string): Promise<IUser>;
     protected abstract getAppUser(appId?: string): Promise<IUser | undefined>;
@@ -92,6 +98,18 @@ export abstract class UserBridge extends BaseBridge {
      * @returns true if any user was deleted, false otherwise.
      */
     protected abstract deleteUsersCreatedByApp(appId: string, type: UserType.APP | UserType.BOT): Promise<boolean>;
+
+    /**
+     * Deactivates a user.
+     * @param userId the user's ID.
+     * @param confirmRelinquish whether the user confirmed the relinquish of the account.
+     * @param appId the App's ID.
+     * @returns true if the user was deactivated, false otherwise.
+     * @throws {Error} if the user is not found.
+     * @throws {Error} if the user is the last admin.
+     * @throws {Error} if the user is the last owner, if confirmRelinquish is false.
+     */
+    protected abstract deactivate(userId: IUser['id'], confirmRelinquish: boolean, appId: string): Promise<boolean>;
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.user.read)) {

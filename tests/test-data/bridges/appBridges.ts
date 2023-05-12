@@ -8,6 +8,7 @@ import {
     IListenerBridge,
     LivechatBridge,
     MessageBridge,
+    ModerationBridge,
     PersistenceBridge,
     RoomBridge,
     SchedulerBridge,
@@ -31,6 +32,7 @@ import { TestsInternalBridge } from './internalBridge';
 import { TestsInternalFederationBridge } from './internalFederationBridge';
 import { TestLivechatBridge } from './livechatBridge';
 import { TestsMessageBridge } from './messageBridge';
+import { TestsModerationBridge } from './moderationBridge';
 import { TestOAuthAppsBridge } from './OAuthAppsBridge';
 import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
@@ -49,6 +51,7 @@ export class TestsAppBridges extends AppBridges {
     private readonly envBridge: TestsEnvironmentalVariableBridge;
     private readonly rlActBridge: TestsActivationBridge;
     private readonly msgBridge: TestsMessageBridge;
+    private readonly moderationBridge: TestsModerationBridge;
     private readonly persisBridge: TestsPersisBridge;
     private readonly roomBridge: TestsRoomBridge;
     private readonly internalBridge: TestsInternalBridge;
@@ -72,6 +75,7 @@ export class TestsAppBridges extends AppBridges {
         this.envBridge = new TestsEnvironmentalVariableBridge();
         this.rlActBridge = new TestsActivationBridge();
         this.msgBridge = new TestsMessageBridge();
+        this.moderationBridge = new TestsModerationBridge();
         this.persisBridge = new TestsPersisBridge();
         this.roomBridge = new TestsRoomBridge();
         this.internalBridge = new TestsInternalBridge();
@@ -85,7 +89,6 @@ export class TestsAppBridges extends AppBridges {
         this.videoConfBridge = new TestsVideoConferenceBridge();
         this.oauthBridge = new TestOAuthAppsBridge();
         this.internalFederationBridge = new TestsInternalFederationBridge();
-
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -118,6 +121,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getMessageBridge(): MessageBridge {
         return this.msgBridge;
+    }
+
+    public getModerationBridge(): ModerationBridge {
+        return this.moderationBridge;
     }
 
     public getPersistenceBridge(): PersistenceBridge {
