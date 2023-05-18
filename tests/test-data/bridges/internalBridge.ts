@@ -2,7 +2,11 @@ import { ISetting } from '../../../src/definition/settings';
 import { IInternalBridge } from '../../../src/server/bridges';
 
 export class TestsInternalBridge implements IInternalBridge {
-    public doGetUsernamesOfRoomById(roomId: string): Array<string> {
+    public doGetUsernamesOfRoomByIdSync(roomId: string): Array<string> {
+        throw new Error('Method not implemented.');
+    }
+
+    public doGetUsernamesOfRoomById(roomId: string): Promise<Array<string>> {
         throw new Error('Method not implemented.');
     }
 

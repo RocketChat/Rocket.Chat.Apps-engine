@@ -16,7 +16,18 @@ export class AppsEngineNodeRuntime extends AppsEngineRuntime {
         process: {},
         exports: {},
     };
-    public static runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
+    public static async runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
+        return new Promise((resolve, reject) => {
+            process.nextTick(() => {
+                try {
+                    resolve(this.runCodeSync(code, sandbox, options));
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        });
+    }
+    public static runCodeSync(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
         return vm.runInNewContext(
             code,
             { ...AppsEngineNodeRuntime.defaultContext, ...sandbox },
@@ -29,17 +40,25 @@ export class AppsEngineNodeRuntime extends AppsEngineRuntime {
     }
 
     public async runInSandbox(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
-        sandbox ??= {};
+        return new Promise((resolve, reject) => {
+            process.nextTick(async () => {
+                try {
+                    sandbox ??= {};
 
-        const result = await vm.runInNewContext(code, {
-            ...AppsEngineNodeRuntime.defaultContext,
-            ...sandbox,
-            require: this.customRequire,
-        }, {
-            ...AppsEngineNodeRuntime.defaultRuntimeOptions,
-            filename: getFilenameForApp(options?.filename || this.app.getName()),
+                    const result = await vm.runInNewContext(code, {
+                        ...AppsEngineNodeRuntime.defaultContext,
+                        ...sandbox,
+                        require: this.customRequire,
+                    }, {
+                        ...AppsEngineNodeRuntime.defaultRuntimeOptions,
+                        filename: getFilenameForApp(options?.filename || this.app.getName()),
+                    });
+
+                    resolve(result);
+                } catch (e) {
+                    reject(e);
+                }
+            });
         });
-
-        return result;
     }
 }
