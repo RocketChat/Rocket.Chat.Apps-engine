@@ -33,32 +33,199 @@ import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 
-type EventData =
-    | IMessage
-    | IRoom
-    | IUser
-    | IVisitor
-    | ILivechatRoom
-    | IUIKitIncomingInteraction
-    | IUIKitLivechatIncomingInteraction
-    | IExternalComponent
-    | ILivechatEventContext
-    | IRoomUserJoinedContext
-    | IRoomUserLeaveContext
-    | ILivechatTransferEventContext
-    | IFileUploadContext
-    | IPreEmailSentContext
-    | IMessageReactionContext
-    | IMessageFollowContext
-    | IMessagePinContext
-    | IMessageStarContext
-    | IMessageReportContext
-    | IMessageDeleteContext
-    | IUserContext
-    | IUserUpdateContext
-    | IUserStatusContext;
+interface IListenerExecutor {
+    [AppInterface.IPreMessageSentPrevent]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPreMessageSentExtend]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPreMessageSentModify]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageSent]: {
+        args: [IMessage];
+        result: void;
+    };
+    [AppInterface.IPreMessageDeletePrevent]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPostMessageDeleted]: {
+        args: [IMessageDeleteContext];
+        result: void;
+    };
+    [AppInterface.IPreMessageUpdatedPrevent]: {
+        args: [IMessage];
+        result: unknown;
+    };
+    [AppInterface.IPreMessageUpdatedExtend]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPreMessageUpdatedModify]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageUpdated]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageReacted]: {
+        args: [IMessageReactionContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageFollowed]: {
+        args: [IMessageFollowContext];
+        result: void;
+    };
+    [AppInterface.IPostMessagePinned]: {
+        args: [IMessagePinContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageStarred]: {
+        args: [IMessageStarContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageReported]: {
+        args: [IMessageReportContext];
+        result: void;
+    };
+    // Rooms
+    [AppInterface.IPreRoomCreatePrevent]: {
+        args: [IRoom];
+        result: boolean;
+    };
+    [AppInterface.IPreRoomCreateExtend]: {
+        args: [IRoom];
+        result: IRoom;
+    };
+    [AppInterface.IPreRoomCreateModify]: {
+        args: [IRoom];
+        result: IRoom;
+    };
+    [AppInterface.IPostRoomCreate]: {
+        args: [IRoom];
+        result: void;
+    };
+    [AppInterface.IPreRoomDeletePrevent]: {
+        args: [IRoom];
+        result: boolean;
+    };
+    [AppInterface.IPostRoomDeleted]: {
+        args: [IRoom];
+        result: void;
+    };
+    [AppInterface.IPreRoomUserJoined]: {
+        args: [IRoomUserJoinedContext];
+        result: void;
+    };
+    [AppInterface.IPostRoomUserJoined]: {
+        args: [IRoomUserJoinedContext];
+        result: void;
+    };
+    [AppInterface.IPreRoomUserLeave]: {
+        args: [IRoomUserLeaveContext];
+        result: void;
+    };
+    [AppInterface.IPostRoomUserLeave]: {
+        args: [IRoomUserLeaveContext];
+        result: void;
+    };
+    // External Components
+    [AppInterface.IPostExternalComponentOpened]: {
+        args: [IExternalComponent];
+        result: void;
+    };
+    [AppInterface.IPostExternalComponentClosed]: {
+        args: [IExternalComponent];
+        result: void;
+    };
+    [AppInterface.IUIKitInteractionHandler]: {
+        args: [IUIKitIncomingInteraction];
+        result: IUIKitResponse;
+    };
+    [AppInterface.IUIKitLivechatInteractionHandler]: {
+        args: [IUIKitLivechatIncomingInteraction];
+        result: IUIKitResponse;
+    };
+    // Livechat
+    [AppInterface.IPostLivechatRoomStarted]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    /**
+     * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
+     */
+    [AppInterface.ILivechatRoomClosedHandler]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomClosed]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomSaved]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatAgentAssigned]: {
+        args: [ILivechatEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatAgentUnassigned]: {
+        args: [ILivechatEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomTransferred]: {
+        args: [ILivechatTransferEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatGuestSaved]: {
+        args: [IVisitor];
+        result: void;
+    };
+    // FileUpload
+    [AppInterface.IPreFileUpload]: {
+        args: [IFileUploadContext];
+        result: void;
+    };
+    // Email
+    [AppInterface.IPreEmailSent]: {
+        args: [IPreEmailSentContext];
+        result: IUIKitResponse;
+    };
+    // User
+    [AppInterface.IPostUserCreated]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserUpdated]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserDeleted]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserLoggedIn]: {
+        args: [IUser];
+        result: void;
+    };
+    [AppInterface.IPostUserLoggedOut]: {
+        args: [IUser];
+        result: void;
+    };
+    [AppInterface.IPostUserStatusChanged]: {
+        args: [IUserStatusContext];
+        result: void;
+    };
+}
 
-type EventReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom | IEmailDescriptor;
+// type EventReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom | IEmailDescriptor;
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -151,7 +318,7 @@ export class AppListenerManager {
         return !!(lockedEventList && lockedEventList.size);
     }
 
-    public async executeListener(int: AppInterface, data: EventData): Promise<EventReturn> {
+    public async executeListener<I extends keyof IListenerExecutor>(int: I, data: IListenerExecutor[I]['args'][0]): Promise<IListenerExecutor[I]['result']> {
         if (this.isEventBlocked(int)) {
             throw new EssentialAppDisabledException('There is one or more apps that are essential to this event but are disabled');
         }
