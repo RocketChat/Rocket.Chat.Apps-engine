@@ -29,6 +29,9 @@ export enum AppMethod {
     EXECUTEPREMESSAGESENTMODIFY = 'executePreMessageSentModify',
     CHECKPOSTMESSAGESENT = 'checkPostMessageSent',
     EXECUTEPOSTMESSAGESENT = 'executePostMessageSent',
+
+    EXECUTEPOSTMESSAGESENTTOBOT = 'executePostMessageSentToBot',
+
     CHECKPREMESSAGEDELETEPREVENT = 'checkPreMessageDeletePrevent',
     EXECUTEPREMESSAGEDELETEPREVENT = 'executePreMessageDeletePrevent',
     CHECKPOSTMESSAGEDELETED = 'checkPostMessageDeleted',
