@@ -12,7 +12,7 @@ import {
     IMessageStarContext,
 } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
-import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
+import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext, RoomType } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
@@ -524,6 +524,39 @@ export class AppListenerManager {
 
     private async executePostMessageSent(data: IMessage): Promise<void> {
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
+
+        // First check if the app implements Bot DM handlers and check if the dm contains more than one user
+        if (cfMsg.room.type === RoomType.DIRECT_MESSAGE && cfMsg.room.userIds.length > 1) {
+            for (const appId of this.listeners.get(AppInterface.IPostMessageSentToBot)) {
+                const app = this.manager.getOneById(appId);
+                if (app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENTTOBOT)) {
+                    const reader = this.am.getReader(appId);
+                    const bot = await reader.getUserReader().getAppUser();
+                    if (!bot) {
+                        continue;
+                    }
+
+                    // if the sender is the bot just ignore it
+
+                    if (bot.id === cfMsg.sender.id) {
+                        continue;
+                    }
+                    // if the user doesnt belong to the room ignore it
+                    if (!cfMsg.room.userIds.includes(bot.id)) {
+                        continue;
+                    }
+
+                    await app.call(
+                        AppMethod.EXECUTEPOSTMESSAGESENTTOBOT,
+                        cfMsg,
+                        this.am.getReader(appId),
+                        this.am.getHttp(appId),
+                        this.am.getPersistence(appId),
+                        this.am.getModifier(appId),
+                    );
+                }
+            }
+        }
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
             const app = this.manager.getOneById(appId);
