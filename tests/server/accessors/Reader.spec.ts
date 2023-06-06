@@ -12,7 +12,7 @@ import {
     IVideoConferenceRead,
 } from '../../../src/definition/accessors';
 import { IOAuthAppsReader } from '../../../src/definition/accessors/IOAuthAppsReader';
-
+import { IThreadRead } from '../../../src/definition/accessors/IThreadRead';
 import { Reader } from '../../../src/server/accessors';
 
 export class ReaderAccessorTestFixture {
@@ -28,6 +28,8 @@ export class ReaderAccessorTestFixture {
     private videoConf: IVideoConferenceRead;
     private oauthApps: IOAuthAppsReader;
 
+    private thread: IThreadRead;
+
     @SetupFixture
     public setupFixture() {
         this.env = {} as IEnvironmentRead;
@@ -41,6 +43,7 @@ export class ReaderAccessorTestFixture {
         this.cloud = {} as ICloudWorkspaceRead;
         this.videoConf = {} as IVideoConferenceRead;
         this.oauthApps = {} as IOAuthAppsReader;
+        this.thread = {} as IThreadRead;
     }
 
     @Test()
@@ -59,6 +62,7 @@ export class ReaderAccessorTestFixture {
                     this.cloud,
                     this.videoConf,
                     this.oauthApps,
+                    this.thread,
                 ),
         ).not.toThrow();
 
@@ -74,7 +78,9 @@ export class ReaderAccessorTestFixture {
             this.cloud,
             this.videoConf,
             this.oauthApps,
+            this.thread,
         );
+
         Expect(rd.getEnvironmentReader()).toBeDefined();
         Expect(rd.getMessageReader()).toBeDefined();
         Expect(rd.getNotifier()).toBeDefined();
