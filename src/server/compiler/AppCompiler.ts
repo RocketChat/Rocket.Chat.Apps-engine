@@ -23,7 +23,7 @@ export class AppCompiler {
         return result;
     }
 
-    public toSandBox(manager: AppManager, storage: IAppStorageItem, { files }: IParseAppPackageResult): ProxiedApp {
+    public async toSandBox(manager: AppManager, storage: IAppStorageItem, { files }: IParseAppPackageResult): Promise<ProxiedApp> {
         if (typeof files[path.normalize(storage.info.classFile)] === 'undefined') {
             throw new Error(`Invalid App package for "${ storage.info.name }". ` +
                 `Could not find the classFile (${ storage.info.classFile }) file.`);
@@ -32,7 +32,7 @@ export class AppCompiler {
         const Runtime = getRuntime();
 
         const customRequire = buildCustomRequire(files, storage.info.id);
-        const result = Runtime.runCode(files[path.normalize(storage.info.classFile)], {
+        const result = await Runtime.runCode(files[path.normalize(storage.info.classFile)], {
             require: customRequire,
         });
 
@@ -42,7 +42,7 @@ export class AppCompiler {
         }
         const appAccessors = new AppAccessors(manager, storage.info.id);
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const rl = Runtime.runCode('exports.app = new App(info, rcLogger, appAccessors);', {
+        const rl = await Runtime.runCode('exports.app = new App(info, rcLogger, appAccessors);', {
             rcLogger: logger,
             info: storage.info,
             App: result,
@@ -81,7 +81,7 @@ export class AppCompiler {
         // TODO: Fix this type cast from to any to the right one
         const app = new ProxiedApp(manager, storage, rl as App, new Runtime(rl as App, customRequire as any));
 
-        manager.getLogStorage().storeEntries(app.getID(), logger);
+        await manager.getLogStorage().storeEntries(app.getID(), logger);
 
         return app;
     }

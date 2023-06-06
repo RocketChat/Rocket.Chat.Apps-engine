@@ -92,12 +92,12 @@ export class AppApi {
                 ],
             });
             logger.debug(`${ path }'s ${ method } was successfully executed.`);
-            logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(this.app.getID(), logger);
             return result;
         } catch (e) {
             logger.error(e);
             logger.debug(`${ path }'s ${ method } was unsuccessful.`);
-            logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(this.app.getID(), logger);
             throw e;
         }
     }

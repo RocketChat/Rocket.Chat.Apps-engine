@@ -89,7 +89,7 @@ export class ProxiedApp implements IApp {
                 throw e;
             }
         } finally {
-            this.manager.getLogStorage().storeEntries(this.getID(), logger);
+            await this.manager.getLogStorage().storeEntries(this.getID(), logger);
         }
 
         return result;

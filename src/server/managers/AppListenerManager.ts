@@ -3,16 +3,16 @@ import { EssentialAppDisabledException } from '../../definition/exceptions';
 import { IExternalComponent } from '../../definition/externalComponent';
 import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
 import {
-  IMessage,
-  IMessageDeleteContext,
-  IMessageFollowContext,
-  IMessagePinContext,
-  IMessageReactionContext,
-  IMessageReportContext,
-  IMessageStarContext,
+    IMessage,
+    IMessageDeleteContext,
+    IMessageFollowContext,
+    IMessagePinContext,
+    IMessageReactionContext,
+    IMessageReportContext,
+    IMessageStarContext,
 } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
-import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
+import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext, RoomType } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
 import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
@@ -33,42 +33,199 @@ import { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
 import { AppAccessorManager } from './AppAccessorManager';
 
-type EventData = (
-    IMessage |
-    IRoom |
-    IUser |
-    IVisitor |
-    ILivechatRoom |
-    IUIKitIncomingInteraction |
-    IUIKitLivechatIncomingInteraction |
-    IExternalComponent |
-    ILivechatEventContext |
-    IRoomUserJoinedContext |
-    IRoomUserLeaveContext |
-    ILivechatTransferEventContext |
-    IFileUploadContext |
-    IPreEmailSentContext |
-    IMessageReactionContext |
-    IMessageFollowContext |
-    IMessagePinContext |
-    IMessageStarContext |
-    IMessageReportContext |
-    IMessageDeleteContext |
-    IUserContext |
-    IUserUpdateContext |
-    IUserStatusContext
-);
+interface IListenerExecutor {
+    [AppInterface.IPreMessageSentPrevent]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPreMessageSentExtend]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPreMessageSentModify]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageSent]: {
+        args: [IMessage];
+        result: void;
+    };
+    [AppInterface.IPreMessageDeletePrevent]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPostMessageDeleted]: {
+        args: [IMessageDeleteContext];
+        result: void;
+    };
+    [AppInterface.IPreMessageUpdatedPrevent]: {
+        args: [IMessage];
+        result: unknown;
+    };
+    [AppInterface.IPreMessageUpdatedExtend]: {
+        args: [IMessage];
+        result: boolean;
+    };
+    [AppInterface.IPreMessageUpdatedModify]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageUpdated]: {
+        args: [IMessage];
+        result: IMessage;
+    };
+    [AppInterface.IPostMessageReacted]: {
+        args: [IMessageReactionContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageFollowed]: {
+        args: [IMessageFollowContext];
+        result: void;
+    };
+    [AppInterface.IPostMessagePinned]: {
+        args: [IMessagePinContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageStarred]: {
+        args: [IMessageStarContext];
+        result: void;
+    };
+    [AppInterface.IPostMessageReported]: {
+        args: [IMessageReportContext];
+        result: void;
+    };
+    // Rooms
+    [AppInterface.IPreRoomCreatePrevent]: {
+        args: [IRoom];
+        result: boolean;
+    };
+    [AppInterface.IPreRoomCreateExtend]: {
+        args: [IRoom];
+        result: IRoom;
+    };
+    [AppInterface.IPreRoomCreateModify]: {
+        args: [IRoom];
+        result: IRoom;
+    };
+    [AppInterface.IPostRoomCreate]: {
+        args: [IRoom];
+        result: void;
+    };
+    [AppInterface.IPreRoomDeletePrevent]: {
+        args: [IRoom];
+        result: boolean;
+    };
+    [AppInterface.IPostRoomDeleted]: {
+        args: [IRoom];
+        result: void;
+    };
+    [AppInterface.IPreRoomUserJoined]: {
+        args: [IRoomUserJoinedContext];
+        result: void;
+    };
+    [AppInterface.IPostRoomUserJoined]: {
+        args: [IRoomUserJoinedContext];
+        result: void;
+    };
+    [AppInterface.IPreRoomUserLeave]: {
+        args: [IRoomUserLeaveContext];
+        result: void;
+    };
+    [AppInterface.IPostRoomUserLeave]: {
+        args: [IRoomUserLeaveContext];
+        result: void;
+    };
+    // External Components
+    [AppInterface.IPostExternalComponentOpened]: {
+        args: [IExternalComponent];
+        result: void;
+    };
+    [AppInterface.IPostExternalComponentClosed]: {
+        args: [IExternalComponent];
+        result: void;
+    };
+    [AppInterface.IUIKitInteractionHandler]: {
+        args: [IUIKitIncomingInteraction];
+        result: IUIKitResponse;
+    };
+    [AppInterface.IUIKitLivechatInteractionHandler]: {
+        args: [IUIKitLivechatIncomingInteraction];
+        result: IUIKitResponse;
+    };
+    // Livechat
+    [AppInterface.IPostLivechatRoomStarted]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    /**
+     * @deprecated please prefer the AppInterface.IPostLivechatRoomClosed event
+     */
+    [AppInterface.ILivechatRoomClosedHandler]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomClosed]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomSaved]: {
+        args: [ILivechatRoom];
+        result: void;
+    };
+    [AppInterface.IPostLivechatAgentAssigned]: {
+        args: [ILivechatEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatAgentUnassigned]: {
+        args: [ILivechatEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatRoomTransferred]: {
+        args: [ILivechatTransferEventContext];
+        result: void;
+    };
+    [AppInterface.IPostLivechatGuestSaved]: {
+        args: [IVisitor];
+        result: void;
+    };
+    // FileUpload
+    [AppInterface.IPreFileUpload]: {
+        args: [IFileUploadContext];
+        result: void;
+    };
+    // Email
+    [AppInterface.IPreEmailSent]: {
+        args: [IPreEmailSentContext];
+        result: IUIKitResponse;
+    };
+    // User
+    [AppInterface.IPostUserCreated]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserUpdated]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserDeleted]: {
+        args: [IUserContext];
+        result: void;
+    };
+    [AppInterface.IPostUserLoggedIn]: {
+        args: [IUser];
+        result: void;
+    };
+    [AppInterface.IPostUserLoggedOut]: {
+        args: [IUser];
+        result: void;
+    };
+    [AppInterface.IPostUserStatusChanged]: {
+        args: [IUserStatusContext];
+        result: void;
+    };
+}
 
-type EventReturn = (
-    void |
-    boolean |
-    IMessage |
-    IRoom |
-    IUser |
-    IUIKitResponse |
-    ILivechatRoom |
-    IEmailDescriptor
-);
+// type EventReturn = void | boolean | IMessage | IRoom | IUser | IUIKitResponse | ILivechatRoom | IEmailDescriptor;
 
 export class AppListenerManager {
     private am: AppAccessorManager;
@@ -161,7 +318,7 @@ export class AppListenerManager {
         return !!(lockedEventList && lockedEventList.size);
     }
 
-    public async executeListener(int: AppInterface, data: EventData): Promise<EventReturn> {
+    public async executeListener<I extends keyof IListenerExecutor>(int: I, data: IListenerExecutor[I]['args'][0]): Promise<IListenerExecutor[I]['result']> {
         if (this.isEventBlocked(int)) {
             throw new EssentialAppDisabledException('There is one or more apps that are essential to this event but are disabled');
         }
@@ -290,20 +447,17 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTPREVENT)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTPREVENT)) {
-                prevented = await app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT,
+                prevented = (await app.call(
+                    AppMethod.EXECUTEPREMESSAGESENTPREVENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as boolean;
+                )) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -323,15 +477,12 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTEXTEND)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTEXTEND)) {
-                await app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND,
+                await app.call(
+                    AppMethod.EXECUTEPREMESSAGESENTEXTEND,
                     cfMsg,
                     new MessageExtender(msg), // This mutates the passed in object
                     this.am.getReader(appId),
@@ -353,21 +504,18 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTMODIFY)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTMODIFY)) {
-                msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY,
+                msg = (await app.call(
+                    AppMethod.EXECUTEPREMESSAGESENTMODIFY,
                     cfMsg,
                     new MessageBuilder(msg),
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as IMessage;
+                )) as IMessage;
             }
         }
 
@@ -377,20 +525,50 @@ export class AppListenerManager {
     private async executePostMessageSent(data: IMessage): Promise<void> {
         const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
+        // First check if the app implements Bot DM handlers and check if the dm contains more than one user
+        if (cfMsg.room.type === RoomType.DIRECT_MESSAGE && cfMsg.room.userIds.length > 1) {
+            for (const appId of this.listeners.get(AppInterface.IPostMessageSentToBot)) {
+                const app = this.manager.getOneById(appId);
+                if (app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENTTOBOT)) {
+                    const reader = this.am.getReader(appId);
+                    const bot = await reader.getUserReader().getAppUser();
+                    if (!bot) {
+                        continue;
+                    }
+
+                    // if the sender is the bot just ignore it
+
+                    if (bot.id === cfMsg.sender.id) {
+                        continue;
+                    }
+                    // if the user doesnt belong to the room ignore it
+                    if (!cfMsg.room.userIds.includes(bot.id)) {
+                        continue;
+                    }
+
+                    await app.call(
+                        AppMethod.EXECUTEPOSTMESSAGESENTTOBOT,
+                        cfMsg,
+                        this.am.getReader(appId),
+                        this.am.getHttp(appId),
+                        this.am.getPersistence(appId),
+                        this.am.getModifier(appId),
+                    );
+                }
+            }
+        }
+
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
             const app = this.manager.getOneById(appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGESENT)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGESENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGESENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENT)) {
-                await app.call(AppMethod.EXECUTEPOSTMESSAGESENT,
+                await app.call(
+                    AppMethod.EXECUTEPOSTMESSAGESENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -410,20 +588,17 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEDELETEPREVENT)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT)) {
-                prevented = await app.call(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT,
+                prevented = (await app.call(
+                    AppMethod.EXECUTEPREMESSAGEDELETEPREVENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as boolean;
+                )) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -436,25 +611,27 @@ export class AppListenerManager {
 
     private async executePostMessageDelete(data: IMessageDeleteContext): Promise<void> {
         const context = Utilities.deepCloneAndFreeze(data);
-        const {message} = context;
+        const { message } = context;
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEDELETED,
+                continueOn = (await app.call(
+                    AppMethod.CHECKPOSTMESSAGEDELETED,
                     // `context` has more information about the event, but
                     // we had to keep this `message` here for compatibility
                     message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     context,
-                ) as boolean;
+                )) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
-                await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED,
+                await app.call(
+                    AppMethod.EXECUTEPOSTMESSAGEDELETED,
                     message,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -475,20 +652,17 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT)) {
-                prevented = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
+                prevented = (await app.call(
+                    AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as boolean;
+                )) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -508,15 +682,12 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND)) {
-                await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND,
+                await app.call(
+                    AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND,
                     cfMsg,
                     new MessageExtender(msg), // This mutates the passed in object
                     this.am.getReader(appId),
@@ -538,21 +709,18 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY)) {
-                continueOn = await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY)) {
-                msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
+                msg = (await app.call(
+                    AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
                     cfMsg,
                     new MessageBuilder(msg),
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as IMessage;
+                )) as IMessage;
             }
         }
 
@@ -567,15 +735,12 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEUPDATED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEUPDATED)) {
-                await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED,
+                await app.call(
+                    AppMethod.EXECUTEPOSTMESSAGEUPDATED,
                     cfMsg,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -596,20 +761,17 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEPREVENT)) {
-                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEPREVENT,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEPREVENT, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEPREVENT)) {
-                prevented = await app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT,
+                prevented = (await app.call(
+                    AppMethod.EXECUTEPREROOMCREATEPREVENT,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as boolean;
+                )) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -629,15 +791,12 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEEXTEND)) {
-                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEEXTEND,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEEXTEND, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEEXTEND)) {
-                await app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND,
+                await app.call(
+                    AppMethod.EXECUTEPREROOMCREATEEXTEND,
                     cfRoom,
                     new RoomExtender(room), // This mutates the passed in object
                     this.am.getReader(appId),
@@ -659,21 +818,18 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMCREATEMODIFY)) {
-                continueOn = await app.call(AppMethod.CHECKPREROOMCREATEMODIFY,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEMODIFY, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEMODIFY)) {
-                room = await app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY,
+                room = (await app.call(
+                    AppMethod.EXECUTEPREROOMCREATEMODIFY,
                     cfRoom,
                     new RoomBuilder(room),
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as IRoom;
+                )) as IRoom;
             }
         }
 
@@ -688,15 +844,12 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTROOMCREATE,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMCREATE)) {
-                await app.call(AppMethod.EXECUTEPOSTROOMCREATE,
+                await app.call(
+                    AppMethod.EXECUTEPOSTROOMCREATE,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -716,20 +869,17 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPREROOMDELETEPREVENT)) {
-                continueOn = await app.call(AppMethod.CHECKPREROOMDELETEPREVENT,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPREROOMDELETEPREVENT, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMDELETEPREVENT)) {
-                prevented = await app.call(AppMethod.EXECUTEPREROOMDELETEPREVENT,
+                prevented = (await app.call(
+                    AppMethod.EXECUTEPREROOMDELETEPREVENT,
                     cfRoom,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
-                ) as boolean;
+                )) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -748,20 +898,11 @@ export class AppListenerManager {
 
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMDELETED)) {
-                continueOn = await app.call(AppMethod.CHECKPOSTROOMDELETED,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                ) as boolean;
+                continueOn = (await app.call(AppMethod.CHECKPOSTROOMDELETED, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
             }
 
             if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
-                await app.call(AppMethod.EXECUTEPOSTROOMDELETED,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                await app.call(AppMethod.EXECUTEPOSTROOMDELETED, cfRoom, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
             }
         }
     }
@@ -780,12 +921,7 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED)) {
-                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED,
-                    data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED, data, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
             }
         }
     }
@@ -804,7 +940,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_JOINED)) {
-                await app.call(AppMethod.EXECUTE_POST_ROOM_USER_JOINED,
+                await app.call(
+                    AppMethod.EXECUTE_POST_ROOM_USER_JOINED,
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -825,12 +962,7 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE)) {
-                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE,
-                    data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE, data, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
             }
         }
     }
@@ -845,7 +977,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE)) {
-                await app.call(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE,
+                await app.call(
+                    AppMethod.EXECUTE_POST_ROOM_USER_LEAVE,
                     data,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -864,7 +997,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
-                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
+                await app.call(
+                    AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
                     cfExternalComponent,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -881,7 +1015,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
-                await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
+                await app.call(
+                    AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
                     cfExternalComponent,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -914,14 +1049,7 @@ export class AppListenerManager {
         }
 
         const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitIncomingInteraction) => {
-            const {
-                actionId,
-                message,
-                user,
-                room,
-                triggerId,
-                container,
-            } = interactionData;
+            const { actionId, message, user, room, triggerId, container } = interactionData;
 
             switch (interactionType) {
                 case UIKitIncomingInteractionType.BLOCK: {
@@ -952,7 +1080,7 @@ export class AppListenerManager {
                     });
                 }
                 case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: IUIKitSurface, isCleared: boolean };
+                    const { view, isCleared } = interactionData.payload as { view: IUIKitSurface; isCleared: boolean };
 
                     return new UIKitViewCloseInteractionContext({
                         appId,
@@ -979,7 +1107,8 @@ export class AppListenerManager {
             }
         })(type, data);
 
-        return app.call(method,
+        return app.call(
+            method,
             interactionContext,
             this.am.getReader(appId),
             this.am.getHttp(appId),
@@ -1004,14 +1133,7 @@ export class AppListenerManager {
         }
 
         const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitLivechatIncomingInteraction) => {
-            const {
-                actionId,
-                message,
-                visitor,
-                room,
-                triggerId,
-                container,
-            } = interactionData;
+            const { actionId, message, visitor, room, triggerId, container } = interactionData;
 
             switch (interactionType) {
                 case UIKitIncomingInteractionType.BLOCK: {
@@ -1032,7 +1154,8 @@ export class AppListenerManager {
             }
         })(type, data);
 
-        return app.call(method,
+        return app.call(
+            method,
             interactionContext,
             this.am.getReader(appId),
             this.am.getHttp(appId),
@@ -1051,7 +1174,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1071,7 +1195,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
+            await app.call(
+                AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1091,7 +1216,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1111,7 +1237,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1131,7 +1258,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1151,7 +1279,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1171,7 +1300,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1191,7 +1321,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
+            await app.call(
+                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
                 cfLivechatRoom,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1209,7 +1340,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
-                await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD,
+                await app.call(
+                    AppMethod.EXECUTE_PRE_FILE_UPLOAD,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -1227,7 +1359,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_PRE_EMAIL_SENT)) {
-                descriptor = await app.call(AppMethod.EXECUTE_PRE_EMAIL_SENT,
+                descriptor = await app.call(
+                    AppMethod.EXECUTE_PRE_EMAIL_SENT,
                     {
                         context: data.context,
                         email: descriptor,
@@ -1253,7 +1386,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REACTED,
+            await app.call(
+                AppMethod.EXECUTE_POST_MESSAGE_REACTED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1273,7 +1407,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED,
+            await app.call(
+                AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1293,7 +1428,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_MESSAGE_PINNED,
+            await app.call(
+                AppMethod.EXECUTE_POST_MESSAGE_PINNED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1313,7 +1449,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_MESSAGE_STARRED,
+            await app.call(
+                AppMethod.EXECUTE_POST_MESSAGE_STARRED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1333,7 +1470,8 @@ export class AppListenerManager {
                 continue;
             }
 
-            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REPORTED,
+            await app.call(
+                AppMethod.EXECUTE_POST_MESSAGE_REPORTED,
                 context,
                 this.am.getReader(appId),
                 this.am.getHttp(appId),
@@ -1350,7 +1488,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_CREATED)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_CREATED,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_CREATED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -1368,7 +1507,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_UPDATED)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_UPDATED,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_UPDATED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -1386,13 +1526,14 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_DELETED,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_DELETED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
                     this.am.getPersistence(appId),
                     this.am.getModifier(appId),
-                    );
+                );
             }
         }
     }
@@ -1404,7 +1545,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_IN)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_IN,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_LOGGED_IN,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -1422,7 +1564,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_OUT)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),
@@ -1439,7 +1582,8 @@ export class AppListenerManager {
             const app = this.manager.getOneById(appId);
 
             if (app.hasMethod(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED)) {
-                await app.call(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED,
+                await app.call(
+                    AppMethod.EXECUTE_POST_USER_STATUS_CHANGED,
                     context,
                     this.am.getReader(appId),
                     this.am.getHttp(appId),

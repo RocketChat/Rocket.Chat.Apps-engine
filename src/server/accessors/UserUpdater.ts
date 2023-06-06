@@ -4,7 +4,7 @@ import { IUser } from '../../definition/users/IUser';
 import { AppBridges } from '../bridges';
 
 export class UserUpdater implements IUserUpdater {
-    constructor(private readonly bridges: AppBridges, private readonly appId: string) { }
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
 
     public async updateStatusText(user: IUser, statusText: IUser['statusText']) {
         return this.bridges.getUserBridge().doUpdate(user, { statusText }, this.appId);
@@ -20,5 +20,9 @@ export class UserUpdater implements IUserUpdater {
 
     public async updateCustomFields(user: IUser, customFields: IUser['customFields']) {
         return this.bridges.getUserBridge().doUpdate(user, { customFields }, this.appId);
+    }
+
+    public async deactivate(userId: IUser['id'], confirmRelinquish: boolean) {
+        return this.bridges.getUserBridge().doDeactivate(userId, confirmRelinquish, this.appId);
     }
 }

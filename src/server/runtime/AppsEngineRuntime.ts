@@ -9,7 +9,10 @@ export function getFilenameForApp(filename: string): string {
 }
 
 export abstract class AppsEngineRuntime {
-    public static runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
+    public static async runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
+        throw new Error(`Can't call this method on abstract class. Override it in a proper runtime class.`);
+    }
+    public static runCodeSync(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
         throw new Error(`Can't call this method on abstract class. Override it in a proper runtime class.`);
     }
     constructor(app: App, customRequire: (module: string) => any) {}

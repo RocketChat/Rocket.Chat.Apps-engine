@@ -1,4 +1,7 @@
 export enum AppInterface {
+    // Bot
+    IPostMessageSentToBot = 'IPostMessageSentToBot',
+
     // Messages
     IPreMessageSentPrevent = 'IPreMessageSentPrevent',
     IPreMessageSentExtend = 'IPreMessageSentExtend',
