@@ -19,14 +19,14 @@ export abstract class ThreadBridge extends BaseBridge {
     protected abstract getById(messageId: string, appId: string): Promise<Array<IMessage>>;
 
     private hasReadPermission(appId: string): boolean {
-        if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {
+        if (AppPermissionManager.hasPermission(appId, AppPermissions.threads.read)) {
             return true;
         }
 
         AppPermissionManager.notifyAboutError(
             new PermissionDeniedError({
                 appId,
-                missingPermissions: [AppPermissions.message.read],
+                missingPermissions: [AppPermissions.threads.read],
             }),
         );
 
