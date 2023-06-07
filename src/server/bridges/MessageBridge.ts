@@ -1,4 +1,4 @@
-import { ITypingOptions } from '../../definition/accessors/INotifier';
+import { ITypingRoomOptions, ITypingThreadOptions } from '../../definition/accessors/INotifier';
 import { IMessage } from '../../definition/messages';
 import { IRoom } from '../../definition/rooms';
 import { IUser } from '../../definition/users';
@@ -7,9 +7,24 @@ import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
-export interface ITypingDescriptor extends ITypingOptions {
+/** @deprecated use TypingDescriptor instead */
+export interface ITypingDescriptor extends ITypingRoomOptions {
     isTyping: boolean;
 }
+
+type WithRequiredProperty<Type, Key extends keyof Type> = Type & {
+    [Property in Key]-?: Type[Property];
+};
+
+type Pretty<K> = {
+    [P in keyof K]: K[P];
+};
+
+export type TypingDescriptor = Pretty<
+    WithRequiredProperty<ITypingRoomOptions | ITypingThreadOptions, 'username'> & {
+        isTyping: boolean;
+    }
+>;
 
 export abstract class MessageBridge extends BaseBridge {
     public async doCreate(message: IMessage, appId: string): Promise<string> {
@@ -36,7 +51,7 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
-    public async doTyping(options: ITypingDescriptor, appId: string): Promise<void> {
+    public async doTyping(options: TypingDescriptor, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
             return this.typing(options, appId);
         }
@@ -58,7 +73,7 @@ export abstract class MessageBridge extends BaseBridge {
     protected abstract update(message: IMessage, appId: string): Promise<void>;
     protected abstract notifyUser(user: IUser, message: IMessage, appId: string): Promise<void>;
     protected abstract notifyRoom(room: IRoom, message: IMessage, appId: string): Promise<void>;
-    protected abstract typing(options: ITypingDescriptor, appId: string): Promise<void>;
+    protected abstract typing(options: TypingDescriptor, appId: string): Promise<void>;
     protected abstract getById(messageId: string, appId: string): Promise<IMessage>;
     protected abstract delete(message: IMessage, user: IUser, appId: string): Promise<void>;
 
@@ -67,10 +82,12 @@ export abstract class MessageBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.message.read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.message.read],
+            }),
+        );
 
         return false;
     }
@@ -80,10 +97,12 @@ export abstract class MessageBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.message.write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.message.write],
+            }),
+        );
 
         return false;
     }
