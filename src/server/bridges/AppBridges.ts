@@ -16,31 +16,33 @@ import { PersistenceBridge } from './PersistenceBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ServerSettingBridge } from './ServerSettingBridge';
+import { ThreadBridge } from './ThreadBridge';
 import { UiInteractionBridge } from './UiInteractionBridge';
 import { UploadBridge } from './UploadBridge';
 import { UserBridge } from './UserBridge';
 import type { VideoConferenceBridge } from './VideoConferenceBridge';
 
-export type Bridge = CommandBridge
-            | ApiBridge
-            | AppDetailChangesBridge
-            | EnvironmentalVariableBridge
-            | HttpBridge
-            | IListenerBridge
-            | LivechatBridge
-            | MessageBridge
-            | PersistenceBridge
-            | AppActivationBridge
-            | RoomBridge
-            | IInternalBridge
-            | ServerSettingBridge
-            | UploadBridge
-            | UserBridge
-            | UiInteractionBridge
-            | SchedulerBridge
-            | VideoConferenceBridge
-            | OAuthAppsBridge
-            | ModerationBridge;
+export type Bridge =
+    | CommandBridge
+    | ApiBridge
+    | AppDetailChangesBridge
+    | EnvironmentalVariableBridge
+    | HttpBridge
+    | IListenerBridge
+    | LivechatBridge
+    | MessageBridge
+    | PersistenceBridge
+    | AppActivationBridge
+    | RoomBridge
+    | IInternalBridge
+    | ServerSettingBridge
+    | UploadBridge
+    | UserBridge
+    | UiInteractionBridge
+    | SchedulerBridge
+    | VideoConferenceBridge
+    | OAuthAppsBridge
+    | ModerationBridge;
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): CommandBridge;
@@ -66,4 +68,5 @@ export abstract class AppBridges {
     public abstract getOAuthAppsBridge(): OAuthAppsBridge;
     public abstract getModerationBridge(): ModerationBridge;
 
+    public abstract getThreadBridge(): ThreadBridge;
 }

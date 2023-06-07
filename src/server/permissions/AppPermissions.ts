@@ -41,6 +41,9 @@ export const AppPermissions = {
         read: { name: 'message.read' },
         write: { name: 'message.write' },
     },
+    'threads': {
+        read: { name: 'threads.read' },
+    },
     'livechat-status': {
         read: { name: 'livechat-status.read' },
     },
