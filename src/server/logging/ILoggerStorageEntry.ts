@@ -3,7 +3,7 @@ import { AppMethod } from '../../definition/metadata';
 
 export interface ILoggerStorageEntry {
     appId: string;
-    method: AppMethod;
+    method: `${AppMethod}`;
     entries: Array<ILogEntry>;
     startTime: Date;
     endTime: Date;
