@@ -50,7 +50,7 @@ export class ProxiedApp implements IApp {
         return this.storageItem.implemented;
     }
 
-    public hasMethod(method: AppMethod): boolean {
+    public hasMethod(method: `${AppMethod}`): boolean {
         return typeof (this.app as any)[method] === 'function';
     }
 

@@ -1027,31 +1027,30 @@ export class AppListenerManager {
     }
 
     private async executeUIKitInteraction(data: UIKitIncomingInteraction): Promise<IUIKitResponse> {
-        const { appId, type } = data;
-
-        const method = ((interactionType: string) => {
-            switch (interactionType) {
-                case UIKitIncomingInteractionType.BLOCK:
-                    return AppMethod.UIKIT_BLOCK_ACTION;
-                case UIKitIncomingInteractionType.VIEW_SUBMIT:
-                    return AppMethod.UIKIT_VIEW_SUBMIT;
-                case UIKitIncomingInteractionType.VIEW_CLOSED:
-                    return AppMethod.UIKIT_VIEW_CLOSE;
-                case UIKitIncomingInteractionType.ACTION_BUTTON:
-                    return AppMethod.UIKIT_ACTION_BUTTON;
-            }
-        })(type);
+        const { appId } = data;
 
         const app = this.manager.getOneById(appId);
-        if (!app?.hasMethod(method)) {
-            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
+        if (!app) {
+            console.warn(`App ${appId} triggered an interaction but it doesn't exist`);
             return;
         }
 
         const { actionId, user, triggerId } = data;
 
+        const appImplementsMethod = (method: string) => {
+            if (!app.hasMethod('executeBlockActionHandler')) {
+                console.warn(`App ${appId} triggered an interaction but it doesn't have method ${method}`);
+                return false;
+            }
+            return true;
+        };
+
         switch (data.type) {
             case UIKitIncomingInteractionType.BLOCK: {
+                if (!appImplementsMethod('executeBlockActionHandler')) {
+                    return;
+                }
+
                 const { value, blockId } = data.payload as { value: string; blockId: string };
                 return app.call(
                     'executeBlockActionHandler',
@@ -1073,6 +1072,10 @@ export class AppListenerManager {
                 );
             }
             case UIKitIncomingInteractionType.VIEW_SUBMIT: {
+                if (!appImplementsMethod('executeViewSubmitHandler')) {
+                    return;
+                }
+
                 const { view } = data.payload as { view: IUIKitSurface };
 
                 return app.call(
@@ -1092,6 +1095,10 @@ export class AppListenerManager {
                 );
             }
             case UIKitIncomingInteractionType.VIEW_CLOSED: {
+                if (!appImplementsMethod('executeViewClosedHandler')) {
+                    return;
+                }
+
                 const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
 
                 return app.call(
@@ -1111,6 +1118,118 @@ export class AppListenerManager {
                 );
             }
             case 'actionButton': {
+                switch (data.payload.context) {
+                    case 'messageBoxAction': {
+                        if (app.hasMethod('executeActionButtonMessageBoxHandler')) {
+                            return app.call(
+                                'executeActionButtonMessageBoxHandler',
+                                new UIKitActionButtonInteractionContext({
+                                    appId,
+                                    actionId,
+                                    triggerId,
+                                    buttonContext: data.payload.context,
+                                    room: ('room' in data && data.room) || undefined,
+                                    user,
+                                    ...('message' in data.payload && { message: data.payload.message }),
+                                }),
+                                this.am.getReader(appId),
+                                this.am.getHttp(appId),
+                                this.am.getPersistence(appId),
+                                this.am.getModifier(appId),
+                            );
+                        }
+                        break;
+                    }
+                    case 'messageAction': {
+                        if (app.hasMethod('executeActionButtonMessageHandler')) {
+                            return app.call(
+                                'executeActionButtonMessageHandler',
+                                new UIKitActionButtonInteractionContext({
+                                    appId,
+                                    actionId,
+                                    triggerId,
+                                    buttonContext: data.payload.context,
+                                    room: ('room' in data && data.room) || undefined,
+                                    user,
+                                    ...('message' in data && { message: data.message }),
+                                }),
+                                this.am.getReader(appId),
+                                this.am.getHttp(appId),
+                                this.am.getPersistence(appId),
+                                this.am.getModifier(appId),
+                            );
+                        }
+                        break;
+                    }
+                    case 'roomAction': {
+                        if (app.hasMethod('executeActionButtonRoomHandler')) {
+                            return app.call(
+                                'executeActionButtonRoomHandler',
+                                new UIKitActionButtonInteractionContext({
+                                    appId,
+                                    actionId,
+                                    triggerId,
+                                    buttonContext: data.payload.context,
+                                    room: ('room' in data && data.room) || undefined,
+                                    user,
+                                    ...('message' in data && { message: data.message }),
+                                }),
+                                this.am.getReader(appId),
+                                this.am.getHttp(appId),
+                                this.am.getPersistence(appId),
+                                this.am.getModifier(appId),
+                            );
+                        }
+                        break;
+                    }
+                    case 'userDropdownAction': {
+                        if (app.hasMethod('executeActionButtonUserDropdownHandler')) {
+                            return app.call(
+                                'executeActionButtonUserDropdownHandler',
+                                new UIKitActionButtonInteractionContext({
+                                    appId,
+                                    actionId,
+                                    triggerId,
+                                    buttonContext: data.payload.context,
+                                    room: ('room' in data && data.room) || undefined,
+                                    user,
+                                    ...('message' in data && { message: data.message }),
+                                }),
+                                this.am.getReader(appId),
+                                this.am.getHttp(appId),
+                                this.am.getPersistence(appId),
+                                this.am.getModifier(appId),
+                            );
+                        }
+                        break;
+                    }
+                    case 'roomSideBarAction': {
+                        if (app.hasMethod('executeActionButtonSidebarRoomHandler')) {
+                            return app.call(
+                                'executeActionButtonSidebarRoomHandler',
+                                new UIKitActionButtonInteractionContext({
+                                    appId,
+                                    actionId,
+                                    triggerId,
+                                    buttonContext: data.payload.context,
+                                    room: ('room' in data && data.room) || undefined,
+                                    user,
+                                    ...('message' in data && { message: data.message }),
+                                }),
+                                this.am.getReader(appId),
+                                this.am.getHttp(appId),
+                                this.am.getPersistence(appId),
+                                this.am.getModifier(appId),
+                            );
+                        }
+                        break;
+                    }
+                }
+
+                if (!appImplementsMethod('executeActionButtonHandler')) {
+                    return;
+                }
+
                 if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
                     return app.call(
                         'executeActionButtonHandler',

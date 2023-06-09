@@ -39,7 +39,7 @@ export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingIn
 
 /** @deprecated */
 export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    buttonContext: Exclude<`${UIActionButtonContext}`, 'messageBoxAction'>;
+    buttonContext: `${UIActionButtonContext}`;
     actionId: string;
     triggerId: string;
     room: IRoom;

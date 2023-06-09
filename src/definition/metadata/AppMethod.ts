@@ -74,6 +74,13 @@ export enum AppMethod {
     UIKIT_VIEW_SUBMIT = 'executeViewSubmitHandler',
     UIKIT_VIEW_CLOSE = 'executeViewClosedHandler',
     UIKIT_ACTION_BUTTON = 'executeActionButtonHandler',
+
+    UIKIT_ACTION_BUTTON_MESSAGE = 'executeActionButtonMessageHandler',
+    UIKIT_ACTION_BUTTON_MESSAGE_BOX = 'executeActionButtonMessageBoxHandler',
+    UIKIT_ACTION_BUTTON_ROOM = 'executeActionButtonRoomHandler',
+    UIKIT_ACTION_BUTTON_USER_DROPDOWN = 'executeActionButtonUserDropdownHandler',
+    UIKIT_ACTION_BUTTON_SIDEBAR_ROOM = 'executeActionButtonSidebarRoomHandler',
+
     UIKIT_LIVECHAT_BLOCK_ACTION = 'executeLivechatBlockActionHandler',
     // Livechat
     EXECUTE_POST_LIVECHAT_ROOM_STARTED = 'executePostLivechatRoomStarted',
