@@ -1,10 +1,8 @@
 import { IMessage } from '../messages';
 import { IRoom } from '../rooms';
 import { IUser } from '../users';
-import {
-    IUIKitIncomingInteractionMessageContainer,
-    IUIKitIncomingInteractionModalContainer,
-} from './UIKitIncomingInteractionContainer';
+import { IUIKitIncomingInteractionActionButton } from './IUIKitIncomingInteractionActionButton';
+import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from './UIKitIncomingInteractionContainer';
 
 export enum UIKitIncomingInteractionType {
     BLOCK = 'blockAction',
@@ -13,8 +11,10 @@ export enum UIKitIncomingInteractionType {
     ACTION_BUTTON = 'actionButton',
 }
 
+/** @deprecated use UIKitIncomingInteraction instead */
+
 export interface IUIKitIncomingInteraction {
-    type: UIKitIncomingInteractionType;
+    type: 'blockAction' | 'viewSubmit' | 'viewClosed';
     container: IUIKitIncomingInteractionModalContainer | IUIKitIncomingInteractionMessageContainer;
     user: IUser;
     appId: string;
@@ -24,3 +24,5 @@ export interface IUIKitIncomingInteraction {
     room?: IRoom;
     message?: IMessage;
 }
+
+export type UIKitIncomingInteraction = IUIKitIncomingInteraction | IUIKitIncomingInteractionActionButton;

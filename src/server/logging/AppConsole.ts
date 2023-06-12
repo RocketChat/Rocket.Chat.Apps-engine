@@ -17,11 +17,11 @@ export class AppConsole implements ILogger {
         };
     }
 
-    public method: AppMethod;
+    public method: `${AppMethod}`;
     private entries: Array<ILogEntry>;
     private start: Date;
 
-    constructor(method: AppMethod) {
+    constructor(method: `${AppMethod}`) {
         this.method = method;
         this.entries = new Array<ILogEntry>();
         this.start = new Date();
@@ -55,7 +55,7 @@ export class AppConsole implements ILogger {
         return Array.from(this.entries);
     }
 
-    public getMethod(): AppMethod {
+    public getMethod(): `${AppMethod}` {
         return this.method;
     }
 
