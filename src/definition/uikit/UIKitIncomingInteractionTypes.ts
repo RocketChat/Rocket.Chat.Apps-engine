@@ -37,23 +37,20 @@ export interface IUIKitViewCloseIncomingInteraction extends IUIKitBaseIncomingIn
     isCleared: boolean;
 }
 
-/** @deprecated */
 export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    buttonContext: Exclude<`${UIActionButtonContext}`, 'messageBoxAction'>;
+    buttonContext: UIActionButtonContext;
     actionId: string;
     triggerId: string;
     room: IRoom;
     message?: IMessage;
 }
 
-export interface IUIKitActionButtonMessageBoxIncomingInteraction extends IUIKitBaseIncomingInteraction {
-    buttonContext: `messageBoxAction`;
-    actionId: string;
-    triggerId: string;
-    room: IRoom;
-    message?: string;
-
+export interface IUIKitActionButtonMessageBoxIncomingInteraction extends IUIKitActionButtonIncomingInteraction {
+    buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION;
+    text?: string;
     threadId?: string;
 }
 
-export type UIKitActionButtonIncomingInteraction = IUIKitActionButtonIncomingInteraction | IUIKitActionButtonMessageBoxIncomingInteraction;
+export function isMessageBoxIncomingInteraction(interaction: IUIKitActionButtonIncomingInteraction): interaction is IUIKitActionButtonMessageBoxIncomingInteraction {
+    return interaction.buttonContext === UIActionButtonContext.MESSAGE_BOX_ACTION;
+}
