@@ -14,7 +14,8 @@ import {
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext, RoomType } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
-import { IUIKitIncomingInteraction, IUIKitResponse, IUIKitSurface, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { IUIKitResponse, IUIKitSurface, UIKitIncomingInteraction, UIKitIncomingInteractionType } from '../../definition/uikit';
+import { isUIKitIncomingInteractionActionButtonMessageBox } from '../../definition/uikit/IUIKitIncomingInteractionActionButton';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
 import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
@@ -145,7 +146,7 @@ interface IListenerExecutor {
         result: void;
     };
     [AppInterface.IUIKitInteractionHandler]: {
-        args: [IUIKitIncomingInteraction];
+        args: [UIKitIncomingInteraction];
         result: IUIKitResponse;
     };
     [AppInterface.IUIKitLivechatInteractionHandler]: {
@@ -389,7 +390,7 @@ export class AppListenerManager {
                 this.executePostExternalComponentClosed(data as IExternalComponent);
                 return;
             case AppInterface.IUIKitInteractionHandler:
-                return this.executeUIKitInteraction(data as IUIKitIncomingInteraction);
+                return this.executeUIKitInteraction(data as UIKitIncomingInteraction);
             case AppInterface.IUIKitLivechatInteractionHandler:
                 return this.executeUIKitLivechatInteraction(data as IUIKitLivechatIncomingInteraction);
             // Livechat
@@ -1026,7 +1027,7 @@ export class AppListenerManager {
         }
     }
 
-    private async executeUIKitInteraction(data: IUIKitIncomingInteraction): Promise<IUIKitResponse> {
+    private async executeUIKitInteraction(data: UIKitIncomingInteraction): Promise<IUIKitResponse> {
         const { appId, type } = data;
 
         const method = ((interactionType: string) => {
@@ -1048,73 +1049,107 @@ export class AppListenerManager {
             return;
         }
 
-        const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitIncomingInteraction) => {
-            const { actionId, message, user, room, triggerId, container } = interactionData;
+        const { actionId, user, triggerId } = data;
 
-            switch (interactionType) {
-                case UIKitIncomingInteractionType.BLOCK: {
-                    const { value, blockId } = interactionData.payload as { value: string; blockId: string };
-
-                    return new UIKitBlockInteractionContext({
+        switch (data.type) {
+            case UIKitIncomingInteractionType.BLOCK: {
+                const { value, blockId } = data.payload as { value: string; blockId: string };
+                return app.call(
+                    'executeBlockActionHandler',
+                    new UIKitBlockInteractionContext({
                         appId,
                         actionId,
                         blockId,
                         user,
-                        room,
+                        room: data.room,
                         triggerId,
                         value,
-                        message,
-                        container,
-                    });
-                }
-                case UIKitIncomingInteractionType.VIEW_SUBMIT: {
-                    const { view } = interactionData.payload as { view: IUIKitSurface };
+                        message: data.message,
+                        container: data.container,
+                    }),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+            case UIKitIncomingInteractionType.VIEW_SUBMIT: {
+                const { view } = data.payload as { view: IUIKitSurface };
 
-                    return new UIKitViewSubmitInteractionContext({
+                return app.call(
+                    'executeViewSubmitHandler',
+                    new UIKitViewSubmitInteractionContext({
                         appId,
                         actionId,
                         view,
-                        room,
+                        room: data.room,
                         triggerId,
                         user,
-                    });
-                }
-                case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                    const { view, isCleared } = interactionData.payload as { view: IUIKitSurface; isCleared: boolean };
+                    }),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+            case UIKitIncomingInteractionType.VIEW_CLOSED: {
+                const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
 
-                    return new UIKitViewCloseInteractionContext({
+                return app.call(
+                    'executeViewClosedHandler',
+                    new UIKitViewCloseInteractionContext({
                         appId,
                         actionId,
                         view,
-                        room,
+                        room: data.room,
                         isCleared,
                         user,
-                    });
+                    }),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
+            }
+            case 'actionButton': {
+                if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
+                    return app.call(
+                        'executeActionButtonHandler',
+                        new UIKitActionButtonInteractionContext({
+                            appId,
+                            actionId,
+                            buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
+                            room: data.room,
+                            triggerId,
+                            user,
+                            threadId: data.tmid,
+                            ...('message' in data.payload && { text: data.payload.message }),
+                        }),
+                        this.am.getReader(appId),
+                        this.am.getHttp(appId),
+                        this.am.getPersistence(appId),
+                        this.am.getModifier(appId),
+                    );
                 }
-                case UIKitIncomingInteractionType.ACTION_BUTTON: {
-                    const { context: buttonContext } = interactionData.payload as { context: UIActionButtonContext };
 
-                    return new UIKitActionButtonInteractionContext({
+                return app.call(
+                    'executeActionButtonHandler',
+                    new UIKitActionButtonInteractionContext({
                         appId,
                         actionId,
-                        buttonContext,
-                        room,
                         triggerId,
+                        buttonContext: data.payload.context as UIActionButtonContext,
+                        room: ('room' in data && data.room) || undefined,
                         user,
-                        message,
-                    });
-                }
+                        ...('message' in data && { message: data.message }),
+                    }),
+                    this.am.getReader(appId),
+                    this.am.getHttp(appId),
+                    this.am.getPersistence(appId),
+                    this.am.getModifier(appId),
+                );
             }
-        })(type, data);
-
-        return app.call(
-            method,
-            interactionContext,
-            this.am.getReader(appId),
-            this.am.getHttp(appId),
-            this.am.getPersistence(appId),
-            this.am.getModifier(appId),
-        );
+        }
     }
 
     private async executeUIKitLivechatInteraction(data: IUIKitLivechatIncomingInteraction): Promise<IUIKitResponse> {

@@ -7,7 +7,7 @@ import { ILogEntry } from './ILogEntry';
  * allow people to easily see what happened (users) or debug what went wrong.
  */
 export interface ILogger {
-    method: AppMethod;
+    method: `${AppMethod}`;
 
     debug(...items: Array<any>): void;
     info(...items: Array<any>): void;
@@ -19,7 +19,7 @@ export interface ILogger {
     /** Gets the entries logged. */
     getEntries(): Array<ILogEntry>;
     /** Gets the method which this logger is for. */
-    getMethod(): AppMethod;
+    getMethod(): `${AppMethod}`;
     /** Gets when this logger was constructed. */
     getStartTime(): Date;
     /** Gets the end time, usually Date.now(). */

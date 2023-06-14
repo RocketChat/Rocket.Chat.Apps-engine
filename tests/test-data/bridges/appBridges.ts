@@ -21,6 +21,7 @@ import {
 import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 import { IInternalFederationBridge } from '../../../src/server/bridges/IInternalFederationBridge';
 import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
+import { ThreadBridge } from '../../../src/server/bridges/ThreadBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
@@ -38,6 +39,7 @@ import { TestsPersisBridge } from './persisBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
+import { TestsThreadBridge } from './threadBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
 import { TestsUserBridge } from './userBridge';
@@ -66,6 +68,8 @@ export class TestsAppBridges extends AppBridges {
     private readonly oauthBridge: OAuthAppsBridge;
     private readonly internalFederationBridge: IInternalFederationBridge;
 
+    private readonly threadBridge: ThreadBridge;
+
     constructor() {
         super();
         this.appDetails = new TestsAppDetailChangesBridge();
@@ -89,6 +93,7 @@ export class TestsAppBridges extends AppBridges {
         this.videoConfBridge = new TestsVideoConferenceBridge();
         this.oauthBridge = new TestOAuthAppsBridge();
         this.internalFederationBridge = new TestsInternalFederationBridge();
+        this.threadBridge = new TestsThreadBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -133,6 +138,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getAppActivationBridge(): AppActivationBridge {
         return this.rlActBridge;
+    }
+
+    public getThreadBridge(): ThreadBridge {
+        return this.threadBridge;
     }
 
     public getRoomBridge(): RoomBridge {

@@ -6,6 +6,7 @@ import { INotifier } from './INotifier';
 import { IOAuthAppsReader } from './IOAuthAppsReader';
 import { IPersistenceRead } from './IPersistenceRead';
 import { IRoomRead } from './IRoomRead';
+import { IThreadRead } from './IThreadRead';
 import { IUploadRead } from './IUploadRead';
 import { IUserRead } from './IUserRead';
 import type { IVideoConferenceRead } from './IVideoConferenceRead';
@@ -18,6 +19,10 @@ import type { IVideoConferenceRead } from './IVideoConferenceRead';
 export interface IRead {
     /** Gets the IEnvironmentRead instance, contains settings and environmental variables. */
     getEnvironmentReader(): IEnvironmentRead;
+
+    /** Gets the IThreadRead instance */
+
+    getThreadReader(): IThreadRead;
 
     /** Gets the IMessageRead instance. */
     getMessageReader(): IMessageRead;

@@ -44,6 +44,7 @@ import {
     VideoConfProviderExtend,
 } from '../accessors';
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
+import { ThreadRead } from '../accessors/ThreadRead';
 import { UIExtend } from '../accessors/UIExtend';
 import { AppManager } from '../AppManager';
 import { AppBridges } from '../bridges/AppBridges';
@@ -92,7 +93,7 @@ export class AppAccessorManager {
             const rl = this.manager.getOneById(appId);
 
             if (!rl) {
-                throw new Error(`No App found by the provided id: ${ appId }`);
+                throw new Error(`No App found by the provided id: ${appId}`);
             }
 
             const htt = new HttpExtend();
@@ -115,7 +116,7 @@ export class AppAccessorManager {
             const rl = this.manager.getOneById(appId);
 
             if (!rl) {
-                throw new Error(`No App found by the provided id: ${ appId }`);
+                throw new Error(`No App found by the provided id: ${appId}`);
             }
 
             const sets = new SettingRead(rl);
@@ -133,7 +134,7 @@ export class AppAccessorManager {
             const rl = this.manager.getOneById(appId);
 
             if (!rl) {
-                throw new Error(`No App found by the provided id: ${ appId }`);
+                throw new Error(`No App found by the provided id: ${appId}`);
             }
 
             const sets = new SettingUpdater(rl, this.manager.getSettingsManager());
@@ -147,11 +148,14 @@ export class AppAccessorManager {
 
     public getConfigurationModify(appId: string): IConfigurationModify {
         if (!this.configModifiers.has(appId)) {
-            this.configModifiers.set(appId, new ConfigurationModify(
-                new ServerSettingsModify(this.bridges.getServerSettingBridge(), appId),
-                new SlashCommandsModify(this.manager.getCommandManager(), appId),
-                new SchedulerModify(this.bridges.getSchedulerBridge(), appId),
-            ));
+            this.configModifiers.set(
+                appId,
+                new ConfigurationModify(
+                    new ServerSettingsModify(this.bridges.getServerSettingBridge(), appId),
+                    new SlashCommandsModify(this.manager.getCommandManager(), appId),
+                    new SchedulerModify(this.bridges.getSchedulerBridge(), appId),
+                ),
+            );
         }
 
         return this.configModifiers.get(appId);
@@ -171,19 +175,9 @@ export class AppAccessorManager {
             const videoConf = new VideoConferenceRead(this.bridges.getVideoConferenceBridge(), appId);
             const oauthApps = new OAuthAppsReader(this.bridges.getOAuthAppsBridge(), appId);
 
-            this.readers.set(appId, new Reader(
-                env,
-                msg,
-                persist,
-                room,
-                user,
-                noti,
-                livechat,
-                upload,
-                cloud,
-                videoConf,
-                oauthApps,
-            ));
+            const thread = new ThreadRead(this.bridges.getThreadBridge(), appId);
+
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf, oauthApps, thread));
         }
 
         return this.readers.get(appId);

@@ -44,3 +44,13 @@ export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomin
     room: IRoom;
     message?: IMessage;
 }
+
+export interface IUIKitActionButtonMessageBoxIncomingInteraction extends IUIKitActionButtonIncomingInteraction {
+    buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION;
+    text?: string;
+    threadId?: string;
+}
+
+export function isMessageBoxIncomingInteraction(interaction: IUIKitActionButtonIncomingInteraction): interaction is IUIKitActionButtonMessageBoxIncomingInteraction {
+    return interaction.buttonContext === UIActionButtonContext.MESSAGE_BOX_ACTION;
+}

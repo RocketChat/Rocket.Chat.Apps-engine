@@ -54,7 +54,7 @@ export class ProxiedApp implements IApp {
         return typeof (this.app as any)[method] === 'function';
     }
 
-    public setupLogger(method: AppMethod): AppConsole {
+    public setupLogger(method: `${AppMethod}`): AppConsole {
         const logger = new AppConsole(method);
         // Set the logger to our new one
         (this.app as any).logger = logger;
@@ -62,7 +62,7 @@ export class ProxiedApp implements IApp {
         return logger;
     }
 
-    public async call(method: AppMethod, ...args: Array<any>): Promise<any> {
+    public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
             throw new Error(`The App ${this.app.getName()} (${this.app.getID()}` + ` does not have the method: "${method}"`);
         }
