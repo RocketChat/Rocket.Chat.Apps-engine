@@ -13,6 +13,7 @@ import {
 } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
 import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext, RoomType } from '../../definition/rooms';
+import { UIActionButtonContext } from '../../definition/ui';
 import { IUIKitResponse, IUIKitSurface, UIKitIncomingInteraction, UIKitIncomingInteractionType } from '../../definition/uikit';
 import { isUIKitIncomingInteractionActionButtonMessageBox } from '../../definition/uikit/IUIKitIncomingInteractionActionButton';
 import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
@@ -1117,12 +1118,12 @@ export class AppListenerManager {
                         new UIKitActionButtonInteractionContext({
                             appId,
                             actionId,
-                            buttonContext: 'messageBoxAction',
+                            buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
                             room: data.room,
                             triggerId,
                             user,
                             threadId: data.tmid,
-                            ...('message' in data.payload && { message: data.payload.message }),
+                            ...('message' in data.payload && { text: data.payload.message }),
                         }),
                         this.am.getReader(appId),
                         this.am.getHttp(appId),
@@ -1137,7 +1138,7 @@ export class AppListenerManager {
                         appId,
                         actionId,
                         triggerId,
-                        buttonContext: data.payload.context,
+                        buttonContext: data.payload.context as UIActionButtonContext,
                         room: ('room' in data && data.room) || undefined,
                         user,
                         ...('message' in data && { message: data.message }),
