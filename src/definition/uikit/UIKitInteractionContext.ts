@@ -13,9 +13,9 @@ export abstract class UIKitInteractionContext {
     private baseContext: IUIKitBaseIncomingInteraction;
     private responder: UIKitInteractionResponder;
     constructor(baseContext: IUIKitBaseIncomingInteraction) {
-        const { appId, actionId, room, user, triggerId } = baseContext;
+        const { appId, actionId, room, user, triggerId, threadId } = baseContext;
 
-        this.baseContext = { appId, actionId, room, user, triggerId };
+        this.baseContext = { appId, actionId, room, user, triggerId, threadId };
 
         this.responder = new UIKitInteractionResponder(this.baseContext);
     }
