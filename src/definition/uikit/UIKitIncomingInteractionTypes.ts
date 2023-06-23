@@ -15,6 +15,7 @@ export interface IUIKitBaseIncomingInteraction {
     actionId?: string;
     room?: IRoom;
     triggerId?: string;
+    threadId?: string;
 }
 
 export interface IUIKitBlockIncomingInteraction extends IUIKitBaseIncomingInteraction {
