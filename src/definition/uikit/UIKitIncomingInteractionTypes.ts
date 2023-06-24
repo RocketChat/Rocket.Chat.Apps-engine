@@ -44,6 +44,7 @@ export interface IUIKitActionButtonIncomingInteraction extends IUIKitBaseIncomin
     triggerId: string;
     room: IRoom;
     message?: IMessage;
+    threadId?: string;
 }
 
 export interface IUIKitActionButtonMessageBoxIncomingInteraction extends IUIKitActionButtonIncomingInteraction {
