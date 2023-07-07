@@ -29,7 +29,7 @@ type OmnichannelSource =
     | IOmnichannelSourceApp;
 
 export interface ILivechatRoom extends IRoom {
-    visitor: IVisitor;
+    visitor: IVisitor & { lastMessageTs?: Date };
     department?: IDepartment;
     servedBy?: IUser;
     responseBy?: IUser;
