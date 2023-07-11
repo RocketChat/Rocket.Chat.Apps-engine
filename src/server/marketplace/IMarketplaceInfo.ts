@@ -20,4 +20,5 @@ export interface IMarketplaceInfo extends IAppInfo {
     purchaseType: MarketplacePurchaseType;
     pricingPlans?: Array<IMarketplacePricingPlan>;
     bundledIn?: Array<IMarketplaceSimpleBundleInfo>;
+    isEnterpriseOnly?: boolean;
 }
