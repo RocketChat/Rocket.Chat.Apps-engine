@@ -30,11 +30,12 @@ type OmnichannelSource =
 
 export interface IVisitorChannelInfo {
     lastMessageTs?: Date;
-    channelPhone?: string;
+    phone?: string;
 }
 
 export interface ILivechatRoom extends IRoom {
-    visitor: IVisitor & IVisitorChannelInfo;
+    visitor: IVisitor;
+    visitorChannelInfo?: IVisitorChannelInfo;
     department?: IDepartment;
     servedBy?: IUser;
     responseBy?: IUser;
