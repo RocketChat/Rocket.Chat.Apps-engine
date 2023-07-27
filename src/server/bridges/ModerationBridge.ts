@@ -24,9 +24,23 @@ export abstract class ModerationBridge extends BaseBridge {
         }
     }
 
+    public async doAddRepRoles(appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.addRepRoles(appId);
+        }
+    }
+
+    public async doAddRepRolePermissions(appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.addRepRolePermissions(appId);
+        }
+    }
+
     protected abstract report(messageId: string, description: string, userId: string, appId: string): Promise<void>;
     protected abstract dismissReportsByMessageId(messageId: string, reason: string, action: string, appId: string): Promise<void>;
     protected abstract dismissReportsByUserId(userId: string, reason: string, action: string, appId: string): Promise<void>;
+    protected abstract addRepRoles(appId: string): Promise<void>;
+    protected abstract addRepRolePermissions(appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.moderation.write)) {

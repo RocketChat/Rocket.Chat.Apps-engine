@@ -17,4 +17,12 @@ export class ModerationModify implements IModerationModify {
     public dismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void> {
         return this.moderationBridge.doDismissReportsByUserId(userId, reason, action, appId);
     }
+
+    public addRepRoles(appId: string): Promise<void> {
+        return this.moderationBridge.doAddRepRoles(appId);
+    }
+
+    public addRepRolePermissions(appId: string): Promise<void> {
+        return this.moderationBridge.doAddRepRolePermissions(appId);
+    }
 }
