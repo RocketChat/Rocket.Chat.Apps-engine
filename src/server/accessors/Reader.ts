@@ -12,6 +12,7 @@ import {
     IVideoConferenceRead,
 } from '../../definition/accessors';
 import { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
+import { IRoleRead } from '../../definition/accessors/IRoleRead';
 import { IThreadRead } from '../../definition/accessors/IThreadRead';
 
 export class Reader implements IRead {
@@ -29,6 +30,7 @@ export class Reader implements IRead {
 
         private oauthApps: IOAuthAppsReader,
         private thread: IThreadRead,
+        private role: IRoleRead,
     ) {}
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
@@ -76,5 +78,9 @@ export class Reader implements IRead {
 
     public getOAuthAppsReader(): IOAuthAppsReader {
         return this.oauthApps;
+    }
+
+    public getRoleReader(): IRoleRead {
+        return this.role;
     }
 }
