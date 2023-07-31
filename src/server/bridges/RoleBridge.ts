@@ -11,7 +11,7 @@ export abstract class RoleBridge extends BaseBridge {
         }
     }
 
-    public abstract getOneByIdOrName(idOrName: IRole['_id'] | IRole['name'], appId: string): Promise<IRole | null>;
+    protected abstract getOneByIdOrName(idOrName: IRole['_id'] | IRole['name'], appId: string): Promise<IRole | null>;
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.role.read)) {

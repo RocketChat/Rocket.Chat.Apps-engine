@@ -27,6 +27,7 @@ import {
     Persistence,
     PersistenceRead,
     Reader,
+    RoleRead,
     RoomRead,
     SchedulerExtend,
     SchedulerModify,
@@ -44,7 +45,6 @@ import {
     VideoConfProviderExtend,
 } from '../accessors';
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
-import { RoleRead } from '../accessors/RoleRead';
 import { ThreadRead } from '../accessors/ThreadRead';
 import { UIExtend } from '../accessors/UIExtend';
 import { AppManager } from '../AppManager';
