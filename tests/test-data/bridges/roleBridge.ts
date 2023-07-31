@@ -5,4 +5,8 @@ export class TestsRoleBridge extends RoleBridge {
     public getOneByIdOrName(idOrName: IRole['_id'] | IRole['name'], appId: string): Promise<IRole | null> {
         throw new Error('Method not implemented.');
     }
+
+    public getCustomRoles(appId: string): Promise<Array<IRole>> {
+        throw new Error('Method not implemented.');
+    }
 }
