@@ -5,7 +5,7 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class RoleBridge extends BaseBridge {
-    public async doGetOneByIdOrName(idOrName: IRole['_id'] | IRole['name'], appId: string): Promise<IRole | null> {
+    public async doGetOneByIdOrName(idOrName: IRole['id'] | IRole['name'], appId: string): Promise<IRole | null> {
         if (this.hasReadPermission(appId)) {
             return this.getOneByIdOrName(idOrName, appId);
         }
@@ -17,7 +17,7 @@ export abstract class RoleBridge extends BaseBridge {
         }
     }
 
-    protected abstract getOneByIdOrName(idOrName: IRole['_id'] | IRole['name'], appId: string): Promise<IRole | null>;
+    protected abstract getOneByIdOrName(idOrName: IRole['id'] | IRole['name'], appId: string): Promise<IRole | null>;
     protected abstract getCustomRoles(appId: string): Promise<Array<IRole>>;
 
     private hasReadPermission(appId: string): boolean {

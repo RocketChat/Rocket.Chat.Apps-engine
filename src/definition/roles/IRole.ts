@@ -4,5 +4,5 @@ export interface IRole {
     name: string;
     protected: boolean;
     scope: 'Users' | 'Subscriptions';
-    _id: string;
+    id: string;
 }
