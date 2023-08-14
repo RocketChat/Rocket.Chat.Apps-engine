@@ -109,6 +109,12 @@ export const AppPermissions = {
     },
 };
 
+/**
+ * @description
+ * Default permissions for apps
+ * Used to ensure backward compatibility with apps
+ * that were developed before the permission system was introduced.
+ */
 export const defaultPermissions: Array<IPermission> = [
     AppPermissions.user.read,
     AppPermissions.user.write,
@@ -140,8 +146,4 @@ export const defaultPermissions: Array<IPermission> = [
     AppPermissions.videoConference.read,
     AppPermissions.videoConference.write,
     AppPermissions.apis.default,
-    AppPermissions.moderation.read,
-    AppPermissions.moderation.write,
-    AppPermissions.role.read,
-    AppPermissions.role.write,
 ];
