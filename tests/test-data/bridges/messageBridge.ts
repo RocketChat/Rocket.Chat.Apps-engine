@@ -2,7 +2,7 @@ import { IMessage } from '../../../src/definition/messages';
 import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 import { MessageBridge } from '../../../src/server/bridges';
-import { ITypingDescriptor } from '../../../src/server/bridges/MessageBridge';
+import { TypingDescriptor } from '../../../src/server/bridges/MessageBridge';
 
 export class TestsMessageBridge extends MessageBridge {
     public create(message: IMessage, appId: string): Promise<string> {
@@ -29,7 +29,7 @@ export class TestsMessageBridge extends MessageBridge {
         throw new Error('Method not implemented.');
     }
 
-    public typing(options: ITypingDescriptor): Promise<void> {
+    public typing(options: TypingDescriptor): Promise<void> {
         throw new Error('Method not implemented.');
     }
 }

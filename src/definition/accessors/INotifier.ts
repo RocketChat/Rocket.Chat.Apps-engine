@@ -3,16 +3,12 @@ import { IRoom } from '../rooms';
 import { IUser } from '../users';
 import { IMessageBuilder } from './IMessageBuilder';
 
-export enum TypingScope {
-    Room = 'room',
-}
-
-export interface ITypingOptions {
+export interface ITypingRoomOptions {
     /**
      * The typing scope where the typing message should be presented,
      * TypingScope.Room by default.
      */
-    scope?: TypingScope;
+    scope?: 'room';
     /**
      * The id of the typing scope
      *
@@ -27,6 +23,38 @@ export interface ITypingOptions {
      */
     username?: string;
 }
+
+export interface ITypingThreadOptions {
+    /**
+     * The typing scope where the typing message should be presented,
+     * TypingScope.Room by default.
+     */
+    scope: 'thread';
+    /**
+     * The id of the typing scope
+     *
+     * TypingScope.Room <-> room.id
+     */
+    roomId: string;
+
+    /**
+     * The id of the thread
+     *
+     * TypingScope.Thread <-> thread.id
+     *
+     */
+
+    threadId: string;
+    /**
+     * The name of the user who is typing the message
+     *
+     * **Note**: If not provided, it will use app assigned
+     * user's name by default.
+     */
+    username?: string;
+}
+
+export type TypingThreadOptions = ITypingThreadOptions | ITypingRoomOptions;
 
 export interface INotifier {
     /**
@@ -56,7 +84,7 @@ export interface INotifier {
      *
      * @returns a cancellation function to stop typing
      */
-    typing(options: ITypingOptions): Promise<() => Promise<void>>;
+    typing(options: ITypingRoomOptions): Promise<() => Promise<void>>;
 
     /** Gets a new message builder for building a notification message. */
     getMessageBuilder(): IMessageBuilder;
