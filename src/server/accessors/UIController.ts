@@ -1,7 +1,8 @@
 import { IUIController } from '../../definition/accessors';
 import { IUIKitErrorInteractionParam, IUIKitInteractionParam, IUIKitSurfaceViewParam } from '../../definition/accessors/IUIController';
+import { IToastMessagePayload } from '../../definition/ui/IToastMessagePaylaod';
 import { UIKitInteractionType, UIKitSurfaceType } from '../../definition/uikit';
-import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
+import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction, formatToastMessageInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
 import { IUser } from '../../definition/users';
 import { AppBridges, UiInteractionBridge } from '../bridges';
@@ -66,6 +67,16 @@ export class UIController implements IUIController {
             case UIKitSurfaceType.MODAL:
                 return this.openModal(viewWithIds, context, user, true);
         }
+    }
+
+    public dispatchToastMessage(toast: IToastMessagePayload, context: IUIKitInteractionParam, user: IUser) {
+        const interactionContext = {
+            ...context,
+            type: UIKitInteractionType.TOAST_MESSAGE,
+            appId: this.appId,
+        };
+
+        return this.uiInteractionBridge.doNotifyUser(user, formatToastMessageInteraction(toast, interactionContext), this.appId);
     }
 
     public setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser) {
