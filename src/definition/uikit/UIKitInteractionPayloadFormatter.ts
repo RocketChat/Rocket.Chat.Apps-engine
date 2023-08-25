@@ -67,7 +67,7 @@ export function formatErrorInteraction(errorInteraction: IUIKitErrorInteractionP
 }
 
 export function formatToastMessageInteraction(toast: IToastMessagePayload, context: IUIKitInteraction): IUIKitToastMessageInteraction {
-    if (UIKitInteractionType.ERRORS !== context.type) {
+    if (UIKitInteractionType.TOAST_MESSAGE !== context.type) {
         throw new Error(`Invalid type "${ context.type }" for error interaction`);
     }
 
