@@ -13,7 +13,6 @@ import { MessageBridge } from './MessageBridge';
 import { ModerationBridge } from './ModerationBridge';
 import { OAuthAppsBridge } from './OAuthAppsBridge';
 import { PersistenceBridge } from './PersistenceBridge';
-import { RoleBridge } from './RoleBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ServerSettingBridge } from './ServerSettingBridge';
@@ -43,8 +42,7 @@ export type Bridge =
     | SchedulerBridge
     | VideoConferenceBridge
     | OAuthAppsBridge
-    | ModerationBridge
-    | RoleBridge;
+    | ModerationBridge;
 
 export abstract class AppBridges {
     public abstract getCommandBridge(): CommandBridge;
@@ -71,6 +69,4 @@ export abstract class AppBridges {
     public abstract getModerationBridge(): ModerationBridge;
 
     public abstract getThreadBridge(): ThreadBridge;
-
-    public abstract getRoleBridge(): RoleBridge;
 }

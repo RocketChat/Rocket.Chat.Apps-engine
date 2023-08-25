@@ -27,7 +27,6 @@ import {
     Persistence,
     PersistenceRead,
     Reader,
-    RoleRead,
     RoomRead,
     SchedulerExtend,
     SchedulerModify,
@@ -178,9 +177,7 @@ export class AppAccessorManager {
 
             const thread = new ThreadRead(this.bridges.getThreadBridge(), appId);
 
-            const role = new RoleRead(this.bridges.getRoleBridge(), appId);
-
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf, oauthApps, thread, role));
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf, oauthApps, thread));
         }
 
         return this.readers.get(appId);

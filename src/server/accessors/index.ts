@@ -23,7 +23,6 @@ import { OAuthAppsReader } from './OAuthAppsReader';
 import { Persistence } from './Persistence';
 import { PersistenceRead } from './PersistenceRead';
 import { Reader } from './Reader';
-import { RoleRead } from './RoleRead';
 import { RoomBuilder } from './RoomBuilder';
 import { RoomExtender } from './RoomExtender';
 import { RoomRead } from './RoomRead';
@@ -69,7 +68,6 @@ export {
     Persistence,
     PersistenceRead,
     Reader,
-    RoleRead,
     RoomBuilder,
     RoomExtender,
     RoomRead,

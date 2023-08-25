@@ -10,7 +10,6 @@ import {
     MessageBridge,
     ModerationBridge,
     PersistenceBridge,
-    RoleBridge,
     RoomBridge,
     SchedulerBridge,
     ServerSettingBridge,
@@ -37,7 +36,6 @@ import { TestsMessageBridge } from './messageBridge';
 import { TestsModerationBridge } from './moderationBridge';
 import { TestOAuthAppsBridge } from './OAuthAppsBridge';
 import { TestsPersisBridge } from './persisBridge';
-import { TestsRoleBridge } from './roleBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
@@ -57,7 +55,6 @@ export class TestsAppBridges extends AppBridges {
     private readonly msgBridge: TestsMessageBridge;
     private readonly moderationBridge: TestsModerationBridge;
     private readonly persisBridge: TestsPersisBridge;
-    private readonly roleBridge: TestsRoleBridge;
     private readonly roomBridge: TestsRoomBridge;
     private readonly internalBridge: TestsInternalBridge;
     private readonly userBridge: TestsUserBridge;
@@ -84,7 +81,6 @@ export class TestsAppBridges extends AppBridges {
         this.msgBridge = new TestsMessageBridge();
         this.moderationBridge = new TestsModerationBridge();
         this.persisBridge = new TestsPersisBridge();
-        this.roleBridge = new TestsRoleBridge();
         this.roomBridge = new TestsRoomBridge();
         this.internalBridge = new TestsInternalBridge();
         this.userBridge = new TestsUserBridge();
@@ -146,9 +142,6 @@ export class TestsAppBridges extends AppBridges {
 
     public getThreadBridge(): ThreadBridge {
         return this.threadBridge;
-    }
-    public getRoleBridge(): RoleBridge {
-        return this.roleBridge;
     }
 
     public getRoomBridge(): RoomBridge {

@@ -29,7 +29,6 @@ export * from './INotifier';
 export * from './IPersistence';
 export * from './IPersistenceRead';
 export * from './IRead';
-export * from './IRoleRead';
 export * from './IRoomBuilder';
 export * from './IRoomExtender';
 export * from './IRoomRead';
