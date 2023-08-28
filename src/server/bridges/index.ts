@@ -13,6 +13,7 @@ import { LivechatBridge } from './LivechatBridge';
 import { MessageBridge } from './MessageBridge';
 import { ModerationBridge } from './ModerationBridge';
 import { PersistenceBridge } from './PersistenceBridge';
+import { RoleBridge } from './RoleBridge';
 import { RoomBridge } from './RoomBridge';
 import { SchedulerBridge } from './SchedulerBridge';
 import { ServerSettingBridge } from './ServerSettingBridge';
@@ -45,4 +46,5 @@ export {
     VideoConferenceBridge,
     IInternalFederationBridge,
     ModerationBridge,
+    RoleBridge,
 };

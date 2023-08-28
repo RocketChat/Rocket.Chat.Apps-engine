@@ -5,6 +5,7 @@ import { IMessageRead } from './IMessageRead';
 import { INotifier } from './INotifier';
 import { IOAuthAppsReader } from './IOAuthAppsReader';
 import { IPersistenceRead } from './IPersistenceRead';
+import { IRoleRead } from './IRoleRead';
 import { IRoomRead } from './IRoomRead';
 import { IThreadRead } from './IThreadRead';
 import { IUploadRead } from './IUploadRead';
@@ -46,4 +47,6 @@ export interface IRead {
     getVideoConferenceReader(): IVideoConferenceRead;
 
     getOAuthAppsReader(): IOAuthAppsReader;
+
+    getRoleReader(): IRoleRead;
 }

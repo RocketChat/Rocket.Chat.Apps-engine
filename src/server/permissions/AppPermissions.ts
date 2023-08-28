@@ -37,9 +37,17 @@ export const AppPermissions = {
         read: { name: 'room.read' },
         write: { name: 'room.write' },
     },
+    'role': {
+        read: { name: 'role.read' },
+        write: { name: 'role.write' },
+    },
     'message': {
         read: { name: 'message.read' },
         write: { name: 'message.write' },
+    },
+    'moderation': {
+        read: { name: 'moderation.read' },
+        write: { name: 'moderation.write' },
     },
     'threads': {
         read: { name: 'threads.read' },
@@ -98,10 +106,6 @@ export const AppPermissions = {
     'oauth-app': {
         read: { name: 'oauth-app.read' },
         write: { name: 'oauth-app.write' },
-    },
-    'moderation': {
-        read: { name: 'moderation.read' },
-        write: { name: 'moderation.write' },
     },
 };
 

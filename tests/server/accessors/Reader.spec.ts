@@ -6,6 +6,7 @@ import {
     IMessageRead,
     INotifier,
     IPersistenceRead,
+    IRoleRead,
     IRoomRead,
     IUploadRead,
     IUserRead,
@@ -29,6 +30,7 @@ export class ReaderAccessorTestFixture {
     private oauthApps: IOAuthAppsReader;
 
     private thread: IThreadRead;
+    private role: IRoleRead;
 
     @SetupFixture
     public setupFixture() {
@@ -44,6 +46,7 @@ export class ReaderAccessorTestFixture {
         this.videoConf = {} as IVideoConferenceRead;
         this.oauthApps = {} as IOAuthAppsReader;
         this.thread = {} as IThreadRead;
+        this.role = {} as IRoleRead;
     }
 
     @Test()
@@ -63,6 +66,7 @@ export class ReaderAccessorTestFixture {
                     this.videoConf,
                     this.oauthApps,
                     this.thread,
+                    this.role,
                 ),
         ).not.toThrow();
 
@@ -79,6 +83,7 @@ export class ReaderAccessorTestFixture {
             this.videoConf,
             this.oauthApps,
             this.thread,
+            this.role,
         );
 
         Expect(rd.getEnvironmentReader()).toBeDefined();
@@ -90,5 +95,6 @@ export class ReaderAccessorTestFixture {
         Expect(rd.getLivechatReader()).toBeDefined();
         Expect(rd.getUploadReader()).toBeDefined();
         Expect(rd.getVideoConferenceReader()).toBeDefined();
+        Expect(rd.getRoleReader()).toBeDefined();
     }
 }
