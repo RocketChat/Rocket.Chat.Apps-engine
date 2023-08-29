@@ -232,11 +232,6 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@rocket.chat/icons@^0.31.25":
-  version "0.31.25"
-  resolved "https://registry.yarnpkg.com/@rocket.chat/icons/-/icons-0.31.25.tgz#62866e9640c28e707a13b6dcc3e6dc0607bccca7"
-  integrity sha512-UAwhOfiESGTWnnhawZjfteg3LflvpVHfOx5GVfSp1p/+yIOlpLiOuE10dloJnb3TK5QZXdaI4Jruh6TIAbqH8Q==
-
 "@rocket.chat/ui-kit@^0.31.22":
   version "0.31.23"
   resolved "https://registry.yarnpkg.com/@rocket.chat/ui-kit/-/ui-kit-0.31.23.tgz#76126b11f7eb3490f19a97b613447e3d267724a6"

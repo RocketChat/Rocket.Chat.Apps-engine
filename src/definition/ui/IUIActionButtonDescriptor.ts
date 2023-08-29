@@ -1,4 +1,3 @@
-import type { Keys as IconName } from '@rocket.chat/icons';
 import { UIActionButtonContext } from './UIActionButtonContext';
 
 export enum RoomTypeFilter {
@@ -32,7 +31,6 @@ export interface IUActionButtonWhen {
 export interface IUIActionButtonDescriptor {
     actionId: string;
     context: UIActionButtonContext;
-    icon?: IconName;
     labelI18n: string;
     variant?: 'danger';
     when?: IUActionButtonWhen;
