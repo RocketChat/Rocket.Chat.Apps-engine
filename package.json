@@ -15,7 +15,7 @@
         "go-publish-beta": "gulp publish-beta",
         "go-publish-alpha": "gulp publish-alpha",
         "unit-tests": "NODE_ENV=test ts-node ./tests/runner.ts",
-        "gen-doc": "typedoc --excludePrivate --name 'Rocket.Chat Apps TypeScript Definition' --out docs/ src/definition/"
+        "gen-doc": "typedoc"
     },
     "repository": {
         "type": "git",
@@ -82,8 +82,8 @@
         "tap-bark": "^1.0.0",
         "ts-node": "^6.2.0",
         "tslint": "^5.20.1",
-        "typedoc": "0.20.11",
-        "typescript": "~4.9.5",
+        "typedoc": "~0.24.8",
+        "typescript": "~5.1.6",
         "uglify-es": "^3.3.9"
     },
     "dependencies": {
