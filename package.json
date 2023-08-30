@@ -118,5 +118,8 @@
         "lint",
         "compile",
         "unit-tests"
-    ]
+    ],
+    "volta": {
+        "node": "14.21.3"
+    }
 }
