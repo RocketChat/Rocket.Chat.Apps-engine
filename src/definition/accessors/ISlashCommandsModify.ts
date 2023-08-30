@@ -1,4 +1,4 @@
-import { ISlashCommand } from '../slashcommands';
+import type { ISlashCommand } from '../slashcommands';
 
 /**
  * This accessor provides methods for modifying existing Rocket.Chat slash commands.

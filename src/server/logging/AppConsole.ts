@@ -1,8 +1,9 @@
 import * as stackTrace from 'stack-trace';
 
-import { ILogEntry, ILogger, LogMessageSeverity } from '../../definition/accessors';
-import { AppMethod } from '../../definition/metadata';
-import { ILoggerStorageEntry } from './ILoggerStorageEntry';
+import type { ILogEntry, ILogger } from '../../definition/accessors';
+import { LogMessageSeverity } from '../../definition/accessors';
+import type { AppMethod } from '../../definition/metadata';
+import type { ILoggerStorageEntry } from './ILoggerStorageEntry';
 
 export class AppConsole implements ILogger {
     public static toStorageEntry(appId: string, logger: AppConsole): ILoggerStorageEntry {
@@ -18,12 +19,14 @@ export class AppConsole implements ILogger {
     }
 
     public method: `${AppMethod}`;
+
     private entries: Array<ILogEntry>;
+
     private start: Date;
 
     constructor(method: `${AppMethod}`) {
         this.method = method;
-        this.entries = new Array<ILogEntry>();
+        this.entries = [];
         this.start = new Date();
     }
 
@@ -75,12 +78,12 @@ export class AppConsole implements ILogger {
         const i = items.map((v) => {
             if (v instanceof Error) {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
-            } else if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
-                return JSON.stringify(v, Object.getOwnPropertyNames(v));
-            } else {
-                const str = JSON.stringify(v, null, 2);
-                return str ? JSON.parse(str) : str; // force call toJSON to prevent circular references
             }
+            if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
+                return JSON.stringify(v, Object.getOwnPropertyNames(v));
+            }
+            const str = JSON.stringify(v, null, 2);
+            return str ? JSON.parse(str) : str; // force call toJSON to prevent circular references
         });
 
         this.entries.push({
@@ -95,7 +98,7 @@ export class AppConsole implements ILogger {
     }
 
     private getFunc(stack: Array<stackTrace.StackFrame>): string {
-        let func: string = 'anonymous';
+        let func = 'anonymous';
 
         if (stack.length === 1) {
             return func;

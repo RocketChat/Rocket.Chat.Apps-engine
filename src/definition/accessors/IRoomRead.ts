@@ -1,6 +1,6 @@
-import { IMessage } from '../messages/index';
-import { IRoom } from '../rooms/index';
-import { IUser } from '../users/index';
+import type { IMessage } from '../messages/index';
+import type { IRoom } from '../rooms/index';
+import type { IUser } from '../users/index';
 
 /**
  * This accessor provides methods for accessing

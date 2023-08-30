@@ -1,4 +1,4 @@
-import { UIActionButtonContext } from './UIActionButtonContext';
+import type { UIActionButtonContext } from './UIActionButtonContext';
 
 export enum RoomTypeFilter {
     PUBLIC_CHANNEL = 'public_channel',

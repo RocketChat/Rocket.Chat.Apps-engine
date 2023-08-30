@@ -1,13 +1,15 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { IUser } from '../../../src/definition/users';
 
+import type { IUser } from '../../../src/definition/users';
 import { UserRead } from '../../../src/server/accessors';
-import { UserBridge } from '../../../src/server/bridges';
+import type { UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class UserReadAccessorTestFixture {
     private user: IUser;
+
     private mockUserBridge: UserBridge;
+
     private mockAppId: 'test-appId';
 
     @SetupFixture

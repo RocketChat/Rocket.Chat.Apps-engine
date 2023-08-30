@@ -1,23 +1,33 @@
-// tslint:disable:max-line-length
-
 import { AsyncTest, Expect, SetupFixture, SpyOn, Test } from 'alsatian';
+
 import { AppMethod } from '../../../src/definition/metadata';
 import { TestData } from '../../test-data/utilities';
-
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSettingsManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppMetadataStorage, IAppStorageItem } from '../../../src/server/storage';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
+import type {
+    AppApiManager,
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../../src/server/managers';
+import { AppAccessorManager, AppSettingsManager } from '../../../src/server/managers';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppMetadataStorage, IAppStorageItem } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class AppSettingsManagerTestFixture {
     private mockStorageItem: IAppStorageItem;
+
     private mockApp: ProxiedApp;
+
     private mockBridges: AppBridges;
+
     private mockAccessors: AppAccessorManager;
+
     private mockStorage: AppMetadataStorage;
+
     private mockManager: AppManager;
 
     @SetupFixture
@@ -36,9 +46,7 @@ export class AppSettingsManagerTestFixture {
             getStorageItem() {
                 return si;
             },
-            setStorageItem(item: IAppStorageItem) {
-                return;
-            },
+            setStorageItem(item: IAppStorageItem) {},
             call(method: AppMethod, ...args: Array<any>): Promise<any> {
                 return Promise.resolve();
             },
@@ -100,13 +108,17 @@ export class AppSettingsManagerTestFixture {
         Expect(asm.getAppSettings('testing')).not.toBe(this.mockStorageItem.settings);
         Expect(asm.getAppSettings('testing')).toEqual(this.mockStorageItem.settings);
         Expect(() => asm.getAppSettings('fake')).toThrowError(Error, 'No App found by the provided id.');
-        Expect(() => asm.getAppSettings('testing').testing.value = 'testing').toThrow();
+        Expect(() => {
+            asm.getAppSettings('testing').testing.value = 'testing';
+        }).toThrow();
 
         Expect(asm.getAppSetting('testing', 'testing')).not.toBe(this.mockStorageItem.settings.testing);
         Expect(asm.getAppSetting('testing', 'testing')).toEqual(this.mockStorageItem.settings.testing);
         Expect(() => asm.getAppSetting('fake', 'testing')).toThrowError(Error, 'No App found by the provided id.');
         Expect(() => asm.getAppSetting('testing', 'fake')).toThrowError(Error, 'No setting found for the App by the provided id.');
-        Expect(() => asm.getAppSetting('testing', 'testing').value = 'testing').toThrow();
+        Expect(() => {
+            asm.getAppSetting('testing', 'testing').value = 'testing';
+        }).toThrow();
     }
 
     @AsyncTest()
@@ -121,11 +133,14 @@ export class AppSettingsManagerTestFixture {
         SpyOn(this.mockAccessors, 'getReader');
         SpyOn(this.mockAccessors, 'getHttp');
 
-        await Expect(async () => await asm.updateAppSetting('fake', TestData.getSetting())).toThrowErrorAsync(Error, 'No App found by the provided id.');
-        await Expect(async () => await asm.updateAppSetting('testing', TestData.getSetting('fake'))).toThrowErrorAsync(Error, 'No setting found for the App by the provided id.');
+        await Expect(() => asm.updateAppSetting('fake', TestData.getSetting())).toThrowErrorAsync(Error, 'No App found by the provided id.');
+        await Expect(() => asm.updateAppSetting('testing', TestData.getSetting('fake'))).toThrowErrorAsync(
+            Error,
+            'No setting found for the App by the provided id.',
+        );
 
         const set = TestData.getSetting('testing');
-        await Expect(async () => await asm.updateAppSetting('testing', set)).not.toThrowAsync();
+        await Expect(() => asm.updateAppSetting('testing', set)).not.toThrowAsync();
 
         Expect(this.mockStorage.update).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockApp.setStorageItem).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
@@ -136,10 +151,14 @@ export class AppSettingsManagerTestFixture {
         Expect(this.mockAccessors.getReader).toHaveBeenCalledWith('testing').exactly(1);
         Expect(this.mockAccessors.getHttp).toHaveBeenCalledWith('testing').exactly(1);
 
-        Expect(this.mockApp.call).toHaveBeenCalledWith(AppMethod.ONSETTINGUPDATED, set,
-            this.mockAccessors.getConfigurationModify('testing'),
-            this.mockAccessors.getReader('testing'),
-            this.mockAccessors.getHttp('testing'),
-        ).exactly(1);
+        Expect(this.mockApp.call)
+            .toHaveBeenCalledWith(
+                AppMethod.ONSETTINGUPDATED,
+                set,
+                this.mockAccessors.getConfigurationModify('testing'),
+                this.mockAccessors.getReader('testing'),
+                this.mockAccessors.getHttp('testing'),
+            )
+            .exactly(1);
     }
 }

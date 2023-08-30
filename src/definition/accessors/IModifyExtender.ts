@@ -1,7 +1,7 @@
-import { IUser } from '../users';
-import { IMessageExtender } from './IMessageExtender';
-import { IRoomExtender } from './IRoomExtender';
-import { IVideoConferenceExtender } from './IVideoConferenceExtend';
+import type { IUser } from '../users';
+import type { IMessageExtender } from './IMessageExtender';
+import type { IRoomExtender } from './IRoomExtender';
+import type { IVideoConferenceExtender } from './IVideoConferenceExtend';
 
 export interface IModifyExtender {
     /**

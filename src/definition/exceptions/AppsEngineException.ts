@@ -13,6 +13,7 @@
  */
 export class AppsEngineException extends Error {
     public name = 'AppsEngineException';
+
     public message: string;
 
     constructor(message?: string) {

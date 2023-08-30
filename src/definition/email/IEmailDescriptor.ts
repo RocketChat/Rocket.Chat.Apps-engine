@@ -1,4 +1,3 @@
-
 export interface IEmailDescriptor {
     from?: string | undefined;
     to?: string | Array<string> | undefined;

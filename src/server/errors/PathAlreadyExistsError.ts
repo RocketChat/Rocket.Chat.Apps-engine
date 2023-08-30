@@ -1,5 +1,6 @@
 export class PathAlreadyExistsError implements Error {
-    public name: string = 'PathAlreadyExists';
+    public name = 'PathAlreadyExists';
+
     public message: string;
 
     constructor(path: string) {

@@ -1,18 +1,20 @@
-import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
+
+import * as AdmZip from 'adm-zip';
 import * as semver from 'semver';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppImplements } from '.';
-import { IAppInfo } from '../../definition/metadata/IAppInfo';
+import type { IAppInfo } from '../../definition/metadata/IAppInfo';
 import { RequiredApiVersionError } from '../errors';
-import { IParseAppPackageResult } from './IParseAppPackageResult';
+import type { IParseAppPackageResult } from './IParseAppPackageResult';
 
 export class AppPackageParser {
-    // tslint:disable-next-line:max-line-length
-    public static uuid4Regex: RegExp = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    public static uuid4Regex = /^[0-9a-fA-f]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
     private allowedIconExts: Array<string> = ['.png', '.jpg', '.jpeg', '.gif'];
+
     private appsEngineVersion: string;
 
     constructor() {
@@ -30,9 +32,12 @@ export class AppPackageParser {
 
                 if (!AppPackageParser.uuid4Regex.test(info.id)) {
                     info.id = uuidv4();
-                    console.warn('WARNING: We automatically generated a uuid v4 id for',
-                        info.name, 'since it did not provide us an id. This is NOT',
-                        'recommended as the same App can be installed several times.');
+                    console.warn(
+                        'WARNING: We automatically generated a uuid v4 id for',
+                        info.name,
+                        'since it did not provide us an id. This is NOT',
+                        'recommended as the same App can be installed several times.',
+                    );
                 }
             } catch (e) {
                 throw new Error('Invalid App package. The "app.json" file is not valid json.');
@@ -50,16 +55,18 @@ export class AppPackageParser {
         // Load all of the TypeScript only files
         const files: { [s: string]: string } = {};
 
-        zip.getEntries().filter((entry) => !entry.isDirectory && entry.entryName.endsWith('.js')).forEach((entry) => {
-            const norm = path.normalize(entry.entryName);
+        zip.getEntries()
+            .filter((entry) => !entry.isDirectory && entry.entryName.endsWith('.js'))
+            .forEach((entry) => {
+                const norm = path.normalize(entry.entryName);
 
-            // Files which start with `.` are supposed to be hidden
-            if (norm.startsWith('.')) {
-                return;
-            }
+                // Files which start with `.` are supposed to be hidden
+                if (norm.startsWith('.')) {
+                    return;
+                }
 
-            files[norm] = entry.getData().toString();
-        });
+                files[norm] = entry.getData().toString();
+            });
 
         // Ensure that the main class file exists
         if (!files[path.normalize(info.classFile)]) {
@@ -91,23 +98,21 @@ export class AppPackageParser {
     private getLanguageContent(zip: AdmZip): { [key: string]: object } {
         const languageContent: { [key: string]: object } = {};
 
-        zip.getEntries().filter((entry) =>
-            !entry.isDirectory &&
-            entry.entryName.startsWith('i18n/') &&
-            entry.entryName.endsWith('.json'))
-        .forEach((entry) => {
-            const entrySplit = entry.entryName.split('/');
-            const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
+        zip.getEntries()
+            .filter((entry) => !entry.isDirectory && entry.entryName.startsWith('i18n/') && entry.entryName.endsWith('.json'))
+            .forEach((entry) => {
+                const entrySplit = entry.entryName.split('/');
+                const lang = entrySplit[entrySplit.length - 1].split('.')[0].toLowerCase();
 
-            let content;
-            try {
-                content = JSON.parse(entry.getData().toString());
-            } catch (e) {
-                // Failed to parse it, maybe warn them? idk yet
-            }
+                let content;
+                try {
+                    content = JSON.parse(entry.getData().toString());
+                } catch (e) {
+                    // Failed to parse it, maybe warn them? idk yet
+                }
 
-            languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
-        });
+                languageContent[lang] = Object.assign(languageContent[lang] || {}, content);
+            });
 
         return languageContent;
     }
@@ -134,7 +139,7 @@ export class AppPackageParser {
 
         const base64 = entry.getData().toString('base64');
 
-        return `data:image/${ ext.replace('.', '') };base64,${ base64 }`;
+        return `data:image/${ext.replace('.', '')};base64,${base64}`;
     }
 
     private getEngineVersion(): string {

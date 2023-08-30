@@ -1,5 +1,5 @@
-import { AccessoryElements, IBlockElement, IImageElement, IInputElement } from './Elements';
-import { ITextObject } from './Objects';
+import type { AccessoryElements, IBlockElement, IImageElement, IInputElement } from './Elements';
+import type { ITextObject } from './Objects';
 
 export enum BlockType {
     SECTION = 'section',

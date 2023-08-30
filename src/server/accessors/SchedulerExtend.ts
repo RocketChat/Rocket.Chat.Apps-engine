@@ -1,6 +1,6 @@
-import { ISchedulerExtend } from '../../definition/accessors';
-import { IProcessor } from '../../definition/scheduler';
-import { AppSchedulerManager } from '../managers/AppSchedulerManager';
+import type { ISchedulerExtend } from '../../definition/accessors';
+import type { IProcessor } from '../../definition/scheduler';
+import type { AppSchedulerManager } from '../managers/AppSchedulerManager';
 
 export class SchedulerExtend implements ISchedulerExtend {
     constructor(private readonly manager: AppSchedulerManager, private readonly appId: string) {}

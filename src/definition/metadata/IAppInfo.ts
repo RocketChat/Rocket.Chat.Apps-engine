@@ -1,6 +1,6 @@
-import { IPermission } from '../permissions/IPermission';
-import { AppInterface } from './AppInterface';
-import { IAppAuthorInfo } from './IAppAuthorInfo';
+import type { IPermission } from '../permissions/IPermission';
+import type { AppInterface } from './AppInterface';
+import type { IAppAuthorInfo } from './IAppAuthorInfo';
 
 export interface IAppInfo {
     id: string;

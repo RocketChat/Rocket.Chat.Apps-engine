@@ -1,5 +1,5 @@
-import { IMessage } from '.';
-import { IUser } from '../users';
+import type { IMessage } from '.';
+import type { IUser } from '../users';
 
 /**
  * The context of execution for the following events:

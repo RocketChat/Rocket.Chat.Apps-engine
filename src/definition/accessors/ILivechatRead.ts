@@ -1,7 +1,7 @@
-import { IDepartment } from '../livechat';
-import { ILivechatRoom } from '../livechat/ILivechatRoom';
-import { IVisitor } from '../livechat/IVisitor';
-import { IMessage } from '../messages';
+import type { IDepartment } from '../livechat';
+import type { ILivechatRoom } from '../livechat/ILivechatRoom';
+import type { IVisitor } from '../livechat/IVisitor';
+import type { IMessage } from '../messages';
 
 export interface ILivechatRead {
     /**

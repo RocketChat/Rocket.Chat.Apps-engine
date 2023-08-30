@@ -1,11 +1,8 @@
 import { BaseBridge } from './BaseBridge';
-
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
-
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
-
-import { IWorkspaceToken } from '../../definition/cloud/IWorkspaceToken';
+import type { IWorkspaceToken } from '../../definition/cloud/IWorkspaceToken';
 
 export abstract class CloudWorkspaceBridge extends BaseBridge {
     public doGetWorkspaceToken(scope: string, appId: string): Promise<IWorkspaceToken> {
@@ -21,10 +18,12 @@ export abstract class CloudWorkspaceBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.cloud['workspace-token']],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.cloud['workspace-token']],
+            }),
+        );
 
         return false;
     }

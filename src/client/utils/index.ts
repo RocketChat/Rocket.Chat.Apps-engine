@@ -4,7 +4,7 @@
  */
 export function randomString(length: number): string {
     const buffer: Array<string> = [];
-    const chars: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     for (let i = 0; i < length; i++) {
         buffer.push(chars[getRandomInt(chars.length)]);

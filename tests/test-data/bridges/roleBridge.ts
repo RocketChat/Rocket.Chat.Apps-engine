@@ -1,4 +1,4 @@
-import { IRole } from '../../../src/definition/roles';
+import type { IRole } from '../../../src/definition/roles';
 import { RoleBridge } from '../../../src/server/bridges';
 
 export class TestsRoleBridge extends RoleBridge {

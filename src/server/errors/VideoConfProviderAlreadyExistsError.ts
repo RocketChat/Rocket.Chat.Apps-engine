@@ -1,5 +1,6 @@
 export class VideoConfProviderAlreadyExistsError implements Error {
-    public name: string = 'VideoConfProviderAlreadyExists';
+    public name = 'VideoConfProviderAlreadyExists';
+
     public message: string;
 
     constructor(name: string) {

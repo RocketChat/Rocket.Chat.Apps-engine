@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { ILivechatEventContext } from './ILivechatEventContext';
+import type { ILivechatEventContext } from './ILivechatEventContext';
 
 /**
  * Handler called after the assignment of a livechat agent.
@@ -16,6 +16,10 @@ export interface IPostLivechatAgentAssigned {
      * @param modify An accessor to the modifier
      */
     [AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED](
-        context: ILivechatEventContext, read: IRead, http: IHttp, persis: IPersistence, modify?: IModify,
+        context: ILivechatEventContext,
+        read: IRead,
+        http: IHttp,
+        persis: IPersistence,
+        modify?: IModify,
     ): Promise<void>;
 }

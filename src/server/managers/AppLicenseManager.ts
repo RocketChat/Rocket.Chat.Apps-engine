@@ -1,10 +1,10 @@
-import { AppManager } from '../AppManager';
-import { UserBridge } from '../bridges';
-import { IInternalUserBridge } from '../bridges/IInternalUserBridge';
+import type { AppManager } from '../AppManager';
+import type { UserBridge } from '../bridges';
+import type { IInternalUserBridge } from '../bridges/IInternalUserBridge';
 import { InvalidLicenseError } from '../errors';
-import { IMarketplaceInfo } from '../marketplace';
-import { AppLicenseValidationResult } from '../marketplace/license';
+import type { IMarketplaceInfo } from '../marketplace';
 import { Crypto } from '../marketplace/license';
+import type { AppLicenseValidationResult } from '../marketplace/license';
 import { MarketplacePurchaseType } from '../marketplace/MarketplacePurchaseType';
 
 enum LicenseVersion {
@@ -13,7 +13,9 @@ enum LicenseVersion {
 
 export class AppLicenseManager {
     private readonly crypto: Crypto;
+
     private readonly userBridge: UserBridge;
+
     constructor(private readonly manager: AppManager) {
         this.crypto = new Crypto(this.manager.getBridges().getInternalBridge());
         this.userBridge = this.manager.getBridges().getUserBridge();
@@ -36,7 +38,7 @@ export class AppLicenseManager {
 
         let license;
         try {
-            license = await this.crypto.decryptLicense(encryptedLicense) as any;
+            license = (await this.crypto.decryptLicense(encryptedLicense)) as any;
         } catch (err) {
             validationResult.addError('publicKey', err.message);
 

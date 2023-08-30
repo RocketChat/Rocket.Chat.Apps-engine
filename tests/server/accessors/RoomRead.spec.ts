@@ -1,14 +1,16 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { IRoom } from '../../../src/definition/rooms';
-import { IUser } from '../../../src/definition/users';
 
+import type { IRoom } from '../../../src/definition/rooms';
+import type { IUser } from '../../../src/definition/users';
 import { RoomRead } from '../../../src/server/accessors';
-import { RoomBridge } from '../../../src/server/bridges';
+import type { RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
+
     private user: IUser;
+
     private mockRoomBridgeWithRoom: RoomBridge;
 
     @SetupFixture
@@ -63,10 +65,10 @@ export class RoomReadAccessorTestFixture {
         Expect(() => new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app')).not.toThrow();
 
         const rr = new RoomRead(this.mockRoomBridgeWithRoom, 'testing-app');
-        await Expect(async () => await rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
+        await Expect(() => rr.getMessages('faker')).toThrowErrorAsync(Error, 'Method not implemented.');
 
         Expect(await rr.getMembers('testing')).toBeDefined();
-        Expect(await rr.getMembers('testing') as Array<IUser>).not.toBeEmpty();
+        Expect((await rr.getMembers('testing')) as Array<IUser>).not.toBeEmpty();
         Expect((await rr.getMembers('testing'))[0]).toBe(this.user);
     }
 }

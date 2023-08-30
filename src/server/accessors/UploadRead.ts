@@ -1,10 +1,9 @@
-
-import { IUploadRead } from '../../definition/accessors';
-import { IUpload } from '../../definition/uploads';
-import { UploadBridge } from '../bridges/UploadBridge';
+import type { IUploadRead } from '../../definition/accessors';
+import type { IUpload } from '../../definition/uploads';
+import type { UploadBridge } from '../bridges/UploadBridge';
 
 export class UploadRead implements IUploadRead {
-    constructor(private readonly uploadBridge: UploadBridge, private readonly appId: string) { }
+    constructor(private readonly uploadBridge: UploadBridge, private readonly appId: string) {}
 
     public getById(id: string): Promise<IUpload> {
         return this.uploadBridge.doGetById(id, this.appId);

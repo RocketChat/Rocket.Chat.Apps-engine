@@ -1,6 +1,6 @@
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
 
 export interface IRoomExtender {
     kind: RocketChatAssociationModel.ROOM;

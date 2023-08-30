@@ -1,6 +1,5 @@
-import {
+import type {
     AppActivationBridge,
-    AppBridges,
     AppDetailChangesBridge,
     EnvironmentalVariableBridge,
     HttpBridge,
@@ -19,10 +18,11 @@ import {
     UserBridge,
     VideoConferenceBridge,
 } from '../../../src/server/bridges';
-import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
-import { IInternalFederationBridge } from '../../../src/server/bridges/IInternalFederationBridge';
-import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
-import { ThreadBridge } from '../../../src/server/bridges/ThreadBridge';
+import { AppBridges } from '../../../src/server/bridges';
+import type { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
+import type { IInternalFederationBridge } from '../../../src/server/bridges/IInternalFederationBridge';
+import type { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
+import type { ThreadBridge } from '../../../src/server/bridges/ThreadBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
 import { TestsAppDetailChangesBridge } from './appDetailChanges';
@@ -49,26 +49,47 @@ import { TestsVideoConferenceBridge } from './videoConferenceBridge';
 
 export class TestsAppBridges extends AppBridges {
     private readonly appDetails: TestsAppDetailChangesBridge;
+
     private readonly cmdBridge: TestsCommandBridge;
+
     private readonly apiBridge: TestsApiBridge;
+
     private readonly setsBridge: TestsServerSettingBridge;
+
     private readonly envBridge: TestsEnvironmentalVariableBridge;
+
     private readonly rlActBridge: TestsActivationBridge;
+
     private readonly msgBridge: TestsMessageBridge;
+
     private readonly moderationBridge: TestsModerationBridge;
+
     private readonly persisBridge: TestsPersisBridge;
+
     private readonly roleBridge: TestsRoleBridge;
+
     private readonly roomBridge: TestsRoomBridge;
+
     private readonly internalBridge: TestsInternalBridge;
+
     private readonly userBridge: TestsUserBridge;
+
     private readonly httpBridge: TestsHttpBridge;
+
     private readonly livechatBridge: TestLivechatBridge;
+
     private readonly uploadBridge: TestUploadBridge;
+
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
+
     private readonly schedulerBridge: TestSchedulerBridge;
+
     private readonly cloudWorkspaceBridge: TestAppCloudWorkspaceBridge;
+
     private readonly videoConfBridge: TestsVideoConferenceBridge;
+
     private readonly oauthBridge: OAuthAppsBridge;
+
     private readonly internalFederationBridge: IInternalFederationBridge;
 
     private readonly threadBridge: ThreadBridge;
@@ -147,6 +168,7 @@ export class TestsAppBridges extends AppBridges {
     public getThreadBridge(): ThreadBridge {
         return this.threadBridge;
     }
+
     public getRoleBridge(): RoleBridge {
         return this.roleBridge;
     }

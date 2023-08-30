@@ -1,12 +1,13 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { VideoConference } from '../../../src/definition/videoConferences';
 
+import type { VideoConference } from '../../../src/definition/videoConferences';
 import { VideoConferenceRead } from '../../../src/server/accessors';
-import { VideoConferenceBridge } from '../../../src/server/bridges';
+import type { VideoConferenceBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class VideoConferenceReadAccessorTestFixture {
     private videoConference: VideoConference;
+
     private mockVideoConfBridge: VideoConferenceBridge;
 
     @SetupFixture

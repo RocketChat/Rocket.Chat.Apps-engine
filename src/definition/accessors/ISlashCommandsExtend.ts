@@ -1,4 +1,4 @@
-import { ISlashCommand } from '../slashcommands';
+import type { ISlashCommand } from '../slashcommands';
 
 /**
  * This accessor provides methods for adding custom slash commands.

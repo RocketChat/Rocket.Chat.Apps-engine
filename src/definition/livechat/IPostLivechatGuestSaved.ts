@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IVisitor } from './IVisitor';
+import type { IVisitor } from './IVisitor';
 
 /**
  * Handler called after the guest's info get saved.
@@ -15,7 +15,5 @@ export interface IPostLivechatGuestSaved {
      * @param persis An accessor to the App's persistence
      * @param modify An accessor to the modifier
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED](
-        context: IVisitor, read: IRead, http: IHttp, persis: IPersistence, modify: IModify,
-    ): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED](context: IVisitor, read: IRead, http: IHttp, persis: IPersistence, modify: IModify): Promise<void>;
 }

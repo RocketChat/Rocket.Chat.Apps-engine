@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IRoom } from './IRoom';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IRoom } from './IRoom';
 
 /** Handler for after a room is created. */
 export interface IPostRoomCreate {

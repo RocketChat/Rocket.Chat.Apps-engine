@@ -1,26 +1,38 @@
 import { Expect, Setup, SetupFixture, Test } from 'alsatian';
 
 import { AppStatus } from '../../../src/definition/AppStatus';
-import { AppMethod } from '../../../src/definition/metadata';
+import type { AppMethod } from '../../../src/definition/metadata';
 import { AppAccessors } from '../../../src/server/accessors';
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSettingsManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
-import { AppLogStorage } from '../../../src/server/storage';
+import type {
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
+import type { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 export class AppAccessorsTestFixture {
-    public static doThrow: boolean = false;
+    public static doThrow = false;
+
     private mockBridges: TestsAppBridges;
+
     private mockApp: ProxiedApp;
+
     private mockAccessors: AppAccessorManager;
+
     private mockManager: AppManager;
+
     private mockApiManager: AppApiManager;
 
     @SetupFixture

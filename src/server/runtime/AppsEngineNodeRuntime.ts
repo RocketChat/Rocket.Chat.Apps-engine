@@ -1,8 +1,9 @@
 import * as timers from 'timers';
 import * as vm from 'vm';
 
-import { App } from '../../definition/App';
-import { APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT, AppsEngineRuntime, getFilenameForApp, IAppsEngineRuntimeOptions } from './AppsEngineRuntime';
+import type { App } from '../../definition/App';
+import type { IAppsEngineRuntimeOptions } from './AppsEngineRuntime';
+import { APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT, AppsEngineRuntime, getFilenameForApp } from './AppsEngineRuntime';
 
 export class AppsEngineNodeRuntime extends AppsEngineRuntime {
     public static defaultRuntimeOptions = {
@@ -16,6 +17,7 @@ export class AppsEngineNodeRuntime extends AppsEngineRuntime {
         process: {},
         exports: {},
     };
+
     public static async runCode(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): Promise<any> {
         return new Promise((resolve, reject) => {
             process.nextTick(() => {
@@ -27,11 +29,12 @@ export class AppsEngineNodeRuntime extends AppsEngineRuntime {
             });
         });
     }
+
     public static runCodeSync(code: string, sandbox?: Record<string, any>, options?: IAppsEngineRuntimeOptions): any {
         return vm.runInNewContext(
             code,
             { ...AppsEngineNodeRuntime.defaultContext, ...sandbox },
-            { ...AppsEngineNodeRuntime.defaultRuntimeOptions, ...options || {} },
+            { ...AppsEngineNodeRuntime.defaultRuntimeOptions, ...(options || {}) },
         );
     }
 
@@ -45,14 +48,18 @@ export class AppsEngineNodeRuntime extends AppsEngineRuntime {
                 try {
                     sandbox ??= {};
 
-                    const result = await vm.runInNewContext(code, {
-                        ...AppsEngineNodeRuntime.defaultContext,
-                        ...sandbox,
-                        require: this.customRequire,
-                    }, {
-                        ...AppsEngineNodeRuntime.defaultRuntimeOptions,
-                        filename: getFilenameForApp(options?.filename || this.app.getName()),
-                    });
+                    const result = await vm.runInNewContext(
+                        code,
+                        {
+                            ...AppsEngineNodeRuntime.defaultContext,
+                            ...sandbox,
+                            require: this.customRequire,
+                        },
+                        {
+                            ...AppsEngineNodeRuntime.defaultRuntimeOptions,
+                            filename: getFilenameForApp(options?.filename || this.app.getName()),
+                        },
+                    );
 
                     resolve(result);
                 } catch (e) {

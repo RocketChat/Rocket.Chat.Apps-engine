@@ -1,7 +1,7 @@
 import { AsyncTest, Expect } from 'alsatian';
 
 import { AppStatus } from '../../../src/definition/AppStatus';
-import { IAppInfo } from '../../../src/definition/metadata';
+import type { IAppInfo } from '../../../src/definition/metadata';
 import { DisabledApp } from '../../../src/server/misc/DisabledApp';
 
 export class DisabledAppTestFixture {
@@ -34,6 +34,5 @@ export class DisabledAppTestFixture {
         Expect(disabledApp.getStatus()).toEqual(AppStatus.COMPILER_ERROR_DISABLED);
         Expect(() => disabledApp.onEnable()).not.toThrow();
         Expect(await disabledApp.onEnable()).toEqual(false);
-
     }
 }

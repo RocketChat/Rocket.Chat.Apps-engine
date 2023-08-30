@@ -1,18 +1,19 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { TestData } from '../../test-data/utilities';
 
+import { TestData } from '../../test-data/utilities';
 import { SettingRead } from '../../../src/server/accessors';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { IAppStorageItem } from '../../../src/server/storage';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { IAppStorageItem } from '../../../src/server/storage';
 
 export class SettingReadAccessorTestFixture {
     private mockStorageItem: IAppStorageItem;
+
     private mockProxiedApp: ProxiedApp;
 
     @SetupFixture
     public setupFixture() {
         this.mockStorageItem = {
-            settings: { },
+            settings: {},
         } as IAppStorageItem;
         this.mockStorageItem.settings.testing = TestData.getSetting('testing');
 
@@ -34,6 +35,6 @@ export class SettingReadAccessorTestFixture {
         Expect(await sr.getValueById('testing')).toBe('The packageValue');
         this.mockStorageItem.settings.testing.value = 'my value';
         Expect(await sr.getValueById('testing')).toBe('my value');
-        await Expect(async () => await sr.getValueById('superfake')).toThrowErrorAsync(Error, 'Setting "superfake" does not exist.');
+        await Expect(() => sr.getValueById('superfake')).toThrowErrorAsync(Error, 'Setting "superfake" does not exist.');
     }
 }

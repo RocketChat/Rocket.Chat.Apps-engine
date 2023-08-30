@@ -1,5 +1,5 @@
-import { RocketChatAssociationModel } from '../metadata';
-import { IUser, IUserEmail } from '../users';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IUser, IUserEmail } from '../users';
 
 /**
  * Interface for creating a user.

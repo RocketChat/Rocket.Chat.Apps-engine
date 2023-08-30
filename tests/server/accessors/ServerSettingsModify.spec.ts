@@ -1,13 +1,15 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { ISetting } from '../../../src/definition/settings';
 
+import type { ISetting } from '../../../src/definition/settings';
 import { ServerSettingsModify } from '../../../src/server/accessors';
-import { ServerSettingBridge } from '../../../src/server/bridges';
+import type { ServerSettingBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ServerSettingsModifyTestFixture {
     private setting: ISetting;
+
     private mockAppId: string;
+
     private mockServerSettingBridge: ServerSettingBridge;
 
     @SetupFixture

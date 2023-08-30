@@ -1,15 +1,16 @@
-import { Omit } from '../../lib/utils';
-import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
-import { IUIKitContextualBarResponse, IUIKitErrorResponse, IUIKitModalResponse, IUIKitResponse, UIKitInteractionType } from './IUIKitInteractionType';
-import { IUIKitSurface } from './IUIKitSurface';
-import { IUIKitBaseIncomingInteraction } from './UIKitIncomingInteractionTypes';
+import type { Omit } from '../../lib/utils';
+import type { IUIKitErrorInteractionParam } from '../accessors/IUIController';
+import type { IUIKitContextualBarResponse, IUIKitErrorResponse, IUIKitModalResponse, IUIKitResponse } from './IUIKitInteractionType';
+import { UIKitInteractionType } from './IUIKitInteractionType';
+import type { IUIKitSurface } from './IUIKitSurface';
+import type { IUIKitBaseIncomingInteraction } from './UIKitIncomingInteractionTypes';
 import { formatContextualBarInteraction, formatModalInteraction } from './UIKitInteractionPayloadFormatter';
 
 export type IUIKitModalViewParam = Omit<IUIKitSurface, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitSurface, 'id'>>;
 export type IUIKitContextualBarViewParam = Omit<IUIKitSurface, 'appId' | 'id' | 'type'> & Partial<Pick<IUIKitSurface, 'id'>>;
 
 export class UIKitInteractionResponder {
-    constructor(private readonly baseContext: IUIKitBaseIncomingInteraction) { }
+    constructor(private readonly baseContext: IUIKitBaseIncomingInteraction) {}
 
     public successResponse(): IUIKitResponse {
         return {

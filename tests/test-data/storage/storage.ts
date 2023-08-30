@@ -1,5 +1,7 @@
 import * as Datastore from 'nedb';
-import { AppMetadataStorage, IAppStorageItem } from '../../../src/server/storage';
+
+import type { IAppStorageItem } from '../../../src/server/storage';
+import { AppMetadataStorage } from '../../../src/server/storage';
 
 export class TestsAppStorage extends AppMetadataStorage {
     private db: Datastore;
@@ -15,7 +17,6 @@ export class TestsAppStorage extends AppMetadataStorage {
             item.createdAt = new Date();
             item.updatedAt = new Date();
 
-            // tslint:disable-next-line
             this.db.findOne({ $or: [{ id: item.id }, { 'info.nameSlug': item.info.nameSlug }] }, (err: Error, doc: IAppStorageItem) => {
                 if (err) {
                     reject(err);
@@ -70,14 +71,15 @@ export class TestsAppStorage extends AppMetadataStorage {
                 if (err) {
                     reject(err);
                 } else {
-                    this.retrieveOne(item.id).then((updated: IAppStorageItem) => resolve(updated))
+                    this.retrieveOne(item.id)
+                        .then((updated: IAppStorageItem) => resolve(updated))
                         .catch((err2: Error) => reject(err2));
                 }
             });
         });
     }
 
-    public remove(id: string): Promise<{ success: boolean}> {
+    public remove(id: string): Promise<{ success: boolean }> {
         return new Promise((resolve, reject) => {
             this.db.remove({ id }, (err: Error) => {
                 if (err) {

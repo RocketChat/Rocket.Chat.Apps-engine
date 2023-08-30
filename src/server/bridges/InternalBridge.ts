@@ -1,4 +1,4 @@
-import { ISetting } from '../../definition/settings';
+import type { ISetting } from '../../definition/settings';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class InternalBridge extends BaseBridge {
@@ -15,6 +15,8 @@ export abstract class InternalBridge extends BaseBridge {
     }
 
     protected abstract getUsernamesOfRoomById(roomId: string): Promise<Array<string>>;
+
     protected abstract getUsernamesOfRoomByIdSync(roomId: string): Array<string>;
+
     protected abstract getWorkspacePublicKey(): Promise<ISetting>;
 }

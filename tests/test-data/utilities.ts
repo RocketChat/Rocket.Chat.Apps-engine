@@ -1,34 +1,39 @@
-// tslint:disable:max-classes-per-file
-// tslint:disable:max-line-length
-import { HttpStatusCode, IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
-import { IMessage } from '../../src/definition/messages';
-import { IRoom, RoomType } from '../../src/definition/rooms';
-import { ISetting, SettingType } from '../../src/definition/settings';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
-import { IUser, UserStatusConnection, UserType } from '../../src/definition/users';
-
+import type { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
+import { HttpStatusCode } from '../../src/definition/accessors';
+import type { IMessage } from '../../src/definition/messages';
+import type { IRoom } from '../../src/definition/rooms';
+import { RoomType } from '../../src/definition/rooms';
+import type { ISetting } from '../../src/definition/settings';
+import { SettingType } from '../../src/definition/settings';
+import type { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../src/definition/slashcommands';
+import type { IUser } from '../../src/definition/users';
+import { UserStatusConnection, UserType } from '../../src/definition/users';
 import { TestsAppBridges } from './bridges/appBridges';
 import { TestsAppLogStorage } from './storage/logStorage';
 import { TestsAppStorage } from './storage/storage';
 import { TestSourceStorage } from './storage/TestSourceStorage';
-
-import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
-import { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
-import { App } from '../../src/definition/App';
+import type { IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
+import { ApiSecurity, ApiVisibility } from '../../src/definition/api';
+import type { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
+import type { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
-import { AppVideoConference } from '../../src/definition/videoConferences/AppVideoConference';
-import { VideoConference, VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
-import { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
-import { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
-import { AppManager } from '../../src/server/AppManager';
-import { AppBridges } from '../../src/server/bridges';
+import type { AppVideoConference } from '../../src/definition/videoConferences/AppVideoConference';
+import type { VideoConference } from '../../src/definition/videoConferences/IVideoConference';
+import { VideoConferenceStatus } from '../../src/definition/videoConferences/IVideoConference';
+import type { IVideoConferenceUser } from '../../src/definition/videoConferences/IVideoConferenceUser';
+import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../src/definition/videoConfProviders';
+import type { AppManager } from '../../src/server/AppManager';
+import type { AppBridges } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
-import { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
+import type { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
+
     private logStorage: TestsAppLogStorage;
+
     private bridges: TestsAppBridges;
+
     private sourceStorage: TestSourceStorage;
 
     constructor() {
@@ -63,7 +68,7 @@ export class TestData {
 
     public static getSetting(id?: string): ISetting {
         return {
-            id: id ? id : 'testing',
+            id: id || 'testing',
             type: SettingType.STRING,
             packageValue: 'The packageValue',
             required: false,
@@ -74,8 +79,8 @@ export class TestData {
 
     public static getUser(id?: string, username?: string): IUser {
         return {
-            id: id ? id : 'BBxwgCBzLeMC6esTb',
-            username: username ? username : 'testing-user',
+            id: id || 'BBxwgCBzLeMC6esTb',
+            username: username || 'testing-user',
             name: 'Testing User',
             emails: [],
             type: UserType.USER,
@@ -92,8 +97,8 @@ export class TestData {
 
     public static getRoom(id?: string, slugifiedName?: string): IRoom {
         return {
-            id: id ? id : 'bTse6CMeLzBCgwxBB',
-            slugifiedName: slugifiedName ? slugifiedName : 'testing-room',
+            id: id || 'bTse6CMeLzBCgwxBB',
+            slugifiedName: slugifiedName || 'testing-room',
             displayName: 'Testing Room',
             type: RoomType.CHANNEL,
             creator: TestData.getUser(),
@@ -110,7 +115,7 @@ export class TestData {
 
     public static getMessage(id?: string, text?: string): IMessage {
         return {
-            id: id ? id : '4bShvoOXqB',
+            id: id || '4bShvoOXqB',
             room: TestData.getRoom(),
             sender: TestData.getUser(),
             text: 'This is just a test, do not be alarmed',
@@ -121,45 +126,47 @@ export class TestData {
             emoji: ':see_no_evil:',
             avatarUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
             alias: 'Testing Bot',
-            attachments: [{
-                collapsed: false,
-                color: '#00b2b2',
-                text: 'Just an attachment that is used for testing',
-                timestamp: new Date(),
-                timestampLink: 'https://google.com/',
-                thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                author: {
-                    name: 'Author Name',
-                    link: 'https://github.com/graywolf336',
-                    icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                },
-                title: {
-                    value: 'Attachment Title',
-                    link: 'https://github.com/RocketChat',
-                    displayDownloadLink: false,
-                },
-                imageUrl: 'https://rocket.chat/images/default/logo.svg',
-                audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
-                videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
-                fields: [
-                    {
-                        short: true,
-                        title: 'Test',
-                        value: 'Testing out something or other',
+            attachments: [
+                {
+                    collapsed: false,
+                    color: '#00b2b2',
+                    text: 'Just an attachment that is used for testing',
+                    timestamp: new Date(),
+                    timestampLink: 'https://google.com/',
+                    thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
+                    author: {
+                        name: 'Author Name',
+                        link: 'https://github.com/graywolf336',
+                        icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
                     },
-                    {
-                        short: true,
-                        title: 'Another Test',
-                        value: '[Link](https://google.com/) something and this and that.',
+                    title: {
+                        value: 'Attachment Title',
+                        link: 'https://github.com/RocketChat',
+                        displayDownloadLink: false,
                     },
-                ],
-            }],
+                    imageUrl: 'https://rocket.chat/images/default/logo.svg',
+                    audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
+                    videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
+                    fields: [
+                        {
+                            short: true,
+                            title: 'Test',
+                            value: 'Testing out something or other',
+                        },
+                        {
+                            short: true,
+                            title: 'Another Test',
+                            value: '[Link](https://google.com/) something and this and that.',
+                        },
+                    ],
+                },
+            ],
         };
     }
 
     public static getSlashCommand(command?: string): ISlashCommand {
         return {
-            command: command ? command : 'testing-cmd',
+            command: command || 'testing-cmd',
             i18nParamsExample: 'justATest',
             i18nDescription: 'justATest_Description',
             permission: 'create-c',
@@ -170,27 +177,43 @@ export class TestData {
             previewer: (context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<ISlashCommandPreview> => {
                 return Promise.resolve({
                     i18nTitle: 'my i18nTitle',
-                    items: new Array(),
+                    items: [],
                 } as ISlashCommandPreview);
             },
-            executePreviewItem: (item: ISlashCommandPreviewItem, context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void> => {
+            executePreviewItem: (
+                item: ISlashCommandPreviewItem,
+                context: SlashCommandContext,
+                read: IRead,
+                modify: IModify,
+                http: IHttp,
+                persis: IPersistence,
+            ): Promise<void> => {
                 return Promise.resolve();
             },
         };
     }
 
-    public static getApi(path: string = 'testing-path', visibility: ApiVisibility = ApiVisibility.PUBLIC, security: ApiSecurity = ApiSecurity.UNSECURE): IApi {
+    public static getApi(path = 'testing-path', visibility: ApiVisibility = ApiVisibility.PUBLIC, security: ApiSecurity = ApiSecurity.UNSECURE): IApi {
         return {
             visibility,
             security,
-            endpoints: [{
-                path,
-                get(request: IApiRequest, endpoint: IApiEndpointInfo, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<IApiResponse> {
-                    return Promise.resolve({
-                        status: HttpStatusCode.OK,
-                    });
+            endpoints: [
+                {
+                    path,
+                    get(
+                        request: IApiRequest,
+                        endpoint: IApiEndpointInfo,
+                        read: IRead,
+                        modify: IModify,
+                        http: IHttp,
+                        persis: IPersistence,
+                    ): Promise<IApiResponse> {
+                        return Promise.resolve({
+                            status: HttpStatusCode.OK,
+                        });
+                    },
                 },
-            }],
+            ],
         };
     }
 
@@ -322,21 +345,20 @@ export class TestData {
     }
 
     public static getOAuthApp(isToCreate: boolean) {
-
         const OAuthApp = {
-            _id : '4526fcab-b068-4dcc-b208-4fff599165b0',
-            name : 'name-test',
-            active : true,
-            clientId : 'clientId-test',
-            clientSecret : 'clientSecret-test',
-            redirectUri : 'redirectUri-test',
-            appId : 'app-123',
-            _createdAt : '2022-07-11T14:30:48.937Z',
-            _createdBy : {
-                _id : 'Em5TQwMD4P7AmTs73',
-                username : 'testa.bot',
+            _id: '4526fcab-b068-4dcc-b208-4fff599165b0',
+            name: 'name-test',
+            active: true,
+            clientId: 'clientId-test',
+            clientSecret: 'clientSecret-test',
+            redirectUri: 'redirectUri-test',
+            appId: 'app-123',
+            _createdAt: '2022-07-11T14:30:48.937Z',
+            _createdBy: {
+                _id: 'Em5TQwMD4P7AmTs73',
+                username: 'testa.bot',
             },
-            _updatedAt : '2022-07-11T14:30:48.937Z',
+            _updatedAt: '2022-07-11T14:30:48.937Z',
         };
 
         if (isToCreate) {
@@ -350,16 +372,28 @@ export class TestData {
     }
 
     public static getMockApp(id: string, name: string): ProxiedApp {
-        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN } as IAppStorageItem, {
-            getName() { return 'testing'; },
-            getID() { return 'testing'; },
-            getRuntime() { return ({ runInSandbox: (mod: string) => mod }); },
-        } as unknown as App, { runInSandbox: (mod: string) => mod } as any);
+        return new ProxiedApp(
+            {} as AppManager,
+            { status: AppStatus.UNKNOWN } as IAppStorageItem,
+            {
+                getName() {
+                    return 'testing';
+                },
+                getID() {
+                    return 'testing';
+                },
+                getRuntime() {
+                    return { runInSandbox: (mod: string) => mod };
+                },
+            } as unknown as App,
+            { runInSandbox: (mod: string) => mod } as any,
+        );
     }
 }
 
 export class SimpleClass {
     private readonly world: string;
+
     constructor(world = 'Earith') {
         this.world = world;
     }

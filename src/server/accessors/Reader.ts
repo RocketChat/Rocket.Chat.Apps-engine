@@ -1,4 +1,4 @@
-import {
+import type {
     ICloudWorkspaceRead,
     IEnvironmentRead,
     ILivechatRead,
@@ -11,9 +11,9 @@ import {
     IUserRead,
     IVideoConferenceRead,
 } from '../../definition/accessors';
-import { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
-import { IRoleRead } from '../../definition/accessors/IRoleRead';
-import { IThreadRead } from '../../definition/accessors/IThreadRead';
+import type { IOAuthAppsReader } from '../../definition/accessors/IOAuthAppsReader';
+import type { IRoleRead } from '../../definition/accessors/IRoleRead';
+import type { IThreadRead } from '../../definition/accessors/IThreadRead';
 
 export class Reader implements IRead {
     constructor(
@@ -32,6 +32,7 @@ export class Reader implements IRead {
         private thread: IThreadRead,
         private role: IRoleRead,
     ) {}
+
     public getEnvironmentReader(): IEnvironmentRead {
         return this.env;
     }

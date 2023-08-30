@@ -1,4 +1,4 @@
-import { ISetting } from '../settings/index';
+import type { ISetting } from '../settings/index';
 
 /**
  * This accessor provides methods for accessing

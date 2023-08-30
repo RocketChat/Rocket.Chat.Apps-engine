@@ -1,4 +1,4 @@
-import {IHttp, IModify, IPersistence, IRead} from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 
 /** Represents a processor that is used by the scheduler methods */
 export interface IProcessor {

@@ -1,9 +1,8 @@
 import { AppMethod } from '../../definition/metadata';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
-
-import { ProxiedApp } from '../ProxiedApp';
-import { AppLogStorage } from '../storage';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
+import type { ProxiedApp } from '../ProxiedApp';
+import type { AppLogStorage } from '../storage';
+import type { AppAccessorManager } from './AppAccessorManager';
 
 export class AppSlashCommand {
     /**
@@ -40,32 +39,31 @@ export class AppSlashCommand {
     }
 
     public async runExecutorOrPreviewer(
-      method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
-      context: SlashCommandContext,
-      logStorage: AppLogStorage,
-      accessors: AppAccessorManager,
+        method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
+        context: SlashCommandContext,
+        logStorage: AppLogStorage,
+        accessors: AppAccessorManager,
     ): Promise<void | ISlashCommandPreview> {
-        return await this.runTheCode(method, logStorage, accessors, context, new Array());
+        return this.runTheCode(method, logStorage, accessors, context, []);
     }
 
     public async runPreviewExecutor(
-      previewItem: ISlashCommandPreviewItem,
-      context: SlashCommandContext,
-      logStorage: AppLogStorage,
-      accessors: AppAccessorManager,
+        previewItem: ISlashCommandPreviewItem,
+        context: SlashCommandContext,
+        logStorage: AppLogStorage,
+        accessors: AppAccessorManager,
     ): Promise<void> {
         await this.runTheCode(AppMethod._COMMAND_PREVIEW_EXECUTOR, logStorage, accessors, context, [previewItem]);
-        return;
     }
 
     private async runTheCode(
-      method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
-      logStorage: AppLogStorage,
-      accessors: AppAccessorManager,
-      context: SlashCommandContext,
-      runContextArgs: Array<any>,
+        method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
+        logStorage: AppLogStorage,
+        accessors: AppAccessorManager,
+        context: SlashCommandContext,
+        runContextArgs: Array<any>,
     ): Promise<void | ISlashCommandPreview> {
-        const command = this.slashCommand.command;
+        const { command } = this.slashCommand;
 
         // Ensure the slash command has the property before going on
         if (typeof this.slashCommand[method] !== 'function') {
@@ -73,10 +71,10 @@ export class AppSlashCommand {
         }
 
         const logger = this.app.setupLogger(method);
-        logger.debug(`${ command }'s ${ method } is being executed...`, context);
+        logger.debug(`${command}'s ${method} is being executed...`, context);
 
         try {
-            const runCode = `module.exports = slashCommand.${ method }.apply(slashCommand, args)`;
+            const runCode = `module.exports = slashCommand.${method}.apply(slashCommand, args)`;
             const result = await this.app.getRuntime().runInSandbox(runCode, {
                 slashCommand: this.slashCommand,
                 args: [
@@ -89,11 +87,11 @@ export class AppSlashCommand {
                 ],
             });
 
-            logger.debug(`${ command }'s ${ method } was successfully executed.`);
+            logger.debug(`${command}'s ${method} was successfully executed.`);
             return result;
         } catch (e) {
             logger.error(e);
-            logger.debug(`${ command }'s ${ method } was unsuccessful.`);
+            logger.debug(`${command}'s ${method} was unsuccessful.`);
         } finally {
             await logStorage.storeEntries(this.app.getID(), logger);
         }

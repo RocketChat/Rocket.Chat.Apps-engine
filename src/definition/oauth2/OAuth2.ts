@@ -1,6 +1,6 @@
 import { OAuth2Client } from '../../server/oauth2/OAuth2Client';
-import { App } from '../App';
-import { IOAuth2ClientOptions } from './IOAuth2';
+import type { App } from '../App';
+import type { IOAuth2ClientOptions } from './IOAuth2';
 
 /**
  * Placeholder factory for OAuth2Client in case

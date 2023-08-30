@@ -1,6 +1,6 @@
-import { IMessage } from '../../definition/messages';
-import { IRoom } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
+import type { IMessage } from '../../definition/messages';
+import type { IRoom } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -92,13 +92,21 @@ export abstract class RoomBridge extends BaseBridge {
     }
 
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
+
     protected abstract getById(roomId: string, appId: string): Promise<IRoom>;
+
     protected abstract getByName(roomName: string, appId: string): Promise<IRoom>;
+
     protected abstract getCreatorById(roomId: string, appId: string): Promise<IUser | undefined>;
+
     protected abstract getCreatorByName(roomName: string, appId: string): Promise<IUser | undefined>;
+
     protected abstract getDirectByUsernames(usernames: Array<string>, appId: string): Promise<IRoom | undefined>;
+
     protected abstract getMembers(roomId: string, appId: string): Promise<Array<IUser>>;
+
     protected abstract update(room: IRoom, members: Array<string>, appId: string): Promise<void>;
+
     protected abstract createDiscussion(
         room: IRoom,
         parentMessage: IMessage | undefined,
@@ -106,9 +114,13 @@ export abstract class RoomBridge extends BaseBridge {
         members: Array<string>,
         appId: string,
     ): Promise<string>;
+
     protected abstract delete(room: string, appId: string): Promise<void>;
+
     protected abstract getModerators(roomId: string, appId: string): Promise<Array<IUser>>;
+
     protected abstract getOwners(roomId: string, appId: string): Promise<Array<IUser>>;
+
     protected abstract getLeaders(roomId: string, appId: string): Promise<Array<IUser>>;
 
     private hasWritePermission(appId: string): boolean {

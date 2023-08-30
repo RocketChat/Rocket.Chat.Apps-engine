@@ -1,13 +1,15 @@
-import { IDiscussionBuilder } from '../../definition/accessors';
-import { IMessage } from '../../definition/messages';
+import type { IDiscussionBuilder } from '../../definition/accessors';
+import type { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
-import { IRoom } from '../../definition/rooms/IRoom';
+import type { IRoom } from '../../definition/rooms/IRoom';
 import { RoomBuilder } from './RoomBuilder';
 
 export class DiscussionBuilder extends RoomBuilder implements IDiscussionBuilder {
     public kind: RocketChatAssociationModel.DISCUSSION;
+
     private reply: string;
+
     private parentMessage: IMessage;
 
     constructor(data?: Partial<IRoom>) {

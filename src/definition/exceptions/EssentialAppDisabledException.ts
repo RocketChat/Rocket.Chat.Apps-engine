@@ -13,5 +13,4 @@ import { AppsEngineException } from '.';
  * This is used interally by the framework and is not
  * intended to be thrown manually by apps.
  */
-export class EssentialAppDisabledException extends AppsEngineException {
-}
+export class EssentialAppDisabledException extends AppsEngineException {}

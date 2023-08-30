@@ -5,10 +5,4 @@ import { RocketChatAssociationModel, RocketChatAssociationRecord } from './Rocke
 
 export * from './AppInterface';
 
-export {
-    AppMethod,
-    IAppAuthorInfo,
-    IAppInfo,
-    RocketChatAssociationModel,
-    RocketChatAssociationRecord,
-};
+export { AppMethod, IAppAuthorInfo, IAppInfo, RocketChatAssociationModel, RocketChatAssociationRecord };

@@ -1,9 +1,9 @@
 import { v1 as uuid } from 'uuid';
 
-import { Omit } from '../../../lib/utils';
-import { BlockType, IActionsBlock, IBlock, IConditionalBlock, IConditionalBlockFilters, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
-import {
-    BlockElementType,
+import type { Omit } from '../../../lib/utils';
+import type { IActionsBlock, IBlock, IConditionalBlock, IConditionalBlockFilters, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
+import { BlockType } from './Blocks';
+import type {
     IBlockElement,
     IButtonElement,
     IImageElement,
@@ -15,11 +15,14 @@ import {
     ISelectElement,
     IStaticSelectElement,
 } from './Elements';
-import { ITextObject, TextObjectType } from './Objects';
+import { BlockElementType } from './Elements';
+import type { ITextObject } from './Objects';
+import { TextObjectType } from './Objects';
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
-    ? Omit<T, 'type' | 'actionId'> | Partial<Pick<T, 'actionId'>> : Omit<T, 'type'>;
+    ? Omit<T, 'type' | 'actionId'> | Partial<Pick<T, 'actionId'>>
+    : Omit<T, 'type'>;
 
 type SectionBlockParam = BlockFunctionParameter<ISectionBlock>;
 type ImageBlockParam = BlockFunctionParameter<IImageBlock>;
@@ -92,7 +95,7 @@ export class BlockBuilder {
         return this.blocks;
     }
 
-    public newPlainTextObject(text: string, emoji: boolean = false): ITextObject {
+    public newPlainTextObject(text: string, emoji = false): ITextObject {
         return {
             type: TextObjectType.PLAINTEXT,
             text,
@@ -118,7 +121,7 @@ export class BlockBuilder {
         return {
             type: BlockElementType.IMAGE,
             ...info,
-       };
+        };
     }
 
     public newOverflowMenuElement(info: OverflowMenuElementParam): IOverflowMenuElement {

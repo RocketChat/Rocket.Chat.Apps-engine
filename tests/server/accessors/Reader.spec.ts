@@ -1,5 +1,6 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import {
+
+import type {
     ICloudWorkspaceRead,
     IEnvironmentRead,
     ILivechatRead,
@@ -12,24 +13,35 @@ import {
     IUserRead,
     IVideoConferenceRead,
 } from '../../../src/definition/accessors';
-import { IOAuthAppsReader } from '../../../src/definition/accessors/IOAuthAppsReader';
-import { IThreadRead } from '../../../src/definition/accessors/IThreadRead';
+import type { IOAuthAppsReader } from '../../../src/definition/accessors/IOAuthAppsReader';
+import type { IThreadRead } from '../../../src/definition/accessors/IThreadRead';
 import { Reader } from '../../../src/server/accessors';
 
 export class ReaderAccessorTestFixture {
     private env: IEnvironmentRead;
+
     private msg: IMessageRead;
+
     private pr: IPersistenceRead;
+
     private rm: IRoomRead;
+
     private ur: IUserRead;
+
     private ni: INotifier;
+
     private livechat: ILivechatRead;
+
     private upload: IUploadRead;
+
     private cloud: ICloudWorkspaceRead;
+
     private videoConf: IVideoConferenceRead;
+
     private oauthApps: IOAuthAppsReader;
 
     private thread: IThreadRead;
+
     private role: IRoleRead;
 
     @SetupFixture

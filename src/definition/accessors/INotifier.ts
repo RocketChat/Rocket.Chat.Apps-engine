@@ -1,7 +1,7 @@
-import { IMessage } from '../messages';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
-import { IMessageBuilder } from './IMessageBuilder';
+import type { IMessage } from '../messages';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
+import type { IMessageBuilder } from './IMessageBuilder';
 
 export enum TypingScope {
     Room = 'room',

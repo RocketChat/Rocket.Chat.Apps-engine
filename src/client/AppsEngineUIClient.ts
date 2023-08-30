@@ -1,5 +1,5 @@
 import { ACTION_ID_LENGTH, MESSAGE_ID } from './constants';
-import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
+import type { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
 import { AppsEngineUIMethods } from './definition/AppsEngineUIMethods';
 import { randomString } from './utils';
 
@@ -8,12 +8,14 @@ import { randomString } from './utils';
  */
 export class AppsEngineUIClient {
     private listener: (this: Window, ev: MessageEvent) => any;
+
     private callbacks: Map<string, (response: any) => any>;
 
     constructor() {
         this.listener = () => console.log('init');
         this.callbacks = new Map();
     }
+
     /**
      * Get the current user's information.
      *
@@ -22,6 +24,7 @@ export class AppsEngineUIClient {
     public getUserInfo(): Promise<IExternalComponentUserInfo> {
         return this.call(AppsEngineUIMethods.GET_USER_INFO);
     }
+
     /**
      * Get the current room's information.
      *
@@ -40,7 +43,9 @@ export class AppsEngineUIClient {
                 return;
             }
 
-            const { [MESSAGE_ID]: { id, payload } } = data;
+            const {
+                [MESSAGE_ID]: { id, payload },
+            } = data;
 
             if (this.callbacks.has(id)) {
                 const resolve = this.callbacks.get(id);
@@ -54,7 +59,7 @@ export class AppsEngineUIClient {
         window.addEventListener('message', this.listener);
     }
 
-    private call(action: string, payload?: any ): Promise<any>  {
+    private call(action: string, payload?: any): Promise<any> {
         return new Promise((resolve) => {
             const id = randomString(ACTION_ID_LENGTH);
 

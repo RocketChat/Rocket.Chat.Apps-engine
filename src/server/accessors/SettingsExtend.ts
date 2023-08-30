@@ -1,10 +1,9 @@
-import { ProxiedApp } from '../ProxiedApp';
-
-import { ISettingsExtend } from '../../definition/accessors';
-import { ISetting } from '../../definition/settings';
+import type { ProxiedApp } from '../ProxiedApp';
+import type { ISettingsExtend } from '../../definition/accessors';
+import type { ISetting } from '../../definition/settings';
 
 export class SettingsExtend implements ISettingsExtend {
-    constructor(private readonly app: ProxiedApp) { }
+    constructor(private readonly app: ProxiedApp) {}
 
     public async provideSetting(setting: ISetting): Promise<void> {
         if (this.app.getStorageItem().settings[setting.id]) {

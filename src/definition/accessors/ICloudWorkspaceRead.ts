@@ -1,4 +1,4 @@
-import { IWorkspaceToken } from '../cloud/IWorkspaceToken';
+import type { IWorkspaceToken } from '../cloud/IWorkspaceToken';
 
 /**
  * Accessor that enables apps to read information

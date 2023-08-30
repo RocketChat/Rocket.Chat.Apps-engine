@@ -1,5 +1,6 @@
 export class MustContainFunctionError implements Error {
-    public name: string = 'MustContainFunction';
+    public name = 'MustContainFunction';
+
     public message: string;
 
     constructor(fileName: string, funcName: string) {

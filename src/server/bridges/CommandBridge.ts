@@ -1,4 +1,4 @@
-import { ISlashCommand } from '../../definition/slashcommands';
+import type { ISlashCommand } from '../../definition/slashcommands';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -105,10 +105,12 @@ export abstract class CommandBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.command.default],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.command.default],
+            }),
+        );
 
         return false;
     }

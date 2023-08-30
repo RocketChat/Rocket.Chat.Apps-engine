@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead, IRoomExtender } from '../accessors';
-import { IRoom } from './IRoom';
+import type { IHttp, IPersistence, IRead, IRoomExtender } from '../accessors';
+import type { IRoom } from './IRoom';
 
 /** Handler called when an App wants to enrich a room. */
 export interface IPreRoomCreateExtend {

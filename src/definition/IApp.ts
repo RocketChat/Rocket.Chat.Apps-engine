@@ -1,8 +1,8 @@
-import { IAppAccessors } from './accessors';
-import { ILogger } from './accessors/ILogger';
-import { AppStatus } from './AppStatus';
-import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
-import { IAppInfo } from './metadata/IAppInfo';
+import type { IAppAccessors } from './accessors';
+import type { ILogger } from './accessors/ILogger';
+import type { AppStatus } from './AppStatus';
+import type { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
+import type { IAppInfo } from './metadata/IAppInfo';
 
 export interface IApp {
     /**

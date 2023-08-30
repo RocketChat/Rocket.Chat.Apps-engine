@@ -1,18 +1,19 @@
-import { IBlock } from '../../definition/uikit';
-import { VideoConference } from '../../definition/videoConferences';
-import { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
+import type { IBlock } from '../../definition/uikit';
+import type { VideoConference } from '../../definition/videoConferences';
+import type { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
-import { AppManager } from '../AppManager';
-import { VideoConferenceBridge } from '../bridges';
+import type { AppManager } from '../AppManager';
+import type { VideoConferenceBridge } from '../bridges';
 import { VideoConfProviderAlreadyExistsError, VideoConfProviderNotRegisteredError } from '../errors';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissions } from '../permissions/AppPermissions';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { AppAccessorManager } from './AppAccessorManager';
 import { AppPermissionManager } from './AppPermissionManager';
 import { AppVideoConfProvider } from './AppVideoConfProvider';
 
 export class AppVideoConfProviderManager {
     private readonly accessors: AppAccessorManager;
+
     private readonly bridge: VideoConferenceBridge;
 
     private videoConfProviders: Map<string, Map<string, AppVideoConfProvider>>;
@@ -26,10 +27,12 @@ export class AppVideoConfProviderManager {
         this.videoConfProviders = new Map<string, Map<string, AppVideoConfProvider>>();
         this.providerApps = new Map<string, string>();
     }
+
     public canProviderBeTouchedBy(appId: string, providerName: string): boolean {
         const key = providerName.toLowerCase().trim();
         return (key && (!this.providerApps.has(key) || this.providerApps.get(key) === appId)) || false;
     }
+
     public isAlreadyDefined(providerName: string): boolean {
         const search = providerName.toLowerCase().trim();
 
@@ -155,7 +158,7 @@ export class AppVideoConfProviderManager {
         call: VideoConfDataExtended,
         user?: IVideoConferenceUser,
         options?: IVideoConferenceOptions,
-        ): Promise<string> {
+    ): Promise<string> {
         const providerInfo = this.retrieveProviderInfo(providerName);
         if (!providerInfo) {
             throw new VideoConfProviderNotRegisteredError(providerName);

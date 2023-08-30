@@ -1,6 +1,6 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
+import type { IHttp, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { ILivechatRoom } from './ILivechatRoom';
+import type { ILivechatRoom } from './ILivechatRoom';
 
 /**
  * Handler called after a livechat room is closed.

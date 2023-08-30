@@ -1,5 +1,6 @@
 export class VideoConfProviderNotRegisteredError implements Error {
     public name = 'VideoConfProviderNotRegistered';
+
     public message: string;
 
     constructor(providerName: string) {

@@ -1,11 +1,12 @@
-import { IAppAccessors, IEnvironmentRead, IEnvironmentWrite, IHttp, IRead } from '../../definition/accessors';
-import { IApiEndpointMetadata } from '../../definition/api';
-import { AppManager } from '../AppManager';
-import { AppAccessorManager } from '../managers/AppAccessorManager';
-import { AppApiManager } from '../managers/AppApiManager';
+import type { IAppAccessors, IEnvironmentRead, IEnvironmentWrite, IHttp, IRead } from '../../definition/accessors';
+import type { IApiEndpointMetadata } from '../../definition/api';
+import type { AppManager } from '../AppManager';
+import type { AppAccessorManager } from '../managers/AppAccessorManager';
+import type { AppApiManager } from '../managers/AppApiManager';
 
 export class AppAccessors implements IAppAccessors {
     private accessorManager: AppAccessorManager;
+
     private apiManager: AppApiManager;
 
     constructor(manager: AppManager, private readonly appId: string) {

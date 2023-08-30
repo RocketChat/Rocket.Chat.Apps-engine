@@ -1,11 +1,11 @@
 import { AppMethod } from '../../definition/metadata';
-import { ISetting } from '../../definition/settings';
-import { ISettingUpdateContext } from '../../definition/settings/ISettingUpdateContext';
-import { AppManager } from '../AppManager';
+import type { ISetting } from '../../definition/settings';
+import type { ISettingUpdateContext } from '../../definition/settings/ISettingUpdateContext';
+import type { AppManager } from '../AppManager';
 import { Utilities } from '../misc/Utilities';
 
 export class AppSettingsManager {
-    constructor(private manager: AppManager) { }
+    constructor(private manager: AppManager) {}
 
     public getAppSettings(appId: string): { [key: string]: ISetting } {
         const rl = this.manager.getOneById(appId);
@@ -42,10 +42,9 @@ export class AppSettingsManager {
         const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
         const reader = this.manager.getAccessorManager().getReader(rl.getID());
         const http = this.manager.getAccessorManager().getHttp(rl.getID());
-        const decoratedSetting = (await rl.call(
-            AppMethod.ON_PRE_SETTING_UPDATE,
-            { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http,
-        )) || setting;
+        const decoratedSetting =
+            (await rl.call(AppMethod.ON_PRE_SETTING_UPDATE, { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http)) ||
+            setting;
 
         decoratedSetting.updatedAt = new Date();
         rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;

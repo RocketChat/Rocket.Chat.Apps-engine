@@ -1,19 +1,22 @@
-import { IUIController } from '../../definition/accessors';
-import { IUIKitErrorInteractionParam, IUIKitInteractionParam, IUIKitSurfaceViewParam } from '../../definition/accessors/IUIController';
-import { IToastMessagePayload } from '../../definition/ui/IToastMessagePaylaod';
+import type { IUIController } from '../../definition/accessors';
+import type { IUIKitErrorInteractionParam, IUIKitInteractionParam, IUIKitSurfaceViewParam } from '../../definition/accessors/IUIController';
+import type { IToastMessagePayload } from '../../definition/ui/IToastMessagePaylaod';
 import { UIKitInteractionType, UIKitSurfaceType } from '../../definition/uikit';
-import { formatContextualBarInteraction, formatErrorInteraction, formatModalInteraction, formatToastMessageInteraction } from '../../definition/uikit/UIKitInteractionPayloadFormatter';
-import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
-import { IUser } from '../../definition/users';
-import { AppBridges, UiInteractionBridge } from '../bridges';
+import {
+    formatContextualBarInteraction,
+    formatErrorInteraction,
+    formatModalInteraction,
+    formatToastMessageInteraction,
+} from '../../definition/uikit/UIKitInteractionPayloadFormatter';
+import type { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../../definition/uikit/UIKitInteractionResponder';
+import type { IUser } from '../../definition/users';
+import type { AppBridges, UiInteractionBridge } from '../bridges';
 import { UIHelper } from '../misc/UIHelper';
 
 export class UIController implements IUIController {
     private readonly uiInteractionBridge: UiInteractionBridge;
-    constructor(
-        private readonly appId: string,
-        bridges: AppBridges,
-    ) {
+
+    constructor(private readonly appId: string, bridges: AppBridges) {
         this.uiInteractionBridge = bridges.getUiInteractionBridge();
     }
 
@@ -47,7 +50,7 @@ export class UIController implements IUIController {
 
     public openSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
         const blocks = UIHelper.assignIds(view.blocks, this.appId);
-        const viewWithIds = {...view, blocks};
+        const viewWithIds = { ...view, blocks };
 
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
@@ -59,7 +62,7 @@ export class UIController implements IUIController {
 
     public updateSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser) {
         const blocks = UIHelper.assignIds(view.blocks, this.appId);
-        const viewWithIds = {...view, blocks};
+        const viewWithIds = { ...view, blocks };
 
         switch (view.type) {
             case UIKitSurfaceType.CONTEXTUAL_BAR:
@@ -102,6 +105,7 @@ export class UIController implements IUIController {
 
         return this.uiInteractionBridge.doNotifyUser(user, formatContextualBarInteraction(view, interactionContext), this.appId);
     }
+
     private openModal(view: IUIKitModalViewParam, context: IUIKitInteractionParam, user: IUser, isUpdate = false): Promise<void> {
         let type = UIKitInteractionType.MODAL_OPEN;
         if (isUpdate) {
@@ -115,5 +119,4 @@ export class UIController implements IUIController {
 
         return this.uiInteractionBridge.doNotifyUser(user, formatModalInteraction(view, interactionContext), this.appId);
     }
-
 }

@@ -1,10 +1,18 @@
 import { v1 as uuid } from 'uuid';
 
-import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
-import { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
-import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, IUIKitToastMessageInteraction, UIKitInteractionType } from './IUIKitInteractionType';
-import { IUIKitSurface, UIKitSurfaceType } from './IUIKitSurface';
-import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
+import type { IUIKitErrorInteractionParam } from '../accessors/IUIController';
+import type { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
+import type {
+    IUIKitContextualBarInteraction,
+    IUIKitErrorInteraction,
+    IUIKitInteraction,
+    IUIKitModalInteraction,
+    IUIKitToastMessageInteraction,
+} from './IUIKitInteractionType';
+import { UIKitInteractionType } from './IUIKitInteractionType';
+import type { IUIKitSurface } from './IUIKitSurface';
+import { UIKitSurfaceType } from './IUIKitSurface';
+import type { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
 
 function isModalInteraction(type: IUIKitInteraction['type']): type is IUIKitModalInteraction['type'] {
     return [UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(type);
@@ -12,7 +20,7 @@ function isModalInteraction(type: IUIKitInteraction['type']): type is IUIKitModa
 
 export function formatModalInteraction(view: IUIKitModalViewParam, context: IUIKitInteraction): IUIKitModalInteraction {
     if (!isModalInteraction(context.type)) {
-        throw new Error(`Invalid type "${ context.type }" for modal interaction`);
+        throw new Error(`Invalid type "${context.type}" for modal interaction`);
     }
 
     return {
@@ -35,7 +43,7 @@ function isContextualBarInteraction(type: IUIKitInteraction['type']): type is IU
 
 export function formatContextualBarInteraction(view: IUIKitContextualBarViewParam, context: IUIKitInteraction): IUIKitContextualBarInteraction {
     if (!isContextualBarInteraction(context.type)) {
-        throw new Error(`Invalid type "${ context.type }" for contextual bar interaction`);
+        throw new Error(`Invalid type "${context.type}" for contextual bar interaction`);
     }
 
     return {
@@ -54,7 +62,7 @@ export function formatContextualBarInteraction(view: IUIKitContextualBarViewPara
 
 export function formatErrorInteraction(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteraction): IUIKitErrorInteraction {
     if (UIKitInteractionType.ERRORS !== context.type) {
-        throw new Error(`Invalid type "${ context.type }" for error interaction`);
+        throw new Error(`Invalid type "${context.type}" for error interaction`);
     }
 
     return {
@@ -68,7 +76,7 @@ export function formatErrorInteraction(errorInteraction: IUIKitErrorInteractionP
 
 export function formatToastMessageInteraction(toast: IToastMessagePayload, context: IUIKitInteraction): IUIKitToastMessageInteraction {
     if (UIKitInteractionType.TOAST_MESSAGE !== context.type) {
-        throw new Error(`Invalid type "${ context.type }" for error interaction`);
+        throw new Error(`Invalid type "${context.type}" for error interaction`);
     }
 
     return {

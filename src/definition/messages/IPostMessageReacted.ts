@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IMessageReactionContext } from './IMessageReactionContext';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IMessageReactionContext } from './IMessageReactionContext';
 
 /**
  * Handler for after a message get a reaction or a reaction
@@ -15,11 +15,5 @@ export interface IPostMessageReacted {
      * @param persistence An accessor to the App's persistence
      * @param modify An accessor to the modifier
      */
-    executePostMessageReacted(
-        context: IMessageReactionContext,
-        read: IRead,
-        http: IHttp,
-        persistence: IPersistence,
-        modify: IModify,
-    ): Promise<void>;
+    executePostMessageReacted(context: IMessageReactionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
 }
