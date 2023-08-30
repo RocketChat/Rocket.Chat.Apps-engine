@@ -1,4 +1,5 @@
-import * as uuid from 'uuid/v1';
+import { v1 as uuid } from 'uuid';
+
 import { Omit } from '../../../lib/utils';
 import { BlockType, IActionsBlock, IBlock, IConditionalBlock, IConditionalBlockFilters, IContextBlock, IImageBlock, IInputBlock, ISectionBlock } from './Blocks';
 import {

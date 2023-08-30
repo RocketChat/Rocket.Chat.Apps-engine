@@ -1,10 +1,10 @@
+import { v1 as uuid } from 'uuid';
+
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
 import { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
 import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, IUIKitToastMessageInteraction, UIKitInteractionType } from './IUIKitInteractionType';
 import { IUIKitSurface, UIKitSurfaceType } from './IUIKitSurface';
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
-
-import uuid = require('uuid/v1');
 
 function isModalInteraction(type: IUIKitInteraction['type']): type is IUIKitModalInteraction['type'] {
     return [UIKitInteractionType.MODAL_OPEN, UIKitInteractionType.MODAL_UPDATE, UIKitInteractionType.MODAL_CLOSE].includes(type);
