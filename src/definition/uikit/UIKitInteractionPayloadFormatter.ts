@@ -1,5 +1,6 @@
 import { IUIKitErrorInteractionParam } from '../accessors/IUIController';
-import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, UIKitInteractionType } from './IUIKitInteractionType';
+import { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
+import { IUIKitContextualBarInteraction, IUIKitErrorInteraction, IUIKitInteraction, IUIKitModalInteraction, IUIKitToastMessageInteraction, UIKitInteractionType } from './IUIKitInteractionType';
 import { IUIKitSurface, UIKitSurfaceType } from './IUIKitSurface';
 import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from './UIKitInteractionResponder';
 
@@ -62,5 +63,18 @@ export function formatErrorInteraction(errorInteraction: IUIKitErrorInteractionP
         errors: errorInteraction.errors,
         viewId: errorInteraction.viewId,
         triggerId: context.triggerId,
+    };
+}
+
+export function formatToastMessageInteraction(toast: IToastMessagePayload, context: IUIKitInteraction): IUIKitToastMessageInteraction {
+    if (UIKitInteractionType.TOAST_MESSAGE !== context.type) {
+        throw new Error(`Invalid type "${ context.type }" for error interaction`);
+    }
+
+    return {
+        appId: context.appId,
+        type: UIKitInteractionType.TOAST_MESSAGE,
+        triggerId: context.triggerId,
+        toast,
     };
 }
