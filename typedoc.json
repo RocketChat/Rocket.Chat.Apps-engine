@@ -4,5 +4,6 @@
     "entryPointStrategy": "expand",
     "entryPoints": ["./src/definition"],
     "excludePrivate": true,
-    "out": "docs"
+    "out": "docs",
+    "gitRevision": "master"
 }
