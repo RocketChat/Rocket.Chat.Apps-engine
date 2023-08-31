@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { getRuntime } from '.';
 
+import { getRuntime } from '.';
 import { AllowedInternalModules, requireNativeModule } from '../compiler/modules';
 
 /**
@@ -8,18 +8,24 @@ import { AllowedInternalModules, requireNativeModule } from '../compiler/modules
  * with previous Apps-Engine versions
  */
 export function transformFallbackModuleForCustomRequire(moduleName: string): string {
-    return path.normalize(moduleName).replace(/\.\.?\//g, '').replace(/^\//, '') + '.ts';
+    return `${path
+        .normalize(moduleName)
+        .replace(/\.\.?\//g, '')
+        .replace(/^\//, '')}.ts`;
 }
 
 export function transformModuleForCustomRequire(moduleName: string): string {
-    return path.normalize(moduleName).replace(/\.\.?\//g, '').replace(/^\//, '') + '.js';
+    return `${path
+        .normalize(moduleName)
+        .replace(/\.\.?\//g, '')
+        .replace(/^\//, '')}.js`;
 }
 
 export function allowedInternalModuleRequire(moduleName: string): moduleName is AllowedInternalModules {
     return moduleName in AllowedInternalModules;
 }
 
-export function buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath: string = '.'): (mod: string, require: any) => {} {
+export function buildCustomRequire(files: { [s: string]: string }, appId: string, currentPath = '.'): (mod: string, require: any) => {} {
     return function _requirer(mod: string, requirer: any) {
         // Keep compatibility with apps importing apps-ts-definition
         if (mod.startsWith('@rocket.chat/apps-ts-definition/')) {
@@ -28,7 +34,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
             }
             mod = path.normalize(mod);
             mod = mod.replace('@rocket.chat/apps-ts-definition/', '../../definition/');
-            return require(mod);
+            return globalThis.require(mod);
         }
 
         if (mod.startsWith('@rocket.chat/apps-engine/definition/')) {
@@ -37,7 +43,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
             }
             mod = path.normalize(mod);
             mod = mod.replace('@rocket.chat/apps-engine/definition/', '../../definition/');
-            return require(mod);
+            return globalThis.require(mod);
         }
 
         if (allowedInternalModuleRequire(mod)) {
@@ -52,7 +58,7 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
         const transformedModule = transformModuleForCustomRequire(mod);
         const fallbackModule = transformFallbackModuleForCustomRequire(mod);
 
-        const filename = files[transformedModule] ? transformedModule : files[fallbackModule] ? fallbackModule : undefined;
+        const filename = (files[transformedModule] && transformedModule) || (files[fallbackModule] && fallbackModule) || undefined;
 
         if (!filename) {
             return;
@@ -61,11 +67,15 @@ export function buildCustomRequire(files: { [s: string]: string }, appId: string
         const Runtime = getRuntime();
 
         // TODO: specify correct file name
-        return Runtime.runCodeSync(files[filename], {
-            require: buildCustomRequire(files, appId, path.dirname(filename) + '/'),
-        }, {
-            returnAllExports: true,
-            filename,
-        });
+        return Runtime.runCodeSync(
+            files[filename],
+            {
+                require: buildCustomRequire(files, appId, `${path.dirname(filename)}/`),
+            },
+            {
+                returnAllExports: true,
+                filename,
+            },
+        );
     };
 }

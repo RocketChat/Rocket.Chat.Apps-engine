@@ -1,4 +1,4 @@
-import { IAppStorageItem } from './IAppStorageItem';
+import type { IAppStorageItem } from './IAppStorageItem';
 
 export abstract class AppSourceStorage {
     /**
@@ -11,6 +11,7 @@ export abstract class AppSourceStorage {
      * @returns the path in which the pacakge has been stored
      */
     public abstract store(item: IAppStorageItem, zip: Buffer): Promise<string>;
+
     /**
      * Fetches an app's package file contents
      *
@@ -19,6 +20,7 @@ export abstract class AppSourceStorage {
      * @returns buffer containing the file contents of the app's package
      */
     public abstract fetch(item: IAppStorageItem): Promise<Buffer>;
+
     /**
      * Updates an app package (zip file) in the underlying
      * storage provided by the host
@@ -29,6 +31,7 @@ export abstract class AppSourceStorage {
      * @returns the path in which the pacakge has been stored
      */
     public abstract update(item: IAppStorageItem, zip: Buffer): Promise<string>;
+
     /**
      *
      * @param item descriptor of the App

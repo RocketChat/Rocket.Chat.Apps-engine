@@ -1,17 +1,17 @@
-import { IRoomExtender } from '../../definition/accessors';
+import type { IRoomExtender } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-
+import type { IRoom } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
 import { Utilities } from '../misc/Utilities';
 
 export class RoomExtender implements IRoomExtender {
     public kind: RocketChatAssociationModel.ROOM;
+
     private members: Array<IUser>;
 
     constructor(private room: IRoom) {
         this.kind = RocketChatAssociationModel.ROOM;
-        this.members = new Array<IUser>();
+        this.members = [];
     }
 
     public addCustomField(key: string, value: any): IRoomExtender {
@@ -20,11 +20,11 @@ export class RoomExtender implements IRoomExtender {
         }
 
         if (this.room.customFields[key]) {
-            throw new Error(`The room already contains a custom field by the key: ${ key }`);
+            throw new Error(`The room already contains a custom field by the key: ${key}`);
         }
 
         if (key.includes('.')) {
-            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
+            throw new Error(`The given key contains a period, which is not allowed. Key: ${key}`);
         }
 
         this.room.customFields[key] = value;

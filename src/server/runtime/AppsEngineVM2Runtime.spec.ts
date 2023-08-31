@@ -1,13 +1,6 @@
-import {
-    AsyncTest,
-    Expect,
-    Setup,
-    SetupFixture,
-    Test,
-    TestCase,
-    TestFixture,
-} from 'alsatian';
-import { App } from '../../definition/App';
+import { AsyncTest, Expect, Setup, SetupFixture, Test, TestCase, TestFixture } from 'alsatian';
+
+import type { App } from '../../definition/App';
 import { AppsEngineVM2Runtime } from './AppsEngineVM2Runtime';
 
 @TestFixture('AppsEngineVM2Runtine')
@@ -41,23 +34,9 @@ export class AppsEngineVM2RuntineTestFixture {
         },
         'Hello World Second case',
     )
-    @TestCase(
-        `module.exports = () => { return 'Hello World Third case'};`,
-        { someSandbox: true },
-        null,
-        'Hello World Third case',
-    )
-    @TestCase(
-        `module.exports = () => { return 'Hello World Fourth case'};`,
-        null,
-        null,
-    )
-    @TestCase(
-        `module.exports = () => { return 'Hello World Fifth case'};`,
-        { require: () => 'module' },
-        null,
-        'Hello World Fourth case',
-    )
+    @TestCase(`module.exports = () => { return 'Hello World Third case'};`, { someSandbox: true }, null, 'Hello World Third case')
+    @TestCase(`module.exports = () => { return 'Hello World Fourth case'};`, null, null)
+    @TestCase(`module.exports = () => { return 'Hello World Fifth case'};`, { require: () => 'module' }, null, 'Hello World Fourth case')
     @Test('AppsEngineVM2Runtime.runCode')
     public runCodeTest(...args: any) {
         const code = args[0];
@@ -84,19 +63,14 @@ export class AppsEngineVM2RuntineTestFixture {
         },
         'Hello World',
     )
-    @AsyncTest(
-        'new AppsEngineVM2Runtime().runInSandbox(code, sandbox, options)',
-    )
+    @AsyncTest('new AppsEngineVM2Runtime().runInSandbox(code, sandbox, options)')
     public async runInSandbox(...args: any) {
         const code = args[0];
         const sandbox = args[1];
         const options = args[2];
         const response = args[3];
 
-        const instance = new AppsEngineVM2Runtime(
-            this.app as App,
-            (mod: string) => mod,
-        );
+        const instance = new AppsEngineVM2Runtime(this.app as App, (mod: string) => mod);
 
         const result = await instance.runInSandbox(code, sandbox, options);
 

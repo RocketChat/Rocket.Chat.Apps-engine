@@ -1,15 +1,18 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { IMessage } from '../../../src/definition/messages';
-import { IRoom } from '../../../src/definition/rooms';
 
+import type { IMessage } from '../../../src/definition/messages';
+import type { IRoom } from '../../../src/definition/rooms';
 import { ModifyExtender } from '../../../src/server/accessors';
-import { AppBridges, MessageBridge, RoomBridge } from '../../../src/server/bridges';
+import type { AppBridges, MessageBridge, RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyExtenderTestFixture {
     private mockAppId: string;
+
     private mockRoomBridge: RoomBridge;
+
     private mockMessageBridge: MessageBridge;
+
     private mockAppBridge: AppBridges;
 
     @SetupFixture
@@ -62,7 +65,7 @@ export class ModifyExtenderTestFixture {
         Expect(await me.extendMessage('msgId', TestData.getUser())).toBeDefined();
         Expect(this.mockMessageBridge.doGetById).toHaveBeenCalledWith('msgId', this.mockAppId);
 
-        await Expect(async () => await me.finish({} as any)).toThrowErrorAsync(Error, 'Invalid extender passed to the ModifyExtender.finish function.');
+        await Expect(() => me.finish({} as any)).toThrowErrorAsync(Error, 'Invalid extender passed to the ModifyExtender.finish function.');
         Expect(await me.finish(await me.extendRoom('roomId', TestData.getUser()))).not.toBeDefined();
         Expect(this.mockRoomBridge.doUpdate).toHaveBeenCalled();
         Expect(await me.finish(await me.extendMessage('msgId', TestData.getUser()))).not.toBeDefined();

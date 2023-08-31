@@ -1,17 +1,17 @@
-import { ILivechatMessage } from '../livechat';
-import { IMessage } from '../messages';
-import { IRoom } from '../rooms';
-import { BlockBuilder } from '../uikit';
-import { AppVideoConference } from '../videoConferences';
-import { IBotUser } from './../users/IBotUser';
-import { IDiscussionBuilder } from './IDiscussionBuilder';
-import { ILivechatCreator } from './ILivechatCreator';
-import { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
-import { IMessageBuilder } from './IMessageBuilder';
-import { IRoomBuilder } from './IRoomBuilder';
-import { IUploadCreator } from './IUploadCreator';
-import { IUserBuilder } from './IUserBuilder';
-import { IVideoConferenceBuilder } from './IVideoConferenceBuilder';
+import type { ILivechatMessage } from '../livechat';
+import type { IMessage } from '../messages';
+import type { IRoom } from '../rooms';
+import type { BlockBuilder } from '../uikit';
+import type { AppVideoConference } from '../videoConferences';
+import type { IBotUser } from '../users/IBotUser';
+import type { IDiscussionBuilder } from './IDiscussionBuilder';
+import type { ILivechatCreator } from './ILivechatCreator';
+import type { ILivechatMessageBuilder } from './ILivechatMessageBuilder';
+import type { IMessageBuilder } from './IMessageBuilder';
+import type { IRoomBuilder } from './IRoomBuilder';
+import type { IUploadCreator } from './IUploadCreator';
+import type { IUserBuilder } from './IUserBuilder';
+import type { IVideoConferenceBuilder } from './IVideoConferenceBuilder';
 
 export interface IModifyCreator {
     /**

@@ -1,5 +1,5 @@
-import { IVisitorEmail } from './IVisitorEmail';
-import { IVisitorPhone } from './IVisitorPhone';
+import type { IVisitorEmail } from './IVisitorEmail';
+import type { IVisitorPhone } from './IVisitorPhone';
 
 export interface IVisitor {
     id?: string;

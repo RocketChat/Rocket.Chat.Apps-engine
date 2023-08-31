@@ -1,11 +1,16 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { ExternalComponentLocation, IExternalComponent } from '../../../src/definition/externalComponent/IExternalComponent';
+
+import type { IExternalComponent } from '../../../src/definition/externalComponent/IExternalComponent';
+import { ExternalComponentLocation } from '../../../src/definition/externalComponent/IExternalComponent';
 import { AppExternalComponentManager } from '../../../src/server/managers';
 
 export class AppExternalComponentManagerTestFixture {
     private mockExternalComponent1: IExternalComponent;
+
     private mockExternalComponent2: IExternalComponent;
+
     private mockExternalComponent3: IExternalComponent;
+
     private mockAppExternalComponentManager: AppExternalComponentManager;
 
     public register(aecm: AppExternalComponentManager, externalComponent: IExternalComponent): void {
@@ -40,9 +45,7 @@ export class AppExternalComponentManagerTestFixture {
             description: 'TestExternalComponent3',
         } as IExternalComponent;
         this.mockAppExternalComponentManager = new AppExternalComponentManager();
-        this.mockAppExternalComponentManager.addExternalComponent(
-            this.mockExternalComponent1.appId, this.mockExternalComponent1,
-        );
+        this.mockAppExternalComponentManager.addExternalComponent(this.mockExternalComponent1.appId, this.mockExternalComponent1);
     }
 
     @Test()

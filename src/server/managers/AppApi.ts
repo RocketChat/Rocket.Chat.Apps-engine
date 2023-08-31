@@ -1,27 +1,23 @@
 import { AppMethod } from '../../definition/metadata';
+import type { IApi, IApiRequest, IApiResponse } from '../../definition/api';
+import { ApiSecurity, ApiVisibility } from '../../definition/api';
+import type { IApiEndpoint } from '../../definition/api/IApiEndpoint';
+import type { IApiEndpointInfo } from '../../definition/api/IApiEndpointInfo';
+import type { ProxiedApp } from '../ProxiedApp';
+import type { AppLogStorage } from '../storage';
+import type { AppAccessorManager } from './AppAccessorManager';
 
-import { ApiSecurity, ApiVisibility, IApi, IApiRequest, IApiResponse } from '../../definition/api';
-import { IApiEndpoint } from '../../definition/api/IApiEndpoint';
-import { IApiEndpointInfo } from '../../definition/api/IApiEndpointInfo';
-import { ProxiedApp } from '../ProxiedApp';
-import { AppLogStorage } from '../storage';
-import { AppAccessorManager } from './AppAccessorManager';
-
-const methods: Array<string> = [
-    'get',
-    'post',
-    'put',
-    'delete',
-    'head',
-    'options',
-    'patch',
-];
+const methods: Array<string> = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'];
 
 export class AppApi {
     public readonly computedPath: string;
+
     public readonly basePath: string;
+
     public readonly appId: string;
+
     public readonly hash?: string;
+
     public readonly implementedMethods: Array<string>;
 
     constructor(public app: ProxiedApp, public api: IApi, public endpoint: IApiEndpoint) {
@@ -43,13 +39,10 @@ export class AppApi {
         this.implementedMethods = methods.filter((m) => typeof (endpoint as any)[m] === 'function');
     }
 
-    public async runExecutor(request: IApiRequest,
-                             logStorage: AppLogStorage,
-                             accessors: AppAccessorManager): Promise<IApiResponse> {
-
+    public async runExecutor(request: IApiRequest, logStorage: AppLogStorage, accessors: AppAccessorManager): Promise<IApiResponse> {
         const { path } = this.endpoint;
 
-        const method = request.method;
+        const { method } = request;
 
         // Ensure the api has the property before going on
         if (typeof this.endpoint[method] !== 'function') {
@@ -76,9 +69,9 @@ export class AppApi {
         };
 
         const logger = this.app.setupLogger(AppMethod._API_EXECUTOR);
-        logger.debug(`${ path }'s ${ method } is being executed...`, request);
+        logger.debug(`${path}'s ${method} is being executed...`, request);
 
-        const runCode = `module.exports = endpoint.${ method }.apply(endpoint, args)`;
+        const runCode = `module.exports = endpoint.${method}.apply(endpoint, args)`;
         try {
             const result: IApiResponse = await this.app.getRuntime().runInSandbox(runCode, {
                 endpoint: this.endpoint,
@@ -91,12 +84,12 @@ export class AppApi {
                     accessors.getPersistence(this.app.getID()),
                 ],
             });
-            logger.debug(`${ path }'s ${ method } was successfully executed.`);
+            logger.debug(`${path}'s ${method} was successfully executed.`);
             await logStorage.storeEntries(this.app.getID(), logger);
             return result;
         } catch (e) {
             logger.error(e);
-            logger.debug(`${ path }'s ${ method } was unsuccessful.`);
+            logger.debug(`${path}'s ${method} was unsuccessful.`);
             await logStorage.storeEntries(this.app.getID(), logger);
             throw e;
         }

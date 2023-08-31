@@ -1,4 +1,4 @@
-import { IRole } from '../roles';
+import type { IRole } from '../roles';
 
 /**
  * Interface for reading roles.

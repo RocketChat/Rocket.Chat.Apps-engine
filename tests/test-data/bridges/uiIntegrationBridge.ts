@@ -1,5 +1,5 @@
-import { IUIKitInteractionParam } from '../../../src/definition/accessors/IUIController';
-import { IUser } from '../../../src/definition/users';
+import type { IUIKitInteractionParam } from '../../../src/definition/accessors/IUIController';
+import type { IUser } from '../../../src/definition/users';
 import { UiInteractionBridge } from '../../../src/server/bridges';
 
 export class TestsUiIntegrationBridge extends UiInteractionBridge {

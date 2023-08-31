@@ -1,13 +1,18 @@
-import { IAppInfo } from '../../definition/metadata';
+import type { IAppInfo } from '../../definition/metadata';
 import { AppLicenseValidationResult } from '../marketplace/license';
-import { ProxiedApp } from '../ProxiedApp';
+import type { ProxiedApp } from '../ProxiedApp';
 
 export class AppFabricationFulfillment {
     public info: IAppInfo;
+
     public app: ProxiedApp;
+
     public implemented: { [int: string]: boolean };
+
     public licenseValidationResult: AppLicenseValidationResult;
+
     public storageError: string;
+
     public appUserError: object;
 
     constructor() {

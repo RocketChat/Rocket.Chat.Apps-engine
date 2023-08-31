@@ -1,4 +1,4 @@
-import { IOAuthAppParams } from './IOAuthApp';
+import type { IOAuthAppParams } from './IOAuthApp';
 
 export interface IOAuthAppsModify {
     /**

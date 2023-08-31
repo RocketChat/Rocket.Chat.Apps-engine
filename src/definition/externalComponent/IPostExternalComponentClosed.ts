@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IExternalComponent } from './IExternalComponent';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IExternalComponent } from './IExternalComponent';
 
 /**
  * Handler called after an external component is closed.

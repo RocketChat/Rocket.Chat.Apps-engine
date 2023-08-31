@@ -1,6 +1,6 @@
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom, RoomType } from '../rooms';
-import { IUser } from '../users';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IRoom, RoomType } from '../rooms';
+import type { IUser } from '../users';
 
 /**
  * Interface for building out a room.

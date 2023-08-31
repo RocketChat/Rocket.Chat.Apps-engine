@@ -1,5 +1,5 @@
-import { IUser } from '../users';
-import { IRoom } from './IRoom';
+import type { IUser } from '../users';
+import type { IRoom } from './IRoom';
 
 /**
  * The context of execution for the following events:

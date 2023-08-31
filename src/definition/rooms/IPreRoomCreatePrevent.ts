@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IRoom } from './IRoom';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IRoom } from './IRoom';
 
 export interface IPreRoomCreatePrevent {
     /**

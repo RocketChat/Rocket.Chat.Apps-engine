@@ -1,7 +1,6 @@
-// tslint:disable:max-line-length
 import { Expect, Test } from 'alsatian';
-import { IAppInfo } from '../../../src/definition/metadata';
 
+import type { IAppInfo } from '../../../src/definition/metadata';
 import { RequiredApiVersionError } from '../../../src/server/errors';
 
 export class RequiredApiVersionErrorTestFixture {
@@ -20,6 +19,8 @@ export class RequiredApiVersionErrorTestFixture {
         const er2 = new RequiredApiVersionError(info, '2.0.0');
 
         Expect(er2.name).toBe('RequiredApiVersion');
-        Expect(er2.message).toBe('Failed to load the App "Testing" (fake-id) as it requires v1.0.1 of the App API however your server comes with v2.0.0. Please tell the author to update their App as it is out of date.');
+        Expect(er2.message).toBe(
+            'Failed to load the App "Testing" (fake-id) as it requires v1.0.1 of the App API however your server comes with v2.0.0. Please tell the author to update their App as it is out of date.',
+        );
     }
 }

@@ -1,4 +1,4 @@
-import { ISetting } from '../../definition/settings';
+import type { ISetting } from '../../definition/settings';
 import { BaseBridge } from './BaseBridge';
 
 /**

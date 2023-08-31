@@ -1,4 +1,4 @@
-import { IVideoConfProvider } from '../videoConfProviders';
+import type { IVideoConfProvider } from '../videoConfProviders';
 
 /**
  * This accessor provides methods for adding videoconf providers.

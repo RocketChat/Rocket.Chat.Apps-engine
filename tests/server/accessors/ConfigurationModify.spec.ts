@@ -1,11 +1,13 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { ISchedulerModify, IServerSettingsModify, ISlashCommandsModify } from '../../../src/definition/accessors';
 
+import type { ISchedulerModify, IServerSettingsModify, ISlashCommandsModify } from '../../../src/definition/accessors';
 import { ConfigurationModify } from '../../../src/server/accessors';
 
 export class ConfigurationExtendTestFixture {
     private ssm: IServerSettingsModify;
+
     private scm: ISlashCommandsModify;
+
     private scheduler: ISchedulerModify;
 
     @SetupFixture

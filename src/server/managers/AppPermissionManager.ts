@@ -1,4 +1,4 @@
-import { IPermission } from '../../definition/permissions/IPermission';
+import type { IPermission } from '../../definition/permissions/IPermission';
 import { getPermissionsByAppId } from '../AppManager';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { APPS_ENGINE_RUNTIME_FILE_PREFIX } from '../runtime/AppsEngineRuntime';
@@ -25,7 +25,7 @@ export class AppPermissionManager {
         if (err instanceof PermissionDeniedError) {
             const { name, message } = err;
 
-            console.error(`${ name }: ${ message }\n${ this.getCallStack() }`);
+            console.error(`${name}: ${message}\n${this.getCallStack()}`);
         } else {
             console.error(err);
         }

@@ -1,9 +1,9 @@
-import { ILivechatMessage, IVisitor } from '../livechat';
-import { IMessageAttachment } from '../messages';
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
-import { IMessageBuilder } from './IMessageBuilder';
+import type { ILivechatMessage, IVisitor } from '../livechat';
+import type { IMessageAttachment } from '../messages';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
+import type { IMessageBuilder } from './IMessageBuilder';
 
 /**
  * Interface for building out a livechat message.

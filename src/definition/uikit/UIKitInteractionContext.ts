@@ -1,5 +1,4 @@
-// tslint:disable:max-classes-per-file
-import {
+import type {
     IUIKitActionButtonIncomingInteraction,
     IUIKitActionButtonMessageBoxIncomingInteraction,
     IUIKitBaseIncomingInteraction,
@@ -11,7 +10,9 @@ import { UIKitInteractionResponder } from './UIKitInteractionResponder';
 
 export abstract class UIKitInteractionContext {
     private baseContext: IUIKitBaseIncomingInteraction;
+
     private responder: UIKitInteractionResponder;
+
     constructor(baseContext: IUIKitBaseIncomingInteraction) {
         const { appId, actionId, room, user, triggerId, threadId } = baseContext;
 

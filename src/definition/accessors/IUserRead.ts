@@ -1,4 +1,4 @@
-import { IUser } from '../users/index';
+import type { IUser } from '../users/index';
 
 /**
  * This accessor provides methods for accessing

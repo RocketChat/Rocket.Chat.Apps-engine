@@ -1,11 +1,13 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
+
 import { AppInterface } from '../../../src/definition/metadata';
-import { AppManager } from '../../../src/server/AppManager';
+import type { AppManager } from '../../../src/server/AppManager';
 import { AppListenerManager } from '../../../src/server/managers';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class AppListenerManagerTestFixture {
     private mockApp: ProxiedApp;
+
     private mockManager: AppManager;
 
     @SetupFixture
@@ -22,9 +24,7 @@ export class AppListenerManagerTestFixture {
         } as ProxiedApp;
 
         this.mockManager = {
-            getAccessorManager() {
-                return;
-            },
+            getAccessorManager() {},
             getOneById(appId: string) {
                 return this.mockApp;
             },

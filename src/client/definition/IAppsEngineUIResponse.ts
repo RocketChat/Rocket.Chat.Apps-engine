@@ -1,4 +1,4 @@
-import { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './index';
+import type { IExternalComponentRoomInfo, IExternalComponentUserInfo } from './index';
 
 /**
  * The response to the AppClientSDK's API call.

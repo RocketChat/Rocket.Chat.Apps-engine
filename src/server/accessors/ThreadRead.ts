@@ -1,6 +1,6 @@
-import { IThreadRead } from '../../definition/accessors/IThreadRead';
-import { IMessage } from '../../definition/messages';
-import { ThreadBridge } from '../bridges/ThreadBridge';
+import type { IThreadRead } from '../../definition/accessors/IThreadRead';
+import type { IMessage } from '../../definition/messages';
+import type { ThreadBridge } from '../bridges/ThreadBridge';
 
 export class ThreadRead implements IThreadRead {
     constructor(private threadBridge: ThreadBridge, private appId: string) {}

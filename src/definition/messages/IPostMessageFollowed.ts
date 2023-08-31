@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IMessageFollowContext } from './IMessageFollowContext';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IMessageFollowContext } from './IMessageFollowContext';
 
 /**
  * Handler for after a message has been followed or unfollowed
@@ -14,11 +14,5 @@ export interface IPostMessageFollowed {
      * @param persistence An accessor to the App's persistence
      * @param modify An accessor to the modifier
      */
-    executePostMessageFollowed(
-        context: IMessageFollowContext,
-        read: IRead,
-        http: IHttp,
-        persistence: IPersistence,
-        modify: IModify,
-    ): Promise<void>;
+    executePostMessageFollowed(context: IMessageFollowContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
 }

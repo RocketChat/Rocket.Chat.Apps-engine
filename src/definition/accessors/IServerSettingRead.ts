@@ -1,4 +1,4 @@
-import { ISetting } from '../settings/ISetting';
+import type { ISetting } from '../settings/ISetting';
 
 /**
  * Reader for the settings inside of the server (Rocket.Chat).

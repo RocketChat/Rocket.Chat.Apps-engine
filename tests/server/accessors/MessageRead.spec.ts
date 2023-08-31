@@ -1,13 +1,15 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { IMessage } from '../../../src/definition/messages';
 
+import type { IMessage } from '../../../src/definition/messages';
 import { MessageRead } from '../../../src/server/accessors';
-import { MessageBridge } from '../../../src/server/bridges';
+import type { MessageBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class MessageReadAccessorTestFixture {
     private msg: IMessage;
+
     private mockMsgBridgeWithMsg: MessageBridge;
+
     private mockMsgBridgeNoMsg: MessageBridge;
 
     @SetupFixture

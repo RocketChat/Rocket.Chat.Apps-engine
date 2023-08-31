@@ -1,7 +1,7 @@
 import { Expect, Test } from 'alsatian';
-import { IRoom } from '../../../src/definition/rooms';
-import { TestData } from '../../test-data/utilities';
 
+import type { IRoom } from '../../../src/definition/rooms';
+import { TestData } from '../../test-data/utilities';
 import { RoomExtender } from '../../../src/server/accessors';
 
 export class RoomExtenderAccessorTestFixture {
@@ -13,7 +13,7 @@ export class RoomExtenderAccessorTestFixture {
 
     @Test()
     public usingRoomExtender() {
-        const room: IRoom = { } as IRoom;
+        const room: IRoom = {} as IRoom;
         const re = new RoomExtender(room);
 
         Expect(room.customFields).not.toBeDefined();

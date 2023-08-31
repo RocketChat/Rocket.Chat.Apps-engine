@@ -1,5 +1,5 @@
-import { AppStatus } from '../../definition/AppStatus';
-import { ProxiedApp } from '../ProxiedApp';
+import type { AppStatus } from '../../definition/AppStatus';
+import type { ProxiedApp } from '../ProxiedApp';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class AppActivationBridge extends BaseBridge {
@@ -24,8 +24,12 @@ export abstract class AppActivationBridge extends BaseBridge {
     }
 
     protected abstract appAdded(app: ProxiedApp): Promise<void>;
+
     protected abstract appUpdated(app: ProxiedApp): Promise<void>;
+
     protected abstract appRemoved(app: ProxiedApp): Promise<void>;
+
     protected abstract appStatusChanged(app: ProxiedApp, status: AppStatus): Promise<void>;
+
     protected abstract actionsChanged(): Promise<void>;
 }

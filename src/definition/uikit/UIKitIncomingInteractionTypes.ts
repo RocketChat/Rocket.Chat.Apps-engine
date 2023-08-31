@@ -1,9 +1,9 @@
-import { IMessage } from '../messages';
-import { IRoom } from '../rooms';
+import type { IMessage } from '../messages';
+import type { IRoom } from '../rooms';
 import { UIActionButtonContext } from '../ui';
-import { IUser } from '../users';
-import { IUIKitSurface } from './IUIKitSurface';
-import {
+import type { IUser } from '../users';
+import type { IUIKitSurface } from './IUIKitSurface';
+import type {
     IUIKitIncomingInteractionContextualBarContainer,
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
@@ -53,6 +53,8 @@ export interface IUIKitActionButtonMessageBoxIncomingInteraction extends IUIKitA
     threadId?: string;
 }
 
-export function isMessageBoxIncomingInteraction(interaction: IUIKitActionButtonIncomingInteraction): interaction is IUIKitActionButtonMessageBoxIncomingInteraction {
+export function isMessageBoxIncomingInteraction(
+    interaction: IUIKitActionButtonIncomingInteraction,
+): interaction is IUIKitActionButtonMessageBoxIncomingInteraction {
     return interaction.buttonContext === UIActionButtonContext.MESSAGE_BOX_ACTION;
 }

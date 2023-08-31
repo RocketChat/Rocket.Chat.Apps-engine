@@ -1,5 +1,5 @@
-import { IUser } from '../users';
-import { RoomType } from './RoomType';
+import type { IUser } from '../users';
+import type { RoomType } from './RoomType';
 
 export interface IRoom {
     id: string;

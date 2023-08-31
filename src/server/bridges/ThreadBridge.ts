@@ -1,5 +1,5 @@
-import { ITypingOptions } from '../../definition/accessors/INotifier';
-import { IMessage } from '../../definition/messages';
+import type { ITypingOptions } from '../../definition/accessors/INotifier';
+import type { IMessage } from '../../definition/messages';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';

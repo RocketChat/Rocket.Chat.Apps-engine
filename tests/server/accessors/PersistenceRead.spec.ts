@@ -1,8 +1,8 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 
+import type { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 import { PersistenceRead } from '../../../src/server/accessors';
-import { PersistenceBridge } from '../../../src/server/bridges';
+import type { PersistenceBridge } from '../../../src/server/bridges';
 
 export class PersistenceReadTestFixture {
     private mockPersisBridge: PersistenceBridge;

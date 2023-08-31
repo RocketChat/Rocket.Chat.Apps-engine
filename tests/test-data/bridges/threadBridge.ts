@@ -1,4 +1,4 @@
-import { IMessage } from '../../../src/definition/messages';
+import type { IMessage } from '../../../src/definition/messages';
 import { ThreadBridge } from '../../../src/server/bridges/ThreadBridge';
 
 export class TestsThreadBridge extends ThreadBridge {

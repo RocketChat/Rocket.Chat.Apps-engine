@@ -1,5 +1,5 @@
-import { ILivechatRoom, IVisitor } from '../livechat';
-import { IUser } from '../users';
+import type { ILivechatRoom, IVisitor } from '../livechat';
+import type { IUser } from '../users';
 
 export interface IExtraRoomParams {
     source?: ILivechatRoom['source'];

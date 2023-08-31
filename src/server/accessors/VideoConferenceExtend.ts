@@ -1,7 +1,7 @@
-import { IVideoConferenceExtender } from '../../definition/accessors';
+import type { IVideoConferenceExtender } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IVideoConferenceUser, VideoConference } from '../../definition/videoConferences';
-import { VideoConferenceMember } from '../../definition/videoConferences/IVideoConference';
+import type { IVideoConferenceUser, VideoConference } from '../../definition/videoConferences';
+import type { VideoConferenceMember } from '../../definition/videoConferences/IVideoConference';
 import { Utilities } from '../misc/Utilities';
 
 export class VideoConferenceExtender implements IVideoConferenceExtender {

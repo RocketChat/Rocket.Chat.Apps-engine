@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { ISlashCommandPreview, ISlashCommandPreviewItem } from './ISlashCommandPreview';
-import { SlashCommandContext } from './SlashCommandContext';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { ISlashCommandPreview, ISlashCommandPreviewItem } from './ISlashCommandPreview';
+import type { SlashCommandContext } from './SlashCommandContext';
 
 /**
  * Represents a slash command that is being provided.
@@ -30,6 +30,12 @@ export interface ISlashCommand {
      */
     previewer?(context: SlashCommandContext, read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<ISlashCommandPreview>;
     /** The function which gets executed whenever a user selects a preview item. */
-    executePreviewItem?(item: ISlashCommandPreviewItem, context: SlashCommandContext,
-                        read: IRead, modify: IModify, http: IHttp, persis: IPersistence): Promise<void>;
+    executePreviewItem?(
+        item: ISlashCommandPreviewItem,
+        context: SlashCommandContext,
+        read: IRead,
+        modify: IModify,
+        http: IHttp,
+        persis: IPersistence,
+    ): Promise<void>;
 }

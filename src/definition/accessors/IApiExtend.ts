@@ -1,4 +1,4 @@
-import { IApi } from '../api';
+import type { IApi } from '../api';
 
 /**
  * This accessor provides methods for adding a custom api.

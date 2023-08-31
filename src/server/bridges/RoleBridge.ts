@@ -1,4 +1,4 @@
-import { IRole } from '../../definition/roles';
+import type { IRole } from '../../definition/roles';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -18,6 +18,7 @@ export abstract class RoleBridge extends BaseBridge {
     }
 
     protected abstract getOneByIdOrName(idOrName: IRole['id'] | IRole['name'], appId: string): Promise<IRole | null>;
+
     protected abstract getCustomRoles(appId: string): Promise<Array<IRole>>;
 
     private hasReadPermission(appId: string): boolean {

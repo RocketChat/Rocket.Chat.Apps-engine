@@ -1,16 +1,17 @@
-import { IAppAccessors, ILogger } from '../definition/accessors';
-import { App } from '../definition/App';
-import { AppStatus } from '../definition/AppStatus';
+import type { IAppAccessors, ILogger } from '../definition/accessors';
+import type { App } from '../definition/App';
+import type { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
-import { IApp } from '../definition/IApp';
-import { AppMethod, IAppAuthorInfo, IAppInfo } from '../definition/metadata';
-import { AppManager } from './AppManager';
+import type { IApp } from '../definition/IApp';
+import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
+import { AppMethod } from '../definition/metadata';
+import type { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
-import { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
-import { IAppStorageItem } from './storage';
+import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
+import type { IAppStorageItem } from './storage';
 
 export class ProxiedApp implements IApp {
     private previousStatus: AppStatus;
@@ -64,11 +65,10 @@ export class ProxiedApp implements IApp {
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
-            throw new Error(`The App ${this.app.getName()} (${this.app.getID()}` + ` does not have the method: "${method}"`);
+            throw new Error(`The App ${this.app.getName()} (${this.app.getID()} does not have the method: "${method}"`);
         }
 
-        // tslint:disable-next-line
-        const methodDeclartion = (this.app as any)[method] as Function;
+        const methodDeclartion = (this.app as any)[method] as (...args: any[]) => any;
         if (args.length < methodDeclartion.length) {
             throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
         }
@@ -134,6 +134,7 @@ export class ProxiedApp implements IApp {
     public getRequiredApiVersion(): string {
         return this.app.getRequiredApiVersion();
     }
+
     public getAuthorInfo(): IAppAuthorInfo {
         return this.app.getAuthorInfo();
     }

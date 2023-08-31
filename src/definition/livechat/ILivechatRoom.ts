@@ -1,8 +1,8 @@
 import { RoomType } from '../rooms';
-import { IRoom } from '../rooms/IRoom';
-import { IUser } from '../users';
-import { IDepartment } from './IDepartment';
-import { IVisitor } from './IVisitor';
+import type { IRoom } from '../rooms/IRoom';
+import type { IUser } from '../users';
+import type { IDepartment } from './IDepartment';
+import type { IVisitor } from './IVisitor';
 
 export enum OmnichannelSourceType {
     WIDGET = 'widget',
@@ -48,8 +48,6 @@ export interface ILivechatRoom extends IRoom {
 export const isLivechatRoom = (room: IRoom): room is ILivechatRoom => {
     return room.type === RoomType.LIVE_CHAT;
 };
-export const isLivechatFromApp = (
-    room: ILivechatRoom,
-): room is ILivechatRoom & { source: IOmnichannelSourceApp } => {
+export const isLivechatFromApp = (room: ILivechatRoom): room is ILivechatRoom & { source: IOmnichannelSourceApp } => {
     return room.source && room.source.type === 'app';
 };

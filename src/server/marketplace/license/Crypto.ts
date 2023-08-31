@@ -1,5 +1,6 @@
 import { publicDecrypt } from 'crypto';
-import { IInternalBridge } from '../../bridges';
+
+import type { IInternalBridge } from '../../bridges';
 
 export class Crypto {
     constructor(private readonly internalBridge: IInternalBridge) {}
@@ -21,5 +22,5 @@ export class Crypto {
         }
 
         return license;
-     }
+    }
 }

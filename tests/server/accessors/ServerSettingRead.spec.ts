@@ -1,12 +1,13 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
-import { ISetting } from '../../../src/definition/settings';
 
+import type { ISetting } from '../../../src/definition/settings';
 import { ServerSettingRead } from '../../../src/server/accessors';
-import { ServerSettingBridge } from '../../../src/server/bridges';
+import type { ServerSettingBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ServerSettingReadAccessorTestFixture {
     private setting: ISetting;
+
     private mockServerSettingBridge: ServerSettingBridge;
 
     @SetupFixture
@@ -36,7 +37,7 @@ export class ServerSettingReadAccessorTestFixture {
         this.setting.value = 'theValue';
         Expect(await ssr.getValueById('testing')).toBe('theValue');
         await Expect(async () => ssr.getValueById('fake')).toThrowErrorAsync(Error, 'No Server Setting found, or it is unaccessible, by the id of "fake".');
-        await Expect(async () => await ssr.getAll()).toThrowErrorAsync(Error, 'Method not implemented.');
+        await Expect(() => ssr.getAll()).toThrowErrorAsync(Error, 'Method not implemented.');
         Expect(await ssr.isReadableById('testing')).toBe(true);
     }
 }

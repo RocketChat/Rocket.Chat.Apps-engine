@@ -1,18 +1,21 @@
-import { Block } from '@rocket.chat/ui-kit';
-import { IMessageBuilder } from '../../definition/accessors';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import type { Block } from '@rocket.chat/ui-kit';
+
+import type { IMessageBuilder } from '../../definition/accessors';
+import type { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom } from '../../definition/rooms';
-import { BlockBuilder, IBlock } from '../../definition/uikit';
-import { IUser } from '../../definition/users';
+import type { IRoom } from '../../definition/rooms';
+import type { IBlock } from '../../definition/uikit';
+import { BlockBuilder } from '../../definition/uikit';
+import type { IUser } from '../../definition/users';
 
 export class MessageBuilder implements IMessageBuilder {
     public kind: RocketChatAssociationModel.MESSAGE;
+
     private msg: IMessage;
 
     constructor(message?: IMessage) {
         this.kind = RocketChatAssociationModel.MESSAGE;
-        this.msg = message ? message : ({} as IMessage);
+        this.msg = message || ({} as IMessage);
     }
 
     public setData(data: IMessage): IMessageBuilder {
@@ -96,7 +99,7 @@ export class MessageBuilder implements IMessageBuilder {
 
     public addAttachment(attachment: IMessageAttachment): IMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         this.msg.attachments.push(attachment);
@@ -114,11 +117,11 @@ export class MessageBuilder implements IMessageBuilder {
 
     public replaceAttachment(position: number, attachment: IMessageAttachment): IMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to replace.`);
+            throw new Error(`No attachment found at the index of "${position}" to replace.`);
         }
 
         this.msg.attachments[position] = attachment;
@@ -127,11 +130,11 @@ export class MessageBuilder implements IMessageBuilder {
 
     public removeAttachment(position: number): IMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to remove.`);
+            throw new Error(`No attachment found at the index of "${position}" to remove.`);
         }
 
         this.msg.attachments.splice(position, 1);
@@ -208,11 +211,11 @@ export class MessageBuilder implements IMessageBuilder {
         }
 
         if (this.msg.customFields[key]) {
-            throw new Error(`The message already contains a custom field by the key: ${ key }`);
+            throw new Error(`The message already contains a custom field by the key: ${key}`);
         }
 
         if (key.includes('.')) {
-            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
+            throw new Error(`The given key contains a period, which is not allowed. Key: ${key}`);
         }
 
         this.msg.customFields[key] = value;

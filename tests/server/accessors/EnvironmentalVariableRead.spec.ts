@@ -1,7 +1,7 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
 import { EnvironmentalVariableRead } from '../../../src/server/accessors';
-import { EnvironmentalVariableBridge } from '../../../src/server/bridges';
+import type { EnvironmentalVariableBridge } from '../../../src/server/bridges';
 
 export class EnvironmentalVariableReadAccessorTestFixture {
     private mockEnvVarBridge: EnvironmentalVariableBridge;

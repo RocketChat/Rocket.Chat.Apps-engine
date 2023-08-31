@@ -1,13 +1,15 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { ISlashCommand } from '../../../src/definition/slashcommands';
 
+import type { ISlashCommand } from '../../../src/definition/slashcommands';
 import { SlashCommandsModify } from '../../../src/server/accessors';
-import { AppSlashCommandManager } from '../../../src/server/managers';
+import type { AppSlashCommandManager } from '../../../src/server/managers';
 import { TestData } from '../../test-data/utilities';
 
 export class SlashCommandsModifyTestFixture {
     private cmd: ISlashCommand;
+
     private mockAppId: string;
+
     private mockCmdManager: AppSlashCommandManager;
 
     @SetupFixture
@@ -15,15 +17,9 @@ export class SlashCommandsModifyTestFixture {
         this.cmd = TestData.getSlashCommand();
         this.mockAppId = 'testing-app';
         this.mockCmdManager = {
-            modifyCommand(appId: string, command: ISlashCommand): void {
-                return;
-            },
-            disableCommand(appId: string, command: string): void {
-                return;
-            },
-            enableCommand(appId: string, command: string): void {
-                return;
-            },
+            modifyCommand(appId: string, command: ISlashCommand): void {},
+            disableCommand(appId: string, command: string): void {},
+            enableCommand(appId: string, command: string): void {},
         } as AppSlashCommandManager;
     }
 

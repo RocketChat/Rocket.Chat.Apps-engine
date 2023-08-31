@@ -1,10 +1,7 @@
-import { IVisitor } from '../../livechat';
-import { IMessage } from '../../messages';
-import { IRoom } from '../../rooms';
-import {
-    IUIKitIncomingInteractionMessageContainer,
-    IUIKitIncomingInteractionModalContainer,
-} from '../UIKitIncomingInteractionContainer';
+import type { IVisitor } from '../../livechat';
+import type { IMessage } from '../../messages';
+import type { IRoom } from '../../rooms';
+import type { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../UIKitIncomingInteractionContainer';
 
 export interface IUIKitLivechatBaseIncomingInteraction {
     appId: string;

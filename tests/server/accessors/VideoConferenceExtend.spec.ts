@@ -1,5 +1,6 @@
 import { Expect, Test } from 'alsatian';
-import { VideoConference } from '../../../src/definition/videoConferences';
+
+import type { VideoConference } from '../../../src/definition/videoConferences';
 import { VideoConferenceExtender } from '../../../src/server/accessors';
 import { TestData } from '../../test-data/utilities';
 
@@ -12,7 +13,7 @@ export class VideoConferenceExtendAccessorTestFixture {
 
     @Test()
     public setProviderData() {
-        const call = { } as VideoConference;
+        const call = {} as VideoConference;
         const extend = new VideoConferenceExtender(call);
 
         Expect(call.providerData).not.toBeDefined();
@@ -36,7 +37,7 @@ export class VideoConferenceExtendAccessorTestFixture {
 
     @Test()
     public setEndedBy() {
-        const call = { } as VideoConference;
+        const call = {} as VideoConference;
         const extend = new VideoConferenceExtender(call);
 
         Expect(call.endedBy).not.toBeDefined();
@@ -47,7 +48,7 @@ export class VideoConferenceExtendAccessorTestFixture {
 
     @Test()
     public setEndedAt() {
-        const call = { } as VideoConference;
+        const call = {} as VideoConference;
         const extend = new VideoConferenceExtender(call);
 
         const date = new Date();

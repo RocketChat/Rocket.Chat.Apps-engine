@@ -1,4 +1,4 @@
-import {
+import type {
     IDiscussionBuilder,
     ILivechatCreator,
     ILivechatMessageBuilder,
@@ -9,16 +9,17 @@ import {
     IUserBuilder,
     IVideoConferenceBuilder,
 } from '../../definition/accessors';
-import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IMessage } from '../../definition/messages';
+import type { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
+import type { IMessage } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom, RoomType } from '../../definition/rooms';
+import type { IRoom } from '../../definition/rooms';
+import { RoomType } from '../../definition/rooms';
 import { BlockBuilder } from '../../definition/uikit';
-import { AppVideoConference } from '../../definition/videoConferences';
-import { AppBridges } from '../bridges';
+import type { AppVideoConference } from '../../definition/videoConferences';
+import type { AppBridges } from '../bridges';
 import { UIHelper } from '../misc/UIHelper';
-import { IBotUser } from './../../definition/users/IBotUser';
-import { UserType } from './../../definition/users/UserType';
+import type { IBotUser } from '../../definition/users/IBotUser';
+import { UserType } from '../../definition/users/UserType';
 import { DiscussionBuilder } from './DiscussionBuilder';
 import { LivechatCreator } from './LivechatCreator';
 import { LivechatMessageBuilder } from './LivechatMessageBuilder';
@@ -30,6 +31,7 @@ import { VideoConferenceBuilder } from './VideoConferenceBuilder';
 
 export class ModifyCreator implements IModifyCreator {
     private livechatCreator: LivechatCreator;
+
     private uploadCreator: UploadCreator;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
@@ -92,7 +94,7 @@ export class ModifyCreator implements IModifyCreator {
         if (data) {
             delete data.id;
 
-            const roles = data.roles;
+            const { roles } = data;
 
             if (roles && roles.length) {
                 const hasRole = roles.map((role) => role.toLocaleLowerCase()).some((role) => role === 'admin' || role === 'owner' || role === 'moderator');

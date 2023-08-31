@@ -1,24 +1,38 @@
-import { IRoom, RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-import { AppManager } from '../AppManager';
+import type { IRoom, RoomType } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
+import type { AppManager } from '../AppManager';
 
 const PrivateManager = Symbol('RoomPrivateManager');
 
 export class Room implements IRoom {
     public id: string;
+
     public displayName?: string;
+
     public slugifiedName: string;
+
     public type: RoomType;
+
     public creator: IUser;
+
     public isDefault?: boolean;
+
     public isReadOnly?: boolean;
+
     public displaySystemMessages?: boolean;
+
     public messageCount?: number;
+
     public createdAt?: Date;
+
     public updatedAt?: Date;
+
     public lastModifiedAt?: Date;
+
     public customFields?: { [key: string]: any };
+
     public userIds?: Array<string>;
+
     private _USERNAMES: Array<string>;
 
     private [PrivateManager]: AppManager;
@@ -35,9 +49,7 @@ export class Room implements IRoom {
         return this._USERNAMES;
     }
 
-    public set usernames(usernames) {
-        return;
-    }
+    public set usernames(usernames) {}
 
     public constructor(room: IRoom, manager: AppManager) {
         Object.assign(this, room);

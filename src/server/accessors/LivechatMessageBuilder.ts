@@ -1,19 +1,21 @@
-import { ILivechatMessageBuilder, IMessageBuilder } from '../../definition/accessors';
-import { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
-import { IVisitor } from '../../definition/livechat/IVisitor';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import type { ILivechatMessageBuilder, IMessageBuilder } from '../../definition/accessors';
+import type { ILivechatMessage } from '../../definition/livechat/ILivechatMessage';
+import type { IVisitor } from '../../definition/livechat/IVisitor';
+import type { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IRoom, RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
+import type { IRoom } from '../../definition/rooms';
+import { RoomType } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
 import { MessageBuilder } from './MessageBuilder';
 
 export class LivechatMessageBuilder implements ILivechatMessageBuilder {
     public kind: RocketChatAssociationModel.LIVECHAT_MESSAGE;
+
     private msg: ILivechatMessage;
 
     constructor(message?: ILivechatMessage) {
         this.kind = RocketChatAssociationModel.LIVECHAT_MESSAGE;
-        this.msg = message ? message : ({} as ILivechatMessage);
+        this.msg = message || ({} as ILivechatMessage);
     }
 
     public setData(data: ILivechatMessage): ILivechatMessageBuilder {
@@ -81,7 +83,7 @@ export class LivechatMessageBuilder implements ILivechatMessageBuilder {
 
     public addAttachment(attachment: IMessageAttachment): ILivechatMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         this.msg.attachments.push(attachment);
@@ -99,11 +101,11 @@ export class LivechatMessageBuilder implements ILivechatMessageBuilder {
 
     public replaceAttachment(position: number, attachment: IMessageAttachment): ILivechatMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to replace.`);
+            throw new Error(`No attachment found at the index of "${position}" to replace.`);
         }
 
         this.msg.attachments[position] = attachment;
@@ -112,11 +114,11 @@ export class LivechatMessageBuilder implements ILivechatMessageBuilder {
 
     public removeAttachment(position: number): ILivechatMessageBuilder {
         if (!this.msg.attachments) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
 
         if (!this.msg.attachments[position]) {
-            throw new Error(`No attachment found at the index of "${ position }" to remove.`);
+            throw new Error(`No attachment found at the index of "${position}" to remove.`);
         }
 
         this.msg.attachments.splice(position, 1);

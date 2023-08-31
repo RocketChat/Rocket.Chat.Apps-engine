@@ -1,6 +1,6 @@
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
-import { IDepartment } from './IDepartment';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
+import type { IDepartment } from './IDepartment';
 
 export enum LivechatTransferEventType {
     AGENT = 'agent',

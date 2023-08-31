@@ -1,11 +1,11 @@
+const fs = require('fs');
+
 const gulp = require('gulp');
 const del = require('del');
 const sourcemaps = require('gulp-sourcemaps');
 const tsc = require('gulp-typescript');
-const tslint = require('gulp-tslint');
 const shell = require('gulp-shell');
 const bump = require('gulp-bump');
-const fs = require('fs');
 
 const tsp = tsc.createProject('tsconfig.json');
 
@@ -16,68 +16,51 @@ if (testIndex > -1) {
 }
 
 // Tasks for bundling AppsEngineUIClient SDK
-const bundle_sdk = shell.task([
+const bundleSdk = shell.task([
     `echo "window.AppsEngineUIClient = require('./AppsEngineUIClient').AppsEngineUIClient;" > client/glue.js`,
-    'cd client && npx browserify glue.js | npx uglifyjs > AppsEngineUIClient.min.js'
+    'cd client && npx browserify glue.js | npx uglifyjs > AppsEngineUIClient.min.js',
 ]);
 
-function clean_generated() {
+function cleanGenerated() {
     return del(['./server', './client', './definition']);
 }
 
-function lint_ts() {
-    return tsp.src().pipe(tslint({ formatter: 'verbose' })).pipe(tslint.report());
+function compileTs() {
+    return tsp.src().pipe(sourcemaps.init()).pipe(tsp()).pipe(sourcemaps.write('.')).pipe(gulp.dest('.'));
 }
 
-function compile_ts() {
-    return tsp.src().pipe(sourcemaps.init())
-        .pipe(tsp())
-        .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('.'));
-}
-
-function update_ts_definition_version() {
+function updateTsDefinitionVersion() {
     const { version } = JSON.parse(fs.readFileSync('./package.json'));
 
-    return gulp.src('src/definition/package.json')
-        .pipe(bump({ version }))
-        .pipe(gulp.dest('src/definition/'));
+    return gulp.src('src/definition/package.json').pipe(bump({ version })).pipe(gulp.dest('src/definition/'));
 }
 
-//Tasks for getting it ready and publishing
-function ts_definition_module_files() {
-    return gulp.src(['LICENSE', 'src/definition/package.json'])
-        .pipe(gulp.dest('definition/'));
+// Tasks for getting it ready and publishing
+function tsDefinitionModuleFiles() {
+    return gulp.src(['LICENSE', 'src/definition/package.json']).pipe(gulp.dest('definition/'));
 }
 
 function watch() {
-    gulp.watch('src/**/*.ts', gulp.series(compile_ts));
+    gulp.watch('src/**/*.ts', gulp.series(compileTs));
 }
 
-const compile = gulp.series(clean_generated, compile_ts, update_ts_definition_version, ts_definition_module_files);
+const compile = gulp.series(cleanGenerated, compileTs, updateTsDefinitionVersion, tsDefinitionModuleFiles);
 
-gulp.task('bundle', bundle_sdk);
+gulp.task('bundle', bundleSdk);
 
-gulp.task('clean', clean_generated);
+gulp.task('clean', cleanGenerated);
 
 gulp.task('compile', gulp.series(compile));
 
 gulp.task('default', gulp.series(compile, watch));
 
-gulp.task('pack', gulp.series(lint_ts, compile, shell.task([
-    'npm pack'
-])));
+gulp.task('pack', gulp.series(compile, shell.task(['npm pack'])));
 
-gulp.task('publish', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
-    'npm publish --access public && npm pack'
-], [
-    'cd definition && npm publish --access public && npm pack'
-])));
+gulp.task(
+    'publish',
+    gulp.series(compile, bundleSdk, shell.task(['npm publish --access public && npm pack'], ['cd definition && npm publish --access public && npm pack'])),
+);
 
-gulp.task('publish-beta', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
-    'npm publish --access public --tag beta'
-])));
+gulp.task('publish-beta', gulp.series(compile, bundleSdk, shell.task(['npm publish --access public --tag beta'])));
 
-gulp.task('publish-alpha', gulp.series(lint_ts, compile, bundle_sdk, shell.task([
-    'npm publish --access public --tag alpha'
-])));
+gulp.task('publish-alpha', gulp.series(compile, bundleSdk, shell.task(['npm publish --access public --tag alpha'])));

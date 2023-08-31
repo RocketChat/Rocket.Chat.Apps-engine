@@ -1,18 +1,19 @@
-import { ILivechatRead } from '../../definition/accessors/ILivechatRead';
-import { IDepartment } from '../../definition/livechat';
-import { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
-import { IVisitor } from '../../definition/livechat/IVisitor';
-import { IMessage } from '../../definition/messages';
-import { LivechatBridge } from '../bridges/LivechatBridge';
+import type { ILivechatRead } from '../../definition/accessors/ILivechatRead';
+import type { IDepartment } from '../../definition/livechat';
+import type { ILivechatRoom } from '../../definition/livechat/ILivechatRoom';
+import type { IVisitor } from '../../definition/livechat/IVisitor';
+import type { IMessage } from '../../definition/messages';
+import type { LivechatBridge } from '../bridges/LivechatBridge';
+
 export class LivechatRead implements ILivechatRead {
-    constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) { }
+    constructor(private readonly livechatBridge: LivechatBridge, private readonly appId: string) {}
 
     /**
      * @deprecated please use the `isOnlineAsync` method instead.
      * In the next major, this method will be `async`
      */
     public isOnline(departmentId?: string): boolean {
-        console.warn('The `LivechatRead.isOnline` method is deprecated and won\'t behave as intended. Please use `LivechatRead.isOnlineAsync` instead');
+        console.warn("The `LivechatRead.isOnline` method is deprecated and won't behave as intended. Please use `LivechatRead.isOnlineAsync` instead");
 
         return this.livechatBridge.doIsOnline(departmentId, this.appId);
     }

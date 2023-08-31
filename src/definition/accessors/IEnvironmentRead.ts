@@ -1,6 +1,6 @@
-import { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
-import { IServerSettingRead } from './IServerSettingRead';
-import { ISettingRead } from './ISettingRead';
+import type { IEnvironmentalVariableRead } from './IEnvironmentalVariableRead';
+import type { IServerSettingRead } from './IServerSettingRead';
+import type { ISettingRead } from './ISettingRead';
 
 /**
  * Allows read-access to the App's settings,

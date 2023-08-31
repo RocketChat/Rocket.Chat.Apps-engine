@@ -1,11 +1,11 @@
-import { IApiExtend } from './IApiExtend';
-import { IExternalComponentsExtend } from './IExternalComponentsExtend';
-import { IHttpExtend } from './IHttp';
-import { ISchedulerExtend } from './ISchedulerExtend';
-import { ISettingsExtend } from './ISettingsExtend';
-import { ISlashCommandsExtend } from './ISlashCommandsExtend';
-import { IUIExtend } from './IUIExtend';
-import { IVideoConfProvidersExtend } from './IVideoConfProvidersExtend';
+import type { IApiExtend } from './IApiExtend';
+import type { IExternalComponentsExtend } from './IExternalComponentsExtend';
+import type { IHttpExtend } from './IHttp';
+import type { ISchedulerExtend } from './ISchedulerExtend';
+import type { ISettingsExtend } from './ISettingsExtend';
+import type { ISlashCommandsExtend } from './ISlashCommandsExtend';
+import type { IUIExtend } from './IUIExtend';
+import type { IVideoConfProvidersExtend } from './IVideoConfProvidersExtend';
 
 /**
  * This accessor provides methods for declaring the configuration

@@ -1,5 +1,4 @@
 import type { IUser, UserType } from '../../../src/definition/users';
-
 import { UserBridge } from '../../../src/server/bridges';
 
 export class TestsUserBridge extends UserBridge {

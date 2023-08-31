@@ -1,20 +1,20 @@
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
-import { AppApi } from '../managers/AppApi';
+import type { AppApi } from '../managers/AppApi';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class ApiBridge extends BaseBridge {
-   public async doRegisterApi(api: AppApi, appId: string): Promise<void> {
-       if (this.hasDefaultPermission(appId)) {
-           return this.registerApi(api, appId);
-       }
+    public async doRegisterApi(api: AppApi, appId: string): Promise<void> {
+        if (this.hasDefaultPermission(appId)) {
+            return this.registerApi(api, appId);
+        }
     }
 
-   public async doUnregisterApis(appId: string): Promise<void> {
-       if (this.hasDefaultPermission(appId)) {
-           return this.unregisterApis(appId);
-       }
+    public async doUnregisterApis(appId: string): Promise<void> {
+        if (this.hasDefaultPermission(appId)) {
+            return this.unregisterApis(appId);
+        }
     }
 
     /**
@@ -37,10 +37,12 @@ export abstract class ApiBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.apis.default],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.apis.default],
+            }),
+        );
 
         return false;
     }
