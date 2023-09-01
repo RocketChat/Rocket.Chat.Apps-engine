@@ -11,6 +11,7 @@ export class NotifierAccessorTestFixture {
     private mockUserBridge: UserBridge;
 
     private mockMsgBridge: MessageBridge;
+
     private mockRoomBridge: RoomBridge;
 
     @SetupFixture
@@ -31,8 +32,8 @@ export class NotifierAccessorTestFixture {
         Expect(() => new Notifier(this.mockUserBridge, this.mockMsgBridge, this.mockRoomBridge, 'testing')).not.toThrow();
 
         const noti = new Notifier(this.mockUserBridge, this.mockMsgBridge, this.mockRoomBridge, 'testing');
-        await Expect(async () => await noti.notifyRoom(TestData.getRoom(), TestData.getMessage())).not.toThrowAsync();
-        await Expect(async () => await noti.notifyUser(TestData.getUser(), TestData.getMessage())).not.toThrowAsync();
+        await Expect(async () => noti.notifyRoom(TestData.getRoom(), TestData.getMessage())).not.toThrowAsync();
+        await Expect(async () => noti.notifyUser(TestData.getUser(), TestData.getMessage())).not.toThrowAsync();
         Expect(noti.getMessageBuilder() instanceof MessageBuilder).toBe(true);
     }
 }
