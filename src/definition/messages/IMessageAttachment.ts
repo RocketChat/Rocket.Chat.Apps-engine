@@ -1,8 +1,8 @@
-import { IMessageAction } from './IMessageAction';
-import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
-import { IMessageAttachmentField } from './IMessageAttachmentField';
-import { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
-import { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
+import type { IMessageAction } from './IMessageAction';
+import type { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
+import type { IMessageAttachmentField } from './IMessageAttachmentField';
+import type { IMessageAttachmentTitle } from './IMessageAttachmentTitle';
+import type { MessageActionButtonsAlignment } from './MessageActionButtonsAlignment';
 
 /**
  * Interface which represents an attachment which can be added to a message.

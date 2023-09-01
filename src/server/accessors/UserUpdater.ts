@@ -1,7 +1,7 @@
-import { IUserUpdater } from '../../definition/accessors/IUserUpdater';
-import { UserStatusConnection } from '../../definition/users';
-import { IUser } from '../../definition/users/IUser';
-import { AppBridges } from '../bridges';
+import type { IUserUpdater } from '../../definition/accessors/IUserUpdater';
+import type { UserStatusConnection } from '../../definition/users';
+import type { IUser } from '../../definition/users/IUser';
+import type { AppBridges } from '../bridges';
 
 export class UserUpdater implements IUserUpdater {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {}

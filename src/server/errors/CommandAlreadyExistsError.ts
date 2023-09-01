@@ -1,5 +1,6 @@
 export class CommandAlreadyExistsError implements Error {
-    public name: string = 'CommandAlreadyExists';
+    public name = 'CommandAlreadyExists';
+
     public message: string;
 
     constructor(command: string) {

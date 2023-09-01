@@ -1,15 +1,22 @@
 import { createHash } from 'crypto';
+
 import * as jose from 'jose';
-import { AppManager } from '../AppManager';
-import { IInternalFederationBridge } from '../bridges';
-import { IAppStorageItem } from '../storage';
+
+import type { AppManager } from '../AppManager';
+import type { IInternalFederationBridge } from '../bridges';
+import type { IAppStorageItem } from '../storage';
 
 export class AppSignatureManager {
     private readonly federationBridge: IInternalFederationBridge;
+
     private readonly checksumAlgorithm = 'SHA256';
+
     private readonly signingAlgorithm = 'RS512';
+
     private privateKey: string;
+
     private publicKey: string;
+
     constructor(private readonly manager: AppManager) {
         this.federationBridge = this.manager.getBridges().getInternalFederationBridge();
     }
@@ -57,16 +64,7 @@ export class AppSignatureManager {
     private getFieldsForChecksum(obj: IAppStorageItem): string {
         // These fields don't hold valuable information and should NOT invalidate
         // the checksum
-        const fieldsToIgnore = [
-            '_id',
-            'status',
-            'signature',
-            'updatedAt',
-            'createdAt',
-            '_updatedAt',
-            '_createdAt',
-            'settings',
-        ];
+        const fieldsToIgnore = ['_id', 'status', 'signature', 'updatedAt', 'createdAt', '_updatedAt', '_createdAt', 'settings'];
 
         // TODO revisit algorithm
         const allKeys: Array<string> = [];
@@ -84,5 +82,4 @@ export class AppSignatureManager {
 
         return JSON.stringify(obj, filteredKeys);
     }
-
 }

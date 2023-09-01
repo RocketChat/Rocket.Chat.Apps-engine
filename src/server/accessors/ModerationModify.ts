@@ -1,7 +1,7 @@
-import { IModerationModify } from '../../definition/accessors';
-import { IMessage } from '../../definition/messages';
-import { IUser } from '../../definition/users';
-import { ModerationBridge } from '../bridges';
+import type { IModerationModify } from '../../definition/accessors';
+import type { IMessage } from '../../definition/messages';
+import type { IUser } from '../../definition/users';
+import type { ModerationBridge } from '../bridges';
 
 export class ModerationModify implements IModerationModify {
     constructor(private moderationBridge: ModerationBridge, appId: string) {}

@@ -1,8 +1,10 @@
-
 export class AppLicenseValidationResult {
-    private errors: {[key: string]: string} = {};
-    private warnings: {[key: string]: string} = {};
-    private validated: boolean = false;
+    private errors: { [key: string]: string } = {};
+
+    private warnings: { [key: string]: string } = {};
+
+    private validated = false;
+
     private appId: string;
 
     public addError(field: string, message: string): void {

@@ -1,15 +1,15 @@
-import { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
-import { IEnvironmentRead } from './IEnvironmentRead';
-import { ILivechatRead } from './ILivechatRead';
-import { IMessageRead } from './IMessageRead';
-import { INotifier } from './INotifier';
-import { IOAuthAppsReader } from './IOAuthAppsReader';
-import { IPersistenceRead } from './IPersistenceRead';
-import { IRoleRead } from './IRoleRead';
-import { IRoomRead } from './IRoomRead';
-import { IThreadRead } from './IThreadRead';
-import { IUploadRead } from './IUploadRead';
-import { IUserRead } from './IUserRead';
+import type { ICloudWorkspaceRead } from './ICloudWorkspaceRead';
+import type { IEnvironmentRead } from './IEnvironmentRead';
+import type { ILivechatRead } from './ILivechatRead';
+import type { IMessageRead } from './IMessageRead';
+import type { INotifier } from './INotifier';
+import type { IOAuthAppsReader } from './IOAuthAppsReader';
+import type { IPersistenceRead } from './IPersistenceRead';
+import type { IRoleRead } from './IRoleRead';
+import type { IRoomRead } from './IRoomRead';
+import type { IThreadRead } from './IThreadRead';
+import type { IUploadRead } from './IUploadRead';
+import type { IUserRead } from './IUserRead';
 import type { IVideoConferenceRead } from './IVideoConferenceRead';
 
 /**

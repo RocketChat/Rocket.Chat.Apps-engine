@@ -1,18 +1,15 @@
-import {
-    IHttp,
-    IHttpExtend,
-    IHttpRequest,
-    IHttpResponse,
-    RequestMethod,
-} from '../../definition/accessors';
-import { AppBridges } from '../bridges/AppBridges';
-import { AppAccessorManager } from '../managers/AppAccessorManager';
+import type { IHttp, IHttpExtend, IHttpRequest, IHttpResponse } from '../../definition/accessors';
+import { RequestMethod } from '../../definition/accessors';
+import type { AppBridges } from '../bridges/AppBridges';
+import type { AppAccessorManager } from '../managers/AppAccessorManager';
 
 export class Http implements IHttp {
-    constructor(private readonly accessManager: AppAccessorManager,
-                private readonly bridges: AppBridges,
-                private readonly httpExtender: IHttpExtend,
-                private readonly appId: string) { }
+    constructor(
+        private readonly accessManager: AppAccessorManager,
+        private readonly bridges: AppBridges,
+        private readonly httpExtender: IHttpExtend,
+        private readonly appId: string,
+    ) {}
 
     public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.GET, options);
@@ -30,12 +27,12 @@ export class Http implements IHttp {
         return this._processHandler(url, RequestMethod.DELETE, options);
     }
 
-    public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse>  {
+    public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
         return this._processHandler(url, RequestMethod.PATCH, options);
     }
 
     private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
-        let request = options || { };
+        let request = options || {};
 
         if (typeof request.headers === 'undefined') {
             request.headers = {};

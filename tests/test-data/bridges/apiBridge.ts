@@ -1,6 +1,6 @@
-import { IApi } from '../../../src/definition/api';
+import type { IApi } from '../../../src/definition/api';
 import { ApiBridge } from '../../../src/server/bridges';
-import { AppApi } from '../../../src/server/managers/AppApi';
+import type { AppApi } from '../../../src/server/managers/AppApi';
 import { TestData } from '../utilities';
 
 export class TestsApiBridge extends ApiBridge {

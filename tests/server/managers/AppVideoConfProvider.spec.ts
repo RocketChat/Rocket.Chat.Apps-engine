@@ -1,9 +1,9 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { AppMethod } from '../../../src/definition/metadata';
-import { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 
+import { AppMethod } from '../../../src/definition/metadata';
+import type { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 import { AppVideoConfProvider } from '../../../src/server/managers/AppVideoConfProvider';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class AppSlashCommandRegistrationTestFixture {
     private mockApp: ProxiedApp;

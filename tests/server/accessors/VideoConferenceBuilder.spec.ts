@@ -1,7 +1,7 @@
 import { Expect, Test } from 'alsatian';
-import { AppVideoConference } from '../../../src/definition/videoConferences';
-import { TestData } from '../../test-data/utilities';
 
+import type { AppVideoConference } from '../../../src/definition/videoConferences';
+import { TestData } from '../../test-data/utilities';
 import { VideoConferenceBuilder } from '../../../src/server/accessors';
 
 export class VideoConferenceBuilderAccessorTestFixture {
@@ -81,7 +81,7 @@ export class VideoConferenceBuilderAccessorTestFixture {
 
     @Test()
     public initialData() {
-        const call = { providerName: 'test'} as AppVideoConference;
+        const call = { providerName: 'test' } as AppVideoConference;
         const builder = new VideoConferenceBuilder(call);
 
         Expect(call.providerName).toBe('test');

@@ -1,9 +1,8 @@
-import { IRoomRead } from '../../definition/accessors';
-import { IMessage } from '../../definition/messages';
-import { IRoom } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-
-import { RoomBridge } from '../bridges';
+import type { IRoomRead } from '../../definition/accessors';
+import type { IMessage } from '../../definition/messages';
+import type { IRoom } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
+import type { RoomBridge } from '../bridges';
 
 export class RoomRead implements IRoomRead {
     constructor(private roomBridge: RoomBridge, private appId: string) {}

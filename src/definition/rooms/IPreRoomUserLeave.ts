@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IRoomUserLeaveContext } from './IRoomUserLeaveContext';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IRoomUserLeaveContext } from './IRoomUserLeaveContext';
 
 /**
  * Event interface that allows an app to

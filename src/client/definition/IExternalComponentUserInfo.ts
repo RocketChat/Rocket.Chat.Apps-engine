@@ -1,4 +1,4 @@
-import { IUser } from '../../definition/users';
+import type { IUser } from '../../definition/users';
 
 type ClientUserInfo = Pick<IUser, 'id' | 'username'>;
 

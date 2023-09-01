@@ -1,5 +1,5 @@
-import { AppMethod } from '../metadata/AppMethod';
-import { ILogEntry } from './ILogEntry';
+import type { AppMethod } from '../metadata/AppMethod';
+import type { ILogEntry } from './ILogEntry';
 
 /**
  * This logger provides a way to log various levels to the entire system.

@@ -1,7 +1,8 @@
 import { Expect, Test } from 'alsatian';
-import { IRoom, RoomType } from '../../../src/definition/rooms';
-import { TestData } from '../../test-data/utilities';
 
+import type { IRoom } from '../../../src/definition/rooms';
+import { RoomType } from '../../../src/definition/rooms';
+import { TestData } from '../../test-data/utilities';
 import { RoomBuilder } from '../../../src/server/accessors';
 
 export class RoomBuilderAccessorTestFixture {

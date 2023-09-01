@@ -1,6 +1,6 @@
-import { IMessage } from '../../../src/definition/messages';
-import { IRoom } from '../../../src/definition/rooms';
-import { IUser } from '../../../src/definition/users';
+import type { IMessage } from '../../../src/definition/messages';
+import type { IRoom } from '../../../src/definition/rooms';
+import type { IUser } from '../../../src/definition/users';
 import { RoomBridge } from '../../../src/server/bridges';
 
 export class TestsRoomBridge extends RoomBridge {

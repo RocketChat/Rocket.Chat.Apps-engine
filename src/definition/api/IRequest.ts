@@ -1,5 +1,5 @@
-import { RequestMethod } from '../accessors';
-import { IUser } from '../users';
+import type { RequestMethod } from '../accessors';
+import type { IUser } from '../users';
 
 export interface IApiRequest {
     method: RequestMethod;

@@ -1,5 +1,5 @@
-import { ILogEntry } from '../../definition/accessors';
-import { AppMethod } from '../../definition/metadata';
+import type { ILogEntry } from '../../definition/accessors';
+import type { AppMethod } from '../../definition/metadata';
 
 export interface ILoggerStorageEntry {
     appId: string;

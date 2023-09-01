@@ -1,5 +1,5 @@
-import { IMessage } from '../../definition/messages';
-import { IUser } from '../../definition/users';
+import type { IMessage } from '../../definition/messages';
+import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -25,7 +25,9 @@ export abstract class ModerationBridge extends BaseBridge {
     }
 
     protected abstract report(messageId: string, description: string, userId: string, appId: string): Promise<void>;
+
     protected abstract dismissReportsByMessageId(messageId: string, reason: string, action: string, appId: string): Promise<void>;
+
     protected abstract dismissReportsByUserId(userId: string, reason: string, action: string, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {

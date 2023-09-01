@@ -1,4 +1,4 @@
-import { SettingType } from './SettingType';
+import type { SettingType } from './SettingType';
 
 export interface ISetting {
     /** The id of this setting. */

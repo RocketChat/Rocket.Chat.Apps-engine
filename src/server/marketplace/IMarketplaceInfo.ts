@@ -1,8 +1,8 @@
-import { IAppInfo } from '../../definition/metadata';
-import { IMarketplacePricingPlan } from './IMarketplacePricingPlan';
-import { IMarketplaceSimpleBundleInfo } from './IMarketplaceSimpleBundleInfo';
-import { IMarketplaceSubscriptionInfo } from './IMarketplaceSubscriptionInfo';
-import { MarketplacePurchaseType } from './MarketplacePurchaseType';
+import type { IAppInfo } from '../../definition/metadata';
+import type { IMarketplacePricingPlan } from './IMarketplacePricingPlan';
+import type { IMarketplaceSimpleBundleInfo } from './IMarketplaceSimpleBundleInfo';
+import type { IMarketplaceSubscriptionInfo } from './IMarketplaceSubscriptionInfo';
+import type { MarketplacePurchaseType } from './MarketplacePurchaseType';
 
 export interface IMarketplaceInfo extends IAppInfo {
     categories: Array<string>;

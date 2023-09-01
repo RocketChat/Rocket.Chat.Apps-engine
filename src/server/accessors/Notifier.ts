@@ -1,9 +1,10 @@
-import { IMessageBuilder, INotifier } from '../../definition/accessors';
-import { ITypingOptions, TypingScope } from '../../definition/accessors/INotifier';
-import { IMessage } from '../../definition/messages';
-import { IRoom, RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-import { MessageBridge, RoomBridge, UserBridge } from '../bridges';
+import type { IMessageBuilder, INotifier } from '../../definition/accessors';
+import type { ITypingOptions } from '../../definition/accessors/INotifier';
+import { TypingScope } from '../../definition/accessors/INotifier';
+import type { IMessage } from '../../definition/messages';
+import { RoomType, type IRoom } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
+import type { MessageBridge, RoomBridge, UserBridge } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 
 export class Notifier implements INotifier {

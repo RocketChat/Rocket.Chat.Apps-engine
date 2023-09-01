@@ -1,9 +1,9 @@
-import { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
-import { IUserUpdater } from '../../definition/accessors/IUserUpdater';
+import type { ILivechatUpdater, IMessageBuilder, IModifyUpdater, IRoomBuilder } from '../../definition/accessors';
+import type { IUserUpdater } from '../../definition/accessors/IUserUpdater';
 import { RocketChatAssociationModel } from '../../definition/metadata';
 import { RoomType } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-import { AppBridges } from '../bridges';
+import type { IUser } from '../../definition/users';
+import type { AppBridges } from '../bridges';
 import { UIHelper } from '../misc/UIHelper';
 import { LivechatUpdater } from './LivechatUpdater';
 import { MessageBuilder } from './MessageBuilder';
@@ -12,6 +12,7 @@ import { UserUpdater } from './UserUpdater';
 
 export class ModifyUpdater implements IModifyUpdater {
     private livechatUpdater: ILivechatUpdater;
+
     private userUpdater: IUserUpdater;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {
@@ -54,7 +55,7 @@ export class ModifyUpdater implements IModifyUpdater {
         const result = builder.getMessage();
 
         if (!result.id) {
-            throw new Error('Invalid message, can\'t update a message without an id.');
+            throw new Error("Invalid message, can't update a message without an id.");
         }
 
         if (!result.sender || !result.sender.id) {
@@ -96,5 +97,4 @@ export class ModifyUpdater implements IModifyUpdater {
 
         return this.bridges.getRoomBridge().doUpdate(result, builder.getMembersToBeAddedUsernames(), this.appId);
     }
-
 }

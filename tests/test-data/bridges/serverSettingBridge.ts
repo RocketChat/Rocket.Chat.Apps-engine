@@ -1,5 +1,4 @@
-import { ISetting } from '../../../src/definition/settings';
-
+import type { ISetting } from '../../../src/definition/settings';
 import { ServerSettingBridge } from '../../../src/server/bridges';
 
 export class TestsServerSettingBridge extends ServerSettingBridge {

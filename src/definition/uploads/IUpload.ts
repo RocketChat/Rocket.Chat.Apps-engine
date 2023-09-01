@@ -1,7 +1,7 @@
-import { IVisitor } from '../livechat';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
-import { StoreType } from './StoreType';
+import type { IVisitor } from '../livechat';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
+import type { StoreType } from './StoreType';
 
 export interface IUpload {
     id: string;

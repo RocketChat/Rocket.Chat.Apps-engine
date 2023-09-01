@@ -1,30 +1,36 @@
-// tslint:disable:max-line-length
-import { AsyncTest, Expect, FunctionSpy, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+import type { FunctionSpy, RestorableFunctionSpy } from 'alsatian';
+import { AsyncTest, Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 
 import { RequestMethod } from '../../../src/definition/accessors';
-import { IApi, IApiRequest } from '../../../src/definition/api';
+import type { IApi, IApiRequest } from '../../../src/definition/api';
 import { AppStatus } from '../../../src/definition/AppStatus';
-import { AppMethod } from '../../../src/definition/metadata';
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
+import type { AppMethod } from '../../../src/definition/metadata';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
 import { PathAlreadyExistsError } from '../../../src/server/errors';
 import { AppConsole } from '../../../src/server/logging';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
+import type { AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { AppApi } from '../../../src/server/managers/AppApi';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
-import { AppLogStorage } from '../../../src/server/storage';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
+import type { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
 
 export class AppApiManagerTestFixture {
-    public static doThrow: boolean = false;
+    public static doThrow = false;
+
     private mockBridges: TestsAppBridges;
+
     private mockApp: ProxiedApp;
+
     private mockAccessors: AppAccessorManager;
+
     private mockManager: AppManager;
+
     private spies: Array<RestorableFunctionSpy>;
 
     @SetupFixture
@@ -98,7 +104,7 @@ export class AppApiManagerTestFixture {
             return bri;
         };
 
-        this.spies = new Array<RestorableFunctionSpy>();
+        this.spies = [];
         this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doRegisterApi'));
         this.spies.push(SpyOn(this.mockBridges.getApiBridge(), 'doUnregisterApis'));
     }
@@ -128,7 +134,7 @@ export class AppApiManagerTestFixture {
         const api: IApi = TestData.getApi('path');
         const regInfo = new AppApi(this.mockApp, api, api.endpoints[0]);
 
-        await Expect(async () => await (ascm as any).registerApi('testing', regInfo)).not.toThrowAsync();
+        await Expect(() => (ascm as any).registerApi('testing', regInfo)).not.toThrowAsync();
         Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing');
     }
 
@@ -159,9 +165,11 @@ export class AppApiManagerTestFixture {
         ascm.addApi('testing', TestData.getApi('apipath'));
         const regInfo = (ascm as any).providedApis.get('testing').get('apipath') as AppApi;
 
-        await Expect(async () => await ascm.registerApis('non-existant')).not.toThrowAsync();
-        await Expect(async () => await ascm.registerApis('testing')).not.toThrowAsync();
-        Expect((ascm as any).registerApi as FunctionSpy).toHaveBeenCalledWith('testing', regInfo).exactly(1);
+        await Expect(() => ascm.registerApis('non-existant')).not.toThrowAsync();
+        await Expect(() => ascm.registerApis('testing')).not.toThrowAsync();
+        Expect((ascm as any).registerApi as FunctionSpy)
+            .toHaveBeenCalledWith('testing', regInfo)
+            .exactly(1);
         Expect(this.mockBridges.getApiBridge().doRegisterApi).toHaveBeenCalledWith(regInfo, 'testing').exactly(1);
     }
 
@@ -171,8 +179,8 @@ export class AppApiManagerTestFixture {
 
         ascm.addApi('testing', TestData.getApi('apipath'));
 
-        await Expect(async () => await ascm.unregisterApis('non-existant')).not.toThrowAsync();
-        await Expect(async () => await ascm.unregisterApis('testing')).not.toThrowAsync();
+        await Expect(() => ascm.unregisterApis('non-existant')).not.toThrowAsync();
+        await Expect(() => ascm.unregisterApis('testing')).not.toThrowAsync();
         Expect(this.mockBridges.getApiBridge().doUnregisterApis).toHaveBeenCalled().exactly(1);
     }
 
@@ -192,11 +200,11 @@ export class AppApiManagerTestFixture {
             content: '',
         };
 
-        await Expect(async () => await ascm.executeApi('testing', 'nope', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'not-exists', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api1', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api2', request)).not.toThrowAsync();
-        await Expect(async () => await ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
+        await Expect(() => ascm.executeApi('testing', 'nope', request)).not.toThrowAsync();
+        await Expect(() => ascm.executeApi('testing', 'not-exists', request)).not.toThrowAsync();
+        await Expect(() => ascm.executeApi('testing', 'api1', request)).not.toThrowAsync();
+        await Expect(() => ascm.executeApi('testing', 'api2', request)).not.toThrowAsync();
+        await Expect(() => ascm.executeApi('testing', 'api3', request)).not.toThrowAsync();
     }
 
     @Test()
@@ -210,11 +218,13 @@ export class AppApiManagerTestFixture {
 
         Expect(() => ascm.listApis('testing')).not.toThrow();
         Expect(ascm.listApis('testing')).not.toEqual([]);
-        Expect(ascm.listApis('testing')).toEqual([{
-            path: 'api1',
-            computedPath: '/api/apps/public/testing/api1',
-            methods: ['get'],
-            examples: {},
-        }]);
+        Expect(ascm.listApis('testing')).toEqual([
+            {
+                path: 'api1',
+                computedPath: '/api/apps/public/testing/api1',
+                methods: ['get'],
+                examples: {},
+            },
+        ]);
     }
 }

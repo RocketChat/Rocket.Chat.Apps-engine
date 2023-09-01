@@ -1,4 +1,6 @@
 import type { IGroupVideoConference } from './IVideoConference';
 
 // Type for video conferences being created by an app
-export type AppVideoConference = Pick<IGroupVideoConference, 'rid' | 'providerName' | 'providerData' | 'title'> & { createdBy: IGroupVideoConference['createdBy']['_id'] };
+export type AppVideoConference = Pick<IGroupVideoConference, 'rid' | 'providerName' | 'providerData' | 'title'> & {
+    createdBy: IGroupVideoConference['createdBy']['_id'];
+};

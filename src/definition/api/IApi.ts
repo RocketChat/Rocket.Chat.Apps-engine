@@ -1,4 +1,4 @@
-import { IApiEndpoint } from './IApiEndpoint';
+import type { IApiEndpoint } from './IApiEndpoint';
 
 /**
  * Represents an api that is being provided.

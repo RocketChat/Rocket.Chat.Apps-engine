@@ -1,4 +1,4 @@
-import {
+import type {
     IModify,
     IModifyCreator,
     IModifyDeleter,
@@ -8,8 +8,8 @@ import {
     ISchedulerModify,
     IUIController,
 } from '../../definition/accessors';
-import { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
-import { AppBridges } from '../bridges';
+import type { IOAuthAppsModify } from '../../definition/accessors/IOAuthAppsModify';
+import type { AppBridges } from '../bridges';
 import { ModerationModify } from './ModerationModify';
 import { ModifyCreator } from './ModifyCreator';
 import { ModifyDeleter } from './ModifyDeleter';
@@ -22,13 +22,21 @@ import { UIController } from './UIController';
 
 export class Modify implements IModify {
     private creator: IModifyCreator;
+
     private deleter: IModifyDeleter;
+
     private updater: IModifyUpdater;
+
     private extender: IModifyExtender;
+
     private notifier: INotifier;
+
     private uiController: IUIController;
+
     private scheduler: ISchedulerModify;
+
     private oauthApps: IOAuthAppsModify;
+
     private moderation: ModerationModify;
 
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {

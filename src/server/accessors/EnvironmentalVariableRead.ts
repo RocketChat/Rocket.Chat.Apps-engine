@@ -1,6 +1,5 @@
-import { EnvironmentalVariableBridge } from '../bridges';
-
-import { IEnvironmentalVariableRead } from '../../definition/accessors';
+import type { EnvironmentalVariableBridge } from '../bridges';
+import type { IEnvironmentalVariableRead } from '../../definition/accessors';
 
 export class EnvironmentalVariableRead implements IEnvironmentalVariableRead {
     constructor(private readonly bridge: EnvironmentalVariableBridge, private readonly appId: string) {}

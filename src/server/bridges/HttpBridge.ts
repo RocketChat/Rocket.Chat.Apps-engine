@@ -1,4 +1,4 @@
-import { IHttpRequest, IHttpResponse, RequestMethod } from '../../definition/accessors';
+import type { IHttpRequest, IHttpResponse, RequestMethod } from '../../definition/accessors';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -25,10 +25,12 @@ export abstract class HttpBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.networking.default],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.networking.default],
+            }),
+        );
 
         return false;
     }

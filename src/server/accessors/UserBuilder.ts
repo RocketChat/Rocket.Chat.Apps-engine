@@ -1,7 +1,7 @@
-import { IUserBuilder } from '../../definition/accessors';
+import type { IUserBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { IUser, IUserEmail } from '../../definition/users';
-import { IUserSettings } from '../../definition/users/IUserSettings';
+import type { IUser, IUserEmail } from '../../definition/users';
+import type { IUserSettings } from '../../definition/users/IUserSettings';
 
 export class UserBuilder implements IUserBuilder {
     public kind: RocketChatAssociationModel.USER;
@@ -10,7 +10,7 @@ export class UserBuilder implements IUserBuilder {
 
     constructor(user?: Partial<IUser>) {
         this.kind = RocketChatAssociationModel.USER;
-        this.user = user ? user : ({} as Partial<IUser>);
+        this.user = user || ({} as Partial<IUser>);
     }
 
     public setData(data: Partial<IUser>): IUserBuilder {

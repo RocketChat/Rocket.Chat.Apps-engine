@@ -1,4 +1,4 @@
-import {
+import type {
     IApiExtend,
     IConfigurationExtend,
     IExternalComponentsExtend,
@@ -20,5 +20,5 @@ export class ConfigurationExtend implements IConfigurationExtend {
         public readonly scheduler: ISchedulerExtend,
         public readonly ui: IUIExtend,
         public readonly videoConfProviders: IVideoConfProvidersExtend,
-    ) { }
+    ) {}
 }

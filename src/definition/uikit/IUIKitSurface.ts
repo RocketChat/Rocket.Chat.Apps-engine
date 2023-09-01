@@ -1,5 +1,6 @@
-import { Block, ButtonElement, TextObject } from '@rocket.chat/ui-kit';
-import { IBlock, IButtonElement, ITextObject } from './blocks';
+import type { Block, ButtonElement, TextObject } from '@rocket.chat/ui-kit';
+
+import type { IBlock, IButtonElement, ITextObject } from './blocks';
 
 export enum UIKitSurfaceType {
     MODAL = 'modal',

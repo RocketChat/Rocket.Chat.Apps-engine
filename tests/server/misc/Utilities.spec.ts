@@ -32,15 +32,23 @@ export class UtilitiesTestFixture {
 
     @Test()
     public testDeepFreeze() {
-        Expect(() => this.expectedInfo.name = 'New Testing App').not.toThrow();
-        Expect(() => this.expectedInfo.author.name = 'Bradley H').not.toThrow();
+        Expect(() => {
+            this.expectedInfo.name = 'New Testing App';
+        }).not.toThrow();
+        Expect(() => {
+            this.expectedInfo.author.name = 'Bradley H';
+        }).not.toThrow();
         Expect(this.expectedInfo.name).toEqual('New Testing App');
         Expect(this.expectedInfo.author.name).toEqual('Bradley H');
 
         Expect(() => Utilities.deepFreeze(this.expectedInfo)).not.toThrow();
 
-        Expect(() => this.expectedInfo.name = 'Old Testing App').toThrow();
-        Expect(() => this.expectedInfo.author.name = 'Bradley').toThrow();
+        Expect(() => {
+            this.expectedInfo.name = 'Old Testing App';
+        }).toThrow();
+        Expect(() => {
+            this.expectedInfo.author.name = 'Bradley';
+        }).toThrow();
         Expect(this.expectedInfo.name).toEqual('New Testing App');
         Expect(this.expectedInfo.author.name).toEqual('Bradley H');
     }
@@ -54,6 +62,8 @@ export class UtilitiesTestFixture {
         Expect(info).not.toBe(this.expectedInfo);
         Expect(info.author.name).toEqual(this.expectedInfo.author.name);
         Expect(info.author.name).toEqual('Bradley H'); // was changed on testDeepFreeze
-        Expect(() => info.author.name = 'Bradley Hilton').toThrow();
+        Expect(() => {
+            info.author.name = 'Bradley Hilton';
+        }).toThrow();
     }
 }

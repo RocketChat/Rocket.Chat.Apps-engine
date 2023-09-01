@@ -1,5 +1,5 @@
-import { IExternalComponentOptions } from './IExternalComponentOptions';
-import { IExternalComponentState } from './IExternalComponentState';
+import type { IExternalComponentOptions } from './IExternalComponentOptions';
+import type { IExternalComponentState } from './IExternalComponentState';
 /**
  * Represents an external component that is being provided.
  */

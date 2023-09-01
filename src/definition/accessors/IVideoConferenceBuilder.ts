@@ -1,5 +1,5 @@
-import { RocketChatAssociationModel } from '../metadata';
-import { AppVideoConference } from '../videoConferences';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { AppVideoConference } from '../videoConferences';
 
 export interface IVideoConferenceBuilder {
     kind: RocketChatAssociationModel.VIDEO_CONFERENCE;

@@ -1,4 +1,4 @@
-import { IWorkspaceToken } from '../../../src/definition/cloud/IWorkspaceToken';
+import type { IWorkspaceToken } from '../../../src/definition/cloud/IWorkspaceToken';
 import { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 
 export class TestAppCloudWorkspaceBridge extends CloudWorkspaceBridge {

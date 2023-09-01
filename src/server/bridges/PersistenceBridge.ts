@@ -1,4 +1,4 @@
-import { RocketChatAssociationRecord } from '../../definition/metadata';
+import type { RocketChatAssociationRecord } from '../../definition/metadata';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -35,13 +35,13 @@ export abstract class PersistenceBridge extends BaseBridge {
         }
     }
 
-    public async doRemove(id: string, appId: string): Promise<object|undefined> {
+    public async doRemove(id: string, appId: string): Promise<object | undefined> {
         if (this.hasDefaultPermission(appId)) {
             return this.remove(id, appId);
         }
     }
 
-    public async doRemoveByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>|undefined> {
+    public async doRemoveByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object> | undefined> {
         if (this.hasDefaultPermission(appId)) {
             return this.removeByAssociations(associations, appId);
         }
@@ -84,7 +84,6 @@ export abstract class PersistenceBridge extends BaseBridge {
      * @argument appId the id of the app which is storing the data
      * @returns the id of the stored record
      */
-    // tslint:disable-next-line:max-line-length
     protected abstract createWithAssociations(data: object, associations: Array<RocketChatAssociationRecord>, appId: string): Promise<string>;
 
     /**
@@ -112,7 +111,7 @@ export abstract class PersistenceBridge extends BaseBridge {
      * @argument appId the id of the app calling this
      * @returns the data being removed
      */
-    protected abstract remove(id: string, appId: string): Promise<object|undefined>;
+    protected abstract remove(id: string, appId: string): Promise<object | undefined>;
 
     /**
      * Removes any data which has been associated with the provided records.
@@ -121,7 +120,7 @@ export abstract class PersistenceBridge extends BaseBridge {
      * @argument appId the id of the app calling this
      * @returns the data of the removed records
      */
-    protected abstract removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object>|undefined>;
+    protected abstract removeByAssociations(associations: Array<RocketChatAssociationRecord>, appId: string): Promise<Array<object> | undefined>;
 
     /**
      * Updates the record in the database, with the option of creating a new one if it doesn't exist.
@@ -150,10 +149,12 @@ export abstract class PersistenceBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.persistence.default],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.persistence.default],
+            }),
+        );
 
         return false;
     }

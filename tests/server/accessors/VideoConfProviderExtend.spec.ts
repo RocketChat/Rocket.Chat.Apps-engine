@@ -1,8 +1,8 @@
 import { AsyncTest, Expect, Test } from 'alsatian';
-import { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 
+import type { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 import { VideoConfProviderExtend } from '../../../src/server/accessors';
-import { AppVideoConfProviderManager } from '../../../src/server/managers';
+import type { AppVideoConfProviderManager } from '../../../src/server/managers';
 
 export class VideoConfProviderExtendAccessorTestFixture {
     @Test()
@@ -32,7 +32,7 @@ export class VideoConfProviderExtendAccessorTestFixture {
             },
         } as IVideoConfProvider;
 
-        await Expect(async () => await se.provideVideoConfProvider(mockProvider)).not.toThrowAsync();
+        await Expect(() => se.provideVideoConfProvider(mockProvider)).not.toThrowAsync();
         Expect(providerAdded).toBe(mockProvider);
     }
 }

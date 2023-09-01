@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IMessageReportContext } from './IMessageReportContext';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IMessageReportContext } from './IMessageReportContext';
 
 /**
  * Handler for after a message report
@@ -14,11 +14,5 @@ export interface IPostMessageReported {
      * @param persistence An accessor to the App's persistence
      * @param modify An accessor to the modifier
      */
-    executePostMessageReported(
-        context: IMessageReportContext,
-        read: IRead,
-        http: IHttp,
-        persistence: IPersistence,
-        modify: IModify,
-    ): Promise<void>;
+    executePostMessageReported(context: IMessageReportContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void>;
 }

@@ -9,8 +9,12 @@ export class Utilities {
         Object.freeze(item);
 
         Object.getOwnPropertyNames(item).forEach((prop: string) => {
-            // tslint:disable-next-line:max-line-length
-            if (item.hasOwnProperty(prop) && item[prop] !== null && (typeof item[prop] === 'object' || typeof item[prop] === 'function') && !Object.isFrozen(item[prop])) {
+            if (
+                item.hasOwnProperty(prop) &&
+                item[prop] !== null &&
+                (typeof item[prop] === 'object' || typeof item[prop] === 'function') &&
+                !Object.isFrozen(item[prop])
+            ) {
                 Utilities.deepFreeze(item[prop]);
             }
         });

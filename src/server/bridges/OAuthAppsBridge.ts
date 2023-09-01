@@ -1,13 +1,13 @@
-import { IOAuthApp, IOAuthAppParams } from '../../definition/accessors/IOAuthApp';
+import type { IOAuthApp, IOAuthAppParams } from '../../definition/accessors/IOAuthApp';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class OAuthAppsBridge extends BaseBridge {
-    public async doCreate(OAuthApp: IOAuthAppParams, appId: string) {
+    public async doCreate(oAuthApp: IOAuthAppParams, appId: string) {
         if (this.hasWritePermission(appId)) {
-            return this.create(OAuthApp, appId);
+            return this.create(oAuthApp, appId);
         }
     }
 
@@ -23,9 +23,9 @@ export abstract class OAuthAppsBridge extends BaseBridge {
         }
     }
 
-    public async doUpdate(OAuthApp: IOAuthAppParams, id: string, appId: string) {
+    public async doUpdate(oAuthApp: IOAuthAppParams, id: string, appId: string) {
         if (this.hasWritePermission(appId)) {
-            return this.update(OAuthApp, id, appId);
+            return this.update(oAuthApp, id, appId);
         }
     }
 
@@ -41,11 +41,16 @@ export abstract class OAuthAppsBridge extends BaseBridge {
         }
     }
 
-    protected abstract create(OAuthApp: IOAuthAppParams, appId: string): Promise<string | null>;
+    protected abstract create(oAuthApp: IOAuthAppParams, appId: string): Promise<string | null>;
+
     protected abstract getById(id: string, appId: string): Promise<IOAuthApp | null>;
+
     protected abstract getByName(name: string, appId: string): Promise<Array<IOAuthApp | null>>;
-    protected abstract update(OAuthApp: IOAuthAppParams, id: string, appId: string): Promise<void>;
+
+    protected abstract update(oAuthApp: IOAuthAppParams, id: string, appId: string): Promise<void>;
+
     protected abstract delete(id: string, appId: string): Promise<void>;
+
     protected abstract purge(appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
@@ -53,10 +58,12 @@ export abstract class OAuthAppsBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions['oauth-app'].write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['oauth-app'].write],
+            }),
+        );
 
         return false;
     }
@@ -66,10 +73,12 @@ export abstract class OAuthAppsBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions['oauth-app'].read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions['oauth-app'].read],
+            }),
+        );
 
         return false;
     }

@@ -1,4 +1,5 @@
-import { IUIKitSurface } from './IUIKitSurface';
+import type { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
+import type { IUIKitSurface } from './IUIKitSurface';
 
 export enum UIKitInteractionType {
     MODAL_OPEN = 'modal.open',
@@ -7,6 +8,7 @@ export enum UIKitInteractionType {
     CONTEXTUAL_BAR_OPEN = 'contextual_bar.open',
     CONTEXTUAL_BAR_CLOSE = 'contextual_bar.close',
     CONTEXTUAL_BAR_UPDATE = 'contextual_bar.update',
+    TOAST_MESSAGE = 'toast_message',
     ERRORS = 'errors',
 }
 
@@ -18,6 +20,11 @@ export interface IUIKitInteraction {
     type: UIKitInteractionType;
     triggerId: string;
     appId: string;
+}
+
+export interface IUIKitToastMessageInteraction extends IUIKitInteraction {
+    type: UIKitInteractionType.TOAST_MESSAGE;
+    toast: IToastMessagePayload;
 }
 
 export interface IUIKitErrorInteraction extends IUIKitInteraction {
@@ -36,6 +43,6 @@ export interface IUIKitContextualBarInteraction extends IUIKitInteraction {
     view: IUIKitSurface;
 }
 
-export interface IUIKitModalResponse extends IUIKitModalInteraction, IUIKitResponse { }
-export interface IUIKitContextualBarResponse extends IUIKitContextualBarInteraction, IUIKitResponse { }
-export interface IUIKitErrorResponse extends IUIKitErrorInteraction, IUIKitResponse { }
+export interface IUIKitModalResponse extends IUIKitModalInteraction, IUIKitResponse {}
+export interface IUIKitContextualBarResponse extends IUIKitContextualBarInteraction, IUIKitResponse {}
+export interface IUIKitErrorResponse extends IUIKitErrorInteraction, IUIKitResponse {}

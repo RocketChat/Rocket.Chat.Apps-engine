@@ -1,27 +1,26 @@
-import {
-    IHttpExtend,
-    IHttpPreRequestHandler,
-    IHttpPreResponseHandler,
-} from '../../definition/accessors';
+import type { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler } from '../../definition/accessors';
 
 export class HttpExtend implements IHttpExtend {
     private headers: Map<string, string>;
+
     private params: Map<string, string>;
+
     private requests: Array<IHttpPreRequestHandler>;
+
     private responses: Array<IHttpPreResponseHandler>;
 
     constructor() {
         this.headers = new Map<string, string>();
         this.params = new Map<string, string>();
-        this.requests = new Array<IHttpPreRequestHandler>();
-        this.responses = new Array<IHttpPreResponseHandler>();
+        this.requests = [];
+        this.responses = [];
     }
 
     public provideDefaultHeader(key: string, value: string): void {
         this.headers.set(key, value);
     }
 
-    public provideDefaultHeaders(headers: { [key: string]: string; }): void {
+    public provideDefaultHeaders(headers: { [key: string]: string }): void {
         Object.keys(headers).forEach((key) => this.headers.set(key, headers[key]));
     }
 
@@ -29,7 +28,7 @@ export class HttpExtend implements IHttpExtend {
         this.params.set(key, value);
     }
 
-    public provideDefaultParams(params: { [key: string]: string; }): void {
+    public provideDefaultParams(params: { [key: string]: string }): void {
         Object.keys(params).forEach((key) => this.params.set(key, params[key]));
     }
 

@@ -1,7 +1,8 @@
-import { IUIKitErrorInteraction, IUIKitInteraction, IUIKitSurface } from '../../definition/uikit';
-import { Omit } from '../../lib/utils';
-import { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../uikit/UIKitInteractionResponder';
-import { IUser } from '../users';
+import type { IUIKitErrorInteraction, IUIKitInteraction, IUIKitSurface } from '../uikit';
+import type { Omit } from '../../lib/utils';
+import type { IToastMessagePayload } from '../ui/IToastMessagePaylaod';
+import type { IUIKitContextualBarViewParam, IUIKitModalViewParam } from '../uikit/UIKitInteractionResponder';
+import type { IUser } from '../users';
 
 export type IUIKitInteractionParam = Omit<IUIKitInteraction, 'appId' | 'type'>;
 export type IUIKitErrorInteractionParam = Omit<IUIKitErrorInteraction, 'type' | 'appId' | 'triggerId'>;
@@ -28,4 +29,5 @@ export interface IUIController {
     setViewError(errorInteraction: IUIKitErrorInteractionParam, context: IUIKitInteractionParam, user: IUser): Promise<void>;
     openSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser): Promise<void>;
     updateSurfaceView(view: IUIKitSurfaceViewParam, context: IUIKitInteractionParam, user: IUser): Promise<void>;
+    dispatchToastMessage(toast: IToastMessagePayload, context: IUIKitInteractionParam, user: IUser): Promise<void>;
 }

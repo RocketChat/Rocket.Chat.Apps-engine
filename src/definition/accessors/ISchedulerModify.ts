@@ -1,7 +1,4 @@
-import {
-    IOnetimeSchedule,
-    IRecurringSchedule,
-} from '../scheduler';
+import type { IOnetimeSchedule, IRecurringSchedule } from '../scheduler';
 
 /**
  * This accessor provides methods to work with the Job Scheduler

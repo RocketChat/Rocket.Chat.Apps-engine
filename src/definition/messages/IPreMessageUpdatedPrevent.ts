@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IMessage } from './IMessage';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IMessage } from './IMessage';
 
 /**  Handler which is called to determine whether a user is allowed to update a message or not. */
 export interface IPreMessageUpdatedPrevent {

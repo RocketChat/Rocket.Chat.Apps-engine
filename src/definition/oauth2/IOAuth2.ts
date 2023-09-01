@@ -1,5 +1,5 @@
-import { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IUser } from '../users/IUser';
+import type { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IUser } from '../users/IUser';
 
 /**
  * Authorization data as provided after

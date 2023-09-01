@@ -1,8 +1,12 @@
 import * as path from 'path';
 import * as timers from 'timers';
-import { NodeVM, NodeVMOptions } from 'vm2';
-import { App } from '../../definition/App';
-import { APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT, AppsEngineRuntime, getFilenameForApp, IAppsEngineRuntimeOptions } from './AppsEngineRuntime';
+
+import type { NodeVMOptions } from 'vm2';
+import { NodeVM } from 'vm2';
+
+import type { App } from '../../definition/App';
+import type { IAppsEngineRuntimeOptions } from './AppsEngineRuntime';
+import { APPS_ENGINE_RUNTIME_DEFAULT_TIMEOUT, AppsEngineRuntime, getFilenameForApp } from './AppsEngineRuntime';
 
 export class AppsEngineVM2Runtime extends AppsEngineRuntime {
     public static defaultNodeVMOptions: NodeVMOptions = {
@@ -47,7 +51,7 @@ export class AppsEngineVM2Runtime extends AppsEngineRuntime {
                 external: ['@rocket.chat/apps-engine', 'uuid'],
                 builtin: ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'],
                 resolve: (moduleName, p) => {
-                    return path.resolve(p + '/npm/node_modules/' + moduleName);
+                    return path.resolve(`${p}/npm/node_modules/${moduleName}`);
                 },
                 context: 'sandbox',
             };

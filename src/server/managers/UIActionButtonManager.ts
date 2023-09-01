@@ -1,12 +1,13 @@
-import { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
-import { AppManager } from '../AppManager';
-import { AppActivationBridge } from '../bridges';
+import type { IUIActionButton, IUIActionButtonDescriptor } from '../../definition/ui';
+import type { AppManager } from '../AppManager';
+import type { AppActivationBridge } from '../bridges';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { AppPermissionManager } from './AppPermissionManager';
 
 export class UIActionButtonManager {
     private readonly activationBridge: AppActivationBridge;
+
     private registeredActionButtons = new Map<string, Map<string, IUIActionButtonDescriptor>>();
 
     constructor(manager: AppManager) {
@@ -42,11 +43,13 @@ export class UIActionButtonManager {
         const buttonList: Array<IUIActionButton> = [];
 
         // Flatten map to a simple list of all buttons
-        this.registeredActionButtons.forEach((appButtons, appId) => appButtons
-             .forEach((button) => buttonList.push({
-                 ...button,
-                 appId,
-             })),
+        this.registeredActionButtons.forEach((appButtons, appId) =>
+            appButtons.forEach((button) =>
+                buttonList.push({
+                    ...button,
+                    appId,
+                }),
+            ),
         );
 
         return buttonList;
@@ -57,10 +60,12 @@ export class UIActionButtonManager {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.ui.registerButtons],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.ui.registerButtons],
+            }),
+        );
 
         return false;
     }

@@ -1,4 +1,4 @@
-import { VideoConference } from '../videoConferences/IVideoConference';
+import type { VideoConference } from '../videoConferences/IVideoConference';
 
 /**
  * This accessor provides methods for accessing

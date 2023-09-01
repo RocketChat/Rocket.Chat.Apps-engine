@@ -1,5 +1,5 @@
-import { IHttp, IMessageExtender, IPersistence, IRead } from '../accessors';
-import { IMessage } from './IMessage';
+import type { IHttp, IMessageExtender, IPersistence, IRead } from '../accessors';
+import type { IMessage } from './IMessage';
 
 /** Handler called when an App wants to enrich a message update. */
 export interface IPreMessageUpdatedExtend {

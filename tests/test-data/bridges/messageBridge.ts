@@ -1,8 +1,8 @@
-import { IMessage } from '../../../src/definition/messages';
-import { IRoom } from '../../../src/definition/rooms';
-import { IUser } from '../../../src/definition/users';
+import type { IMessage } from '../../../src/definition/messages';
+import type { IRoom } from '../../../src/definition/rooms';
+import type { IUser } from '../../../src/definition/users';
 import { MessageBridge } from '../../../src/server/bridges';
-import { ITypingDescriptor } from '../../../src/server/bridges/MessageBridge';
+import type { ITypingDescriptor } from '../../../src/server/bridges/MessageBridge';
 
 export class TestsMessageBridge extends MessageBridge {
     public create(message: IMessage, appId: string): Promise<string> {

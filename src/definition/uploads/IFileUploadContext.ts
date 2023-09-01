@@ -1,5 +1,4 @@
-
-import { IUploadDetails } from './IUploadDetails';
+import type { IUploadDetails } from './IUploadDetails';
 
 export interface IFileUploadContext {
     file: IUploadDetails;

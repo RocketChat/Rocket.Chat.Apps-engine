@@ -1,11 +1,12 @@
-// tslint:disable:max-classes-per-file
-import { IUIKitBaseIncomingInteraction } from '../UIKitIncomingInteractionTypes';
+import type { IUIKitBaseIncomingInteraction } from '../UIKitIncomingInteractionTypes';
 import { UIKitInteractionResponder } from '../UIKitInteractionResponder';
-import { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
+import type { IUIKitLivechatBaseIncomingInteraction, IUIKitLivechatBlockIncomingInteraction } from './UIKitLivechatIncomingInteractionType';
 
 export abstract class UIKitLivechatInteractionContext {
     private baseContext: IUIKitLivechatBaseIncomingInteraction;
+
     private responder: UIKitInteractionResponder;
+
     constructor(baseContext: IUIKitLivechatBaseIncomingInteraction) {
         const { appId, actionId, room, visitor, triggerId } = baseContext;
 

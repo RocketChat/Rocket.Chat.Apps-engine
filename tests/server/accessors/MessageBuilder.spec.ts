@@ -1,8 +1,8 @@
 import { Expect, Test } from 'alsatian';
-import { IMessage } from '../../../src/definition/messages';
-import { IUser } from '../../../src/definition/users';
-import { TestData } from '../../test-data/utilities';
 
+import type { IMessage } from '../../../src/definition/messages';
+import type { IUser } from '../../../src/definition/users';
+import { TestData } from '../../test-data/utilities';
 import { MessageBuilder, UserBuilder } from '../../../src/server/accessors';
 
 export class MessageBuilderAccessorTestFixture {
@@ -17,7 +17,7 @@ export class MessageBuilderAccessorTestFixture {
         const mbOnce = new MessageBuilder();
 
         // setData just replaces the passed in object, so let's treat it differently
-        Expect(mbOnce.setData({text: 'hello' } as IMessage)).toBe(mbOnce);
+        Expect(mbOnce.setData({ text: 'hello' } as IMessage)).toBe(mbOnce);
         Expect((mbOnce as any).msg.text).toBe('hello');
 
         const mbUpdate = new MessageBuilder();
@@ -26,7 +26,7 @@ export class MessageBuilderAccessorTestFixture {
         editor.setDisplayName('name');
 
         // setUpdateData keeps the ID passed in the message object, so let's treat it differently
-        Expect(mbUpdate.setUpdateData({text: 'hello', id: 'messageID' } as IMessage, editor.getUser() as IUser)).toBe(mbUpdate);
+        Expect(mbUpdate.setUpdateData({ text: 'hello', id: 'messageID' } as IMessage, editor.getUser() as IUser)).toBe(mbUpdate);
         Expect((mbUpdate as any).msg.text).toBe('hello');
         Expect((mbUpdate as any).msg.id).toBe('messageID');
 
@@ -79,7 +79,7 @@ export class MessageBuilderAccessorTestFixture {
         delete msg.attachments;
         Expect(() => mb.replaceAttachment(1, {})).toThrowError(Error, 'No attachment found at the index of "1" to replace.');
         Expect(mb.addAttachment({})).toBe(mb);
-        Expect(mb.replaceAttachment(0, { color: '#f0f'})).toBe(mb);
+        Expect(mb.replaceAttachment(0, { color: '#f0f' })).toBe(mb);
         Expect(msg.attachments[0].color).toEqual('#f0f');
         Expect(mb.getAttachments()[0].color).toEqual('#f0f');
 

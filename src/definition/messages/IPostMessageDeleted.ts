@@ -1,6 +1,6 @@
-import { IMessage } from '.';
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IMessageDeleteContext } from './IMessageDeleteContext';
+import type { IMessage } from '.';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IMessageDeleteContext } from './IMessageDeleteContext';
 
 /** Handler for after a message is deleted. */
 export interface IPostMessageDeleted {

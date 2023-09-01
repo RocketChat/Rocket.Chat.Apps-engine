@@ -1,5 +1,5 @@
-import { IPersistence } from './IPersistence';
-import { IRead } from './IRead';
+import type { IPersistence } from './IPersistence';
+import type { IRead } from './IRead';
 
 /**
  * The Http package allows users to call out to an external web service.
@@ -32,11 +32,11 @@ export interface IHttpRequest {
     data?: any;
     query?: string;
     params?: {
-        [key: string]: string,
+        [key: string]: string;
     };
     auth?: string;
     headers?: {
-        [key: string]: string,
+        [key: string]: string;
     };
     timeout?: number;
     /**
@@ -68,7 +68,7 @@ export interface IHttpResponse {
     method: RequestMethod;
     statusCode: number;
     headers?: {
-        [key: string]: string,
+        [key: string]: string;
     };
     content?: string;
     data?: any;
@@ -199,4 +199,4 @@ export enum HttpStatusCode {
     SERVICE_UNAVAILABLE = 503,
     GATEWAY_TIMEOUT = 504,
     HTTP_VERSION_NOT_SUPPORTED = 505,
-  }
+}
