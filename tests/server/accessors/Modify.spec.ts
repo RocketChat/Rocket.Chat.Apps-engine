@@ -1,7 +1,7 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
 import { Modify } from '../../../src/server/accessors';
-import { AppBridges, MessageBridge, ModerationBridge, SchedulerBridge, UiInteractionBridge, UserBridge } from '../../../src/server/bridges';
+import { AppBridges, MessageBridge, ModerationBridge, RoomBridge, SchedulerBridge, UiInteractionBridge, UserBridge } from '../../../src/server/bridges';
 import { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
 
 export class ModifyAccessorTestFixture {
@@ -15,6 +15,9 @@ export class ModifyAccessorTestFixture {
             },
             getMessageBridge(): MessageBridge {
                 return {} as MessageBridge;
+            },
+            getRoomBridge() {
+                return {} as RoomBridge;
             },
             getUiInteractionBridge(): UiInteractionBridge {
                 return {} as UiInteractionBridge;

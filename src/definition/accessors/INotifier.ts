@@ -52,6 +52,16 @@ export interface INotifier {
     notifyRoom(room: IRoom, message: IMessage): Promise<void>;
 
     /**
+     * Sends a direct message to a user.
+     * @param user The user to send the message to
+     * @param partialMsg The partial message to send
+     * @returns A Promise that resolves when the message has been sent
+     * @throws {Error} if the room could not be created
+     * @throws {Error} if the message could not be sent
+     */
+    notifyDM(user: IUser, partialMsg: Omit<IMessage, 'room'>): Promise<void>;
+
+    /**
      * Notifies all of the users a typing indicator in the provided scope.
      *
      * @returns a cancellation function to stop typing

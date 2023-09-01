@@ -36,7 +36,7 @@ export class Modify implements IModify {
         this.deleter = new ModifyDeleter(this.bridges, this.appId);
         this.updater = new ModifyUpdater(this.bridges, this.appId);
         this.extender = new ModifyExtender(this.bridges, this.appId);
-        this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.appId);
+        this.notifier = new Notifier(this.bridges.getUserBridge(), this.bridges.getMessageBridge(), this.bridges.getRoomBridge(), this.appId);
         this.uiController = new UIController(this.appId, this.bridges);
         this.scheduler = new SchedulerModify(this.bridges.getSchedulerBridge(), this.appId);
         this.oauthApps = new OAuthAppsModify(this.bridges.getOAuthAppsBridge(), this.appId);

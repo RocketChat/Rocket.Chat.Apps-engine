@@ -2,7 +2,14 @@ import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Te
 
 import { AppManager } from '../../../src/server/AppManager';
 import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager  } from '../../../src/server/managers';
+import {
+    AppAccessorManager,
+    AppApiManager,
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../../src/server/managers';
 import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
@@ -31,7 +38,7 @@ export class AppAccessorManagerTestFixture {
                 return {} as AppApiManager;
             },
             getOneById(appId: string): ProxiedApp {
-                return appId === 'testing' ? {} as ProxiedApp : undefined;
+                return appId === 'testing' ? ({} as ProxiedApp) : undefined;
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
@@ -117,7 +124,7 @@ export class AppAccessorManagerTestFixture {
         Expect(this.bridges.getServerSettingBridge).toHaveBeenCalled().exactly(1);
         Expect(this.bridges.getEnvironmentalVariableBridge).toHaveBeenCalled().exactly(1);
         Expect(this.bridges.getPersistenceBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getRoomBridge).toHaveBeenCalled().exactly(1);
+        Expect(this.bridges.getRoomBridge).toHaveBeenCalled().exactly(2);
         Expect(this.bridges.getUserBridge).toHaveBeenCalled().exactly(2);
         Expect(this.bridges.getMessageBridge).toHaveBeenCalled().exactly(2);
     }

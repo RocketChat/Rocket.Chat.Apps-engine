@@ -4,12 +4,13 @@ import { IRoom } from '../../../src/definition/rooms';
 import { IUser } from '../../../src/definition/users';
 
 import { MessageBuilder, Notifier } from '../../../src/server/accessors';
-import { MessageBridge, UserBridge } from '../../../src/server/bridges';
+import { MessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class NotifierAccessorTestFixture {
     private mockUserBridge: UserBridge;
     private mockMsgBridge: MessageBridge;
+    private mockRoomBridge: RoomBridge;
 
     @SetupFixture
     public setupFixture() {
@@ -26,9 +27,9 @@ export class NotifierAccessorTestFixture {
 
     @AsyncTest()
     public async useNotifier() {
-        Expect(() => new Notifier(this.mockUserBridge, this.mockMsgBridge, 'testing')).not.toThrow();
+        Expect(() => new Notifier(this.mockUserBridge, this.mockMsgBridge, this.mockRoomBridge, 'testing')).not.toThrow();
 
-        const noti = new Notifier(this.mockUserBridge, this.mockMsgBridge, 'testing');
+        const noti = new Notifier(this.mockUserBridge, this.mockMsgBridge, this.mockRoomBridge, 'testing');
         await Expect(async () => await noti.notifyRoom(TestData.getRoom(), TestData.getMessage())).not.toThrowAsync();
         await Expect(async () => await noti.notifyUser(TestData.getUser(), TestData.getMessage())).not.toThrowAsync();
         Expect(noti.getMessageBuilder() instanceof MessageBuilder).toBe(true);
