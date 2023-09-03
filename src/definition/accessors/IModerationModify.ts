@@ -24,4 +24,19 @@ export interface IModerationModify {
      * @param appId the app id
      */
     dismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void>;
+
+    /**
+     * Provides a way for Apps to add rep roles.
+     * @param appId the app id
+     * @throws if the app does not have the permission to add rep roles
+     */
+    addRepRoles(appId: string): Promise<void>;
+
+    /**
+     * Provides a way for Apps to add default permissions to rep roles.
+     * @param appId the app id
+     * @throws if the app does not have the permission to add rep roles
+     * @throws if the app does not have the permission to add default permissions to rep roles
+     */
+    addRepRolePermissions(appId: string): Promise<void>;
 }

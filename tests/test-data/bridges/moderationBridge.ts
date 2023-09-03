@@ -14,4 +14,12 @@ export class TestsModerationBridge extends ModerationBridge {
     public dismissReportsByUserId(userId: IUser['id'], reason: string, action: string, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
+
+    public addRepRoles(appId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
+
+    public addRepRolePermissions(appId: string): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
 }
