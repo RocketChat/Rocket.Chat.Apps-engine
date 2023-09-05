@@ -80,7 +80,7 @@ export class Notifier implements INotifier {
      * @returns {Promise<IRoom>} A Promise that resolves with the newly created direct message room.
      */
     private async createDMRoom(user: IUser, sender: IUser): Promise<IRoom> {
-        const newDMRId = await this.roomBridge.doCreate(
+        const newDMrid = await this.roomBridge.doCreate(
             {
                 type: RoomType.DIRECT_MESSAGE,
                 usernames: [user.username, sender.username],
@@ -92,6 +92,6 @@ export class Notifier implements INotifier {
             this.appId,
         );
 
-        return this.roomBridge.doGetById(newDMRId, this.appId);
+        return this.roomBridge.doGetById(newDMrid, this.appId);
     }
 }
