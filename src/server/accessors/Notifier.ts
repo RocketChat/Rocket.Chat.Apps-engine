@@ -39,10 +39,10 @@ export class Notifier implements INotifier {
      * Sends a direct message to a user.
      *
      * @param {IUser} user - The user to send the message to.
-     * @param {IMessage} partialMsg - The partial message to send.
+     * @param {Omit<IMessage, 'room'>} partialMsg - The partial message to send, without `room` parameter.
      * @returns {Promise<void>} A Promise that resolves when the message has been sent.
      */
-    public async notifyDM(user: IUser, partialMsg: Omit<IMessage, 'room'>): Promise<void> {
+    public async sendDirectMessage(user: IUser, partialMsg: Omit<IMessage, 'room'>): Promise<void> {
         const sender = partialMsg.sender || (await this.userBridge.doGetAppUser(this.appId));
         const dmRoom = (await this.roomBridge.doGetDirectByUsernames([user.username, sender.username], this.appId)) || (await this.createDMRoom(user, sender));
 

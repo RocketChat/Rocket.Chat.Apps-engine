@@ -59,7 +59,7 @@ export interface INotifier {
      * @throws {Error} if the room could not be created
      * @throws {Error} if the message could not be sent
      */
-    notifyDM(user: IUser, partialMsg: Omit<IMessage, 'room'>): Promise<void>;
+    sendDirectMessage(user: IUser, partialMsg: Omit<IMessage, 'room'>): Promise<void>;
 
     /**
      * Notifies all of the users a typing indicator in the provided scope.
