@@ -1,5 +1,5 @@
 import type { ITypingOptions } from '../../definition/accessors/INotifier';
-import type { IMessage } from '../../definition/messages';
+import type { IMessage, IDirectMessage } from '../../definition/messages';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
@@ -12,7 +12,7 @@ export interface ITypingDescriptor extends ITypingOptions {
 }
 
 export abstract class MessageBridge extends BaseBridge {
-    public async doCreate(message: IMessage, appId: string): Promise<string> {
+    public async doCreate(message: IMessage | IDirectMessage, appId: string): Promise<string> {
         if (this.hasWritePermission(appId)) {
             return this.create(message, appId);
         }
@@ -54,7 +54,7 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
-    protected abstract create(message: IMessage, appId: string): Promise<string>;
+    protected abstract create(message: IMessage | IDirectMessage, appId: string): Promise<string>;
 
     protected abstract update(message: IMessage, appId: string): Promise<void>;
 

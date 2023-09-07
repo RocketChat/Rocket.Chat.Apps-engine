@@ -1,7 +1,7 @@
 import type { IMessageBuilder, INotifier } from '../../definition/accessors';
 import type { ITypingOptions } from '../../definition/accessors/INotifier';
 import { TypingScope } from '../../definition/accessors/INotifier';
-import type { IMessage } from '../../definition/messages';
+import type { IDirectMessage, IMessage } from '../../definition/messages';
 import { RoomType, type IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import type { MessageBridge, RoomBridge, UserBridge } from '../bridges';
@@ -46,9 +46,13 @@ export class Notifier implements INotifier {
         const sender = partialMsg.sender || (await this.userBridge.doGetAppUser(this.appId));
         const dmRoom = (await this.roomBridge.doGetDirectByUsernames([user.username, sender.username], this.appId)) || (await this.createDMRoom(user, sender));
 
-        const message: IMessage = {
+        const message: IDirectMessage = {
             ...partialMsg,
-            room: dmRoom,
+            room: {
+                type: RoomType.DIRECT_MESSAGE,
+                id: dmRoom.id,
+                creator: sender,
+            },
             sender,
         };
 
@@ -77,9 +81,9 @@ export class Notifier implements INotifier {
      *
      * @param {IUser} user - The first user to create the room for.
      * @param {IUser} sender - The second user to create the room for.
-     * @returns {Promise<IRoom>} A Promise that resolves with the newly created direct message room.
+     * @returns {Promise<Pick<IRoom, 'id'>>} A Promise that resolves with the newly created direct message room id.
      */
-    private async createDMRoom(user: IUser, sender: IUser): Promise<IRoom> {
+    private async createDMRoom(user: IUser, sender: IUser): Promise<Pick<IRoom, 'id'>> {
         const newDMrid = await this.roomBridge.doCreate(
             {
                 type: RoomType.DIRECT_MESSAGE,
@@ -95,6 +99,8 @@ export class Notifier implements INotifier {
             this.appId,
         );
 
-        return this.roomBridge.doGetById(newDMrid, this.appId);
+        return {
+            id: newDMrid,
+        };
     }
 }
