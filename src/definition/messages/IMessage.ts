@@ -1,6 +1,6 @@
 import type { Block } from '@rocket.chat/ui-kit';
 
-import type { IRoom } from '../rooms';
+import type { IRoom, RoomType } from '../rooms';
 import type { IBlock } from '../uikit';
 import type { IUser, IUserLookup } from '../users';
 import type { IMessageAttachment } from './IMessageAttachment';
@@ -31,4 +31,8 @@ export interface IMessage {
     pinned?: boolean;
     pinnedAt?: Date;
     pinnedBy?: IUserLookup;
+}
+
+export interface IDirectMessage extends Omit<IMessage, 'room'> {
+    room: Pick<IRoom, 'id' | 'creator'> & { type: RoomType.DIRECT_MESSAGE };
 }
