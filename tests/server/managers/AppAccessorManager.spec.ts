@@ -127,7 +127,7 @@ export class AppAccessorManagerTestFixture {
         Expect(this.bridges.getServerSettingBridge).toHaveBeenCalled().exactly(1);
         Expect(this.bridges.getEnvironmentalVariableBridge).toHaveBeenCalled().exactly(1);
         Expect(this.bridges.getPersistenceBridge).toHaveBeenCalled().exactly(1);
-        Expect(this.bridges.getRoomBridge).toHaveBeenCalled().exactly(2);
+        Expect(this.bridges.getRoomBridge).toHaveBeenCalled().exactly(1);
         Expect(this.bridges.getUserBridge).toHaveBeenCalled().exactly(2);
         Expect(this.bridges.getMessageBridge).toHaveBeenCalled().exactly(2);
     }
