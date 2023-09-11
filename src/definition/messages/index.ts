@@ -1,4 +1,4 @@
-import { IDirectMessage, IMessage } from './IMessage';
+import { IMessage } from './IMessage';
 import { IMessageAction } from './IMessageAction';
 import { IMessageAttachment } from './IMessageAttachment';
 import { IMessageAttachmentAuthor } from './IMessageAttachmentAuthor';
@@ -32,7 +32,6 @@ import { MessageActionType } from './MessageActionType';
 import { MessageProcessingType } from './MessageProcessingType';
 
 export {
-    IDirectMessage,
     IMessage,
     IMessageAttachment,
     IMessageAttachmentAuthor,
