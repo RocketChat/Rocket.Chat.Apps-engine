@@ -1,11 +1,8 @@
-const fs = require('fs');
-
 const gulp = require('gulp');
 const del = require('del');
 const sourcemaps = require('gulp-sourcemaps');
 const tsc = require('gulp-typescript');
 const shell = require('gulp-shell');
-const bump = require('gulp-bump');
 
 const tsp = tsc.createProject('tsconfig.json');
 
@@ -29,22 +26,11 @@ function compileTs() {
     return tsp.src().pipe(sourcemaps.init()).pipe(tsp()).pipe(sourcemaps.write('.')).pipe(gulp.dest('.'));
 }
 
-function updateTsDefinitionVersion() {
-    const { version } = JSON.parse(fs.readFileSync('./package.json'));
-
-    return gulp.src('src/definition/package.json').pipe(bump({ version })).pipe(gulp.dest('src/definition/'));
-}
-
-// Tasks for getting it ready and publishing
-function tsDefinitionModuleFiles() {
-    return gulp.src(['LICENSE', 'src/definition/package.json']).pipe(gulp.dest('definition/'));
-}
-
 function watch() {
     gulp.watch('src/**/*.ts', gulp.series(compileTs));
 }
 
-const compile = gulp.series(cleanGenerated, compileTs, updateTsDefinitionVersion, tsDefinitionModuleFiles);
+const compile = gulp.series(cleanGenerated, compileTs);
 
 gulp.task('bundle', bundleSdk);
 
