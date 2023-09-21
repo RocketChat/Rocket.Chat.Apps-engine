@@ -54,7 +54,8 @@ async function buildRequirer(preloadModules: string[]): Promise<(module: string)
             }
 
             if (module.startsWith('@rocket.chat/apps-engine')) {
-                loadedModules[module] = await import(`${module}.ts`);
+                const path = module.replace('@rocket.chat/apps-engine/', '../').concat('.js');
+                loadedModules[module] = await import(path);
                 return;
             }
 

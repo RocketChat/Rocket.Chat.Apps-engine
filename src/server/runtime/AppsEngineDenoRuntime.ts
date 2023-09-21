@@ -35,7 +35,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown';
 
-    constructor(private readonly appId: string) {
+    // We need to keep the appSource around in case the Deno process needs to be restarted
+    constructor(private readonly appId: string, private readonly appSource: string) {
         super();
 
         this.state = 'uninitialized';
@@ -68,10 +69,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return this.state;
     }
 
-    public async setupApp(appSource: string) {
+    public async setupApp() {
         await this.waitUntilReady();
 
-        this.sendRequest({ method: 'construct', params: [this.appId, appSource] });
+        this.sendRequest({ method: 'construct', params: [this.appId, this.appSource] });
     }
 
     private async sendRequest(message: Record<string, unknown>): Promise<unknown> {
@@ -167,8 +168,8 @@ export class AppsEngineDenoRuntime {
             throw new Error('App already has an associated runtime');
         }
 
-        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId);
+        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource);
 
-        await this.subprocesses[appId].setupApp(appSource);
+        await this.subprocesses[appId].setupApp();
     }
 }
