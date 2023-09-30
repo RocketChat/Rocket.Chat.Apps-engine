@@ -8,6 +8,7 @@ if (!Deno.args.includes('--subprocess')) {
     Deno.exit(1001);
 }
 
+
 async function notifyEngine(notify: Record<string, unknown>): Promise<void> {
     const encoder = new TextEncoder();
     const encoded = encoder.encode(JSON.stringify(notify));
@@ -32,7 +33,7 @@ const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'ne
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
 
 async function buildRequirer(preloadModules: string[]): Promise<(module: string) => unknown> {
-    // A simple object is desireable here over a Map, as we're going to do direct lookups
+    // A simple object is desireable here over a Map, since we're going to do many direct lookups
     // and not as many inserts and iterations. For more details https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#objects_vs._maps
     const loadedModules: Record<string, unknown> = Object.create(null);
 
@@ -130,6 +131,7 @@ const Messenger = new (class {
 
 async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<void> {
     const deps = getAppDependencies(source);
+    source = sanitizeDeprecatedUsages(source);
     const require = await buildRequirer(deps);
     const appExports = wrapAppCode(source)(require);
     console.log('appExports', appExports);
