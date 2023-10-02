@@ -170,7 +170,9 @@ export const checkReassignmentOfModifiedIdentifiers: FullAncestorWalkerCallback<
         return;
     }
 
-    if (node.type === 'Property') {
+    // "Property" is for plain objects, "PropertyDefinition" is for classes
+    // but both share the same structure
+    if (node.type === 'Property' || node.type === 'PropertyDefinition') {
         if (node.key.type !== 'Identifier' || functionIdentifiers.has(node.key.name)) return;
 
         if (node.value?.type !== 'Identifier' || !functionIdentifiers.has(node.value.name)) return;
