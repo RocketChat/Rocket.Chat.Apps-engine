@@ -8,6 +8,13 @@ if (!Deno.args.includes('--subprocess')) {
     Deno.exit(1001);
 }
 
+import { createRequire } from 'node:module';
+import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
+
+const require = createRequire(import.meta.url);
+
+// @deno-types='../definition/App.d.ts'
+const { App } = require('../definition/App');
 
 async function notifyEngine(notify: Record<string, unknown>): Promise<void> {
     const encoder = new TextEncoder();
@@ -16,62 +23,29 @@ async function notifyEngine(notify: Record<string, unknown>): Promise<void> {
     return undefined;
 }
 
-function getAppDependencies(appSource: string): string[] {
-    const regex = /require\((['"])(.+?)\1\)/g;
-    const dependencies: string[] = [];
-
-    let match: ReturnType<RegExp['exec']>;
-
-    while (((match = regex.exec(appSource)), match !== null)) {
-        dependencies.push(match[2]);
-    }
-
-    return dependencies;
-}
-
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
 
-async function buildRequirer(preloadModules: string[]): Promise<(module: string) => unknown> {
-    // A simple object is desireable here over a Map, since we're going to do many direct lookups
-    // and not as many inserts and iterations. For more details https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#objects_vs._maps
-    const loadedModules: Record<string, unknown> = Object.create(null);
-
-    await Promise.all(
-        preloadModules.map(async (module: string) => {
-            // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-            if (loadedModules[module]) {
-                return;
-            }
-
-            if (ALLOWED_NATIVE_MODULES.includes(module)) {
-                loadedModules[module] = await import(`node:${module}`);
-                return;
-            }
-
-            if (ALLOWED_EXTERNAL_MODULES.includes(module)) {
-                loadedModules[module] = await import(`npm:${module}`);
-                return;
-            }
-
-            if (module.startsWith('@rocket.chat/apps-engine')) {
-                const path = module.replace('@rocket.chat/apps-engine/', '../').concat('.js');
-                loadedModules[module] = await import(path);
-                return;
-            }
-
-            throw new Error(`Module ${module} is not allowed`);
-        }),
-    );
-
+function buildRequire(): (module: string) => unknown {
     return (module: string): unknown => {
-        console.log('require', module);
+        if (ALLOWED_NATIVE_MODULES.includes(module)) {
+            return require(`node:${module}`)
+        }
 
-        return loadedModules[module];
+        if (ALLOWED_EXTERNAL_MODULES.includes(module)) {
+            return require(`npm:${module}`);
+        }
+
+        if (module.startsWith('@rocket.chat/apps-engine')) {
+            const path = module.replace('@rocket.chat/apps-engine/', new URL('..', import.meta.url).pathname).concat('.js');
+            return require(path);
+        }
+
+        throw new Error(`Module ${module} is not allowed`);
     };
 }
 
-function wrapAppCode(code: string): (require: (module: string) => unknown) => Record<string, unknown> {
+function wrapAppCode(code: string): (require: (module: string) => unknown) => Promise<Record<string, unknown>> {
     return new Function(
         'require',
         `
@@ -81,7 +55,7 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Re
             ${code};
         })(exports,module,require);
         return result.then(() => module.exports);`,
-    ) as () => Record<string, unknown>;
+    ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
 }
 
 type JSONRPC_Message = {
@@ -129,18 +103,56 @@ const Messenger = new (class {
     }
 })();
 
-async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<void> {
-    const deps = getAppDependencies(source);
-    source = sanitizeDeprecatedUsages(source);
-    const require = await buildRequirer(deps);
-    const appExports = wrapAppCode(source)(require);
-    console.log('appExports', appExports);
+function proxify(namespace: string) {
+    return new Proxy({}, {
+        get(target: unknown, prop: string): unknown {
+            return (...args: unknown[]) => {
+                return {};
+            };
+        }
+    })
+}
+
+async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<Record<string, unknown>> {
+    source = sanitizeDeprecatedUsage(source);
+    const require = buildRequire();
+    const exports = await wrapAppCode(source)(require);
+    // This is the same naive logic we've been using in the App Compiler
+    const appClass = Object.values(exports)[0] as typeof App;
+    const app = new appClass({ author: {} }, proxify('logger'), proxify('AppAccessors'));
+
+    if (typeof app.getName !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getName');
+    }
+
+    if (typeof app.getNameSlug !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getNameSlug');
+    }
+
+    if (typeof app.getVersion !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getVersion');
+    }
+
+    if (typeof app.getID !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getID');
+    }
+
+    if (typeof app.getDescription !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getDescription');
+    }
+
+    if (typeof app.getRequiredApiVersion !== 'function') {
+        throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
+    }
+
+    return app;
 }
 
 async function main() {
-    setTimeout(() => notifyEngine({ method: 'ready' }), 1_780);
+    setTimeout(() => notifyEngine({ method: 'ready', _data: Deno.inspect(App) }), 1_780);
 
     const decoder = new TextDecoder();
+    let app: typeof App;
 
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
@@ -149,14 +161,8 @@ async function main() {
         switch (method) {
             case 'construct': {
                 const [appId, source] = params;
-                await handlInitializeApp({ id: appId, source })
-                    .then(() => Messenger.successResponse(id, true))
-                    .catch(() =>
-                        Messenger.errorResponse({
-                            error: { message: 'Could not initialize app', code: -32001 },
-                            id,
-                        }),
-                    );
+                app = await handlInitializeApp({ id: appId, source })
+                Messenger.successResponse(id, { result: "hooray!" });
                 break;
             }
             default: {

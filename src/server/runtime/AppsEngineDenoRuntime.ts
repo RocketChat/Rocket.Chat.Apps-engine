@@ -44,9 +44,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         try {
             const denoExePath = getDenoExecutablePath();
             const denoWrapperPath = getDenoWrapperPath();
-            const denoWrapperDir = path.dirname(denoWrapperPath);
+            const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/*`, denoWrapperPath, '--subprocess']);
+            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess']);
 
             this.setupListeners();
         } catch {
@@ -156,7 +156,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     private async parseError(chunk: Buffer): Promise<void> {
-        console.error(chunk);
+        console.error(chunk.toString());
     }
 }
 

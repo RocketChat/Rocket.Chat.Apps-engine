@@ -11,7 +11,7 @@ function hasPotentialDeprecatedUsage(source: string) {
     )
 }
 
-export function sanitizeDepprecatedUsage(source: string) {
+export function sanitizeDeprecatedUsage(source: string) {
     if (!hasPotentialDeprecatedUsage(source)) {
         return source;
     }

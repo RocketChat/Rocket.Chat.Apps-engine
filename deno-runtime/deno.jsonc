@@ -1,5 +1,4 @@
 {
-    "nodeModulesDir": true,
     "imports": {
         "acorn": "npm:acorn@8.10.0",
         "acorn-walk": "npm:acorn-walk@8.2.0",
