@@ -7,7 +7,9 @@
     "scripts": {
         "start": "gulp",
         "test": "npm run unit-tests",
-        "lint": "eslint .",
+        "lint:eslint": "eslint .",
+        "lint:deno": "deno lint deno-runtime/",
+        "lint": "concurrently \"npm:lint:eslint\" \"npm:lint:deno\"",
         "fix-lint": "eslint . --fix",
         "bundle": "gulp bundle",
         "compile": "gulp compile",
@@ -69,6 +71,7 @@
         "@typescript-eslint/parser": "~5.60.1",
         "alsatian": "^2.4.0",
         "browserify": "^16.5.2",
+        "concurrently": "^8.2.1",
         "del": "^3.0.0",
         "eslint": "~8.45.0",
         "gulp": "^4.0.2",
