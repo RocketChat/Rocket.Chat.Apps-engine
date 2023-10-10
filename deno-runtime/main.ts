@@ -10,6 +10,8 @@ if (!Deno.args.includes('--subprocess')) {
 
 import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
+import { proxify } from "./lib/accessors/mod.ts";
+import * as Messenger from "./lib/messenger.ts";
 
 const require = createRequire(import.meta.url);
 
@@ -56,61 +58,6 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
         })(exports,module,require);
         return result.then(() => module.exports);`,
     ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
-}
-
-type JSONRPC_Message = {
-    jsonrpc: '2.0-rc';
-};
-
-type SuccessResponse = JSONRPC_Message & {
-    id: string;
-    result: any;
-};
-
-type ErrorResponse = JSONRPC_Message & {
-    error: {
-        code: number;
-        message: string;
-        data?: Record<string, unknown>;
-    };
-    id: string | null;
-};
-
-type JSONRPC_Response = SuccessResponse | ErrorResponse;
-
-const Messenger = new (class {
-    private encoder = new TextEncoder();
-
-    public async successResponse(id: string, ...result: unknown[]): Promise<void> {
-        const rpc: SuccessResponse = {
-            jsonrpc: '2.0-rc',
-            id,
-            result,
-        };
-        const encoded = this.encoder.encode(JSON.stringify(rpc));
-        await Deno.stdout.write(encoded);
-    }
-
-    public async errorResponse({ error: { message, code = -32000, data }, id }: Omit<ErrorResponse, 'jsonrpc'>): Promise<void> {
-        const rpc: ErrorResponse = {
-            jsonrpc: '2.0-rc',
-            id,
-            error: { message, code, ...(data && { data }) },
-        };
-
-        const encoded = this.encoder.encode(JSON.stringify(rpc));
-        Deno.stdout.write(encoded);
-    }
-})();
-
-function proxify(namespace: string) {
-    return new Proxy({}, {
-        get(target: unknown, prop: string): unknown {
-            return (...args: unknown[]) => {
-                return {};
-            };
-        }
-    })
 }
 
 async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<Record<string, unknown>> {
