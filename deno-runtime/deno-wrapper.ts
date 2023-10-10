@@ -122,34 +122,34 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     const app = new appClass({ author: {} }, proxify('logger'), proxify('AppAccessors'));
 
     if (typeof app.getName !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getName');
+        throw new Error('App must contain a getName function');
     }
 
     if (typeof app.getNameSlug !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getNameSlug');
+        throw new Error('App must contain a getNameSlug function');
     }
 
     if (typeof app.getVersion !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getVersion');
+        throw new Error('App must contain a getVersion function');
     }
 
     if (typeof app.getID !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getID');
+        throw new Error('App must contain a getID function');
     }
 
     if (typeof app.getDescription !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getDescription');
+        throw new Error('App must contain a getDescription function');
     }
 
     if (typeof app.getRequiredApiVersion !== 'function') {
-        throw new MustContainFunctionError(storage.info.classFile, 'getRequiredApiVersion');
+        throw new Error('App must contain a getRequiredApiVersion function');
     }
 
     return app;
 }
 
 async function main() {
-    setTimeout(() => notifyEngine({ method: 'ready', _data: Deno.inspect(App) }), 1_780);
+    setTimeout(() => notifyEngine({ method: 'ready' }), 1_780);
 
     const decoder = new TextDecoder();
     let app: typeof App;
