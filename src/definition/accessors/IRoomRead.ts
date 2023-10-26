@@ -45,7 +45,7 @@ export interface IRoomRead {
      * @param roomId the room's id
      * @returns an iterator for messages
      */
-    getMessages(roomId: string): Promise<IterableIterator<IMessage>>;
+    getMessages(roomId: string): Promise<IMessage[]>;
 
     /**
      * Gets an iterator for all of the users in the provided room.

@@ -91,6 +91,12 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    public async doGetMessages(roomId: string, appId: string): Promise<Array<IMessage>> {
+        if (this.hasReadPermission(appId)) {
+            return this.getMessages(roomId, appId);
+        }
+    }
+
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
 
     protected abstract getById(roomId: string, appId: string): Promise<IRoom>;
@@ -122,6 +128,8 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract getOwners(roomId: string, appId: string): Promise<Array<IUser>>;
 
     protected abstract getLeaders(roomId: string, appId: string): Promise<Array<IUser>>;
+
+    protected abstract getMessages(roomId: string, appId: string): Promise<Array<IMessage>>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
