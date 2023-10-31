@@ -1,8 +1,9 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
 import { EventEmitter } from 'stream';
-import { AppAccessorManager, AppApiManager } from '../managers';
-import { AppManager } from '../AppManager';
+
+import type { AppAccessorManager, AppApiManager } from '../managers';
+import type { AppManager } from '../AppManager';
 
 export type AppRuntimeParams = {
     appId: string;
@@ -77,7 +78,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.sendRequest({ method: 'construct', params: [this.appId, this.appSource] });
     }
 
-    private async sendRequest(message: Record<string, unknown>): Promise<unknown> {
+    public async sendRequest(message: Record<string, unknown>): Promise<unknown> {
         const id = String(Math.random()).substring(2);
 
         this.deno.stdin.write(JSON.stringify({ id, ...message }));
@@ -165,12 +166,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 type ExecRequestContext = {
     method: string;
     params: Record<string, unknown>;
-    namespace: string; // Use a namespace notation in the `method` property for this
+    namespace?: string; // Use a namespace notation in the `method` property for this
 };
 
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
+
     private readonly accessorManager: AppAccessorManager;
+
     private readonly apiManager: AppApiManager;
 
     constructor(manager: AppManager) {
