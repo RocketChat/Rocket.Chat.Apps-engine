@@ -95,6 +95,36 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     return app;
 }
 
+async function handleRequest({ method, params, id }: Messenger.Request): Promise<void> {
+    switch (method) {
+        case 'construct': {
+            const [appId, source] = params;
+            app = await handlInitializeApp({ id: appId, source })
+            Messenger.successResponse(id, { result: "hooray!" });
+            break;
+        }
+        default: {
+            Messenger.errorResponse({
+                error: { message: 'Method not found', code: -32601 },
+                id,
+            });
+            break;
+        }
+    }
+}
+
+async function handleResponse(response: Messenger.Response): Promise<void> {
+    let event: Event;
+
+    if (Messenger.isErrorResponse(response)) {
+        event = new ErrorEvent(`response:${response.id}`, { error: response.error });
+    } else {
+        event = new CustomEvent(`response:${response.id}`, { detail: response.result });
+    }
+
+    Messenger.RPCResponseObserver.dispatchEvent(event);
+}
+
 async function main() {
     setTimeout(() => notifyEngine({ method: 'ready' }), 1_780);
 
@@ -103,22 +133,20 @@ async function main() {
 
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
-        const { method, params, id } = JSON.parse(message);
+        let JSONRPCMessage
 
-        switch (method) {
-            case 'construct': {
-                const [appId, source] = params;
-                app = await handlInitializeApp({ id: appId, source })
-                Messenger.successResponse(id, { result: "hooray!" });
-                break;
-            }
-            default: {
-                Messenger.errorResponse({
-                    error: { message: 'Method not found', code: -32601 },
-                    id,
-                });
-                break;
-            }
+        try {
+            JSONRPCMessage = JSON.parse(message);
+        } catch (_) {
+            return Messenger.serverParseError();
+        }
+
+        if (Messenger.isRequest(JSONRPCMessage)) {
+            await handleRequest(JSONRPCMessage);
+        }
+
+        if (Messenger.isResponse(JSONRPCMessage)) {
+            await handleResponse(JSONRPCMessage);
         }
     }
 }
