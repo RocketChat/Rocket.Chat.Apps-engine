@@ -2,6 +2,9 @@ import * as child_process from 'child_process';
 import * as path from 'path';
 import { EventEmitter } from 'stream';
 
+import type { AppAccessorManager, AppApiManager } from '../managers';
+import type { AppManager } from '../AppManager';
+
 export type AppRuntimeParams = {
     appId: string;
     appSource: string;
@@ -75,7 +78,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.sendRequest({ method: 'construct', params: [this.appId, this.appSource] });
     }
 
-    private async sendRequest(message: Record<string, unknown>): Promise<unknown> {
+    public async sendRequest(message: Record<string, unknown>): Promise<unknown> {
         const id = String(Math.random()).substring(2);
 
         this.deno.stdin.write(JSON.stringify({ id, ...message }));
@@ -160,8 +163,23 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 }
 
+type ExecRequestContext = {
+    method: string;
+    params: Record<string, unknown>;
+    namespace?: string; // Use a namespace notation in the `method` property for this
+};
+
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
+
+    private readonly accessorManager: AppAccessorManager;
+
+    private readonly apiManager: AppApiManager;
+
+    constructor(manager: AppManager) {
+        this.accessorManager = manager.getAccessorManager();
+        this.apiManager = manager.getApiManager();
+    }
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
@@ -171,5 +189,15 @@ export class AppsEngineDenoRuntime {
         this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource);
 
         await this.subprocesses[appId].setupApp();
+    }
+
+    public async runInSandbox(appId: string, execRequest: ExecRequestContext) {
+        const subprocess = this.subprocesses[appId];
+
+        if (!subprocess) {
+            throw new Error('App does not have an associated runtime');
+        }
+
+        return subprocess.sendRequest(execRequest);
     }
 }
