@@ -10,7 +10,7 @@ if (!Deno.args.includes('--subprocess')) {
 
 import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
-import { proxify } from "./lib/accessors/mod.ts";
+import { AppAccessorsInstance, proxify } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
 
 const require = createRequire(import.meta.url);
@@ -66,7 +66,7 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     const exports = await wrapAppCode(source)(require);
     // This is the same naive logic we've been using in the App Compiler
     const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, proxify('logger'), proxify('AppAccessors'));
+    const app = new appClass({ author: {} }, proxify('logger'), AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
@@ -98,9 +98,9 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
 async function handleRequest({ method, params, id }: Messenger.Request): Promise<void> {
     switch (method) {
         case 'construct': {
-            const [appId, source] = params;
-            app = await handlInitializeApp({ id: appId, source })
-            Messenger.successResponse(id, { result: "hooray!" });
+            const [appId, source] = params as [string, string];
+            const app = await handlInitializeApp({ id: appId, source })
+            Messenger.successResponse({ id, result: 'ok'});
             break;
         }
         default: {
@@ -113,7 +113,7 @@ async function handleRequest({ method, params, id }: Messenger.Request): Promise
     }
 }
 
-async function handleResponse(response: Messenger.Response): Promise<void> {
+function handleResponse(response: Messenger.Response) {
     let event: Event;
 
     if (Messenger.isErrorResponse(response)) {
@@ -126,14 +126,14 @@ async function handleResponse(response: Messenger.Response): Promise<void> {
 }
 
 async function main() {
-    setTimeout(() => notifyEngine({ method: 'ready' }), 1_780);
+    setTimeout(() => Messenger.sendNotification({ method: 'ready', params: null }), 1_780);
 
     const decoder = new TextDecoder();
     let app: typeof App;
 
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
-        let JSONRPCMessage
+        let JSONRPCMessage;
 
         try {
             JSONRPCMessage = JSON.parse(message);
@@ -146,7 +146,7 @@ async function main() {
         }
 
         if (Messenger.isResponse(JSONRPCMessage)) {
-            await handleResponse(JSONRPCMessage);
+            handleResponse(JSONRPCMessage);
         }
     }
 }

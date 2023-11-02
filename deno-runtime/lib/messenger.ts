@@ -4,7 +4,7 @@ export type JSONRPC_Message = {
 
 export type RequestDescriptor = {
     method: string;
-    params: any[];
+    params: unknown[];
 };
 
 export type Request = JSONRPC_Message &
@@ -14,7 +14,7 @@ export type Request = JSONRPC_Message &
 
 export type SuccessResponseDescriptor = {
     id: string;
-    result: any;
+    result: unknown;
 };
 
 export type SuccessResponse = JSONRPC_Message & SuccessResponseDescriptor;
@@ -31,6 +31,8 @@ export type ErrorResponseDescriptor = {
 export type ErrorResponse = JSONRPC_Message & ErrorResponseDescriptor;
 
 export type Response = SuccessResponse | ErrorResponse;
+
+export type NotificationDescriptor = RequestDescriptor;
 
 export function isJSONRPCMessage(message: object): message is JSONRPC_Message {
     return 'jsonrpc' in message && message['jsonrpc'] === '2.0-rc';
@@ -99,7 +101,7 @@ export async function successResponse({ id, result }: SuccessResponseDescriptor)
     await Deno.stdout.write(encoded);
 }
 
-export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<Request> {
+export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<SuccessResponse> {
     const request: Request = {
         jsonrpc: '2.0-rc',
         id: Math.random().toString(36).slice(2),
@@ -124,4 +126,14 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
         RPCResponseObserver.addEventListener(`response:${request.id}`, handler);
     });
+}
+
+export function sendNotification(notification: NotificationDescriptor) {
+    const request = {
+        jsonrpc: '2.0-rc',
+        ...notification,
+    }
+
+    const encoded = encoder.encode(JSON.stringify(request));
+    Deno.stdout.write(encoded);
 }

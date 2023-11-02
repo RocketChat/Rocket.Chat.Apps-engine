@@ -29,6 +29,11 @@ export function getDenoWrapperPath(): string {
     }
 }
 
+type ControllerDeps = {
+    accessors: AppAccessorManager;
+    api: AppApiManager;
+};
+
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
@@ -38,8 +43,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown';
 
+    private readonly accessors: AppAccessorManager;
+
+    private readonly api: AppApiManager;
+
     // We need to keep the appSource around in case the Deno process needs to be restarted
-    constructor(private readonly appId: string, private readonly appSource: string) {
+    constructor(private readonly appId: string, private readonly appSource: string, deps: ControllerDeps) {
         super();
 
         this.state = 'uninitialized';
@@ -55,6 +64,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         } catch {
             this.state = 'invalid';
         }
+
+        this.accessors = deps.accessors;
+        this.api = deps.api;
     }
 
     emit(eventName: string | symbol, ...args: any[]): boolean {
