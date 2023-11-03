@@ -1,113 +1,90 @@
-export type JSONRPC_Message = {
-    jsonrpc: '2.0-rc';
-};
+import * as jsonrpc from 'jsonrpc-lite';
 
-export type RequestDescriptor = {
-    method: string;
-    params: any[];
-};
+export type RequestDescriptor = Pick<jsonrpc.RequestObject, 'method' | 'params'>;
 
-export type Request = JSONRPC_Message &
-    RequestDescriptor & {
-        id: string;
-    };
+export type NotificationDescriptor = Pick<jsonrpc.NotificationObject, 'method' | 'params'>;
 
-export type SuccessResponseDescriptor = {
-    id: string;
-    result: any;
-};
+export type SuccessResponseDescriptor = Pick<jsonrpc.SuccessObject, 'id' | 'result'>;
 
-export type SuccessResponse = JSONRPC_Message & SuccessResponseDescriptor;
+export type ErrorResponseDescriptor = Pick<jsonrpc.ErrorObject, 'id' | 'error'>;
 
-export type ErrorResponseDescriptor = {
-    error: {
-        code: number;
-        message: string;
-        data?: Record<string, unknown>;
-    };
-    id: string | null;
-};
+export type JsonRpcRequest = jsonrpc.IParsedObjectRequest | jsonrpc.IParsedObjectNotification;
+export type JsonRpcResponse = jsonrpc.IParsedObjectSuccess | jsonrpc.IParsedObjectError;
 
-export type ErrorResponse = JSONRPC_Message & ErrorResponseDescriptor;
-
-export type Response = SuccessResponse | ErrorResponse;
-
-export function isJSONRPCMessage(message: object): message is JSONRPC_Message {
-    return 'jsonrpc' in message && message['jsonrpc'] === '2.0-rc';
+export function isRequest(message: jsonrpc.IParsedObject): message is JsonRpcRequest {
+    return message.type === 'request' || message.type === 'notification';
 }
 
-export function isRequest(message: object): message is Request {
-    return isJSONRPCMessage(message) && 'method' in message && 'params' in message && 'id' in message;
+export function isResponse(message: jsonrpc.IParsedObject): message is JsonRpcResponse {
+    return message.type === 'success' || message.type === 'error';
 }
 
-export function isResponse(message: object): message is Response {
-    return isJSONRPCMessage(message) && ('result' in message || 'error' in message);
-}
-
-export function isErrorResponse(response: Response): response is ErrorResponse {
-    return 'error' in response;
-}
-
-export function isSuccessResponse(response: Response): response is SuccessResponse {
-    return 'result' in response;
+export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.ErrorObject {
+    return message instanceof jsonrpc.ErrorObject;
 }
 
 const encoder = new TextEncoder();
 export const RPCResponseObserver = new EventTarget();
 
-export async function serverParseError(): Promise<void> {
-    const rpc: ErrorResponse = {
-        jsonrpc: '2.0-rc',
-        id: null,
-        error: { message: 'Parse error', code: -32700 },
-    };
+export function parseMessage(message: string) {
+    const parsed = jsonrpc.parse(message);
 
-    const encoded = encoder.encode(JSON.stringify(rpc));
+    if (Array.isArray(parsed)) {
+        throw jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
+    }
+
+    if (parsed.type === 'invalid') {
+        throw jsonrpc.error(null, parsed.payload);
+    }
+
+    return parsed;
+}
+
+export async function send(message: jsonrpc.JsonRpc): Promise<void> {
+    const encoded = encoder.encode(message.serialize());
     await Deno.stdout.write(encoded);
 }
 
-export async function serverMethodNotFound(id: string): Promise<void> {
-    const rpc: ErrorResponse = {
-        jsonrpc: '2.0-rc',
-        id,
-        error: { message: 'Method not found', code: -32601 },
-    };
+export async function sendInvalidRequestError(): Promise<void> {
+    const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
 
-    const encoded = encoder.encode(JSON.stringify(rpc));
-    await Deno.stdout.write(encoded);
+    await send(rpc);
+}
+
+export async function sendInvalidParamsError(id: jsonrpc.ID): Promise<void> {
+    const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.invalidParams(null));
+
+    await send(rpc);
+}
+
+export async function sendParseError(): Promise<void> {
+    const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.parseError(null));
+
+    await send(rpc);
+}
+
+export async function sendMethodNotFound(id: jsonrpc.ID): Promise<void> {
+    const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.methodNotFound(null));
+
+    await send(rpc);
 }
 
 export async function errorResponse({ error: { message, code = -32000, data }, id }: ErrorResponseDescriptor): Promise<void> {
-    const rpc: ErrorResponse = {
-        jsonrpc: '2.0-rc',
-        id,
-        error: { message, code, ...(data && { data }) },
-    };
+    const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
 
-    const encoded = encoder.encode(JSON.stringify(rpc));
-    Deno.stdout.write(encoded);
+    await send(rpc);
 }
 
 export async function successResponse({ id, result }: SuccessResponseDescriptor): Promise<void> {
-    const rpc: SuccessResponse = {
-        jsonrpc: '2.0-rc',
-        id,
-        result,
-    };
+    const rpc = jsonrpc.success(id, result);
 
-    const encoded = encoder.encode(JSON.stringify(rpc));
-    await Deno.stdout.write(encoded);
+    await send(rpc);
 }
 
-export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<Request> {
-    const request: Request = {
-        jsonrpc: '2.0-rc',
-        id: Math.random().toString(36).slice(2),
-        ...requestDescriptor,
-    };
+export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<jsonrpc.SuccessObject> {
+    const request = jsonrpc.request(Math.random().toString(36).slice(2), requestDescriptor.method, requestDescriptor.params);
 
-    const encoded = encoder.encode(JSON.stringify(request));
-    await Deno.stdout.write(encoded);
+    await send(request);
 
     return new Promise((resolve, reject) => {
         const handler = (event: Event) => {
@@ -124,4 +101,10 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
         RPCResponseObserver.addEventListener(`response:${request.id}`, handler);
     });
+}
+
+export function sendNotification({ method, params }: NotificationDescriptor) {
+    const request = jsonrpc.notification(method, params);
+
+    send(request);
 }

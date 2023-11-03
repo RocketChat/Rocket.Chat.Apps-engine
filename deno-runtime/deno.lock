@@ -40,7 +40,8 @@
     "specifiers": {
       "acorn-walk@8.2.0": "acorn-walk@8.2.0",
       "acorn@8.10.0": "acorn@8.10.0",
-      "astring@1.8.6": "astring@1.8.6"
+      "astring@1.8.6": "astring@1.8.6",
+      "jsonrpc-lite@2.2.0": "jsonrpc-lite@2.2.0"
     },
     "packages": {
       "acorn-walk@8.2.0": {
@@ -53,6 +54,10 @@
       },
       "astring@1.8.6": {
         "integrity": "sha512-ISvCdHdlTDlH5IpxQJIex7BWBywFWgjJSVdwst+/iQCoEYnyOaQ95+X1JGshuBjGp6nxKUy1jMgE3zPqN7fQdg==",
+        "dependencies": {}
+      },
+      "jsonrpc-lite@2.2.0": {
+        "integrity": "sha512-/cbbSxtZWs1O7R4tWqabrCM/t3N8qKUZMAg9IUqpPvUs6UyRvm6pCNYkskyKN/XU0UgffW+NY2ZRr8t0AknX7g==",
         "dependencies": {}
       }
     }
