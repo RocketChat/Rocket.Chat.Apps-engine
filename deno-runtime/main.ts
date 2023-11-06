@@ -18,13 +18,6 @@ const require = createRequire(import.meta.url);
 // @deno-types='../definition/App.d.ts'
 const { App } = require('../definition/App');
 
-async function notifyEngine(notify: Record<string, unknown>): Promise<void> {
-    const encoder = new TextEncoder();
-    const encoded = encoder.encode(JSON.stringify(notify));
-    await Deno.stdout.write(encoded);
-    return undefined;
-}
-
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
 
@@ -95,12 +88,24 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     return app;
 }
 
-async function handleRequest({ method, params, id }: Messenger.Request): Promise<void> {
+async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
+    // We're not handling notifications at the moment
+    if (type === 'notification') {
+        return Messenger.sendInvalidRequestError();
+    }
+
+    const { id, method, params } = payload;
+
     switch (method) {
         case 'construct': {
             const [appId, source] = params as [string, string];
+
+            if (!appId || !source) {
+                return Messenger.sendInvalidParamsError(id);
+            }
+
             const app = await handlInitializeApp({ id: appId, source })
-            Messenger.successResponse({ id, result: 'ok'});
+            Messenger.successResponse({ id, result: 'hooray' });
             break;
         }
         default: {
@@ -113,32 +118,37 @@ async function handleRequest({ method, params, id }: Messenger.Request): Promise
     }
 }
 
-function handleResponse(response: Messenger.Response) {
+function handleResponse(response: Messenger.JsonRpcResponse): void {
     let event: Event;
 
-    if (Messenger.isErrorResponse(response)) {
-        event = new ErrorEvent(`response:${response.id}`, { error: response.error });
+    if (response.type === 'error') {
+        event = new ErrorEvent(`response:${response.payload.id}`, { error: response.payload.error });
     } else {
-        event = new CustomEvent(`response:${response.id}`, { detail: response.result });
+        event = new CustomEvent(`response:${response.payload.id}`, { detail: response.payload.result });
     }
 
     Messenger.RPCResponseObserver.dispatchEvent(event);
 }
 
 async function main() {
-    setTimeout(() => Messenger.sendNotification({ method: 'ready', params: null }), 1_780);
+    setTimeout(() => Messenger.sendNotification({ method: 'ready' }), 1_780);
 
     const decoder = new TextDecoder();
-    let app: typeof App;
 
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
         let JSONRPCMessage;
 
         try {
-            JSONRPCMessage = JSON.parse(message);
-        } catch (_) {
-            return Messenger.serverParseError();
+            JSONRPCMessage = Messenger.parseMessage(message);
+        } catch (error) {
+            if (Messenger.isErrorResponse(error)) {
+                await Messenger.send(error);
+            } else {
+                await Messenger.sendParseError();
+            }
+
+            continue;
         }
 
         if (Messenger.isRequest(JSONRPCMessage)) {

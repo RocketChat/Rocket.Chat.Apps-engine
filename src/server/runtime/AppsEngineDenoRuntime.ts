@@ -2,6 +2,8 @@ import * as child_process from 'child_process';
 import * as path from 'path';
 import { EventEmitter } from 'stream';
 
+import * as jsonrpc from 'jsonrpc-lite';
+
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
 
@@ -90,10 +92,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.sendRequest({ method: 'construct', params: [this.appId, this.appSource] });
     }
 
-    public async sendRequest(message: Record<string, unknown>): Promise<unknown> {
+    public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
         const id = String(Math.random()).substring(2);
 
-        this.deno.stdin.write(JSON.stringify({ id, ...message }));
+        this.deno.stdin.write(jsonrpc.request(id, message.method, message.params).serialize());
 
         return this.waitForResult(id);
     }
@@ -106,15 +108,15 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             this.once('ready', resolve);
 
-            setTimeout(reject, this.options.timeout);
+            setTimeout(() => reject(new Error('Timeout: app process not ready')), this.options.timeout);
         });
     }
 
     private waitForResult(id: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            this.once(`result:${id}`, (result: unknown[]) => resolve(...result));
+            this.once(`result:${id}`, (result: unknown[]) => resolve(result));
 
-            setTimeout(reject, this.options.timeout);
+            setTimeout(() => reject(new Error('Request timed out')), this.options.timeout);
         });
     }
 
@@ -129,8 +131,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.on('ready', this.onReady.bind(this));
     }
 
-    private async handleIncomingMessage(message: Record<string, unknown>): Promise<void> {
-        const { method, id } = message;
+    private async handleIncomingMessage(message: jsonrpc.IParsedObjectNotification | jsonrpc.IParsedObjectRequest): Promise<void> {
+        const { method, id } = message.payload;
 
         switch (method) {
             case 'ready':
@@ -142,23 +144,35 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
     }
 
-    private async handleResultMessage(message: Record<string, unknown>): Promise<void> {
-        const { id, result } = message;
+    private async handleResultMessage(message: jsonrpc.IParsedObjectError | jsonrpc.IParsedObjectSuccess): Promise<void> {
+        const { id } = message.payload;
 
-        this.emit(`result:${id}`, result);
+        let param;
+
+        if (message.type === 'success') {
+            param = message.payload.result;
+        } else {
+            param = message.payload.error;
+        }
+
+        this.emit(`result:${id}`, param);
     }
 
     private async parseOutput(chunk: Buffer): Promise<void> {
         let message;
 
         try {
-            message = JSON.parse(chunk.toString());
+            message = jsonrpc.parse(chunk.toString());
 
-            if ('method' in message) {
+            if (Array.isArray(message)) {
+                throw new Error('Invalid message format');
+            }
+
+            if (message.type === 'request' || message.type === 'notification') {
                 return this.handleIncomingMessage(message);
             }
 
-            if ('result' in message && 'id' in message) {
+            if (message.type === 'success' || message.type === 'error') {
                 return this.handleResultMessage(message);
             }
 
@@ -184,14 +198,14 @@ type ExecRequestContext = {
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
 
-    private readonly accessorManager: AppAccessorManager;
+    // private readonly accessorManager: AppAccessorManager;
 
-    private readonly apiManager: AppApiManager;
+    // private readonly apiManager: AppApiManager;
 
-    constructor(manager: AppManager) {
-        this.accessorManager = manager.getAccessorManager();
-        this.apiManager = manager.getApiManager();
-    }
+    // constructor(manager: AppManager) {
+    //     this.accessorManager = manager.getAccessorManager();
+    //     this.apiManager = manager.getApiManager();
+    // }
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
