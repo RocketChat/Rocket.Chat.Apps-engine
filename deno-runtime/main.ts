@@ -10,7 +10,7 @@ if (!Deno.args.includes('--subprocess')) {
 
 import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
-import { AppAccessorsInstance, proxify } from "./lib/accessors/mod.ts";
+import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
 
 const require = createRequire(import.meta.url);

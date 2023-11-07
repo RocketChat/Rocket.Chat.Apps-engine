@@ -17,7 +17,7 @@ import {
     SimpleCallExpressionOfFoo,
     SyncFunctionDeclarationWithAsyncCallExpression,
 } from './data/ast_blocks.ts';
-import { AnyNode, ArrowFunctionExpression, AssignmentExpression, AwaitExpression, CallExpression, Expression, MethodDefinition, ReturnStatement, VariableDeclaration } from '../../../acorn.d.ts';
+import { AnyNode, ArrowFunctionExpression, AssignmentExpression, AwaitExpression, Expression, MethodDefinition, ReturnStatement, VariableDeclaration } from '../../../acorn.d.ts';
 import { assertNotEquals } from 'https://deno.land/std@0.203.0/assert/assert_not_equals.ts';
 
 describe('getFunctionIdentifier', () => {
