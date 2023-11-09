@@ -1,4 +1,5 @@
-import type { IUser, UserType } from '../../../src/definition/users';
+import type { IUser } from '../../../src/definition/users';
+import { UserStatusConnection, UserType } from '../../../src/definition/users';
 import { UserBridge } from '../../../src/server/bridges';
 
 export class TestsUserBridge extends UserBridge {
@@ -7,7 +8,23 @@ export class TestsUserBridge extends UserBridge {
     }
 
     public getByUsername(username: string, appId: string): Promise<IUser> {
-        throw new Error('Method not implemented.');
+        return Promise.resolve({
+            id: 'id',
+            username,
+            isEnabled: true,
+            emails: [],
+            name: 'name',
+            roles: [],
+            type: UserType.USER,
+            active: true,
+            appId,
+            utcOffset: 0,
+            status: 'offline',
+            statusConnection: UserStatusConnection.OFFLINE,
+            lastLoginAt: new Date(),
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
     }
 
     public create(user: Partial<IUser>): Promise<string> {

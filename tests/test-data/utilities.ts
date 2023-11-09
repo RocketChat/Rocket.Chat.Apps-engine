@@ -26,6 +26,14 @@ import type { AppManager } from '../../src/server/AppManager';
 import type { AppBridges } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
 import type { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
+import type {
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../src/server/managers';
+import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -36,11 +44,43 @@ export class TestInfastructureSetup {
 
     private sourceStorage: TestSourceStorage;
 
+    private appManager: AppManager;
+
     constructor() {
         this.appStorage = new TestsAppStorage();
         this.logStorage = new TestsAppLogStorage();
         this.bridges = new TestsAppBridges();
         this.sourceStorage = new TestSourceStorage();
+
+        this.appManager = {
+            getBridges: () => {
+                return this.bridges as AppBridges;
+            },
+            getCommandManager() {
+                return {} as AppSlashCommandManager;
+            },
+            getExternalComponentManager() {
+                return {} as AppExternalComponentManager;
+            },
+            getOneById(appId: string): ProxiedApp {
+                return appId === 'failMePlease' ? undefined : TestData.getMockApp(appId, 'testing');
+            },
+            getLogStorage(): AppLogStorage {
+                return new TestsAppLogStorage();
+            },
+            getSchedulerManager() {
+                return {} as AppSchedulerManager;
+            },
+            getUIActionButtonManager() {
+                return {} as UIActionButtonManager;
+            },
+            getVideoConfProviderManager() {
+                return {} as AppVideoConfProviderManager;
+            },
+            getSettingsManager() {
+                return {} as AppSettingsManager;
+            },
+        } as AppManager;
     }
 
     public getAppStorage(): AppMetadataStorage {
@@ -57,6 +97,10 @@ export class TestInfastructureSetup {
 
     public getSourceStorage(): AppSourceStorage {
         return this.sourceStorage;
+    }
+
+    public getMockManager(): AppManager {
+        return this.appManager;
     }
 }
 
@@ -377,10 +421,10 @@ export class TestData {
             { status: AppStatus.UNKNOWN } as IAppStorageItem,
             {
                 getName() {
-                    return 'testing';
+                    return name;
                 },
                 getID() {
-                    return 'testing';
+                    return id;
                 },
                 getRuntime() {
                     return { runInSandbox: (mod: string) => mod };

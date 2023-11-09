@@ -10,7 +10,7 @@ if (!Deno.args.includes('--subprocess')) {
 
 import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
-import { proxify } from "./lib/accessors/mod.ts";
+import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
 
 const require = createRequire(import.meta.url);
@@ -59,7 +59,7 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     const exports = await wrapAppCode(source)(require);
     // This is the same naive logic we've been using in the App Compiler
     const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, proxify('logger'), proxify('AppAccessors'));
+    const app = new appClass({ author: {} }, proxify('logger'), AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
