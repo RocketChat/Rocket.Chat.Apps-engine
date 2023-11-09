@@ -9,10 +9,12 @@ import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors
 import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
+import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
+import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
 
 import * as Messenger from '../messenger.ts';
-import { AppObjectRegistry } from "../../main.ts";
+import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
 
 export const getProxify = (call: typeof Messenger.sendRequest) =>
     function proxify<T>(namespace: string): T {
@@ -78,35 +80,50 @@ export class AppAccessors {
         return this.configModifier;
     }
 
-    public getConifgurationExtend() {
+    public getConfigurationExtend() {
         if (!this.configExtender) {
             this.configExtender = {
                 ui: this.proxify('getConfigurationExtend:ui'),
-                api: this.proxify('getConfigurationExtend:api'),
                 http: this.proxify('getConfigurationExtend:http'),
                 settings: this.proxify('getConfigurationExtend:settings'),
-                scheduler: this.proxify('getConfigurationExtend:scheduler'),
                 externalComponents: this.proxify('getConfigurationExtend:externalComponents'),
+                api: {
+                    _proxy: this.proxify('getConfigurationExtend:api'),
+                    provideApi(api: IApi) {
+                        api.endpoints.forEach((endpoint) => {
+                            AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
+                        });
+
+                        return this._proxy.provideApi(api);
+                    },
+                },
+                scheduler: {
+                    _proxy: this.proxify('getConfigurationExtend:scheduler'),
+                    registerProcessors(processors: IProcessor[]) {
+                        // Store the processor instance to use when the Apps-Engine calls the processor
+                        processors.forEach((processor) => {
+                            AppObjectRegistry.set(`scheduler:${processor.id}`, processor);
+                        });
+
+                        return this._proxy.registerProcessors(processors);
+                    },
+                },
                 videoConfProviders: {
-                    provideVideoConfProvider: async (provider: IVideoConfProvider) => {
+                    _proxy: this.proxify('getConfigurationExtend:videoConfProviders'),
+                    provideVideoConfProvider(provider: IVideoConfProvider) {
                         // Store the videoConfProvider instance to use when the Apps-Engine calls the videoConfProvider
                         AppObjectRegistry.set(`videoConfProvider:${provider.name}`, provider);
 
-                        await Messenger.sendRequest({
-                            method: 'accessor:getConfigurationExtend:videoConfProviders:provideVideoConfProvider',
-                            params: [provider],
-                        });
+                        return this._proxy.provideVideoConfProvider(provider);
                     },
                 },
                 slashCommands: {
-                    provideSlashCommand: async (slashcommand: ISlashCommand) => {
+                    _proxy: this.proxify('getConfigurationExtend:slashCommands'),
+                    provideSlashCommand(slashcommand: ISlashCommand) {
                         // Store the slashcommand instance to use when the Apps-Engine calls the slashcommand
                         AppObjectRegistry.set(`slashcommand:${slashcommand.command}`, slashcommand);
 
-                        await Messenger.sendRequest({
-                            method: 'accessor:getConfigurationExtend:slashCommands:provideSlashCommand',
-                            params: [slashcommand],
-                        });
+                        return this._proxy.provideSlashCommand(slashcommand);
                     }
                 }
             };

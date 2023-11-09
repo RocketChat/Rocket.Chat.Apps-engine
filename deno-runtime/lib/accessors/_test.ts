@@ -2,6 +2,7 @@ import { beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/
 import { assertEquals } from "https://deno.land/std@0.203.0/assert/assert_equals.ts";
 
 import { AppAccessors, getProxify } from "./mod.ts";
+import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
 
 describe('AppAccessors', () => {
     let appAccessors: AppAccessors;
@@ -16,6 +17,7 @@ describe('AppAccessors', () => {
 
     beforeEach(() => {
         appAccessors = new AppAccessors(proxify);
+        AppObjectRegistry.clear();
     });
 
     it('creates the correct format for IRead calls', async () => {
@@ -75,6 +77,37 @@ describe('AppAccessors', () => {
                 providesPreview: true,
             }],
             method: 'accessor:getConfigurationModify:slashCommands:modifySlashCommand',
+        });
+    });
+
+    it('correctly stores a reference to a slashcommand object and sends a request via proxy', async () => {
+        const configExtend = appAccessors.getConfigurationExtend();
+
+        const slashcommand = {
+            command: 'test',
+            i18nDescription: 'test',
+            i18nParamsExample: 'test',
+            providesPreview: true,
+            executor() {
+                return Promise.resolve();
+            }
+        };
+
+        const result = await configExtend.slashCommands.provideSlashCommand(slashcommand);
+
+        assertEquals(AppObjectRegistry.get('slashcommand:test'), slashcommand);
+
+        // The function will not be serialized and sent to the main process
+        delete result.result.params[0].executor;
+
+        assertEquals(result.result, {
+            method: 'accessor:getConfigurationExtend:slashCommands:provideSlashCommand',
+            params: [{
+                command: 'test',
+                i18nDescription: 'test',
+                i18nParamsExample: 'test',
+                providesPreview: true,
+            }],
         });
     });
 });

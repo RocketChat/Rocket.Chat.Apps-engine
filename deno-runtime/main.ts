@@ -12,18 +12,7 @@ import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
 import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
-
-export const AppObjectRegistry = new class {
-    registry: Record<string, unknown> = {};
-
-    public get(key: string): unknown {
-        return this.registry[key];
-    }
-
-    public set(key: string, value: unknown): void {
-        this.registry[key] = value;
-    }
-}
+import { AppObjectRegistry } from "./AppObjectRegistry.ts";
 
 const require = createRequire(import.meta.url);
 
