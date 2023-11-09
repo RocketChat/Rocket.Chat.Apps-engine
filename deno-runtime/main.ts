@@ -13,6 +13,18 @@ import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
 import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
 
+export const AppObjectRegistry = new class {
+    registry: Record<string, unknown> = {};
+
+    public get(key: string): unknown {
+        return this.registry[key];
+    }
+
+    public set(key: string, value: unknown): void {
+        this.registry[key] = value;
+    }
+}
+
 const require = createRequire(import.meta.url);
 
 // @deno-types='../definition/App.d.ts'
@@ -53,13 +65,13 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
     ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
 }
 
-async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<Record<string, unknown>> {
+async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<void> {
     source = sanitizeDeprecatedUsage(source);
     const require = buildRequire();
     const exports = await wrapAppCode(source)(require);
     // This is the same naive logic we've been using in the App Compiler
     const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, proxify('logger'), AppAccessorsInstance.getDefaultAppAccessors());
+    const app = new appClass({ author: {} }, console, AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
@@ -85,7 +97,8 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
         throw new Error('App must contain a getRequiredApiVersion function');
     }
 
-    return app;
+    AppObjectRegistry.set('app', app);
+    AppObjectRegistry.set('id', id);
 }
 
 async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
@@ -104,7 +117,8 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
                 return Messenger.sendInvalidParamsError(id);
             }
 
-            const app = await handlInitializeApp({ id: appId, source })
+            await handlInitializeApp({ id: appId, source })
+
             Messenger.successResponse({ id, result: 'hooray' });
             break;
         }
