@@ -14,23 +14,9 @@ import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
 
 import * as Messenger from '../messenger.ts';
-import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
+import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 
-export const getProxify = (call: typeof Messenger.sendRequest) =>
-    function proxify<T>(namespace: string): T {
-        return new Proxy(
-            { __kind: namespace }, // debugging purposes
-            {
-                get:
-                    (_target: unknown, prop: string) =>
-                    (...params: unknown[]) =>
-                        call({
-                            method: `accessor:${namespace}:${prop}`,
-                            params,
-                        }),
-            },
-        ) as T;
-    };
+const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
 export class AppAccessors {
     private defaultAppAccessors?: IAppAccessors;
@@ -43,7 +29,23 @@ export class AppAccessors {
     private persistence?: IPersistence;
     private http?: IHttp;
 
-    constructor(private readonly proxify: <T>(n: string) => T) {}
+    private proxify: <T>(namespace: string) => T;
+
+    constructor(senderFn: typeof Messenger.sendRequest) {
+        this.proxify = <T>(namespace: string): T =>
+            new Proxy(
+                { __kind: namespace },
+                {
+                    get:
+                        (_target: unknown, prop: string) =>
+                        (...params: unknown[]) =>
+                            senderFn({
+                                method: `accessor:${namespace}:${prop}`,
+                                params,
+                            }),
+                },
+            ) as T;
+    }
 
     public getEnvironmentRead(): IEnvironmentRead {
         if (!this.environmentRead) {
@@ -72,7 +74,21 @@ export class AppAccessors {
         if (!this.configModifier) {
             this.configModifier = {
                 scheduler: this.proxify('getConfigurationModify:scheduler'),
-                slashCommands: this.proxify('getConfigurationModify:slashCommands'),
+                slashCommands: {
+                    _proxy: this.proxify('getConfigurationModify:slashCommands'),
+                    modifySlashCommand(slashcommand: ISlashCommand) {
+                        // Store the slashcommand instance to use when the Apps-Engine calls the slashcommand
+                        AppObjectRegistry.set(`slashcommand:${slashcommand.command}`, slashcommand);
+
+                        return this._proxy.modifySlashCommand(slashcommand);
+                    },
+                    disableSlashCommand(command: string) {
+                        return this._proxy.disableSlashCommand(command);
+                    },
+                    enableSlashCommand(command: string) {
+                        return this._proxy.enableSlashCommand(command);
+                    },
+                },
                 serverSettings: this.proxify('getConfigurationModify:serverSettings'),
             };
         }
@@ -92,6 +108,8 @@ export class AppAccessors {
                     provideApi(api: IApi) {
                         api.endpoints.forEach((endpoint) => {
                             AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
+
+                            endpoint._availableMethods = httpMethods.filter((method) => typeof endpoint[method] === 'function');
                         });
 
                         return this._proxy.provideApi(api);
@@ -124,8 +142,8 @@ export class AppAccessors {
                         AppObjectRegistry.set(`slashcommand:${slashcommand.command}`, slashcommand);
 
                         return this._proxy.provideSlashCommand(slashcommand);
-                    }
-                }
+                    },
+                },
             };
         }
 
@@ -139,7 +157,7 @@ export class AppAccessors {
                 environmentWriter: this.getEnvironmentWrite(),
                 reader: this.getReader(),
                 http: this.getHttp(),
-                providedApiEndpoints: this.proxify('providedApiEndpoints'),
+                providedApiEndpoints: this.proxify('api:listApis'),
             };
         }
 
@@ -207,4 +225,4 @@ export class AppAccessors {
     }
 }
 
-export const AppAccessorsInstance = new AppAccessors(getProxify(Messenger.sendRequest.bind(Messenger)));
+export const AppAccessorsInstance = new AppAccessors(Messenger.sendRequest);
