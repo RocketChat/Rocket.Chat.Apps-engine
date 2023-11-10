@@ -1,3 +1,12 @@
+enum LogMessageSeverity {
+    DEBUG = 'debug',
+    INFORMATION = 'info',
+    LOG = 'log',
+    WARNING = 'warning',
+    ERROR = 'error',
+    SUCCESS = 'success',
+}
+
 export class Logger {
     private static instance: Logger;
     private entries: Array<object> = [];
@@ -13,12 +22,30 @@ export class Logger {
     }
 
     public debug(...args: Array<any>) {
-        this.addEntry('DEBUG', ...args)
+        this.addEntry(LogMessageSeverity.DEBUG, ...args)
     }
+
     public info(...args: Array<any>){
-        this.addEntry('INFO', ...args)
+        this.addEntry(LogMessageSeverity.INFORMATION, ...args)
     }
-    private addEntry(severity: 'DEBUG' | 'INFO',...items: Array<any>) {
+
+    public log(...args: Array<any>){
+        this.addEntry(LogMessageSeverity.LOG, ...args)
+    }
+
+    public warning(...args: Array<any>){
+        this.addEntry(LogMessageSeverity.WARNING, ...args)
+    }
+
+    public error(...args: Array<any>){
+        this.addEntry(LogMessageSeverity.ERROR, ...args)
+    }
+
+    public success(...args: Array<any>){
+        this.addEntry(LogMessageSeverity.SUCCESS, ...args)
+    }
+
+    private addEntry(severity: LogMessageSeverity,...items: Array<any>) {
         const i = items.map((v) => {
             if (v instanceof Error) {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
@@ -36,6 +63,7 @@ export class Logger {
             args: i,
         });
     }
+
     public flush() {
         const logs = this.entries;
         this.entries = [];
