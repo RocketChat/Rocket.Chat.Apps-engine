@@ -8,23 +8,29 @@ import type { IModify } from '@rocket.chat/apps-engine/definition/accessors/IMod
 import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors/IPersistence.ts';
 import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
+import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
+import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
+import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
+import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
 
 import * as Messenger from '../messenger.ts';
+import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
 
-export const getProxify = (call: typeof Messenger.sendRequest) => function proxify<T>(namespace: string): T {
-    return new Proxy(
-        { __kind: namespace }, // debugging purposes
-        {
-            get:
-                (_target: unknown, prop: string) =>
-                (...params: unknown[]) =>
-                    call({
-                        method: `accessor:${namespace}:${prop}`,
-                        params,
-                    }),
-        },
-    ) as T;
-}
+export const getProxify = (call: typeof Messenger.sendRequest) =>
+    function proxify<T>(namespace: string): T {
+        return new Proxy(
+            { __kind: namespace }, // debugging purposes
+            {
+                get:
+                    (_target: unknown, prop: string) =>
+                    (...params: unknown[]) =>
+                        call({
+                            method: `accessor:${namespace}:${prop}`,
+                            params,
+                        }),
+            },
+        ) as T;
+    };
 
 export class AppAccessors {
     private defaultAppAccessors?: IAppAccessors;
@@ -43,8 +49,8 @@ export class AppAccessors {
         if (!this.environmentRead) {
             this.environmentRead = {
                 getSettings: () => this.proxify('getEnvironmentRead:getSettings'),
-                    getServerSettings: () => this.proxify('getEnvironmentRead:getServerSettings'),
-                    getEnvironmentVariables: () => this.proxify('getEnvironmentRead:getEnvironmentVariables'),
+                getServerSettings: () => this.proxify('getEnvironmentRead:getServerSettings'),
+                getEnvironmentVariables: () => this.proxify('getEnvironmentRead:getEnvironmentVariables'),
             };
         }
 
@@ -74,18 +80,53 @@ export class AppAccessors {
         return this.configModifier;
     }
 
-    public getConifgurationExtend() {
+    public getConfigurationExtend() {
         if (!this.configExtender) {
             this.configExtender = {
                 ui: this.proxify('getConfigurationExtend:ui'),
-                api: this.proxify('getConfigurationExtend:api'),
                 http: this.proxify('getConfigurationExtend:http'),
                 settings: this.proxify('getConfigurationExtend:settings'),
-                scheduler: this.proxify('getConfigurationExtend:scheduler'),
-                slashCommands: this.proxify('getConfigurationExtend:slashCommands'),
                 externalComponents: this.proxify('getConfigurationExtend:externalComponents'),
-                videoConfProviders: this.proxify('getConfigurationExtend:videoConfProviders'),
-            }
+                api: {
+                    _proxy: this.proxify('getConfigurationExtend:api'),
+                    provideApi(api: IApi) {
+                        api.endpoints.forEach((endpoint) => {
+                            AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
+                        });
+
+                        return this._proxy.provideApi(api);
+                    },
+                },
+                scheduler: {
+                    _proxy: this.proxify('getConfigurationExtend:scheduler'),
+                    registerProcessors(processors: IProcessor[]) {
+                        // Store the processor instance to use when the Apps-Engine calls the processor
+                        processors.forEach((processor) => {
+                            AppObjectRegistry.set(`scheduler:${processor.id}`, processor);
+                        });
+
+                        return this._proxy.registerProcessors(processors);
+                    },
+                },
+                videoConfProviders: {
+                    _proxy: this.proxify('getConfigurationExtend:videoConfProviders'),
+                    provideVideoConfProvider(provider: IVideoConfProvider) {
+                        // Store the videoConfProvider instance to use when the Apps-Engine calls the videoConfProvider
+                        AppObjectRegistry.set(`videoConfProvider:${provider.name}`, provider);
+
+                        return this._proxy.provideVideoConfProvider(provider);
+                    },
+                },
+                slashCommands: {
+                    _proxy: this.proxify('getConfigurationExtend:slashCommands'),
+                    provideSlashCommand(slashcommand: ISlashCommand) {
+                        // Store the slashcommand instance to use when the Apps-Engine calls the slashcommand
+                        AppObjectRegistry.set(`slashcommand:${slashcommand.command}`, slashcommand);
+
+                        return this._proxy.provideSlashCommand(slashcommand);
+                    }
+                }
+            };
         }
 
         return this.configExtender;
@@ -143,7 +184,7 @@ export class AppAccessors {
                 getScheduler: () => this.proxify('getModifier:getScheduler'),
                 getOAuthAppsModifier: () => this.proxify('getModifier:getOAuthAppsModifier'),
                 getModerationModifier: () => this.proxify('getModifier:getModerationModifier'),
-            }
+            };
         }
 
         return this.modifier;
