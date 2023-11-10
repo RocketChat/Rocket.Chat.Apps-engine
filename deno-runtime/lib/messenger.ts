@@ -1,4 +1,5 @@
 import * as jsonrpc from 'jsonrpc-lite';
+import { Logger } from './logger.ts';
 
 export type RequestDescriptor = Pick<jsonrpc.RequestObject, 'method' | 'params'>;
 
@@ -70,13 +71,15 @@ export async function sendMethodNotFound(id: jsonrpc.ID): Promise<void> {
 }
 
 export async function errorResponse({ error: { message, code = -32000, data }, id }: ErrorResponseDescriptor): Promise<void> {
-    const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
+    const logs = Logger.getInstance().flush();
+    const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, {logs, ...data}));
 
     await send(rpc);
 }
 
 export async function successResponse({ id, result }: SuccessResponseDescriptor): Promise<void> {
-    const rpc = jsonrpc.success(id, result);
+    const logs = Logger.getInstance().flush();
+    const rpc = jsonrpc.success(id, {value: result, logs});
 
     await send(rpc);
 }

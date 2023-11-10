@@ -260,6 +260,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         if (message.type === 'success') {
             param = message.payload.result;
+            const {value, logs} = param as any;
+            param = value;
+
+            logs.forEach(({args, severity, timestamp}: { timestamp: any; severity: any; args: any; }) => console.log(`${timestamp} - [${severity}] - ${args}`))
+
         } else {
             param = message.payload.error;
         }
@@ -311,10 +316,10 @@ export class AppsEngineDenoRuntime {
 
     private readonly apiManager: AppApiManager;
 
-    constructor(manager: AppManager) {
-        this.accessorManager = manager.getAccessorManager();
-        this.apiManager = manager.getApiManager();
-    }
+    // constructor(manager: AppManager) {
+    //     this.accessorManager = manager.getAccessorManager();
+    //     this.apiManager = manager.getApiManager();
+    // }
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
