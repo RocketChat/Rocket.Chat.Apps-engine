@@ -1,50 +1,34 @@
-import { URL } from 'url';
-import {
-    HttpStatusCode,
-    IConfigurationExtend,
-    IHttp,
-    IModify,
-    IPersistence,
-    IRead,
-} from '../../definition/accessors';
-import {
-    ApiSecurity,
-    ApiVisibility,
-    IApiEndpointInfo,
-    IApiRequest,
-    IApiResponse,
-} from '../../definition/api';
-import { App } from '../../definition/App';
+import type { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../../definition/accessors';
+import { HttpStatusCode } from '../../definition/accessors';
+import type { IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
+import { ApiSecurity, ApiVisibility } from '../../definition/api';
+import type { App } from '../../definition/App';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '../../definition/metadata';
-import { IAuthData, IOAuth2Client, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
+import type { IAuthData, IOAuth2Client, IOAuth2ClientOptions } from '../../definition/oauth2/IOAuth2';
 import { SettingType } from '../../definition/settings';
-import { IUser } from '../../definition/users';
+import type { IUser } from '../../definition/users';
 
 export enum GrantType {
-    RefreshToken =  'refresh_token',
-    AuthorizationCode =  'authorization_code',
+    RefreshToken = 'refresh_token',
+    AuthorizationCode = 'authorization_code',
 }
 
 export class OAuth2Client implements IOAuth2Client {
-
     private defaultContents = {
-        success:  '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+        success: `<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
                         <h1 style="text-align: center; font-family: Helvetica Neue;">\
                             Authorization went successfully<br>\
                             You can close this tab now<br>\
                         </h1>\
-                    </div>',
-        failed: '<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
+                    </div>`,
+        failed: `<div style="display: flex;align-items: center;justify-content: center; height: 100%;">\
                     <h1 style="text-align: center; font-family: Helvetica Neue;">\
                         Oops, something went wrong, please try again or in case it still does not work, contact the administrator.\
                     </h1>\
-                </div>',
+                </div>`,
     };
 
-    constructor(
-        private readonly app: App,
-        private readonly config: IOAuth2ClientOptions,
-    ) {}
+    constructor(private readonly app: App, private readonly config: IOAuth2ClientOptions) {}
 
     public async setup(configuration: IConfigurationExtend): Promise<void> {
         configuration.api.provideApi({
@@ -80,24 +64,15 @@ export class OAuth2Client implements IOAuth2Client {
     }
 
     public async getUserAuthorizationUrl(user: IUser, scopes?: Array<string>): Promise<URL> {
-        const redirectUri = this.app
-            .getAccessors()
-            .providedApiEndpoints[0].computedPath.substring(1);
+        const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
 
         const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
-        const finalScopes = ([] as Array<string>).concat(
-            this.config.defaultScopes || [],
-            scopes || [],
-        );
+        const finalScopes = ([] as Array<string>).concat(this.config.defaultScopes || [], scopes || []);
 
-        const authUri = this.config.authUri;
+        const { authUri } = this.config;
 
-        const clientId = await this.app
-            .getAccessors()
-            .reader.getEnvironmentReader()
-            .getSettings()
-            .getValueById(`${this.config.alias}-oauth-client-id`);
+        const clientId = await this.app.getAccessors().reader.getEnvironmentReader().getSettings().getValueById(`${this.config.alias}-oauth-client-id`);
 
         const url = new URL(authUri, siteUrl);
 
@@ -116,20 +91,13 @@ export class OAuth2Client implements IOAuth2Client {
 
     public async getAccessTokenForUser(user: IUser): Promise<IAuthData | undefined> {
         const associations = [
-            new RocketChatAssociationRecord(
-                RocketChatAssociationModel.USER,
-                user.id,
-            ),
-            new RocketChatAssociationRecord(
-                RocketChatAssociationModel.MISC,
-                `${this.config.alias}-oauth-connection`,
-            ),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.USER, user.id),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, `${this.config.alias}-oauth-connection`),
         ];
 
-        const [ result ] = await this.app
-            .getAccessors()
-            .reader.getPersistenceReader()
-            .readByAssociations(associations) as unknown as Array<IAuthData | undefined>;
+        const [result] = (await this.app.getAccessors().reader.getPersistenceReader().readByAssociations(associations)) as unknown as Array<
+            IAuthData | undefined
+        >;
 
         return result;
     }
@@ -150,11 +118,7 @@ export class OAuth2Client implements IOAuth2Client {
                 config: { refreshTokenUri },
             } = this;
 
-            const clientId = await this.app
-                .getAccessors()
-                .reader.getEnvironmentReader()
-                .getSettings()
-                .getValueById(`${this.config.alias}-oauth-client-id`);
+            const clientId = await this.app.getAccessors().reader.getEnvironmentReader().getSettings().getValueById(`${this.config.alias}-oauth-client-id`);
 
             const clientSecret = await this.app
                 .getAccessors()
@@ -164,9 +128,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
-            const redirectUri = this.app
-                    .getAccessors()
-                    .providedApiEndpoints[0].computedPath.substring(1);
+            const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
 
             const url = new URL(refreshTokenUri);
 
@@ -182,9 +144,7 @@ export class OAuth2Client implements IOAuth2Client {
                 throw new Error('Request to provider was unsuccessful. Check logs for more information');
             }
 
-            const { access_token, expires_in, refresh_token, scope } = JSON.parse(
-                content as string,
-            );
+            const { access_token, expires_in, refresh_token, scope } = JSON.parse(content as string);
 
             if (!access_token) {
                 throw new Error('No access token returned by the provider');
@@ -235,10 +195,7 @@ export class OAuth2Client implements IOAuth2Client {
 
     private async getBaseURLWithoutTrailingSlash(): Promise<string> {
         const SITE_URL = 'Site_Url';
-        const url = await this.app
-            .getAccessors()
-            .environmentReader.getServerSettings()
-            .getValueById(SITE_URL);
+        const url = await this.app.getAccessors().environmentReader.getServerSettings().getValueById(SITE_URL);
 
         if (url.endsWith('/')) {
             return url.substr(0, url.length - 1);
@@ -259,11 +216,7 @@ export class OAuth2Client implements IOAuth2Client {
                 query: { code, state },
             } = request;
 
-            const user = await this.app
-                .getAccessors()
-                .reader
-                .getUserReader()
-                .getById(state);
+            const user = await this.app.getAccessors().reader.getUserReader().getById(state);
 
             if (!user) {
                 throw new Error('User could not be determined.');
@@ -271,14 +224,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             // User chose not to authorize the access
             if (!code) {
-                const failedResult = await this.config.authorizationCallback?.(
-                    undefined,
-                    user,
-                    read,
-                    modify,
-                    http,
-                    persis,
-                );
+                const failedResult = await this.config.authorizationCallback?.(undefined, user, read, modify, http, persis);
 
                 return {
                     status: HttpStatusCode.UNAUTHORIZED,
@@ -290,15 +236,9 @@ export class OAuth2Client implements IOAuth2Client {
 
             const accessTokenUrl = this.config.accessTokenUri;
 
-            const redirectUri = this.app
-                .getAccessors()
-                .providedApiEndpoints[0].computedPath.substring(1);
+            const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
 
-            const clientId = await this.app
-                .getAccessors()
-                .reader.getEnvironmentReader()
-                .getSettings()
-                .getValueById(`${this.config.alias}-oauth-client-id`);
+            const clientId = await this.app.getAccessors().reader.getEnvironmentReader().getSettings().getValueById(`${this.config.alias}-oauth-client-id`);
 
             const clientSecret = await this.app
                 .getAccessors()
@@ -334,20 +274,9 @@ export class OAuth2Client implements IOAuth2Client {
                 refreshToken: refresh_token,
             };
 
-            const result = await this.config.authorizationCallback?.(
-                authData,
-                user,
-                read,
-                modify,
-                http,
-                persis,
-            );
+            const result = await this.config.authorizationCallback?.(authData, user, read, modify, http, persis);
 
-            await this.saveToken(
-                authData,
-                user.id,
-                persis,
-            );
+            await this.saveToken(authData, user.id, persis);
 
             return {
                 status: statusCode,
@@ -367,14 +296,8 @@ export class OAuth2Client implements IOAuth2Client {
 
         return persis.updateByAssociations(
             [
-                new RocketChatAssociationRecord(
-                    RocketChatAssociationModel.USER,
-                    userId,
-                ),
-                new RocketChatAssociationRecord(
-                    RocketChatAssociationModel.MISC,
-                    `${this.config.alias}-oauth-connection`,
-                ),
+                new RocketChatAssociationRecord(RocketChatAssociationModel.USER, userId),
+                new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, `${this.config.alias}-oauth-connection`),
             ],
             {
                 scope,
@@ -386,23 +309,11 @@ export class OAuth2Client implements IOAuth2Client {
         );
     }
 
-    private async removeToken({
-        userId,
-        persis,
-    }: {
-        userId: string,
-        persis: IPersistence,
-    }): Promise<IAuthData> {
-        const [ result ] = await persis.removeByAssociations([
-            new RocketChatAssociationRecord(
-                RocketChatAssociationModel.USER,
-                userId,
-            ),
-            new RocketChatAssociationRecord(
-                RocketChatAssociationModel.MISC,
-                `${this.config.alias}-oauth-connection`,
-            ),
-        ]) as unknown as Array<IAuthData>;
+    private async removeToken({ userId, persis }: { userId: string; persis: IPersistence }): Promise<IAuthData> {
+        const [result] = (await persis.removeByAssociations([
+            new RocketChatAssociationRecord(RocketChatAssociationModel.USER, userId),
+            new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, `${this.config.alias}-oauth-connection`),
+        ])) as unknown as Array<IAuthData>;
 
         return result;
     }

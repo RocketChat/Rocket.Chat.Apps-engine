@@ -1,9 +1,9 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { AppMethod } from '../../../src/definition/metadata';
-import { ISlashCommand } from '../../../src/definition/slashcommands';
 
+import { AppMethod } from '../../../src/definition/metadata';
+import type { ISlashCommand } from '../../../src/definition/slashcommands';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 
 export class AppSlashCommandRegistrationTestFixture {
     private mockApp: ProxiedApp;

@@ -1,5 +1,5 @@
-import { ISetting } from '../../../src/definition/settings';
-import { IInternalBridge } from '../../../src/server/bridges';
+import type { ISetting } from '../../../src/definition/settings';
+import type { IInternalBridge } from '../../../src/server/bridges';
 
 export class TestsInternalBridge implements IInternalBridge {
     public doGetUsernamesOfRoomByIdSync(roomId: string): Array<string> {

@@ -1,5 +1,5 @@
-import { IUpload } from '../../definition/uploads';
-import { IUploadDetails } from '../../definition/uploads/IUploadDetails';
+import type { IUpload } from '../../definition/uploads';
+import type { IUploadDetails } from '../../definition/uploads/IUploadDetails';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -25,7 +25,9 @@ export abstract class UploadBridge extends BaseBridge {
     }
 
     protected abstract getById(id: string, appId: string): Promise<IUpload>;
+
     protected abstract getBuffer(upload: IUpload, appId: string): Promise<Buffer>;
+
     protected abstract createUpload(details: IUploadDetails, buffer: Buffer, appId: string): Promise<IUpload>;
 
     private hasReadPermission(appId: string): boolean {
@@ -33,10 +35,12 @@ export abstract class UploadBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.upload.read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.upload.read],
+            }),
+        );
 
         return false;
     }
@@ -46,10 +50,12 @@ export abstract class UploadBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.upload.write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.upload.write],
+            }),
+        );
 
         return false;
     }

@@ -1,4 +1,4 @@
-import {
+import type {
     IConfigurationExtend,
     IConfigurationModify,
     IEnvironmentRead,
@@ -27,6 +27,7 @@ import {
     Persistence,
     PersistenceRead,
     Reader,
+    RoleRead,
     RoomRead,
     SchedulerExtend,
     SchedulerModify,
@@ -46,18 +47,26 @@ import {
 import { CloudWorkspaceRead } from '../accessors/CloudWorkspaceRead';
 import { ThreadRead } from '../accessors/ThreadRead';
 import { UIExtend } from '../accessors/UIExtend';
-import { AppManager } from '../AppManager';
-import { AppBridges } from '../bridges/AppBridges';
+import type { AppManager } from '../AppManager';
+import type { AppBridges } from '../bridges/AppBridges';
 
 export class AppAccessorManager {
     private readonly bridges: AppBridges;
+
     private readonly configExtenders: Map<string, IConfigurationExtend>;
+
     private readonly envReaders: Map<string, IEnvironmentRead>;
+
     private readonly envWriters: Map<string, IEnvironmentWrite>;
+
     private readonly configModifiers: Map<string, IConfigurationModify>;
+
     private readonly readers: Map<string, IRead>;
+
     private readonly modifiers: Map<string, IModify>;
+
     private readonly persists: Map<string, IPersistence>;
+
     private readonly https: Map<string, IHttp>;
 
     constructor(private readonly manager: AppManager) {
@@ -177,7 +186,9 @@ export class AppAccessorManager {
 
             const thread = new ThreadRead(this.bridges.getThreadBridge(), appId);
 
-            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf, oauthApps, thread));
+            const role = new RoleRead(this.bridges.getRoleBridge(), appId);
+
+            this.readers.set(appId, new Reader(env, msg, persist, room, user, noti, livechat, upload, cloud, videoConf, oauthApps, thread, role));
         }
 
         return this.readers.get(appId);

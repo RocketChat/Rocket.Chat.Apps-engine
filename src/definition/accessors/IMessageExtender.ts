@@ -1,5 +1,5 @@
-import { IMessage, IMessageAttachment } from '../messages';
-import { RocketChatAssociationModel } from '../metadata';
+import type { IMessage, IMessageAttachment } from '../messages';
+import type { RocketChatAssociationModel } from '../metadata';
 
 export interface IMessageExtender {
     kind: RocketChatAssociationModel.MESSAGE;

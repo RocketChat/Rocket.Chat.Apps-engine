@@ -1,9 +1,10 @@
-import { Block } from '@rocket.chat/ui-kit';
-import { IMessage, IMessageAttachment } from '../messages';
-import { RocketChatAssociationModel } from '../metadata';
-import { IRoom } from '../rooms';
-import { BlockBuilder, IBlock } from '../uikit';
-import { IUser } from '../users';
+import type { Block } from '@rocket.chat/ui-kit';
+
+import type { IMessage, IMessageAttachment } from '../messages';
+import type { RocketChatAssociationModel } from '../metadata';
+import type { IRoom } from '../rooms';
+import type { BlockBuilder, IBlock } from '../uikit';
+import type { IUser } from '../users';
 
 /**
  * Interface for building out a message.

@@ -1,7 +1,7 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IUIKitResponse } from './IUIKitInteractionType';
-import {
+import type { IUIKitResponse } from './IUIKitInteractionType';
+import type {
     UIKitActionButtonInteractionContext,
     UIKitBlockInteractionContext,
     UIKitViewCloseInteractionContext,
@@ -18,8 +18,13 @@ export interface IUIKitInteractionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_BLOCK_ACTION]?(context: UIKitBlockInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse>;
+    [AppMethod.UIKIT_BLOCK_ACTION]?(
+        context: UIKitBlockInteractionContext,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence,
+        modify: IModify,
+    ): Promise<IUIKitResponse>;
 
     /**
      * Method called when a modal is submitted.
@@ -29,8 +34,13 @@ export interface IUIKitInteractionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_VIEW_SUBMIT]?(context: UIKitViewSubmitInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse>;
+    [AppMethod.UIKIT_VIEW_SUBMIT]?(
+        context: UIKitViewSubmitInteractionContext,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence,
+        modify: IModify,
+    ): Promise<IUIKitResponse>;
 
     /**
      * Method called when a modal is closed.
@@ -40,8 +50,13 @@ export interface IUIKitInteractionHandler {
      * @param http An accessor to the outside world
      * @param persistence An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_VIEW_CLOSE]?(context: UIKitViewCloseInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse>;
+    [AppMethod.UIKIT_VIEW_CLOSE]?(
+        context: UIKitViewCloseInteractionContext,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence,
+        modify: IModify,
+    ): Promise<IUIKitResponse>;
 
     /**
      * Method called when an action button is clicked.
@@ -52,6 +67,11 @@ export interface IUIKitInteractionHandler {
      * @param persistence An accessor to the App's persistence
      * @param modify An accessor to the App's persistence
      */
-    [AppMethod.UIKIT_ACTION_BUTTON]?(context: UIKitActionButtonInteractionContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify):
-        Promise<IUIKitResponse>;
+    [AppMethod.UIKIT_ACTION_BUTTON]?(
+        context: UIKitActionButtonInteractionContext,
+        read: IRead,
+        http: IHttp,
+        persistence: IPersistence,
+        modify: IModify,
+    ): Promise<IUIKitResponse>;
 }

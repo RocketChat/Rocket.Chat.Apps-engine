@@ -1,6 +1,6 @@
 import type { AppVideoConference } from '../../definition/videoConferences/AppVideoConference';
 import type { VideoConference } from '../../definition/videoConferences/IVideoConference';
-import { IVideoConfProvider } from '../../definition/videoConfProviders';
+import type { IVideoConfProvider } from '../../definition/videoConfProviders';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -38,9 +38,13 @@ export abstract class VideoConferenceBridge extends BaseBridge {
     }
 
     protected abstract create(call: AppVideoConference, appId: string): Promise<string>;
+
     protected abstract getById(callId: string, appId: string): Promise<VideoConference>;
+
     protected abstract update(call: VideoConference, appId: string): Promise<void>;
+
     protected abstract registerProvider(info: IVideoConfProvider, appId: string): Promise<void>;
+
     protected abstract unRegisterProvider(info: IVideoConfProvider, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
@@ -48,10 +52,12 @@ export abstract class VideoConferenceBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.videoConference.write],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.videoConference.write],
+            }),
+        );
 
         return false;
     }
@@ -61,10 +67,12 @@ export abstract class VideoConferenceBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.videoConference.read],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.videoConference.read],
+            }),
+        );
 
         return false;
     }
@@ -74,10 +82,12 @@ export abstract class VideoConferenceBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.videoConference.provider],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.videoConference.provider],
+            }),
+        );
 
         return false;
     }

@@ -1,5 +1,5 @@
-import { MessageActionType } from './MessageActionType';
-import { MessageProcessingType } from './MessageProcessingType';
+import type { MessageActionType } from './MessageActionType';
+import type { MessageProcessingType } from './MessageProcessingType';
 
 /**
  * Interface which represents an action which can be added to a message.

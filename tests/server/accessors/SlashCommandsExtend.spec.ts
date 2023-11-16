@@ -1,11 +1,9 @@
-// tslint:disable:max-line-length
-
 import { AsyncTest, Expect, Test } from 'alsatian';
-import { ISlashCommand } from '../../../src/definition/slashcommands';
 
+import type { ISlashCommand } from '../../../src/definition/slashcommands';
 import { SlashCommandsExtend } from '../../../src/server/accessors';
 import { CommandAlreadyExistsError } from '../../../src/server/errors';
-import { AppSlashCommandManager } from '../../../src/server/managers';
+import type { AppSlashCommandManager } from '../../../src/server/managers';
 
 export class SlashCommandsExtendAccessorTestFixture {
     @Test()
@@ -39,8 +37,11 @@ export class SlashCommandsExtendAccessorTestFixture {
             i18nDescription: 'Thing',
         } as ISlashCommand;
 
-        await Expect(async () => await se.provideSlashCommand(mockCommand)).not.toThrowAsync();
+        await Expect(() => se.provideSlashCommand(mockCommand)).not.toThrowAsync();
         Expect(commands.size).toBe(1);
-        await Expect(async () => await se.provideSlashCommand(mockCommand)).toThrowErrorAsync(CommandAlreadyExistsError, 'The command "mock" already exists in the system.');
+        await Expect(() => se.provideSlashCommand(mockCommand)).toThrowErrorAsync(
+            CommandAlreadyExistsError,
+            'The command "mock" already exists in the system.',
+        );
     }
 }

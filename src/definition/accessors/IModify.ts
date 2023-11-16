@@ -1,12 +1,12 @@
-import { IModerationModify } from './IModerationModify';
-import { IModifyCreator } from './IModifyCreator';
-import { IModifyDeleter } from './IModifyDeleter';
-import { IModifyExtender } from './IModifyExtender';
-import { IModifyUpdater } from './IModifyUpdater';
-import { INotifier } from './INotifier';
-import { IOAuthAppsModify } from './IOAuthAppsModify';
-import { ISchedulerModify } from './ISchedulerModify';
-import { IUIController } from './IUIController';
+import type { IModerationModify } from './IModerationModify';
+import type { IModifyCreator } from './IModifyCreator';
+import type { IModifyDeleter } from './IModifyDeleter';
+import type { IModifyExtender } from './IModifyExtender';
+import type { IModifyUpdater } from './IModifyUpdater';
+import type { INotifier } from './INotifier';
+import type { IOAuthAppsModify } from './IOAuthAppsModify';
+import type { ISchedulerModify } from './ISchedulerModify';
+import type { IUIController } from './IUIController';
 
 export interface IModify {
     getCreator(): IModifyCreator;

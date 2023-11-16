@@ -1,4 +1,4 @@
-import {
+import type {
     IAppAccessors,
     IAppInstallationContext,
     IAppUninstallationContext,
@@ -12,11 +12,11 @@ import {
     IRead,
 } from './accessors';
 import { AppStatus } from './AppStatus';
-import { IApp } from './IApp';
-import { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
-import { IAppInfo } from './metadata/IAppInfo';
-import { ISetting } from './settings';
-import { ISettingUpdateContext } from './settings/ISettingUpdateContext';
+import type { IApp } from './IApp';
+import type { IAppAuthorInfo } from './metadata/IAppAuthorInfo';
+import type { IAppInfo } from './metadata/IAppInfo';
+import type { ISetting } from './settings';
+import type { ISettingUpdateContext } from './settings/ISettingUpdateContext';
 
 export abstract class App implements IApp {
     private status: AppStatus = AppStatus.UNKNOWN;
@@ -28,9 +28,11 @@ export abstract class App implements IApp {
      * *might* be called more than once but the `initialize()` will only be called once.
      */
     protected constructor(private readonly info: IAppInfo, private readonly logger: ILogger, private readonly accessors?: IAppAccessors) {
-        this.logger.debug(`Constructed the App ${this.info.name} (${this.info.id})`,
+        this.logger.debug(
+            `Constructed the App ${this.info.name} (${this.info.id})`,
             `v${this.info.version} which depends on the API v${this.info.requiredApiVersion}!`,
-            `Created by ${this.info.author.name}`);
+            `Created by ${this.info.author.name}`,
+        );
 
         this.setStatus(AppStatus.CONSTRUCTED);
     }
@@ -66,7 +68,7 @@ export abstract class App implements IApp {
      * Please use read.getUserReader().getAppUser() instead.
      */
     public getAppUserUsername(): string {
-        return `${ this.info.nameSlug }.bot`;
+        return `${this.info.nameSlug}.bot`;
     }
 
     /**
@@ -162,9 +164,7 @@ export abstract class App implements IApp {
      * Method which is called when this App is disabled and it can be called several times.
      * If this App was enabled and then the user disabled it, this method will be called.
      */
-    public async onDisable(configurationModify: IConfigurationModify): Promise<void> {
-        return;
-    }
+    public async onDisable(configurationModify: IConfigurationModify): Promise<void> {}
 
     /**
      * Method which is called when the App is uninstalled and it is called one single time.
@@ -172,18 +172,14 @@ export abstract class App implements IApp {
      * This method will NOT be called when an App is getting disabled manually, ONLY when
      * it's being uninstalled from Rocket.Chat.
      */
-    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
-        return;
-    }
+    public async onUninstall(context: IAppUninstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {}
 
     /**
      * Method which is called when the App is installed and it is called one single time.
      *
      * This method is NOT called when the App is updated.
      */
-    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {
-        return;
-    }
+    public async onInstall(context: IAppInstallationContext, read: IRead, http: IHttp, persistence: IPersistence, modify: IModify): Promise<void> {}
 
     /**
      * Method which is called whenever a setting which belongs to this App has been updated
@@ -194,9 +190,7 @@ export abstract class App implements IApp {
      * @param reader the reader accessor
      * @param http an accessor to the outside world
      */
-    public async onSettingUpdated(setting: ISetting, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<void> {
-        return;
-    }
+    public async onSettingUpdated(setting: ISetting, configurationModify: IConfigurationModify, read: IRead, http: IHttp): Promise<void> {}
 
     /**
      * Method which is called before a setting which belongs to this App is going to be updated
@@ -215,9 +209,7 @@ export abstract class App implements IApp {
      * Method will be called during initialization. It allows for adding custom configuration options and defaults
      * @param configuration
      */
-    protected async extendConfiguration(configuration: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {
-        return;
-    }
+    protected async extendConfiguration(configuration: IConfigurationExtend, environmentRead: IEnvironmentRead): Promise<void> {}
 
     /**
      * Sets the status this App is now at, use only when 100% true (it's protected for a reason).
@@ -225,7 +217,7 @@ export abstract class App implements IApp {
      * @param status the new status of this App
      */
     protected async setStatus(status: AppStatus): Promise<void> {
-        this.logger.debug(`The status is now: ${ status }`);
+        this.logger.debug(`The status is now: ${status}`);
         this.status = status;
     }
 }

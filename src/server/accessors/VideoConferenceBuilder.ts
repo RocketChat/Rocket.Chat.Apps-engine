@@ -1,6 +1,6 @@
-import { IVideoConferenceBuilder } from '../../definition/accessors';
+import type { IVideoConferenceBuilder } from '../../definition/accessors';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-import { AppVideoConference } from '../../definition/videoConferences';
+import type { AppVideoConference } from '../../definition/videoConferences';
 
 export class VideoConferenceBuilder implements IVideoConferenceBuilder {
     public kind: RocketChatAssociationModel.VIDEO_CONFERENCE = RocketChatAssociationModel.VIDEO_CONFERENCE;
@@ -8,7 +8,7 @@ export class VideoConferenceBuilder implements IVideoConferenceBuilder {
     protected call: AppVideoConference;
 
     constructor(data?: Partial<AppVideoConference>) {
-        this.call = (data ? data : { }) as AppVideoConference;
+        this.call = (data || {}) as AppVideoConference;
     }
 
     public setData(data: Partial<AppVideoConference>): IVideoConferenceBuilder {

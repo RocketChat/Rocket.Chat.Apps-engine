@@ -1,4 +1,4 @@
-import { RocketChatAssociationRecord } from '../metadata';
+import type { RocketChatAssociationRecord } from '../metadata';
 
 /**
  * Provides an accessor write data to the App's persistent storage.

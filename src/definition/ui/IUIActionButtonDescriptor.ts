@@ -1,4 +1,4 @@
-import { UIActionButtonContext } from './UIActionButtonContext';
+import type { UIActionButtonContext } from './UIActionButtonContext';
 
 export enum RoomTypeFilter {
     PUBLIC_CHANNEL = 'public_channel',
@@ -30,8 +30,9 @@ export interface IUActionButtonWhen {
 
 export interface IUIActionButtonDescriptor {
     actionId: string;
-    labelI18n: string;
     context: UIActionButtonContext;
+    labelI18n: string;
+    variant?: 'danger';
     when?: IUActionButtonWhen;
 }
 export interface IUIActionButton extends IUIActionButtonDescriptor {

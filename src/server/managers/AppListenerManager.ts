@@ -1,8 +1,8 @@
-import { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
+import type { IEmailDescriptor, IPreEmailSentContext } from '../../definition/email';
 import { EssentialAppDisabledException } from '../../definition/exceptions';
-import { IExternalComponent } from '../../definition/externalComponent';
-import { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
-import {
+import type { IExternalComponent } from '../../definition/externalComponent';
+import type { ILivechatEventContext, ILivechatRoom, ILivechatTransferEventContext, IVisitor } from '../../definition/livechat';
+import type {
     IMessage,
     IMessageDeleteContext,
     IMessageFollowContext,
@@ -12,27 +12,33 @@ import {
     IMessageStarContext,
 } from '../../definition/messages';
 import { AppInterface, AppMethod } from '../../definition/metadata';
-import { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext, RoomType } from '../../definition/rooms';
+import type { IRoom, IRoomUserJoinedContext, IRoomUserLeaveContext } from '../../definition/rooms';
+import { RoomType } from '../../definition/rooms';
 import { UIActionButtonContext } from '../../definition/ui';
-import { IUIKitResponse, IUIKitSurface, UIKitIncomingInteraction, UIKitIncomingInteractionType } from '../../definition/uikit';
+import type { IUIKitResponse, IUIKitSurface, UIKitIncomingInteraction } from '../../definition/uikit';
+import { UIKitIncomingInteractionType } from '../../definition/uikit';
 import { isUIKitIncomingInteractionActionButtonMessageBox } from '../../definition/uikit/IUIKitIncomingInteractionActionButton';
-import { IUIKitLivechatIncomingInteraction, UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
-import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from '../../definition/uikit/UIKitIncomingInteractionContainer';
+import type { IUIKitLivechatIncomingInteraction } from '../../definition/uikit/livechat';
+import { UIKitLivechatBlockInteractionContext } from '../../definition/uikit/livechat';
+import type {
+    IUIKitIncomingInteractionMessageContainer,
+    IUIKitIncomingInteractionModalContainer,
+} from '../../definition/uikit/UIKitIncomingInteractionContainer';
 import {
     UIKitActionButtonInteractionContext,
     UIKitBlockInteractionContext,
     UIKitViewCloseInteractionContext,
     UIKitViewSubmitInteractionContext,
 } from '../../definition/uikit/UIKitInteractionContext';
-import { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
-import { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
+import type { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
+import type { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
-import { AppManager } from '../AppManager';
+import type { AppManager } from '../AppManager';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
-import { ProxiedApp } from '../ProxiedApp';
+import type { ProxiedApp } from '../ProxiedApp';
 import { Room } from '../rooms/Room';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { AppAccessorManager } from './AppAccessorManager';
 
 interface IListenerExecutor {
     [AppInterface.IPreMessageSentPrevent]: {
@@ -230,7 +236,9 @@ interface IListenerExecutor {
 
 export class AppListenerManager {
     private am: AppAccessorManager;
+
     private listeners: Map<string, Array<string>>;
+
     /**
      * Locked events are those who are listed in an app's
      * "essentials" list but the app is disabled.
@@ -245,7 +253,7 @@ export class AppListenerManager {
         this.lockedEvents = new Map<string, Set<string>>();
 
         Object.keys(AppInterface).forEach((intt) => {
-            this.listeners.set(intt, new Array<string>());
+            this.listeners.set(intt, []);
             this.lockedEvents.set(intt, new Set<string>());
         });
     }
@@ -304,7 +312,7 @@ export class AppListenerManager {
     }
 
     public getListeners(int: AppInterface): Array<ProxiedApp> {
-        const results = new Array<ProxiedApp>();
+        const results: Array<ProxiedApp> = [];
 
         for (const appId of this.listeners.get(int)) {
             results.push(this.manager.getOneById(appId));
@@ -434,7 +442,6 @@ export class AppListenerManager {
                 return this.executePostUserStatusChanged(data as IUserStatusContext);
             default:
                 console.warn('An invalid listener was called');
-                return;
         }
     }
 
@@ -1198,6 +1205,7 @@ export class AppListenerManager {
             this.am.getModifier(appId),
         );
     }
+
     // Livechat
     private async executePostLivechatRoomStarted(data: ILivechatRoom): Promise<void> {
         const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
@@ -1610,6 +1618,7 @@ export class AppListenerManager {
             }
         }
     }
+
     private async executePostUserStatusChanged(data: IUserStatusContext): Promise<void> {
         const context = Utilities.deepFreeze(data);
 

@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { IFileUploadContext } from './IFileUploadContext';
+import type { IFileUploadContext } from './IFileUploadContext';
 
 /**
  * Event interface that allows an app to
@@ -16,11 +16,5 @@ import { IFileUploadContext } from './IFileUploadContext';
  * reason for rejection.
  */
 export interface IPreFileUpload {
-    [AppMethod.EXECUTE_PRE_FILE_UPLOAD](
-        context: IFileUploadContext,
-        read: IRead,
-        http: IHttp,
-        persis: IPersistence,
-        modify: IModify,
-    ): Promise<void>;
+    [AppMethod.EXECUTE_PRE_FILE_UPLOAD](context: IFileUploadContext, read: IRead, http: IHttp, persis: IPersistence, modify: IModify): Promise<void>;
 }

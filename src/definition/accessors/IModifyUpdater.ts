@@ -1,8 +1,8 @@
-import { IUser } from '../users';
-import { ILivechatUpdater } from './ILivechatUpdater';
-import { IMessageBuilder } from './IMessageBuilder';
-import { IRoomBuilder } from './IRoomBuilder';
-import { IUserUpdater } from './IUserUpdater';
+import type { IUser } from '../users';
+import type { ILivechatUpdater } from './ILivechatUpdater';
+import type { IMessageBuilder } from './IMessageBuilder';
+import type { IRoomBuilder } from './IRoomBuilder';
+import type { IUserUpdater } from './IUserUpdater';
 
 export interface IModifyUpdater {
     /**

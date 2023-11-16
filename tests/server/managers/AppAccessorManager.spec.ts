@@ -1,15 +1,25 @@
-import { Expect, RestorableFunctionSpy, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+import type { RestorableFunctionSpy } from 'alsatian';
+import { Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager  } from '../../../src/server/managers';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
+import type {
+    AppApiManager,
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../../src/server/managers';
+import { AppAccessorManager } from '../../../src/server/managers';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 
 export class AppAccessorManagerTestFixture {
     private bridges: AppBridges;
+
     private manager: AppManager;
+
     private spies: Array<RestorableFunctionSpy>;
 
     @SetupFixture
@@ -31,7 +41,7 @@ export class AppAccessorManagerTestFixture {
                 return {} as AppApiManager;
             },
             getOneById(appId: string): ProxiedApp {
-                return appId === 'testing' ? {} as ProxiedApp : undefined;
+                return appId === 'testing' ? ({} as ProxiedApp) : undefined;
             },
             getSchedulerManager() {
                 return {} as AppSchedulerManager;
@@ -47,7 +57,7 @@ export class AppAccessorManagerTestFixture {
 
     @Setup
     public setup() {
-        this.spies = new Array<RestorableFunctionSpy>();
+        this.spies = [];
         this.spies.push(SpyOn(this.bridges, 'getServerSettingBridge'));
         this.spies.push(SpyOn(this.bridges, 'getEnvironmentalVariableBridge'));
         this.spies.push(SpyOn(this.bridges, 'getMessageBridge'));

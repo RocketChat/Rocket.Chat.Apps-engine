@@ -1,4 +1,4 @@
-import { IUser } from './IUser';
+import type { IUser } from './IUser';
 
 /**
  * The context of execution for the

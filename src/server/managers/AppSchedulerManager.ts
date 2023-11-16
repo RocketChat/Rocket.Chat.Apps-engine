@@ -1,25 +1,21 @@
 import { AppStatus } from '../../definition/AppStatus';
 import { AppMethod } from '../../definition/metadata';
-import {
-    IJobContext,
-    IOnetimeSchedule,
-    IProcessor,
-    IRecurringSchedule,
-} from '../../definition/scheduler';
-import { AppManager } from '../AppManager';
-import { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
-import { SchedulerBridge } from '../bridges/SchedulerBridge';
-import { AppAccessorManager } from './';
+import type { IJobContext, IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../definition/scheduler';
+import type { AppManager } from '../AppManager';
+import type { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
+import type { SchedulerBridge } from '../bridges/SchedulerBridge';
+import type { AppAccessorManager } from '.';
 
 function createProcessorId(jobId: string, appId: string): string {
-    return jobId.includes(`_${appId}`) ? jobId : `${ jobId }_${ appId }`;
+    return jobId.includes(`_${appId}`) ? jobId : `${jobId}_${appId}`;
 }
 
 export class AppSchedulerManager {
     private readonly bridge: SchedulerBridge;
+
     private readonly accessors: AppAccessorManager;
 
-    private registeredProcessors: Map<string, {[processorId: string]: IProcessor}>;
+    private registeredProcessors: Map<string, { [processorId: string]: IProcessor }>;
 
     constructor(private readonly manager: AppManager) {
         this.bridge = this.manager.getBridges().getSchedulerBridge();
@@ -32,17 +28,20 @@ export class AppSchedulerManager {
             this.registeredProcessors.set(appId, {});
         }
 
-        return this.bridge.doRegisterProcessors(processors.map((processor) => {
-            const processorId = createProcessorId(processor.id, appId);
+        return this.bridge.doRegisterProcessors(
+            processors.map((processor) => {
+                const processorId = createProcessorId(processor.id, appId);
 
-            this.registeredProcessors.get(appId)[processorId] = processor;
+                this.registeredProcessors.get(appId)[processorId] = processor;
 
-            return {
-                id: processorId,
-                processor: this.wrapProcessor(appId, processorId).bind(this),
-                startupSetting: processor.startupSetting,
-            };
-        }),  appId);
+                return {
+                    id: processorId,
+                    processor: this.wrapProcessor(appId, processorId).bind(this),
+                    startupSetting: processor.startupSetting,
+                };
+            }),
+            appId,
+        );
     }
 
     public wrapProcessor(appId: string, processorId: string): IProcessor['processor'] {

@@ -1,7 +1,7 @@
-import { IHttp, IModify, IPersistence, IRead } from '../../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../../accessors';
 import { AppMethod } from '../../metadata';
-import { IUIKitResponse } from '../IUIKitInteractionType';
-import { UIKitLivechatBlockInteractionContext } from './UIKitLivechatInteractionContext';
+import type { IUIKitResponse } from '../IUIKitInteractionType';
+import type { UIKitLivechatBlockInteractionContext } from './UIKitLivechatInteractionContext';
 
 /** Handler for UIKit interactions in the livechat widget. */
 export interface IUIKitLivechatInteractionHandler {

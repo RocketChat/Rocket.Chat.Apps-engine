@@ -1,4 +1,4 @@
-import { ISetting } from '../settings';
+import type { ISetting } from '../settings';
 
 /**
  * This accessor provides methods to change default setting options

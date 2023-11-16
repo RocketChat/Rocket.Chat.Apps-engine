@@ -58,11 +58,15 @@ export abstract class UserBridge extends BaseBridge {
     }
 
     protected abstract getById(id: string, appId: string): Promise<IUser>;
+
     protected abstract getByUsername(username: string, appId: string): Promise<IUser>;
+
     protected abstract getAppUser(appId?: string): Promise<IUser | undefined>;
+
     protected abstract getActiveUserCount(): Promise<number>;
 
     protected abstract getUserUnreadMessageCount(uid: string): Promise<number>;
+
     /**
      * Creates a user.
      * @param data the essential data for creating a user
@@ -70,6 +74,7 @@ export abstract class UserBridge extends BaseBridge {
      * @param options options for passing extra data
      */
     protected abstract create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;
+
     /**
      * Remove a user.
      *
@@ -77,6 +82,7 @@ export abstract class UserBridge extends BaseBridge {
      * @param appId the id of the app executing the call
      */
     protected abstract remove(user: IUser, appId: string): Promise<boolean>;
+
     /**
      * Updates a user.
      *

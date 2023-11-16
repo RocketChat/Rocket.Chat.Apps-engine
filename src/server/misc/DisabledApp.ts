@@ -1,7 +1,8 @@
-import { ILogger } from '../../definition/accessors';
+import type { ILogger } from '../../definition/accessors';
 import { App } from '../../definition/App';
-import { AppStatus } from '../../definition/AppStatus';
-import { AppMethod, IAppInfo } from '../../definition/metadata';
+import type { AppStatus } from '../../definition/AppStatus';
+import type { IAppInfo } from '../../definition/metadata';
+import { AppMethod } from '../../definition/metadata';
 import { AppConsole } from '../logging';
 
 export class DisabledApp extends App {

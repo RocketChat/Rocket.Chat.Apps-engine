@@ -1,4 +1,4 @@
-import { HttpStatusCode } from '../accessors';
+import type { HttpStatusCode } from '../accessors';
 
 export interface IApiResponse {
     status: HttpStatusCode;

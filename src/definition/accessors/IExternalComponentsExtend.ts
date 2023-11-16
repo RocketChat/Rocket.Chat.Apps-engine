@@ -1,4 +1,4 @@
-import { IExternalComponent } from '../externalComponent';
+import type { IExternalComponent } from '../externalComponent';
 
 /**
  * This accessor provides a method for registering external

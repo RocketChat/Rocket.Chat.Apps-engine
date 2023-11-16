@@ -1,4 +1,4 @@
-import { RocketChatAssociationRecord } from '../../definition/metadata';
+import type { RocketChatAssociationRecord } from '../metadata';
 
 export interface IPersistenceItem {
     appId: string;

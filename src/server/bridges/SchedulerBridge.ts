@@ -1,8 +1,4 @@
-import {
-    IOnetimeSchedule,
-    IProcessor,
-    IRecurringSchedule,
-} from '../../definition/scheduler';
+import type { IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../definition/scheduler';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
@@ -40,9 +36,13 @@ export abstract class SchedulerBridge extends BaseBridge {
     }
 
     protected abstract registerProcessors(processors: Array<IProcessor>, appId: string): Promise<void | Array<string>>;
+
     protected abstract scheduleOnce(job: IOnetimeSchedule, appId: string): Promise<void | string>;
+
     protected abstract scheduleRecurring(job: IRecurringSchedule, appId: string): Promise<void | string>;
+
     protected abstract cancelJob(jobId: string, appId: string): Promise<void>;
+
     protected abstract cancelAllJobs(appId: string): Promise<void>;
 
     private hasDefaultPermission(appId: string): boolean {
@@ -50,10 +50,12 @@ export abstract class SchedulerBridge extends BaseBridge {
             return true;
         }
 
-        AppPermissionManager.notifyAboutError(new PermissionDeniedError({
-            appId,
-            missingPermissions: [AppPermissions.scheduler.default],
-        }));
+        AppPermissionManager.notifyAboutError(
+            new PermissionDeniedError({
+                appId,
+                missingPermissions: [AppPermissions.scheduler.default],
+            }),
+        );
 
         return false;
     }

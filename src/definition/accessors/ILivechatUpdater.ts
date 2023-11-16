@@ -1,6 +1,6 @@
-import { ILivechatTransferData, IVisitor } from '../livechat';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
+import type { ILivechatTransferData, IVisitor } from '../livechat';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
 
 export interface ILivechatUpdater {
     /**

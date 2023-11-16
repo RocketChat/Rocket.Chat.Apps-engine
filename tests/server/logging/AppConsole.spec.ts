@@ -1,10 +1,8 @@
-// tslint:disable:max-classes-per-file
-
 import { Expect, SpyOn, Test } from 'alsatian';
-import * as stackTrace from 'stack-trace';
-import { ILogEntry, LogMessageSeverity } from '../../../src/definition/accessors';
-import { AppMethod } from '../../../src/definition/metadata';
+import type * as stackTrace from 'stack-trace';
 
+import { LogMessageSeverity } from '../../../src/definition/accessors';
+import { AppMethod } from '../../../src/definition/metadata';
 import { AppConsole } from '../../../src/server/logging';
 
 export class AppConsoleTestFixture {
@@ -13,7 +11,7 @@ export class AppConsoleTestFixture {
         Expect(() => new AppConsole(AppMethod._CONSTRUCTOR)).not.toThrow();
 
         const logger = new AppConsole(AppMethod._CONSTRUCTOR);
-        const entries: Array<ILogEntry> = (logger as any).entries;
+        const { entries } = logger as any;
 
         Expect(() => logger.debug('this is a debug')).not.toThrow();
         Expect(entries.length).toBe(1);
@@ -64,7 +62,7 @@ export class AppConsoleTestFixture {
 
         const getFuncSpy = SpyOn(logger, 'getFunc');
         Expect(getFuncSpy.call([{} as stackTrace.StackFrame])).toBe('anonymous');
-        const mockFrames = new Array<stackTrace.StackFrame>();
+        const mockFrames = [];
         mockFrames.push({} as stackTrace.StackFrame);
         mockFrames.push({
             getMethodName() {

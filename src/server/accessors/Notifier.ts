@@ -1,17 +1,14 @@
-import { IMessageBuilder, INotifier } from '../../definition/accessors';
-import { ITypingOptions, TypingScope } from '../../definition/accessors/INotifier';
-import { IMessage } from '../../definition/messages';
-import { IRoom } from '../../definition/rooms';
-import { IUser } from '../../definition/users';
-import { MessageBridge, UserBridge } from '../bridges';
+import type { IMessageBuilder, INotifier } from '../../definition/accessors';
+import type { ITypingOptions } from '../../definition/accessors/INotifier';
+import { TypingScope } from '../../definition/accessors/INotifier';
+import type { IMessage } from '../../definition/messages';
+import type { IRoom } from '../../definition/rooms';
+import type { IUser } from '../../definition/users';
+import type { MessageBridge, UserBridge } from '../bridges';
 import { MessageBuilder } from './MessageBuilder';
 
 export class Notifier implements INotifier {
-    constructor(
-        private readonly userBridge: UserBridge,
-        private readonly msgBridge: MessageBridge,
-        private readonly appId: string,
-    ) { }
+    constructor(private readonly userBridge: UserBridge, private readonly msgBridge: MessageBridge, private readonly appId: string) {}
 
     public async notifyUser(user: IUser, message: IMessage): Promise<void> {
         if (!message.sender || !message.sender.id) {
@@ -38,7 +35,7 @@ export class Notifier implements INotifier {
 
         if (!options.username) {
             const appUser = await this.userBridge.doGetAppUser(this.appId);
-            options.username = appUser && appUser.name || '';
+            options.username = (appUser && appUser.name) || '';
         }
 
         this.msgBridge.doTyping({ ...options, isTyping: true }, this.appId);

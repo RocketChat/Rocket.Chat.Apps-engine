@@ -1,5 +1,5 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IMessage } from './IMessage';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IMessage } from './IMessage';
 
 /** Handler for after a message is updated. */
 export interface IPostMessageUpdated {

@@ -1,5 +1,5 @@
-import { IMessage } from '../../../src/definition/messages';
-import { IUser } from '../../../src/definition/users';
+import type { IMessage } from '../../../src/definition/messages';
+import type { IUser } from '../../../src/definition/users';
 import { ModerationBridge } from '../../../src/server/bridges';
 
 export class TestsModerationBridge extends ModerationBridge {

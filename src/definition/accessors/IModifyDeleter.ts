@@ -1,4 +1,4 @@
-import { IMessage } from '../messages';
+import type { IMessage } from '../messages';
 import type { IUser, UserType } from '../users';
 
 export interface IModifyDeleter {

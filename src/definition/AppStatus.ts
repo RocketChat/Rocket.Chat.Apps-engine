@@ -58,10 +58,7 @@ export class AppStatusUtilsDef {
     }
 
     public isError(status: AppStatus): boolean {
-        return [
-            AppStatus.ERROR_DISABLED,
-            AppStatus.COMPILER_ERROR_DISABLED,
-        ].includes(status);
+        return [AppStatus.ERROR_DISABLED, AppStatus.COMPILER_ERROR_DISABLED].includes(status);
     }
 }
 

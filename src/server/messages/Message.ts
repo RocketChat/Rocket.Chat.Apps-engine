@@ -1,31 +1,53 @@
-import { Block } from '@rocket.chat/ui-kit';
-import { IMessage, IMessageAttachment, IMessageFile, IMessageReactions } from '../../definition/messages';
-import { IUser, IUserLookup } from '../../definition/users';
-import { AppManager } from '../AppManager';
+import type { Block } from '@rocket.chat/ui-kit';
+
+import type { IMessage, IMessageAttachment, IMessageFile, IMessageReactions } from '../../definition/messages';
+import type { IUser, IUserLookup } from '../../definition/users';
+import type { AppManager } from '../AppManager';
 import { Room } from '../rooms/Room';
 
 export class Message implements IMessage {
     public id?: string;
+
     public sender: IUser;
+
     public text?: string;
+
     public createdAt?: Date;
+
     public updatedAt?: Date;
+
     public editor?: IUser;
+
     public editedAt?: Date;
+
     public emoji?: string;
+
     public avatarUrl?: string;
+
     public alias?: string;
+
     public attachments?: Array<IMessageAttachment>;
+
     public reactions?: IMessageReactions;
+
     public groupable?: boolean;
+
     public parseUrls?: boolean;
+
     public customFields?: { [key: string]: any };
+
     public threadId?: string;
+
     public file?: IMessageFile;
+
     public blocks?: Array<Block>;
+
     public starred?: Array<{ _id: string }>;
+
     public pinned?: boolean;
+
     public pinnedAt?: Date;
+
     public pinnedBy?: IUserLookup;
 
     private _ROOM: Room;
@@ -33,6 +55,7 @@ export class Message implements IMessage {
     public get room(): Room {
         return this._ROOM;
     }
+
     public set room(room) {
         this._ROOM = new Room(room, this.manager);
     }

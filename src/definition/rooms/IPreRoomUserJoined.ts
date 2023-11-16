@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead } from '../accessors';
-import { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
+import type { IHttp, IPersistence, IRead } from '../accessors';
+import type { IRoomUserJoinedContext } from './IRoomUserJoinedContext';
 
 /**
  * Event interface that allows an app to

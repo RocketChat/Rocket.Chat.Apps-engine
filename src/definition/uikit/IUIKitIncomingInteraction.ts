@@ -1,8 +1,8 @@
-import { IMessage } from '../messages';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
-import { IUIKitIncomingInteractionActionButton } from './IUIKitIncomingInteractionActionButton';
-import { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from './UIKitIncomingInteractionContainer';
+import type { IMessage } from '../messages';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
+import type { IUIKitIncomingInteractionActionButton } from './IUIKitIncomingInteractionActionButton';
+import type { IUIKitIncomingInteractionMessageContainer, IUIKitIncomingInteractionModalContainer } from './UIKitIncomingInteractionContainer';
 
 export enum UIKitIncomingInteractionType {
     BLOCK = 'blockAction',

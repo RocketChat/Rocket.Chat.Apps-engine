@@ -1,5 +1,4 @@
-
-import { IUpload } from '../uploads';
+import type { IUpload } from '../uploads';
 
 export interface IUploadRead {
     getById(id: string): Promise<IUpload>;

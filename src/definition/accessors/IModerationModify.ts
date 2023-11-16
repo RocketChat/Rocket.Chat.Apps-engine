@@ -1,5 +1,5 @@
-import { IMessage } from '../messages';
-import { IUser } from '../users';
+import type { IMessage } from '../messages';
+import type { IUser } from '../users';
 
 export interface IModerationModify {
     /**

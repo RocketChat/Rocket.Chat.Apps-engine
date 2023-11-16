@@ -1,20 +1,37 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { IHttpExtend, IHttpPreRequestHandler, IHttpPreResponseHandler, IHttpRequest, IHttpResponse, IPersistence, IRead } from '../../../src/definition/accessors';
 
+import type {
+    IHttpExtend,
+    IHttpPreRequestHandler,
+    IHttpPreResponseHandler,
+    IHttpRequest,
+    IHttpResponse,
+    IPersistence,
+    IRead,
+} from '../../../src/definition/accessors';
 import { Http, HttpExtend } from '../../../src/server/accessors';
-import { AppBridges, HttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
-import { AppAccessorManager } from '../../../src/server/managers';
+import type { AppBridges, HttpBridge, IHttpBridgeRequestInfo } from '../../../src/server/bridges';
+import type { AppAccessorManager } from '../../../src/server/managers';
 
 export class HttpAccessorTestFixture {
     private mockAppId: string;
+
     private mockHttpBridge: HttpBridge;
+
     private mockAppBridge: AppBridges;
+
     private mockHttpExtender: IHttpExtend;
+
     private mockReader: IRead;
+
     private mockPersis: IPersistence;
+
     private mockAccessorManager: AppAccessorManager;
+
     private mockPreRequestHandler: IHttpPreRequestHandler;
+
     private mockPreResponseHandler: IHttpPreResponseHandler;
+
     private mockResponse: IHttpResponse;
 
     @SetupFixture

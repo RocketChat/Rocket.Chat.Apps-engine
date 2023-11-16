@@ -1,10 +1,10 @@
 import { HttpStatusCode } from '../../definition/accessors';
-import { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
+import type { IApi, IApiEndpointMetadata, IApiRequest, IApiResponse } from '../../definition/api';
 import { AppStatusUtils } from '../../definition/AppStatus';
-import { AppManager } from '../AppManager';
-import { ApiBridge } from '../bridges';
+import type { AppManager } from '../AppManager';
+import type { ApiBridge } from '../bridges';
 import { PathAlreadyExistsError } from '../errors';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { AppAccessorManager } from './AppAccessorManager';
 import { AppApi } from './AppApi';
 
 /**
@@ -16,7 +16,9 @@ import { AppApi } from './AppApi';
  */
 export class AppApiManager {
     private readonly bridge: ApiBridge;
+
     private readonly accessors: AppAccessorManager;
+
     // Variable that contains the api's which have been provided by apps.
     // The key of the top map is app id and the key of the inner map is the path
     private providedApis: Map<string, Map<string, AppApi>>;

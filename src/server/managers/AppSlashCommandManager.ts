@@ -1,12 +1,12 @@
 import { AppStatusUtils } from '../../definition/AppStatus';
 import { AppMethod } from '../../definition/metadata';
-import { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
-
-import { AppManager } from '../AppManager';
-import { CommandBridge } from '../bridges';
+import type { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem } from '../../definition/slashcommands';
+import { SlashCommandContext } from '../../definition/slashcommands';
+import type { AppManager } from '../AppManager';
+import type { CommandBridge } from '../bridges';
 import { CommandAlreadyExistsError, CommandHasAlreadyBeenTouchedError } from '../errors';
 import { Room } from '../rooms/Room';
-import { AppAccessorManager } from './AppAccessorManager';
+import type { AppAccessorManager } from './AppAccessorManager';
 import { AppSlashCommand } from './AppSlashCommand';
 
 /**
@@ -20,22 +20,27 @@ import { AppSlashCommand } from './AppSlashCommand';
  */
 export class AppSlashCommandManager {
     private readonly bridge: CommandBridge;
+
     private readonly accessors: AppAccessorManager;
+
     /**
      * Variable that contains the commands which have been provided by apps.
      * The key of the top map is app id and the key of the inner map is the command
      */
     private providedCommands: Map<string, Map<string, AppSlashCommand>>;
+
     /**
      * Contains the commands which have modified the system commands
      */
     private modifiedCommands: Map<string, AppSlashCommand>;
+
     /**
      * Contains the commands as keys and appId that touched it.
      * Doesn't matter whether the app provided, modified, disabled, or enabled.
      * As long as an app touched the command (besides to see if it exists), then it is listed here.
      */
     private touchedCommandsToApps: Map<string, string>;
+
     /**
      * Contains the apps and the commands they have touched. The key is the appId and value is the commands.
      * Doesn't matter whether the app provided, modified, disabled, or enabled.
@@ -79,7 +84,7 @@ export class AppSlashCommandManager {
      */
     public isAlreadyDefined(command: string): boolean {
         const search = command.toLowerCase().trim();
-        let exists: boolean = false;
+        let exists = false;
 
         this.providedCommands.forEach((cmds) => {
             if (cmds.has(search)) {
@@ -110,7 +115,7 @@ export class AppSlashCommandManager {
         }
 
         // Verify the command doesn't exist already
-        if (await this.bridge.doDoesCommandExist(command.command, appId) || this.isAlreadyDefined(command.command)) {
+        if ((await this.bridge.doDoesCommandExist(command.command, appId)) || this.isAlreadyDefined(command.command)) {
             throw new CommandAlreadyExistsError(command.command);
         }
 
@@ -264,7 +269,7 @@ export class AppSlashCommandManager {
         }
 
         const commands = this.providedCommands.get(appId);
-        for await (const [_, appSlashCommand] of commands) {
+        for await (const [, appSlashCommand] of commands) {
             if (appSlashCommand.isDisabled) {
                 continue;
             }
@@ -281,7 +286,7 @@ export class AppSlashCommandManager {
     public async unregisterCommands(appId: string): Promise<void> {
         if (this.providedCommands.has(appId)) {
             const commands = this.providedCommands.get(appId);
-            for await (const [_, appSlashCommand] of commands) {
+            for await (const [, appSlashCommand] of commands) {
                 const cmd = appSlashCommand.slashCommand.command;
                 await this.bridge.doUnregisterCommand(cmd, appId);
                 this.touchedCommandsToApps.delete(cmd);
@@ -336,8 +341,6 @@ export class AppSlashCommandManager {
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
         await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_EXECUTOR, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
-
-        return;
     }
 
     public async getPreviews(command: string, context: SlashCommandContext): Promise<ISlashCommandPreview> {
@@ -357,8 +360,12 @@ export class AppSlashCommandManager {
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
 
-        // tslint:disable-next-line:max-line-length
-        const result = await appCmd.runExecutorOrPreviewer(AppMethod._COMMAND_PREVIEWER, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
+        const result = await appCmd.runExecutorOrPreviewer(
+            AppMethod._COMMAND_PREVIEWER,
+            this.ensureContext(context),
+            this.manager.getLogStorage(),
+            this.accessors,
+        );
 
         if (!result) {
             // Failed to get the preview, thus returning is fine
@@ -385,8 +392,6 @@ export class AppSlashCommandManager {
 
         const appCmd = this.retrieveCommandInfo(cmd, app.getID());
         await appCmd.runPreviewExecutor(previewItem, this.ensureContext(context), this.manager.getLogStorage(), this.accessors);
-
-        return;
     }
 
     private ensureContext(context: SlashCommandContext): SlashCommandContext {
@@ -442,7 +447,7 @@ export class AppSlashCommandManager {
      */
     private setAsTouched(appId: string, command: string): void {
         if (!this.appsTouchedCommands.has(appId)) {
-            this.appsTouchedCommands.set(appId, new Array<string>());
+            this.appsTouchedCommands.set(appId, []);
         }
 
         if (!this.appsTouchedCommands.get(appId).includes(command)) {

@@ -1,6 +1,6 @@
-import { IMessage } from '../messages';
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
+import type { IMessage } from '../messages';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
 
 interface IUIKitIncomingInteractionActionButtonBase {
     triggerId: string;

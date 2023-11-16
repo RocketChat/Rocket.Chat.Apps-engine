@@ -1,5 +1,5 @@
-import { IUpload } from '../uploads';
-import { IUploadDescriptor } from '../uploads/IUploadDescriptor';
+import type { IUpload } from '../uploads';
+import type { IUploadDescriptor } from '../uploads/IUploadDescriptor';
 
 export interface IUploadCreator {
     /**

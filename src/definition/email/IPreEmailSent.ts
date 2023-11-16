@@ -1,5 +1,5 @@
-import { IEmailDescriptor, IPreEmailSentContext } from '.';
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IEmailDescriptor, IPreEmailSentContext } from '.';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
 
 /**

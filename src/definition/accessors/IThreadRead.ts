@@ -1,4 +1,4 @@
-import { IMessage } from '../messages/index';
+import type { IMessage } from '../messages/index';
 
 /**
  * This accessor provides methods for accessing

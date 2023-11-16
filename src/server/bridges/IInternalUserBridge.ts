@@ -1,4 +1,4 @@
-import { IUser, IUserCreationOptions } from '../../definition/users';
+import type { IUser, IUserCreationOptions } from '../../definition/users';
 
 export interface IInternalUserBridge {
     create(data: Partial<IUser>, appId: string, options?: IUserCreationOptions): Promise<string>;

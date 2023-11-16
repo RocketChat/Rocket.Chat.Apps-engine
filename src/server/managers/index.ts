@@ -1,4 +1,4 @@
-import { AppAccessorManager} from './AppAccessorManager';
+import { AppAccessorManager } from './AppAccessorManager';
 import { AppApiManager } from './AppApiManager';
 import { AppExternalComponentManager } from './AppExternalComponentManager';
 import { AppLicenseManager } from './AppLicenseManager';

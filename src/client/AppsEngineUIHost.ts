@@ -1,10 +1,6 @@
 import { MESSAGE_ID } from './constants';
-import {
-    AppsEngineUIMethods,
-    IAppsEngineUIResponse,
-    IExternalComponentRoomInfo,
-    IExternalComponentUserInfo,
-} from './definition';
+import type { IAppsEngineUIResponse, IExternalComponentRoomInfo, IExternalComponentUserInfo } from './definition';
+import { AppsEngineUIMethods } from './definition';
 
 type HandleActionData = IExternalComponentUserInfo | IExternalComponentRoomInfo;
 
@@ -20,6 +16,7 @@ export abstract class AppsEngineUIHost {
     constructor() {
         this.initialize();
     }
+
     /**
      * initialize the AppClientUIHost by registering window `message` listener
      */
@@ -31,7 +28,9 @@ export abstract class AppsEngineUIHost {
 
             this.responseDestination = source as Window;
 
-            const { [MESSAGE_ID]: { action, id } } = data;
+            const {
+                [MESSAGE_ID]: { action, id },
+            } = data;
 
             switch (action) {
                 case AppsEngineUIMethods.GET_USER_INFO:
@@ -43,14 +42,17 @@ export abstract class AppsEngineUIHost {
             }
         });
     }
+
     /**
      * Get the current user's information.
      */
     public abstract getClientUserInfo(): Promise<IExternalComponentUserInfo>;
+
     /**
      * Get the opened room's information.
      */
     public abstract getClientRoomInfo(): Promise<IExternalComponentRoomInfo>;
+
     /**
      * Handle the action sent from the external component.
      * @param action the name of the action
@@ -58,16 +60,19 @@ export abstract class AppsEngineUIHost {
      * @param data The data that will return to the caller
      */
     private async handleAction(action: AppsEngineUIMethods, id: string, data: HandleActionData): Promise<void> {
-        if ((this.responseDestination instanceof MessagePort) || (this.responseDestination instanceof ServiceWorker)) {
+        if (this.responseDestination instanceof MessagePort || this.responseDestination instanceof ServiceWorker) {
             return;
         }
 
-        this.responseDestination.postMessage({
-            [MESSAGE_ID]: {
-                id,
-                action,
-                payload: data,
-            } as IAppsEngineUIResponse,
-        }, '*');
+        this.responseDestination.postMessage(
+            {
+                [MESSAGE_ID]: {
+                    id,
+                    action,
+                    payload: data,
+                } as IAppsEngineUIResponse,
+            },
+            '*',
+        );
     }
 }

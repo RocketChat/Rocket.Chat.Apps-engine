@@ -1,11 +1,13 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IEnvironmentalVariableRead, IServerSettingRead, ISettingRead } from '../../../src/definition/accessors';
 
+import type { IEnvironmentalVariableRead, IServerSettingRead, ISettingRead } from '../../../src/definition/accessors';
 import { EnvironmentRead } from '../../../src/server/accessors';
 
 export class EnvironmentReadTestFixture {
     private evr: IEnvironmentalVariableRead;
+
     private ssr: IServerSettingRead;
+
     private sr: ISettingRead;
 
     @SetupFixture

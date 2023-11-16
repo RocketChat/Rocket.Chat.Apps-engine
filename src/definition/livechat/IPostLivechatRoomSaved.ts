@@ -1,6 +1,6 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
 import { AppMethod } from '../metadata';
-import { ILivechatRoom } from './ILivechatRoom';
+import type { ILivechatRoom } from './ILivechatRoom';
 
 /**
  * Handler called after the room's info get saved.
@@ -15,7 +15,5 @@ export interface IPostLivechatRoomSaved {
      * @param persis An accessor to the App's persistence
      * @param modify An accessor to the modifier
      */
-    [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED](
-        context: ILivechatRoom, read: IRead, http: IHttp, persis: IPersistence, modify: IModify,
-    ): Promise<void>;
+    [AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED](context: ILivechatRoom, read: IRead, http: IHttp, persis: IPersistence, modify: IModify): Promise<void>;
 }

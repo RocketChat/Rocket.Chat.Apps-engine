@@ -1,14 +1,11 @@
-import {
-    IEnvironmentalVariableRead,
-    IEnvironmentRead,
-    IServerSettingRead,
-    ISettingRead,
-} from '../../definition/accessors';
+import type { IEnvironmentalVariableRead, IEnvironmentRead, IServerSettingRead, ISettingRead } from '../../definition/accessors';
 
 export class EnvironmentRead implements IEnvironmentRead {
-    constructor(private readonly settings: ISettingRead,
-                private readonly serverSettings: IServerSettingRead,
-                private readonly envRead: IEnvironmentalVariableRead) {}
+    constructor(
+        private readonly settings: ISettingRead,
+        private readonly serverSettings: IServerSettingRead,
+        private readonly envRead: IEnvironmentalVariableRead,
+    ) {}
 
     public getSettings(): ISettingRead {
         return this.settings;

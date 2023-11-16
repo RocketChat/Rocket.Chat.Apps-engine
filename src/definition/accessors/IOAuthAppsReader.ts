@@ -1,4 +1,4 @@
-import { IOAuthApp } from './IOAuthApp';
+import type { IOAuthApp } from './IOAuthApp';
 
 export interface IOAuthAppsReader {
     /**

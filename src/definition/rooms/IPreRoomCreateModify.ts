@@ -1,5 +1,5 @@
-import { IHttp, IPersistence, IRead, IRoomBuilder } from '../accessors';
-import { IRoom } from './IRoom';
+import type { IHttp, IPersistence, IRead, IRoomBuilder } from '../accessors';
+import type { IRoom } from './IRoom';
 
 /** Handler called when an App wants to modify a room in a destructive way. */
 export interface IPreRoomCreateModify {

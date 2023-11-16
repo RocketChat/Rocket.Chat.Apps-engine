@@ -1,12 +1,9 @@
-import { ISchedulerModify } from '../../definition/accessors';
-import {
-    IOnetimeSchedule,
-    IRecurringSchedule,
-} from '../../definition/scheduler';
-import { SchedulerBridge } from '../bridges';
+import type { ISchedulerModify } from '../../definition/accessors';
+import type { IOnetimeSchedule, IRecurringSchedule } from '../../definition/scheduler';
+import type { SchedulerBridge } from '../bridges';
 
 function createProcessorId(jobId: string, appId: string): string {
-    return jobId.includes(`_${appId}`) ? jobId : `${ jobId }_${ appId }`;
+    return jobId.includes(`_${appId}`) ? jobId : `${jobId}_${appId}`;
 }
 
 export class SchedulerModify implements ISchedulerModify {

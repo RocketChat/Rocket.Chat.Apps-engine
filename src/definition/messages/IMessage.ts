@@ -1,10 +1,11 @@
-import { Block } from '@rocket.chat/ui-kit';
-import { IRoom } from '../rooms';
-import { IBlock } from '../uikit';
-import { IUser, IUserLookup } from '../users';
-import { IMessageAttachment } from './IMessageAttachment';
-import { IMessageFile } from './IMessageFile';
-import { IMessageReactions } from './IMessageReaction';
+import type { Block } from '@rocket.chat/ui-kit';
+
+import type { IRoom } from '../rooms';
+import type { IBlock } from '../uikit';
+import type { IUser, IUserLookup } from '../users';
+import type { IMessageAttachment } from './IMessageAttachment';
+import type { IMessageFile } from './IMessageFile';
+import type { IMessageReactions } from './IMessageReaction';
 
 export interface IMessage {
     id?: string;

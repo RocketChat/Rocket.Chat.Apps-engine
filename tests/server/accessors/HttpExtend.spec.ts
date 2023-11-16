@@ -1,6 +1,6 @@
 import { Expect, Test } from 'alsatian';
-import { IHttpPreRequestHandler, IHttpPreResponseHandler } from '../../../src/definition/accessors';
 
+import type { IHttpPreRequestHandler, IHttpPreResponseHandler } from '../../../src/definition/accessors';
 import { HttpExtend } from '../../../src/server/accessors';
 
 export class HttpExtendAccessorTestFixture {
@@ -23,10 +23,12 @@ export class HttpExtendAccessorTestFixture {
         Expect(he.getDefaultHeaders().size).toBe(1);
         Expect(he.getDefaultHeaders().get('Auth')).toBe('token');
 
-        Expect(() => he.provideDefaultHeaders({
-            Auth: 'token2',
-            Another: 'thing',
-        })).not.toThrow();
+        Expect(() =>
+            he.provideDefaultHeaders({
+                Auth: 'token2',
+                Another: 'thing',
+            }),
+        ).not.toThrow();
         Expect(he.getDefaultHeaders().size).toBe(2);
         Expect(he.getDefaultHeaders().get('Auth')).toBe('token2');
         Expect(he.getDefaultHeaders().get('Another')).toBe('thing');
@@ -40,10 +42,12 @@ export class HttpExtendAccessorTestFixture {
         Expect(he.getDefaultParams().size).toBe(1);
         Expect(he.getDefaultParams().get('id')).toBe('abcdefg');
 
-        Expect(() => he.provideDefaultParams({
-            id: 'zyxwvu',
-            count: '4',
-        })).not.toThrow();
+        Expect(() =>
+            he.provideDefaultParams({
+                id: 'zyxwvu',
+                count: '4',
+            }),
+        ).not.toThrow();
         Expect(he.getDefaultParams().size).toBe(2);
         Expect(he.getDefaultParams().get('id')).toBe('zyxwvu');
         Expect(he.getDefaultParams().get('count')).toBe('4');

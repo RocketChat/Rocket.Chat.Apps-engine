@@ -1,4 +1,4 @@
-import { IProcessor } from '../scheduler';
+import type { IProcessor } from '../scheduler';
 
 export interface ISchedulerExtend {
     /**

@@ -1,5 +1,4 @@
-import { RocketChatAssociationRecord } from '../../../src/definition/metadata';
-
+import type { RocketChatAssociationRecord } from '../../../src/definition/metadata';
 import { PersistenceBridge } from '../../../src/server/bridges';
 
 export class TestsPersisBridge extends PersistenceBridge {

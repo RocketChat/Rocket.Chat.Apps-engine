@@ -1,22 +1,27 @@
 import { AsyncTest, Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
-
-import { AppManager } from '../../../src/server/AppManager';
-import { AppBridges } from '../../../src/server/bridges';
+import type { AppManager } from '../../../src/server/AppManager';
+import type { AppBridges } from '../../../src/server/bridges';
 import { VideoConfProviderAlreadyExistsError, VideoConfProviderNotRegisteredError } from '../../../src/server/errors';
-import { AppAccessorManager, AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager, AppVideoConfProviderManager } from '../../../src/server/managers';
+import type { AppApiManager, AppExternalComponentManager, AppSchedulerManager, AppSlashCommandManager } from '../../../src/server/managers';
+import { AppAccessorManager, AppVideoConfProviderManager } from '../../../src/server/managers';
 import { AppVideoConfProvider } from '../../../src/server/managers/AppVideoConfProvider';
-import { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
-import { ProxiedApp } from '../../../src/server/ProxiedApp';
-import { AppLogStorage } from '../../../src/server/storage';
+import type { UIActionButtonManager } from '../../../src/server/managers/UIActionButtonManager';
+import type { ProxiedApp } from '../../../src/server/ProxiedApp';
+import type { AppLogStorage } from '../../../src/server/storage';
 
 export class AppVideoConfProviderManagerTestFixture {
-    public static doThrow: boolean = false;
+    public static doThrow = false;
+
     private mockBridges: TestsAppBridges;
+
     private mockApp: ProxiedApp;
+
     private mockAccessors: AppAccessorManager;
+
     private mockManager: AppManager;
 
     @SetupFixture
@@ -65,12 +70,10 @@ export class AppVideoConfProviderManagerTestFixture {
     }
 
     @Setup
-    public setup() {
-    }
+    public setup() {}
 
     @Teardown
-    public teardown() {
-    }
+    public teardown() {}
 
     @Test()
     public basicAppVideoConfProviderManager() {
@@ -91,8 +94,7 @@ export class AppVideoConfProviderManagerTestFixture {
 
         Expect(() => manager.addProvider('testing', provider)).not.toThrow();
         Expect((manager as any).videoConfProviders.size).toBe(1);
-        Expect(() => manager.addProvider('failMePlease', provider))
-            .toThrowError(Error, 'App must exist in order for a video conference provider to be added.');
+        Expect(() => manager.addProvider('failMePlease', provider)).toThrowError(Error, 'App must exist in order for a video conference provider to be added.');
         Expect((manager as any).videoConfProviders.size).toBe(1);
     }
 
@@ -173,8 +175,10 @@ export class AppVideoConfProviderManagerTestFixture {
 
         manager.addProvider('firstApp', TestData.getVideoConfProvider());
 
-        Expect(() => manager.addProvider('secondApp', TestData.getVideoConfProvider('test')))
-            .toThrowError(VideoConfProviderAlreadyExistsError, `The video conference provider "test" was already registered by another App.`);
+        Expect(() => manager.addProvider('secondApp', TestData.getVideoConfProvider('test'))).toThrowError(
+            VideoConfProviderAlreadyExistsError,
+            `The video conference provider "test" was already registered by another App.`,
+        );
     }
 
     @Test()
@@ -197,13 +201,17 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const call = TestData.getVideoConfData();
 
-        await Expect(async () => manager.generateUrl('test', call))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
+        await Expect(async () => manager.generateUrl('test', call)).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "test" is not registered in the system.`,
+        );
 
         manager.addProvider('testing', TestData.getVideoConfProvider());
 
-        await Expect(async () => await manager.generateUrl('test', call))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
+        await Expect(() => manager.generateUrl('test', call)).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "test" is not registered in the system.`,
+        );
     }
 
     @AsyncTest()
@@ -252,23 +260,26 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const cases: any = [
             {
-                name: 'test', call,
+                name: 'test',
+                call,
                 runGenerateUrl: 'test/first-call',
                 result: 'test/first-call',
             },
             {
-                name: 'test2', call,
+                name: 'test2',
+                call,
                 runGenerateUrl: 'test2/first-call',
                 result: 'test2/first-call',
             },
             {
-                name: 'differentProvider', call,
+                name: 'differentProvider',
+                call,
                 runGenerateUrl: 'differentProvider/first-call',
                 result: 'differentProvider/first-call',
             },
         ];
 
-        for (const c of cases ) {
+        for (const c of cases) {
             SpyOn(AppVideoConfProvider.prototype, 'runGenerateUrl').andReturn(c.runGenerateUrl);
             await Expect(await manager.generateUrl(c.name, c.call)).toBe(c.result);
         }
@@ -278,8 +289,10 @@ export class AppVideoConfProviderManagerTestFixture {
     public async failToGenerateUrlWithUnknownProvider() {
         const call = TestData.getVideoConfData();
         const manager = new AppVideoConfProviderManager(this.mockManager);
-        await Expect(async () => await manager.generateUrl('unknownProvider', call))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unknownProvider" is not registered in the system.`);
+        await Expect(() => manager.generateUrl('unknownProvider', call)).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "unknownProvider" is not registered in the system.`,
+        );
     }
 
     @AsyncTest()
@@ -287,8 +300,10 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfData();
         const manager = new AppVideoConfProviderManager(this.mockManager);
         manager.addProvider('unregisteredApp', TestData.getVideoConfProvider('unregisteredProvider'));
-        await Expect(async () => await manager.generateUrl('unregisteredProvider', call))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unregisteredProvider" is not registered in the system.`);
+        await Expect(() => manager.generateUrl('unregisteredProvider', call)).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "unregisteredProvider" is not registered in the system.`,
+        );
     }
 
     @AsyncTest()
@@ -297,14 +312,19 @@ export class AppVideoConfProviderManagerTestFixture {
         const call = TestData.getVideoConfDataExtended();
         const user = TestData.getVideoConferenceUser();
 
-        await Expect(async () => await manager.customizeUrl('test', call, user, {}))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
+        await Expect(() => manager.customizeUrl('test', call, user, {})).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "test" is not registered in the system.`,
+        );
 
         manager.addProvider('testing', TestData.getVideoConfProvider());
 
-        await Expect(async () => await manager.customizeUrl('test', call, user, {}))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "test" is not registered in the system.`);
+        await Expect(() => manager.customizeUrl('test', call, user, {})).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "test" is not registered in the system.`,
+        );
     }
+
     @AsyncTest()
     public async customizeUrl() {
         const manager = new AppVideoConfProviderManager(this.mockManager);
@@ -316,22 +336,27 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const cases: any = [
             {
-                name: 'test', call, user, options: {},
+                name: 'test',
+                call,
+                user,
+                options: {},
                 runCustomizeUrl: 'test/first-call#caller',
                 result: 'test/first-call#caller',
             },
             {
-                name: 'test', call, user: undefined, options: {},
+                name: 'test',
+                call,
+                user: undefined,
+                options: {},
                 runCustomizeUrl: 'test/first-call#',
                 result: 'test/first-call#',
             },
         ];
 
-        for (const c of cases ) {
+        for (const c of cases) {
             SpyOn(AppVideoConfProvider.prototype, 'runCustomizeUrl').andReturn(c.runCustomizeUrl);
             await Expect(await manager.customizeUrl(c.name, c.call, c.user, c.options)).toBe(c.result);
         }
-
     }
 
     @AsyncTest()
@@ -348,38 +373,56 @@ export class AppVideoConfProviderManagerTestFixture {
 
         const cases = [
             {
-                name: 'test', call, user, options: {},
+                name: 'test',
+                call,
+                user,
+                options: {},
                 runCustomizeUrl: 'test/first-call#caller',
                 result: 'test/first-call#caller',
             },
             {
-                name: 'test', call, user: undefined, options: {},
+                name: 'test',
+                call,
+                user: undefined,
+                options: {},
                 runCustomizeUrl: 'test/first-call#',
                 result: 'test/first-call#',
             },
             {
-                name: 'test2', call, user, options: {},
+                name: 'test2',
+                call,
+                user,
+                options: {},
                 runCustomizeUrl: 'test2/first-call#caller',
                 result: 'test2/first-call#caller',
             },
             {
-                name: 'test2', call, user: undefined, options: {},
+                name: 'test2',
+                call,
+                user: undefined,
+                options: {},
                 runCustomizeUrl: 'test2/first-call#',
                 result: 'test2/first-call#',
             },
             {
-                name: 'differentProvider', call, user, options: {},
+                name: 'differentProvider',
+                call,
+                user,
+                options: {},
                 runCustomizeUrl: 'differentProvider/first-call#caller',
                 result: 'differentProvider/first-call#caller',
             },
             {
-                name: 'differentProvider', call, user: undefined, options: {},
+                name: 'differentProvider',
+                call,
+                user: undefined,
+                options: {},
                 runCustomizeUrl: 'differentProvider/first-call#',
                 result: 'differentProvider/first-call#',
             },
         ];
 
-        for (const c of cases ) {
+        for (const c of cases) {
             SpyOn(AppVideoConfProvider.prototype, 'runCustomizeUrl').andReturn(c.runCustomizeUrl);
             await Expect(await manager.customizeUrl(c.name, c.call, c.user, c.options)).toBe(c.result);
         }
@@ -391,8 +434,10 @@ export class AppVideoConfProviderManagerTestFixture {
         const user = TestData.getVideoConferenceUser();
         const manager = new AppVideoConfProviderManager(this.mockManager);
 
-        await Expect(async () => await manager.customizeUrl('unknownProvider', call, user, {}))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unknownProvider" is not registered in the system.`);
+        await Expect(() => manager.customizeUrl('unknownProvider', call, user, {})).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "unknownProvider" is not registered in the system.`,
+        );
     }
 
     @AsyncTest()
@@ -402,7 +447,9 @@ export class AppVideoConfProviderManagerTestFixture {
         const manager = new AppVideoConfProviderManager(this.mockManager);
 
         manager.addProvider('unregisteredApp', TestData.getVideoConfProvider('unregisteredProvider'));
-        await Expect(async () => await manager.customizeUrl('unregisteredProvider', call, user, {}))
-            .toThrowErrorAsync(VideoConfProviderNotRegisteredError, `The video conference provider "unregisteredProvider" is not registered in the system.`);
+        await Expect(() => manager.customizeUrl('unregisteredProvider', call, user, {})).toThrowErrorAsync(
+            VideoConfProviderNotRegisteredError,
+            `The video conference provider "unregisteredProvider" is not registered in the system.`,
+        );
     }
 }

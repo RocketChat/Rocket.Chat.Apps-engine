@@ -1,4 +1,4 @@
-import { IUser } from '../users/IUser';
+import type { IUser } from '../users/IUser';
 
 /**
  * Updating a user is a more granular approach, since

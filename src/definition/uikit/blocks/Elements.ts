@@ -1,4 +1,4 @@
-import { IOptionObject, ITextObject } from './Objects';
+import type { IOptionObject, ITextObject } from './Objects';
 
 /**
  * @deprecated please prefer the rocket.chat/ui-kit components

@@ -5,4 +5,4 @@ import { AppsEngineException } from './AppsEngineException';
  * app has determined that an invalid setting value
  * is passed.
  */
-export class InvalidSettingValueException extends AppsEngineException { }
+export class InvalidSettingValueException extends AppsEngineException {}

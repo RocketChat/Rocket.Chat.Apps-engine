@@ -1,9 +1,11 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
-import { IServerSettingUpdater, ISettingUpdater } from '../../../src/definition/accessors';
+
+import type { IServerSettingUpdater, ISettingUpdater } from '../../../src/definition/accessors';
 import { EnvironmentWrite } from '../../../src/server/accessors';
 
 export class EnvironmentWriteTestFixture {
     private sr: ISettingUpdater;
+
     private serverSettings: IServerSettingUpdater;
 
     @SetupFixture

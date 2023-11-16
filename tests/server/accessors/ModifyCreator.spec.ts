@@ -1,17 +1,25 @@
 import { AsyncTest, Expect, SetupFixture, SpyOn } from 'alsatian';
-import { IMessage } from '../../../src/definition/messages';
-import { IRoom, RoomType } from '../../../src/definition/rooms';
-import { IUser, UserStatusConnection, UserType } from '../../../src/definition/users';
+
+import type { IMessage } from '../../../src/definition/messages';
+import type { IRoom } from '../../../src/definition/rooms';
+import { RoomType } from '../../../src/definition/rooms';
+import type { IUser } from '../../../src/definition/users';
+import { UserStatusConnection, UserType } from '../../../src/definition/users';
 import { ModifyCreator } from '../../../src/server/accessors';
-import { AppBridges, MessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
+import type { AppBridges, MessageBridge, RoomBridge, UserBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
 
 export class ModifyCreatorTestFixture {
     private mockAppId: string;
+
     private mockRoomBridge: RoomBridge;
+
     private mockMessageBridge: MessageBridge;
+
     private mockAppBridge: AppBridges;
+
     private mockAppUser: IUser;
+
     private mockUserBridge: UserBridge;
 
     @SetupFixture
@@ -69,7 +77,7 @@ export class ModifyCreatorTestFixture {
         Expect(mc.startRoom()).toBeDefined();
         Expect(mc.startRoom({ id: 'value' } as IRoom)).toBeDefined();
 
-        await Expect(async () => await mc.finish({} as any)).toThrowErrorAsync(Error, 'Invalid builder passed to the ModifyCreator.finish function.');
+        await Expect(() => mc.finish({} as any)).toThrowErrorAsync(Error, 'Invalid builder passed to the ModifyCreator.finish function.');
     }
 
     @AsyncTest()
@@ -78,10 +86,10 @@ export class ModifyCreatorTestFixture {
 
         const msg = {} as IMessage;
         const msgBd = mc.startMessage(msg);
-        await Expect(async () => await mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
+        await Expect(() => mc.finish(msgBd)).toThrowErrorAsync(Error, 'The "room" property is required.');
         msgBd.setRoom(TestData.getRoom());
         Expect(msg.room).toBeDefined();
-        await Expect(async () => await mc.finish(msgBd)).not.toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
+        await Expect(() => mc.finish(msgBd)).not.toThrowErrorAsync(Error, 'Invalid sender assigned to the message.');
         msgBd.setSender(TestData.getUser());
         Expect(msg.sender).toBeDefined();
 
@@ -97,19 +105,19 @@ export class ModifyCreatorTestFixture {
 
         const room = {} as IRoom;
         const roomBd = mc.startRoom(room);
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
+        await Expect(() => mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid type assigned to the room.');
         roomBd.setType(RoomType.CHANNEL);
         Expect(room.type).toBe(RoomType.CHANNEL);
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
+        await Expect(() => mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid creator assigned to the room.');
         roomBd.setCreator(TestData.getUser());
         Expect(room.creator).toBeDefined();
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
+        await Expect(() => mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid slugifiedName assigned to the room.');
         roomBd.setSlugifiedName('testing-room');
         Expect(room.slugifiedName).toBe('testing-room');
 
-        await Expect(async () => await mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
+        await Expect(() => mc.finish(roomBd)).toThrowErrorAsync(Error, 'Invalid displayName assigned to the room.');
         roomBd.setDisplayName('Display Name');
         Expect(room.displayName).toBe('Display Name');
 

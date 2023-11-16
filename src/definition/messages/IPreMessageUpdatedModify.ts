@@ -1,5 +1,5 @@
-import { IHttp, IMessageBuilder, IPersistence, IRead } from '../accessors';
-import { IMessage } from './IMessage';
+import type { IHttp, IMessageBuilder, IPersistence, IRead } from '../accessors';
+import type { IMessage } from './IMessage';
 
 /** Handler called when an App wants to modify a message update in a destructive way. */
 export interface IPreMessageUpdatedModify {

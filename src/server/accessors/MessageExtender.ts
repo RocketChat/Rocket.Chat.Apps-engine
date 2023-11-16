@@ -1,7 +1,6 @@
-import { IMessageExtender } from '../../definition/accessors';
-import { IMessage, IMessageAttachment } from '../../definition/messages';
+import type { IMessageExtender } from '../../definition/accessors';
+import type { IMessage, IMessageAttachment } from '../../definition/messages';
 import { RocketChatAssociationModel } from '../../definition/metadata';
-
 import { Utilities } from '../misc/Utilities';
 
 export class MessageExtender implements IMessageExtender {
@@ -11,7 +10,7 @@ export class MessageExtender implements IMessageExtender {
         this.kind = RocketChatAssociationModel.MESSAGE;
 
         if (!Array.isArray(msg.attachments)) {
-            this.msg.attachments = new Array<IMessageAttachment>();
+            this.msg.attachments = [];
         }
     }
 
@@ -21,11 +20,11 @@ export class MessageExtender implements IMessageExtender {
         }
 
         if (this.msg.customFields[key]) {
-            throw new Error(`The message already contains a custom field by the key: ${ key }`);
+            throw new Error(`The message already contains a custom field by the key: ${key}`);
         }
 
         if (key.includes('.')) {
-            throw new Error(`The given key contains a period, which is not allowed. Key: ${ key }`);
+            throw new Error(`The given key contains a period, which is not allowed. Key: ${key}`);
         }
 
         this.msg.customFields[key] = value;

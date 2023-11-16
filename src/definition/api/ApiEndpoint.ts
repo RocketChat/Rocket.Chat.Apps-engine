@@ -1,7 +1,7 @@
 import { HttpStatusCode } from '../accessors';
-import { IApp } from '../IApp';
-import { IApiEndpoint } from './IApiEndpoint';
-import { IApiResponse, IApiResponseJSON } from './IResponse';
+import type { IApp } from '../IApp';
+import type { IApiEndpoint } from './IApiEndpoint';
+import type { IApiResponse, IApiResponseJSON } from './IResponse';
 
 /** Represents an api endpoint that is being provided. */
 export abstract class ApiEndpoint implements IApiEndpoint {

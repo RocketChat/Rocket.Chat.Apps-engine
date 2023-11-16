@@ -1,8 +1,8 @@
-import { IHttp, IModify, IPersistence, IRead } from '../accessors';
-import { IApiEndpointInfo } from './IApiEndpointInfo';
-import { IApiExample } from './IApiExample';
-import { IApiRequest } from './IRequest';
-import { IApiResponse } from './IResponse';
+import type { IHttp, IModify, IPersistence, IRead } from '../accessors';
+import type { IApiEndpointInfo } from './IApiEndpointInfo';
+import type { IApiExample } from './IApiExample';
+import type { IApiRequest } from './IRequest';
+import type { IApiResponse } from './IResponse';
 
 /**
  * Represents an api endpoint that is being provided.
@@ -13,7 +13,7 @@ export interface IApiEndpoint {
      * or https://{your-server-address}/api/apps/private/{your-app-id}/{private-hash}/{path}
      */
     path: string;
-    examples?: {[key: string]: IApiExample};
+    examples?: { [key: string]: IApiExample };
     /**
      * Whether this endpoint requires an authenticated user to access it.
      *

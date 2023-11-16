@@ -6,7 +6,9 @@ export class AppImplements {
 
     constructor() {
         this.implemented = {};
-        Object.keys(AppInterface).forEach((int) => this.implemented[int] = false);
+        Object.keys(AppInterface).forEach((int) => {
+            this.implemented[int] = false;
+        });
     }
 
     public doesImplement(int: string): void {

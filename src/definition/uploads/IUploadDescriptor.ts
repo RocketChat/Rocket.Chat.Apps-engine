@@ -1,5 +1,5 @@
-import { IRoom } from '../rooms';
-import { IUser } from '../users';
+import type { IRoom } from '../rooms';
+import type { IUser } from '../users';
 
 export interface IUploadDescriptor {
     /**
