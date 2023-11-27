@@ -10,6 +10,7 @@ enum LogMessageSeverity {
 export class Logger {
     private static instance: Logger;
     private entries: Array<object> = [];
+    public method = '';
 
     private constructor() {}
 
@@ -59,6 +60,7 @@ export class Logger {
 
         this.entries.push({
             severity,
+            method: this.method,
             timestamp: new Date(),
             args: i,
         });
@@ -67,6 +69,7 @@ export class Logger {
     public flush() {
         const logs = this.entries;
         this.entries = [];
+        this.method = '';
         return logs;
     }
 }

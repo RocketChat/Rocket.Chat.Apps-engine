@@ -6,6 +6,8 @@ import * as jsonrpc from 'jsonrpc-lite';
 
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
+import type { AppLogStorage } from '../storage';
+import { AppConsole } from '../logging';
 
 export type AppRuntimeParams = {
     appId: string;
@@ -68,8 +70,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly api: AppApiManager;
 
+    private readonly logStorage: AppLogStorage;
+
     // We need to keep the appSource around in case the Deno process needs to be restarted
-    constructor(private readonly appId: string, private readonly appSource: string, deps: ControllerDeps) {
+    constructor(private readonly appId: string, private readonly appSource: string, manager: AppManager) {
         super();
 
         this.state = 'uninitialized';
@@ -86,8 +90,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.state = 'invalid';
         }
 
-        this.accessors = deps.accessors;
-        this.api = deps.api;
+        // this.accessors = manager.getAccessorManager();
+        // this.api = manager.getApiManager();
+        // this.logStorage = manager.getLogStorage();
     }
 
     emit(eventName: string | symbol, ...args: any[]): boolean {
@@ -260,11 +265,22 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         if (message.type === 'success') {
             param = message.payload.result;
-            const {value, logs} = param as any;
+            const { value, logs } = param as any;
             param = value;
 
-            logs.forEach(({args, severity, timestamp}: { timestamp: any; severity: any; args: any; }) => console.log(`${timestamp} - [${severity}] - ${args}`))
+            const logger = new AppConsole(logs[0].method); // the method will be the same for all entries
+            logs.forEach((log: any) => {
+                const logMethod = logger[log.severity as keyof AppConsole];
 
+                if (typeof logMethod !== 'function') {
+                    throw new Error('Invalid log severity');
+                }
+
+                logMethod.apply(logger, log.args);
+                console.log(`${log.timestamp} - ${log.method} [${log.severity}]: ${log.args}`);
+            });
+
+            // this.logStorage.storeEntries(this.appId, logs);
         } else {
             param = message.payload.error;
         }
@@ -312,9 +328,7 @@ type ExecRequestContext = {
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
 
-    private readonly accessorManager: AppAccessorManager;
-
-    private readonly apiManager: AppApiManager;
+    private readonly appManager: AppManager;
 
     // constructor(manager: AppManager) {
     //     this.accessorManager = manager.getAccessorManager();
@@ -326,7 +340,7 @@ export class AppsEngineDenoRuntime {
             throw new Error('App already has an associated runtime');
         }
 
-        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource, { accessors: this.accessorManager, api: this.apiManager });
+        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource, this.appManager);
 
         await this.subprocesses[appId].setupApp();
     }

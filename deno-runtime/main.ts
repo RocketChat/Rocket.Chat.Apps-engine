@@ -102,6 +102,7 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
 
     const { id, method, params } = payload;
 
+    logger.method = method;
     switch (method) {
         case 'construct': {
             const [appId, source] = params as [string, string];
