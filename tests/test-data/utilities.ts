@@ -244,6 +244,8 @@ export class TestData {
             endpoints: [
                 {
                     path,
+                    // The move to the Deno runtime now requires us to manually set what methods are available
+                    _availableMethods: ['get'],
                     get(
                         request: IApiRequest,
                         endpoint: IApiEndpointInfo,
