@@ -52,11 +52,6 @@ export function getDenoWrapperPath(): string {
     }
 }
 
-type ControllerDeps = {
-    accessors: AppAccessorManager;
-    api: AppApiManager;
-};
-
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
@@ -90,9 +85,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.state = 'invalid';
         }
 
-        // this.accessors = manager.getAccessorManager();
-        // this.api = manager.getApiManager();
-        // this.logStorage = manager.getLogStorage();
+        this.accessors = manager.getAccessorManager();
+        this.api = manager.getApiManager();
+        this.logStorage = manager.getLogStorage();
     }
 
     emit(eventName: string | symbol, ...args: any[]): boolean {
@@ -328,19 +323,14 @@ type ExecRequestContext = {
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
 
-    private readonly appManager: AppManager;
-
-    // constructor(manager: AppManager) {
-    //     this.accessorManager = manager.getAccessorManager();
-    //     this.apiManager = manager.getApiManager();
-    // }
+    constructor(private readonly manager: AppManager) {}
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
             throw new Error('App already has an associated runtime');
         }
 
-        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource, this.appManager);
+        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource, this.manager);
 
         await this.subprocesses[appId].setupApp();
     }

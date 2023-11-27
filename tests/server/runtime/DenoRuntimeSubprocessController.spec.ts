@@ -3,36 +3,35 @@ import { TestFixture, Setup, SetupFixture, Expect, AsyncTest } from 'alsatian';
 import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { TestData, TestInfastructureSetup } from '../../test-data/utilities';
 import { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
+import type { AppManager } from '../../../src/server/AppManager';
 
 @TestFixture('DenoRuntimeSubprocessController')
 export class DenuRuntimeSubprocessControllerTestFixture {
-    private accessors: AppAccessorManager;
-
-    private api: AppApiManager;
-
     private simpleAppSource = 'module.exports={ default: new class { constructor() { this.name = "parangarico" } } };console.log("hi from app")';
+
+    private manager: AppManager;
 
     private controller: DenoRuntimeSubprocessController;
 
     @SetupFixture
     public fixture() {
         const infrastructure = new TestInfastructureSetup();
-        const manager = infrastructure.getMockManager();
+        this.manager = infrastructure.getMockManager();
 
-        this.accessors = new AppAccessorManager(manager);
+        const accessors = new AppAccessorManager(this.manager);
 
-        manager.getAccessorManager = () => this.accessors;
+        this.manager.getAccessorManager = () => accessors;
 
-        this.api = new AppApiManager(manager);
+        const api = new AppApiManager(this.manager);
 
-        manager.getApiManager = () => this.api;
+        this.manager.getApiManager = () => api;
     }
 
     @Setup
     public setup() {
         const app = TestData.getMockApp('deno-controller', 'Deno Controller test');
 
-        this.controller = new DenoRuntimeSubprocessController(app.getID(), this.simpleAppSource, { accessors: this.accessors, api: this.api });
+        this.controller = new DenoRuntimeSubprocessController(app.getID(), this.simpleAppSource, this.manager);
     }
 
     @AsyncTest('correctly identifies a call to the HTTP accessor')
