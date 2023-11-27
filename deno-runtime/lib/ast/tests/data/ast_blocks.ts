@@ -1,5 +1,5 @@
 // @deno-types="../../../../acorn.d.ts"
-import { AnyNode, CallExpression, ClassDeclaration, ExpressionStatement, FunctionDeclaration, VariableDeclaration } from 'acorn';
+import { AnyNode, ClassDeclaration, ExpressionStatement, FunctionDeclaration, VariableDeclaration } from 'acorn';
 
 /**
  * Partial AST blocks to support testing.
