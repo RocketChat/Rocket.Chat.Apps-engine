@@ -1,22 +1,27 @@
-import { beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
-import { assertEquals } from "https://deno.land/std@0.203.0/assert/assert_equals.ts";
+import { afterAll, beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
+import { assertEquals } from 'https://deno.land/std@0.203.0/assert/assert_equals.ts';
 
-import { AppAccessors } from "./mod.ts";
-import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
+import { AppAccessors } from '../mod.ts';
+import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 
 describe('AppAccessors', () => {
     let appAccessors: AppAccessors;
-    const senderFn = (r: object) => Promise.resolve({
-        id: Math.random().toString(36).substring(2),
-        jsonrpc: '2.0',
-        result: r,
-        serialize() {
-            return JSON.stringify(this);
-        }
-    });
+    const senderFn = (r: object) =>
+        Promise.resolve({
+            id: Math.random().toString(36).substring(2),
+            jsonrpc: '2.0',
+            result: r,
+            serialize() {
+                return JSON.stringify(this);
+            },
+        });
 
     beforeEach(() => {
         appAccessors = new AppAccessors(senderFn);
+        AppObjectRegistry.clear();
+    });
+
+    afterAll(() => {
         AppObjectRegistry.clear();
     });
 
@@ -70,12 +75,14 @@ describe('AppAccessors', () => {
         });
 
         assertEquals(command.result, {
-            params: [{
-                command: 'test',
-                i18nDescription: 'test',
-                i18nParamsExample: 'test',
-                providesPreview: true,
-            }],
+            params: [
+                {
+                    command: 'test',
+                    i18nDescription: 'test',
+                    i18nParamsExample: 'test',
+                    providesPreview: true,
+                },
+            ],
             method: 'accessor:getConfigurationModify:slashCommands:modifySlashCommand',
         });
     });
@@ -90,7 +97,7 @@ describe('AppAccessors', () => {
             providesPreview: true,
             executor() {
                 return Promise.resolve();
-            }
+            },
         };
 
         const result = await configExtend.slashCommands.provideSlashCommand(slashcommand);
@@ -102,12 +109,14 @@ describe('AppAccessors', () => {
 
         assertEquals(result.result, {
             method: 'accessor:getConfigurationExtend:slashCommands:provideSlashCommand',
-            params: [{
-                command: 'test',
-                i18nDescription: 'test',
-                i18nParamsExample: 'test',
-                providesPreview: true,
-            }],
+            params: [
+                {
+                    command: 'test',
+                    i18nDescription: 'test',
+                    i18nParamsExample: 'test',
+                    providesPreview: true,
+                },
+            ],
         });
     });
 });

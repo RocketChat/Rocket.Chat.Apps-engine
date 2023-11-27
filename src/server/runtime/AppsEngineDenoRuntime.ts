@@ -6,6 +6,8 @@ import * as jsonrpc from 'jsonrpc-lite';
 
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
+import { AppBridges } from '../bridges';
+import { LivechatMessageBuilder } from '../accessors/LivechatMessageBuilder';
 
 export type AppRuntimeParams = {
     appId: string;
@@ -63,6 +65,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly api: AppApiManager;
 
+    private readonly bridges: AppBridges;
+
     // We need to keep the appSource around in case the Deno process needs to be restarted
     constructor(private readonly appId: string, private readonly appSource: string, manager: AppManager) {
         super();
@@ -83,6 +87,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.accessors = manager.getAccessorManager();
         this.api = manager.getApiManager();
+        this.bridges = manager.getBridges();
     }
 
     emit(eventName: string | symbol, ...args: any[]): boolean {
@@ -234,6 +239,31 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return jsonrpc.success(id, result);
     }
 
+    private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
+        const [bridgeName, bridgeMethod] = method.substring(7).split(':');
+
+        const bridge = this.bridges[bridgeName as keyof typeof this.bridges];
+
+        if (!bridgeMethod.startsWith('do') || typeof bridge !== 'function' || !Array.isArray(params)) {
+            throw new Error('Invalid bridge request');
+        }
+
+        const bridgeInstance = bridge();
+
+        const methodRef = bridgeInstance[bridgeMethod as keyof typeof bridge] as unknown;
+
+        if (typeof methodRef !== 'function') {
+            throw new Error('Invalid bridge request');
+        }
+
+        const result = await methodRef.apply(
+            bridgeInstance,
+            params.map((value: unknown) => (value === 'APP_ID' ? this.appId : value)),
+        );
+
+        return jsonrpc.success(id, result);
+    }
+
     private async handleIncomingMessage(message: jsonrpc.IParsedObjectNotification | jsonrpc.IParsedObjectRequest): Promise<void> {
         const { method } = message.payload;
 
@@ -241,6 +271,16 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
 
             this.deno.stdin.write(result.serialize());
+
+            return;
+        }
+
+        if (method.startsWith('bridge:')) {
+            const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
+
+            this.deno.stdin.write(result.serialize());
+
+            return;
         }
 
         switch (method) {
