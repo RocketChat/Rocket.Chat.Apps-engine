@@ -6,8 +6,7 @@ import * as jsonrpc from 'jsonrpc-lite';
 
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
-import { AppBridges } from '../bridges';
-import { LivechatMessageBuilder } from '../accessors/LivechatMessageBuilder';
+import type { AppBridges } from '../bridges';
 
 export type AppRuntimeParams = {
     appId: string;
