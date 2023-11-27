@@ -167,4 +167,4 @@ export function findNodeAround<TState>(
  */
 export const findNodeAfter: typeof findNodeAround
 
-export const base: RecursiveVisitors<any>
+export const base: RecursiveVisitors<unknown>
