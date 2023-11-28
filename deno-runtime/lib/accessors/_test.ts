@@ -1,22 +1,22 @@
 import { beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
 import { assertEquals } from "https://deno.land/std@0.203.0/assert/assert_equals.ts";
 
-import { AppAccessors, getProxify } from "./mod.ts";
+import { AppAccessors } from "./mod.ts";
 import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
 
 describe('AppAccessors', () => {
     let appAccessors: AppAccessors;
-    const proxify = getProxify((r) => Promise.resolve({
+    const senderFn = (r: object) => Promise.resolve({
         id: Math.random().toString(36).substring(2),
         jsonrpc: '2.0',
         result: r,
         serialize() {
             return JSON.stringify(this);
         }
-    }));
+    });
 
     beforeEach(() => {
-        appAccessors = new AppAccessors(proxify);
+        appAccessors = new AppAccessors(senderFn);
         AppObjectRegistry.clear();
     });
 

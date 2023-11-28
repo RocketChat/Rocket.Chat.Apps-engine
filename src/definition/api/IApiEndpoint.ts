@@ -26,6 +26,14 @@ export interface IApiEndpoint {
     authRequired?: boolean;
 
     /**
+     * The methods that are available for this endpoint.
+     * This property is provided by the Runtime and should not be set manually.
+     *
+     * Its values are used on the Apps-Engine to validate the request method.
+     */
+    _availableMethods?: string[];
+
+    /**
      * Called whenever the publically accessible url for this App is called,
      * if you handle the methods differently then split it out so your code doesn't get too big.
      */

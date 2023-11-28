@@ -7,8 +7,6 @@ import type { ProxiedApp } from '../ProxiedApp';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
 
-const methods: Array<string> = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'];
-
 export class AppApi {
     public readonly computedPath: string;
 
@@ -36,7 +34,7 @@ export class AppApi {
 
         this.computedPath = `${this.basePath}/${endpoint.path}`;
 
-        this.implementedMethods = methods.filter((m) => typeof (endpoint as any)[m] === 'function');
+        this.implementedMethods = endpoint._availableMethods;
     }
 
     public async runExecutor(request: IApiRequest, logStorage: AppLogStorage, accessors: AppAccessorManager): Promise<IApiResponse> {
@@ -45,7 +43,7 @@ export class AppApi {
         const { method } = request;
 
         // Ensure the api has the property before going on
-        if (typeof this.endpoint[method] !== 'function') {
+        if (!this.endpoint[method]) {
             return;
         }
 
