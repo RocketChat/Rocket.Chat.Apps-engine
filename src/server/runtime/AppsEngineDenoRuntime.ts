@@ -157,6 +157,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const managerOrigin = accessorMethods.shift();
         const tailMethodName = accessorMethods.pop();
 
+        if (managerOrigin === 'api' && tailMethodName === 'listApis') {
+            const result = this.api.listApis(this.appId);
+
+            return jsonrpc.success(id, result);
+        }
+
         /**
          * At this point, the accessorMethods array will contain the path to the accessor from the origin (AppAccessorManager)
          * The accessor is the one that contains the actual method the app wants to call
@@ -196,13 +202,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         ) => {
             const origin = accessorManager[managerOrigin](this.appId);
 
-            // These will need special treatment
-            if (managerOrigin === 'getConfigurationExtend' || managerOrigin === 'getConfigurationModify') {
-                return origin[accessorMethods[0] as keyof typeof origin];
-            }
-
             if (managerOrigin === 'getHttp' || managerOrigin === 'getPersistence') {
                 return origin;
+            }
+
+            if (managerOrigin === 'getConfigurationExtend' || managerOrigin === 'getConfigurationModify') {
+                return origin[accessorMethods[0] as keyof typeof origin];
             }
 
             let accessor = origin;
