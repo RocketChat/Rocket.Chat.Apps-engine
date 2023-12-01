@@ -103,7 +103,7 @@ jobs:
                   tar xzf /tmp/workspace.tar.gz .
 
             - name: Test TypeScript Code
-              run: npm run unit-tests
+              run: npm run test
 
     build:
         runs-on: ubuntu-latest
