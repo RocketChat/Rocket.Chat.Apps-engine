@@ -21,10 +21,18 @@ const ALLOWED_ACCESSOR_METHODS = [
     'getReader',
     'getPersistence',
     'getHttp',
+    'getModifier',
 ] as Array<
     keyof Pick<
         AppAccessorManager,
-        'getConfigurationExtend' | 'getEnvironmentRead' | 'getEnvironmentWrite' | 'getConfigurationModify' | 'getReader' | 'getPersistence' | 'getHttp'
+        | 'getConfigurationExtend'
+        | 'getEnvironmentRead'
+        | 'getEnvironmentWrite'
+        | 'getConfigurationModify'
+        | 'getReader'
+        | 'getPersistence'
+        | 'getHttp'
+        | 'getModifier'
     >
 >;
 
@@ -239,7 +247,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
-        const [bridgeName, bridgeMethod] = method.substring(7).split(':');
+        const [bridgeName, bridgeMethod] = method.substring(8).split(':');
 
         const bridge = this.bridges[bridgeName as keyof typeof this.bridges];
 
@@ -247,7 +255,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             throw new Error('Invalid bridge request');
         }
 
-        const bridgeInstance = bridge();
+        const bridgeInstance = bridge.call(this.bridges);
 
         const methodRef = bridgeInstance[bridgeMethod as keyof typeof bridge] as unknown;
 
@@ -257,6 +265,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const result = await methodRef.apply(
             bridgeInstance,
+            // Should the protocol expect the placeholder APP_ID value or should the Deno process send the actual appId?
+            // If we do not expect the APP_ID, the Deno process will be able to impersonate other apps, potentially
             params.map((value: unknown) => (value === 'APP_ID' ? this.appId : value)),
         );
 

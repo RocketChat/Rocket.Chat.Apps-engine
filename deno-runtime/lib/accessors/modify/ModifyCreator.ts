@@ -1,6 +1,8 @@
 import { createRequire } from 'node:module';
 
 import type { IModifyCreator } from '@rocket.chat/apps-engine/definition/accessors/IModifyCreator.ts';
+import type { IUploadCreator } from '@rocket.chat/apps-engine/definition/accessors/IUploadCreator.ts';
+import type { ILivechatCreator } from '@rocket.chat/apps-engine/definition/accessors/ILivechatCreator.ts';
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { IBotUser } from '@rocket.chat/apps-engine/definition/users/IBotUser.ts';
@@ -32,7 +34,7 @@ const UIHelper = require(import.meta.resolve('@rocket.chat/apps-engine/server/mi
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
 
-    getLivechatCreator() {
+    getLivechatCreator(): ILivechatCreator {
         return new Proxy(
             { __kind: 'getLivechatCreator' },
             {
@@ -48,10 +50,10 @@ export class ModifyCreator implements IModifyCreator {
                         });
                 },
             },
-        );
+        ) as ILivechatCreator;
     }
 
-    getUploadCreator() {
+    getUploadCreator(): IUploadCreator {
         return new Proxy(
             { __kind: 'getUploadCreator' },
             {
@@ -63,7 +65,7 @@ export class ModifyCreator implements IModifyCreator {
                             params,
                         }),
             },
-        );
+        ) as IUploadCreator;
     }
 
     getBlockBuilder() {
@@ -178,7 +180,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getMessageBridge:doCreate',
-            params: [result, 'APP_ID'],
+            params: [result, AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);
@@ -200,7 +202,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getLivechatBridge:doCreateMessage',
-            params: [result, 'APP_ID'],
+            params: [result, AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);
@@ -234,7 +236,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreate',
-            params: [result, builder.getMembersToBeAddedUsernames(), 'APP_ID'],
+            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);
@@ -262,7 +264,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreateDiscussion',
-            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), 'APP_ID'],
+            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);
@@ -285,7 +287,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getVideoConferenceBridge:doCreate',
-            params: [videoConference, 'APP_ID'],
+            params: [videoConference, AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);
@@ -296,7 +298,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getUserBridge:doCreate',
-            params: [user, 'APP_ID'],
+            params: [user, AppObjectRegistry.get('appId')],
         });
 
         return String(response.result);

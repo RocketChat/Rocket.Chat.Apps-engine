@@ -1,6 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
 import { afterAll, beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
 import { assertSpyCall, spy } from 'https://deno.land/std@0.203.0/testing/mock.ts';
+import { assert, assertEquals, assertNotInstanceOf } from 'https://deno.land/std@0.203.0/assert/mod.ts';
 
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 import { ModifyCreator } from '../modify/ModifyCreator.ts';
@@ -18,6 +19,7 @@ describe('ModifyCreator', () => {
 
     beforeEach(() => {
         AppObjectRegistry.clear();
+        AppObjectRegistry.set('appId', 'deno-test');
     });
 
     afterAll(() => {
@@ -37,7 +39,7 @@ describe('ModifyCreator', () => {
             .setUsernameAlias('alias')
             .setAvatarUrl('https://avatars.com/123');
 
-        // We can't get a legitimate result here, so we ignore it
+        // We can't get a legitimate return value here, so we ignore it
         // but we need to know that the request sent was well formed
         await modifyCreator.finish(messageBuilder);
 
@@ -53,11 +55,52 @@ describe('ModifyCreator', () => {
                             alias: 'alias',
                             avatarUrl: 'https://avatars.com/123',
                         },
-                        // We don't know the app id in Denoland, the Apps-Engine needs to fill it in on that side
-                        'APP_ID',
+                        'deno-test',
                     ],
                 },
             ],
         });
+    });
+
+    it('sends the correct payload in the request to upload a buffer', async () => {
+        const modifyCreator = new ModifyCreator(senderFn);
+
+        const result = await modifyCreator.getUploadCreator().uploadBuffer(new Uint8Array([1, 2, 3, 4]), 'text/plain');
+
+        assertEquals(result.result, {
+            method: 'accessor:getModifier:getCreator:getUploadCreator:uploadBuffer',
+            params: [new Uint8Array([1, 2, 3, 4]), 'text/plain'],
+        });
+    });
+
+    it('sends the correct payload in the request to create a visitor', async () => {
+        const modifyCreator = new ModifyCreator(senderFn);
+
+        const result = (await modifyCreator.getLivechatCreator().createVisitor({
+            token: 'random token',
+            username: 'random username for visitor',
+            name: 'Random Visitor',
+        })) as any; // We modified the send function so it changed the original return type of the function
+
+        assertEquals(result.result, {
+            method: 'accessor:getModifier:getCreator:getLivechatCreator:createVisitor',
+            params: [
+                {
+                    token: 'random token',
+                    username: 'random username for visitor',
+                    name: 'Random Visitor',
+                },
+            ],
+        });
+    });
+
+    // This test is important because if we return a promise we break API compatibility
+    it('does not return a promise for calls of the createToken() method of the LivechatCreator', () => {
+        const modifyCreator = new ModifyCreator(senderFn);
+
+        const result = modifyCreator.getLivechatCreator().createToken();
+
+        assertNotInstanceOf(result, Promise);
+        assert(typeof result === 'string', `Expected "${result}" to be of type "string", but got "${typeof result}"`);
     });
 });

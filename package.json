@@ -16,7 +16,7 @@
         "go-publish": "gulp publish",
         "go-publish-beta": "gulp publish-beta",
         "go-publish-alpha": "gulp publish-alpha",
-        "unit-tests": "NODE_ENV=test ts-node ./tests/runner.ts",
+        "unit-tests": "NODE_ENV=test ts-node --transpileOnly ./tests/runner.ts",
         "gen-doc": "typedoc"
     },
     "repository": {
