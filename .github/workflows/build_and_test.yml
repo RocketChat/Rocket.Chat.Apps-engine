@@ -85,7 +85,7 @@ jobs:
 
     test:
         runs-on: ubuntu-latest
-        needs: prepare
+        needs: build
 
         steps:
             - name: Use Node.js 14.19.3
@@ -107,9 +107,7 @@ jobs:
 
     build:
         runs-on: ubuntu-latest
-        needs:
-            - lint
-            - test
+        needs: lint
 
         steps:
             - name: Use Node.js 14.19.3
