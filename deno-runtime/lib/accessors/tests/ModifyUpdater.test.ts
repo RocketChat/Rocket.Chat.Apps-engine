@@ -13,7 +13,7 @@ describe('ModifyUpdater', () => {
         Promise.resolve({
             id: Math.random().toString(36).substring(2),
             jsonrpc: '2.0',
-            result: r,
+            result: structuredClone(r),
             serialize() {
                 return JSON.stringify(this);
             },
