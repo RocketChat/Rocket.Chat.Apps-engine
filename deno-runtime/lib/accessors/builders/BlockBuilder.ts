@@ -26,7 +26,7 @@ import type {
 import { BlockElementType } from '@rocket.chat/apps-engine/definition/uikit/blocks/Elements.ts';
 import type { ITextObject } from '@rocket.chat/apps-engine/definition/uikit/blocks/Objects.ts';
 import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks/Objects.ts';
-import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
+import { AppObjectRegistry } from "../../../AppObjectRegistry.ts";
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement

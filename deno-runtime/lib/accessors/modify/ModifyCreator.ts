@@ -16,14 +16,15 @@ import { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/acc
 import { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
 import { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
 
-import { BlockBuilder } from '../BlockBuilder.ts';
-import { MessageBuilder } from '../MessageBuilder.ts';
-import { DiscussionBuilder, IDiscussionBuilder } from '../DiscussionBuilder.ts';
-import { ILivechatMessage, LivechatMessageBuilder } from '../LivechatMessageBuilder.ts';
-import { RoomBuilder } from '../RoomBuilder.ts';
-import { UserBuilder } from '../UserBuilder.ts';
-import { AppVideoConference, VideoConferenceBuilder } from '../VideoConferenceBuilder.ts';
 import * as Messenger from '../../messenger.ts';
+
+import { BlockBuilder } from '../builders/BlockBuilder.ts';
+import { MessageBuilder } from '../builders/MessageBuilder.ts';
+import { DiscussionBuilder, IDiscussionBuilder } from '../builders/DiscussionBuilder.ts';
+import { ILivechatMessage, LivechatMessageBuilder } from '../builders/LivechatMessageBuilder.ts';
+import { RoomBuilder } from '../builders/RoomBuilder.ts';
+import { UserBuilder } from '../builders/UserBuilder.ts';
+import { AppVideoConference, VideoConferenceBuilder } from '../builders/VideoConferenceBuilder.ts';
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 
 const require = createRequire(import.meta.url);

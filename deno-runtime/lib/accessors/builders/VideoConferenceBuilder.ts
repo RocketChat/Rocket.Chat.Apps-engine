@@ -6,7 +6,6 @@ export type AppVideoConference = Pick<IGroupVideoConference, 'rid' | 'providerNa
     createdBy: IGroupVideoConference['createdBy']['_id'];
 };
 
-
 export class VideoConferenceBuilder implements IVideoConferenceBuilder {
     public kind: RocketChatAssociationModel.VIDEO_CONFERENCE = RocketChatAssociationModel.VIDEO_CONFERENCE;
 

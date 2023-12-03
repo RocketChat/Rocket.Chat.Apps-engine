@@ -1,12 +1,12 @@
 import type { IDiscussionBuilder as _IDiscussionBuilder } from "@rocket.chat/apps-engine/definition/accessors/IDiscussionBuilder.ts";
 import type { IMessage } from "@rocket.chat/apps-engine/definition/messages/IMessage.ts";
 import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
+import type { IRoomBuilder } from "@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts";
 
 import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
 import { RoomType } from "@rocket.chat/apps-engine/definition/rooms/RoomType.ts";
 
 import { RoomBuilder } from "./RoomBuilder.ts";
-import { IRoomBuilder } from "@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts";
 
 export interface IDiscussionBuilder extends _IDiscussionBuilder, IRoomBuilder {}
 

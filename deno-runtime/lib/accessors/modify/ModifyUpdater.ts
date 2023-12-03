@@ -13,8 +13,9 @@ import { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts'
 import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
 
 import * as Messenger from '../../messenger.ts';
-import { MessageBuilder } from '../MessageBuilder.ts';
-import { RoomBuilder } from '../RoomBuilder.ts';
+
+import { MessageBuilder } from '../builders/MessageBuilder.ts';
+import { RoomBuilder } from '../builders/RoomBuilder.ts';
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 
 const require = createRequire(import.meta.url);
