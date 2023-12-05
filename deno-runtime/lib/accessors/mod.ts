@@ -16,6 +16,7 @@ import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from "./modify/ModifyCreator.ts";
 import { ModifyUpdater } from "./modify/ModifyUpdater.ts";
+import { ModifyExtender } from "./modify/ModifyExtender.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -31,6 +32,7 @@ export class AppAccessors {
     private http?: IHttp;
     private creator?: ModifyCreator;
     private updater?: ModifyUpdater;
+    private extender?: ModifyExtender;
 
     private proxify: <T>(namespace: string) => T;
 
@@ -198,8 +200,8 @@ export class AppAccessors {
             this.modifier = {
                 getCreator: this.getCreator.bind(this),
                 getUpdater: this.getUpdater.bind(this),
+                getExtender: this.getExtender.bind(this),
                 getDeleter: () => this.proxify('getModifier:getDeleter'),
-                getExtender: () => this.proxify('getModifier:getExtender'), // can't be proxy
                 getNotifier: () => this.proxify('getModifier:getNotifier'),
                 getUiController: () => this.proxify('getModifier:getUiController'),
                 getScheduler: () => this.proxify('getModifier:getScheduler'),
@@ -241,6 +243,14 @@ export class AppAccessors {
         }
 
         return this.updater;
+    }
+
+    private getExtender() {
+        if (!this.extender) {
+            this.extender = new ModifyExtender(this.senderFn);
+        }
+
+        return this.extender;
     }
 }
 
