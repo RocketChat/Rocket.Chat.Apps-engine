@@ -1,4 +1,3 @@
-// @ts-ignore - this is a hack to make the tests work
 import type { IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors/IAppAccessors.ts';
 import type { IEnvironmentWrite } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentWrite.ts';
 import type { IEnvironmentRead } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentRead.ts';
@@ -16,6 +15,7 @@ import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/vid
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from "./modify/ModifyCreator.ts";
+import { ModifyUpdater } from "./modify/ModifyUpdater.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -30,6 +30,7 @@ export class AppAccessors {
     private persistence?: IPersistence;
     private http?: IHttp;
     private creator?: ModifyCreator;
+    private updater?: ModifyUpdater;
 
     private proxify: <T>(namespace: string) => T;
 
@@ -195,9 +196,8 @@ export class AppAccessors {
     public getModifier() {
         if (!this.modifier) {
             this.modifier = {
-                // getCreator: () => this.proxify('getModifier:getCreator'), // can't be proxy
                 getCreator: this.getCreator.bind(this),
-                getUpdater: () => this.proxify('getModifier:getUpdater'), // can't be proxy
+                getUpdater: this.getUpdater.bind(this),
                 getDeleter: () => this.proxify('getModifier:getDeleter'),
                 getExtender: () => this.proxify('getModifier:getExtender'), // can't be proxy
                 getNotifier: () => this.proxify('getModifier:getNotifier'),
@@ -233,6 +233,14 @@ export class AppAccessors {
         }
 
         return this.creator;
+    }
+
+    private getUpdater() {
+        if (!this.updater) {
+            this.updater = new ModifyUpdater(this.senderFn);
+        }
+
+        return this.updater;
     }
 }
 
