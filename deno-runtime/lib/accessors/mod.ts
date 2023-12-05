@@ -15,6 +15,7 @@ import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/vid
 
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
+import { ModifyCreator } from "./modify/ModifyCreator.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -28,13 +29,14 @@ export class AppAccessors {
     private modifier?: IModify;
     private persistence?: IPersistence;
     private http?: IHttp;
+    private creator?: ModifyCreator;
 
     private proxify: <T>(namespace: string) => T;
 
-    constructor(senderFn: typeof Messenger.sendRequest) {
+    constructor(private readonly senderFn: typeof Messenger.sendRequest) {
         this.proxify = <T>(namespace: string): T =>
             new Proxy(
-                { __kind: namespace },
+                { __kind: `accessor:${namespace}` },
                 {
                     get:
                         (_target: unknown, prop: string) =>
@@ -193,7 +195,8 @@ export class AppAccessors {
     public getModifier() {
         if (!this.modifier) {
             this.modifier = {
-                getCreator: () => this.proxify('getModifier:getCreator'), // can't be proxy
+                // getCreator: () => this.proxify('getModifier:getCreator'), // can't be proxy
+                getCreator: this.getCreator.bind(this),
                 getUpdater: () => this.proxify('getModifier:getUpdater'), // can't be proxy
                 getDeleter: () => this.proxify('getModifier:getDeleter'),
                 getExtender: () => this.proxify('getModifier:getExtender'), // can't be proxy
@@ -222,6 +225,14 @@ export class AppAccessors {
         }
 
         return this.http;
+    }
+
+    private getCreator() {
+        if (!this.creator) {
+            this.creator = new ModifyCreator(this.senderFn);
+        }
+
+        return this.creator;
     }
 }
 
