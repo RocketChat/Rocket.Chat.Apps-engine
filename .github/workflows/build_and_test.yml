@@ -54,6 +54,9 @@ jobs:
               if: steps.cache-nodemodules.outputs.cache-hit != 'true'
               run: npm install
 
+            - name: Deno Info
+              run: npx deno-bin info
+
             - name: Prepare workspace
               run: |
                   tar czf /tmp/workspace.tar.gz .
