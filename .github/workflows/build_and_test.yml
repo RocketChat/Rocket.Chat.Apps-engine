@@ -9,6 +9,9 @@ on:
             - 'alpha'
             - 'beta'
 
+env:
+    DENO_DIR: _PATH/.deno
+
 jobs:
     prepare:
         runs-on: ubuntu-latest
