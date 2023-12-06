@@ -46,8 +46,8 @@ jobs:
               uses: actions/cache@v2
               with:
                   path: |
-                      - ./node_modules
-                      - ~/.cache/deno
+                      ./node_modules
+                      ~/.cache/deno
                   key: ${{ runner.OS }}-node_modules-deno-cache-4-${{ hashFiles('./package-lock.json', './deno-runtime/deno.lock', '.github/workflows/build_and_test.yml') }}
 
             - name: npm install
