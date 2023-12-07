@@ -10,7 +10,7 @@ on:
             - 'beta'
 
 env:
-    DENO_DIR: _PATH/.deno
+    DENO_DIR: ${{ env.GITHUB_WORKSPACE }}/.deno
 
 jobs:
     prepare:
