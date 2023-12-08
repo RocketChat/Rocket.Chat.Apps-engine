@@ -20,4 +20,8 @@ export class AppImplements {
     public getValues(): { [int: string]: boolean } {
         return Utilities.deepCloneAndFreeze(this.implemented);
     }
+
+    public toJSON(): { [int: string]: boolean } {
+        return this.getValues();
+    }
 }

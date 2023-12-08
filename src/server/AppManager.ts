@@ -36,6 +36,7 @@ import type { IAppStorageItem } from './storage';
 import { AppLogStorage, AppMetadataStorage } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
+import { AppsEngineDenoRuntime } from './runtime/AppsEngineDenoRuntime';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -99,6 +100,8 @@ export class AppManager {
 
     private readonly signatureManager: AppSignatureManager;
 
+    private readonly runtime: AppsEngineDenoRuntime;
+
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -146,6 +149,7 @@ export class AppManager {
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
         this.signatureManager = new AppSignatureManager(this);
+        this.runtime = new AppsEngineDenoRuntime(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -224,6 +228,10 @@ export class AppManager {
 
     public getSignatureManager(): AppSignatureManager {
         return this.signatureManager;
+    }
+
+    public getRuntime(): AppsEngineDenoRuntime {
+        return this.runtime;
     }
 
     /** Gets whether the Apps have been loaded or not. */

@@ -7,6 +7,8 @@ import * as jsonrpc from 'jsonrpc-lite';
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
 import type { AppBridges } from '../bridges';
+import type { IParseAppPackageResult } from '../compiler';
+import type { AppStatus } from '../../definition/AppStatus';
 
 export type AppRuntimeParams = {
     appId: string;
@@ -75,7 +77,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly bridges: AppBridges;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
-    constructor(private readonly appId: string, private readonly appSource: string, manager: AppManager) {
+    constructor(private readonly appPackage: IParseAppPackageResult, manager: AppManager) {
         super();
 
         this.state = 'uninitialized';
@@ -85,7 +87,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const denoWrapperPath = getDenoWrapperPath();
             const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess']);
+            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess', appPackage.info.id]);
 
             this.setupListeners();
         } catch {
@@ -98,7 +100,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     emit(eventName: string | symbol, ...args: any[]): boolean {
-        console.debug(eventName, args);
         const hadListeners = super.emit(eventName, ...args);
 
         if (!hadListeners) {
@@ -108,15 +109,18 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return hadListeners;
     }
 
-    public getState() {
-        console.log(this.api);
+    public getProcessState() {
         return this.state;
+    }
+
+    public async getStatus(): Promise<AppStatus> {
+        return this.sendRequest({ method: 'getStatus', params: [] }) as Promise<AppStatus>;
     }
 
     public async setupApp() {
         await this.waitUntilReady();
 
-        this.sendRequest({ method: 'construct', params: [this.appId, this.appSource] });
+        this.sendRequest({ method: 'construct', params: [this.appPackage] });
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
@@ -165,7 +169,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const tailMethodName = accessorMethods.pop();
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
-            const result = this.api.listApis(this.appId);
+            const result = this.api.listApis(this.appPackage.info.id);
 
             return jsonrpc.success(id, result);
         }
@@ -207,7 +211,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             managerOrigin: typeof ALLOWED_ACCESSOR_METHODS[number],
             accessorManager: AppAccessorManager,
         ) => {
-            const origin = accessorManager[managerOrigin](this.appId);
+            const origin = accessorManager[managerOrigin](this.appPackage.info.id);
 
             if (managerOrigin === 'getHttp' || managerOrigin === 'getPersistence') {
                 return origin;
@@ -267,7 +271,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             bridgeInstance,
             // Should the protocol expect the placeholder APP_ID value or should the Deno process send the actual appId?
             // If we do not expect the APP_ID, the Deno process will be able to impersonate other apps, potentially
-            params.map((value: unknown) => (value === 'APP_ID' ? this.appId : value)),
+            params.map((value: unknown) => (value === 'APP_ID' ? this.appPackage.info.id : value)),
         );
 
         return jsonrpc.success(id, result);
@@ -347,10 +351,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 }
 
-type ExecRequestContext = {
+export type ExecRequestContext = {
     method: string;
-    params: Record<string, unknown>;
-    namespace?: string; // Use a namespace notation in the `method` property for this
+    params: unknown[];
+};
+
+export type ExecRequestOptions = {
+    timeout?: number;
 };
 
 export class AppsEngineDenoRuntime {
@@ -358,17 +365,21 @@ export class AppsEngineDenoRuntime {
 
     constructor(private readonly manager: AppManager) {}
 
-    public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
+    public async startRuntimeForApp(appPackage: IParseAppPackageResult, options = { force: false }): Promise<DenoRuntimeSubprocessController> {
+        const { id: appId } = appPackage.info;
+
         if (appId in this.subprocesses && !options.force) {
             throw new Error('App already has an associated runtime');
         }
 
-        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appId, appSource, this.manager);
+        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appPackage, this.manager);
 
         await this.subprocesses[appId].setupApp();
+
+        return this.subprocesses[appId];
     }
 
-    public async runInSandbox(appId: string, execRequest: ExecRequestContext) {
+    public async runInSandbox(appId: string, execRequest: ExecRequestContext, options?: ExecRequestOptions): Promise<unknown> {
         const subprocess = this.subprocesses[appId];
 
         if (!subprocess) {

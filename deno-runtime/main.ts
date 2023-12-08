@@ -9,15 +9,17 @@ if (!Deno.args.includes('--subprocess')) {
 }
 
 import { createRequire } from 'node:module';
-import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
-import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
-import * as Messenger from "./lib/messenger.ts";
-import { AppObjectRegistry } from "./AppObjectRegistry.ts";
+import { sanitizeDeprecatedUsage } from './lib/sanitizeDeprecatedUsage.ts';
+import { AppAccessorsInstance } from './lib/accessors/mod.ts';
+import * as Messenger from './lib/messenger.ts';
+import { AppObjectRegistry } from './AppObjectRegistry.ts';
+
+import type { IParseAppPackageResult } from '@rocket.chat/apps-engine/server/compiler/IParseAppPackageResult.ts';
+import type { App as AbstractApp } from '@rocket.chat/apps-engine/definition/App.ts';
+
+type App = typeof AbstractApp;
 
 const require = createRequire(import.meta.url);
-
-// @deno-types='../definition/App.d.ts'
-const { App } = require('../definition/App');
 
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
@@ -25,7 +27,7 @@ const ALLOWED_EXTERNAL_MODULES = ['uuid'];
 function buildRequire(): (module: string) => unknown {
     return (module: string): unknown => {
         if (ALLOWED_NATIVE_MODULES.includes(module)) {
-            return require(`node:${module}`)
+            return require(`node:${module}`);
         }
 
         if (ALLOWED_EXTERNAL_MODULES.includes(module)) {
@@ -54,13 +56,15 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
     ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
 }
 
-async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<void> {
-    source = sanitizeDeprecatedUsage(source);
+async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<void> {
+    const source = sanitizeDeprecatedUsage(appPackage.files[appPackage.info.classFile]);
+
     const require = buildRequire();
     const exports = await wrapAppCode(source)(require);
     // This is the same naive logic we've been using in the App Compiler
-    const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, console, AppAccessorsInstance.getDefaultAppAccessors());
+    const appClass = Object.values(exports)[0] as App;
+    // What do I do here? D:
+    const app = new appClass(appPackage.info, console, AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
@@ -87,7 +91,7 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     }
 
     AppObjectRegistry.set('app', app);
-    AppObjectRegistry.set('id', id);
+    AppObjectRegistry.set('id', appPackage.info.id);
 }
 
 async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
@@ -100,15 +104,15 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
 
     switch (method) {
         case 'construct': {
-            const [appId, source] = params as [string, string];
+            const [appPackage] = params as [IParseAppPackageResult];
 
-            if (!appId || !source) {
+            if (!appPackage?.info?.id || !appPackage?.info?.classFile || !appPackage?.files) {
                 return Messenger.sendInvalidParamsError(id);
             }
 
-            await handlInitializeApp({ id: appId, source })
+            await handlInitializeApp(appPackage);
 
-            Messenger.successResponse({ id, result: 'hooray' });
+            Messenger.successResponse({ id, result: 'logs should go here as a response' });
             break;
         }
         default: {
@@ -125,9 +129,13 @@ function handleResponse(response: Messenger.JsonRpcResponse): void {
     let event: Event;
 
     if (response.type === 'error') {
-        event = new ErrorEvent(`response:${response.payload.id}`, { error: response.payload.error });
+        event = new ErrorEvent(`response:${response.payload.id}`, {
+            error: response.payload.error,
+        });
     } else {
-        event = new CustomEvent(`response:${response.payload.id}`, { detail: response.payload.result });
+        event = new CustomEvent(`response:${response.payload.id}`, {
+            detail: response.payload.result,
+        });
     }
 
     Messenger.RPCResponseObserver.dispatchEvent(event);
@@ -140,6 +148,7 @@ async function main() {
 
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
+
         let JSONRPCMessage;
 
         try {
