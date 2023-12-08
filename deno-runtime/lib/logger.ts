@@ -9,19 +9,27 @@ enum LogMessageSeverity {
     SUCCESS = 'success',
 }
 
+interface ILoggerStorageEntry {
+    appId: string;
+    method: string;
+    entries: Array<any>;
+    startTime: Date;
+    endTime: Date;
+    totalTime: number;
+    _createdAt: Date;
+}
+
 export class Logger {
-    private static instance: Logger;
-    private entries: Array<object> = [];
-    public method = '';
+    private appId: string;
+    private entries: Array<object>;
+    private start: Date;
+    private method: string;
 
-    private constructor() {}
-
-    public static getInstance(): Logger {
-        if (!Logger.instance) {
-            Logger.instance = new Logger();
-        }
-
-        return Logger.instance;
+    constructor(method: string, appId: string) {
+        this.appId = appId;
+        this.method = method;
+        this.entries = [];
+        this.start = new Date();
     }
 
     public debug(...args: Array<any>) {
@@ -91,10 +99,19 @@ export class Logger {
         return func;
     }
 
-    public flush() {
-        const logs = this.entries;
-        this.entries = [];
-        this.method = '';
-        return logs;
+    private getTotalTime(): number {
+        return new Date().getTime() - this.start.getTime();
+    }
+
+    public getLogs(): ILoggerStorageEntry {
+        return {
+            appId: this.appId,
+            method: this.method,
+            entries: this.entries,
+            startTime: this.start,
+            endTime: new Date(),
+            totalTime: this.getTotalTime(),
+            _createdAt: new Date(),
+        };
     }
 }

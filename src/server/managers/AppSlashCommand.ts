@@ -1,6 +1,7 @@
 import { AppMethod } from '../../definition/metadata';
 import type { ISlashCommand, ISlashCommandPreview, ISlashCommandPreviewItem, SlashCommandContext } from '../../definition/slashcommands';
 import type { ProxiedApp } from '../ProxiedApp';
+import { AppConsole } from '../logging';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
 
@@ -93,7 +94,7 @@ export class AppSlashCommand {
             logger.error(e);
             logger.debug(`${command}'s ${method} was unsuccessful.`);
         } finally {
-            await logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(AppConsole.toStorageEntry(this.app.getID(), logger));
         }
     }
 }

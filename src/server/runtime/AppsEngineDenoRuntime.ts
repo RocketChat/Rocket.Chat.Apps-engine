@@ -7,7 +7,6 @@ import * as jsonrpc from 'jsonrpc-lite';
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
 import type { AppLogStorage } from '../storage';
-import { AppConsole } from '../logging';
 
 export type AppRuntimeParams = {
     appId: string;
@@ -268,19 +267,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const { value, logs } = param as any;
             param = value;
 
-            const logger = new AppConsole(logs[0].method); // the method will be the same for all entries
-            logs.forEach((log: any) => {
-                const logMethod = logger[log.severity as keyof AppConsole];
-
-                if (typeof logMethod !== 'function') {
-                    throw new Error('Invalid log severity');
-                }
-
-                logMethod.apply(logger, log.args);
-                console.log(`${log.timestamp} - ${log.method} [${log.severity}]: ${log.args}`);
-            });
-
-            // this.logStorage.storeEntries(this.appId, logs);
+            this.logStorage.storeEntries(logs);
         } else {
             param = message.payload.error;
         }
@@ -328,7 +315,9 @@ type ExecRequestContext = {
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
 
-    constructor(private readonly manager: AppManager) {}
+    private manager: AppManager;
+
+    // constructor(private readonly manager: AppManager) {}
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
