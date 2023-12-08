@@ -1,4 +1,6 @@
+// deno-lint-ignore-file no-explicit-any
 import * as stackTrace from 'npm:stack-trace'
+import { StackFrame } from 'npm:stack-trace'
 
 enum LogMessageSeverity {
     DEBUG = 'debug',
@@ -9,10 +11,18 @@ enum LogMessageSeverity {
     SUCCESS = 'success',
 }
 
+type Entry = {
+    caller: string;
+    severity: LogMessageSeverity;
+    method: string;
+    timestamp: Date;
+    args: Array<any>;
+}
+
 interface ILoggerStorageEntry {
     appId: string;
     method: string;
-    entries: Array<any>;
+    entries: Array<Entry>;
     startTime: Date;
     endTime: Date;
     totalTime: number;
@@ -21,7 +31,7 @@ interface ILoggerStorageEntry {
 
 export class Logger {
     private appId: string;
-    private entries: Array<object>;
+    private entries: Array<Entry>;
     private start: Date;
     private method: string;
 
@@ -32,31 +42,31 @@ export class Logger {
         this.start = new Date();
     }
 
-    public debug(...args: Array<any>) {
+    public debug(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.DEBUG, this.getStack(stackTrace.get()), ...args)
     }
 
-    public info(...args: Array<any>){
+    public info(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.INFORMATION, this.getStack(stackTrace.get()), ...args)
     }
 
-    public log(...args: Array<any>){
+    public log(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.LOG, this.getStack(stackTrace.get()), ...args)
     }
 
-    public warning(...args: Array<any>){
+    public warning(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.WARNING, this.getStack(stackTrace.get()), ...args)
     }
 
-    public error(...args: Array<any>){
+    public error(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.ERROR, this.getStack(stackTrace.get()), ...args)
     }
 
-    public success(...args: Array<any>){
+    public success(...args: Array<any>): void {
         this.addEntry(LogMessageSeverity.SUCCESS, this.getStack(stackTrace.get()), ...args)
     }
 
-    private addEntry(severity: LogMessageSeverity, caller?: string,...items: Array<any>) {
+    private addEntry(severity: LogMessageSeverity, caller: string,...items: Array<any>): void {
         const i = items.map((v) => {
             if (v instanceof Error) {
                 return JSON.stringify(v, Object.getOwnPropertyNames(v));
@@ -77,7 +87,7 @@ export class Logger {
         });
     }
 
-    private getStack(stack: Array<any>) {
+    private getStack(stack: Array<StackFrame>): string {
         let func = 'anonymous';
 
         if (stack.length === 1) {
