@@ -74,7 +74,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly api: AppApiManager;
 
     private readonly logStorage: AppLogStorage;
-  
+
     private readonly bridges: AppBridges;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
