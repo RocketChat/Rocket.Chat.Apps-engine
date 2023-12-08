@@ -1,4 +1,3 @@
-// @ts-ignore - this is a hack to make the tests work
 import type { IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors/IAppAccessors.ts';
 import type { IEnvironmentWrite } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentWrite.ts';
 import type { IEnvironmentRead } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentRead.ts';
@@ -15,6 +14,9 @@ import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/vid
 
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
+import { ModifyCreator } from "./modify/ModifyCreator.ts";
+import { ModifyUpdater } from "./modify/ModifyUpdater.ts";
+import { ModifyExtender } from "./modify/ModifyExtender.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -28,13 +30,16 @@ export class AppAccessors {
     private modifier?: IModify;
     private persistence?: IPersistence;
     private http?: IHttp;
+    private creator?: ModifyCreator;
+    private updater?: ModifyUpdater;
+    private extender?: ModifyExtender;
 
     private proxify: <T>(namespace: string) => T;
 
-    constructor(senderFn: typeof Messenger.sendRequest) {
+    constructor(private readonly senderFn: typeof Messenger.sendRequest) {
         this.proxify = <T>(namespace: string): T =>
             new Proxy(
-                { __kind: namespace },
+                { __kind: `accessor:${namespace}` },
                 {
                     get:
                         (_target: unknown, prop: string) =>
@@ -193,10 +198,10 @@ export class AppAccessors {
     public getModifier() {
         if (!this.modifier) {
             this.modifier = {
-                getCreator: () => this.proxify('getModifier:getCreator'), // can't be proxy
-                getUpdater: () => this.proxify('getModifier:getUpdater'), // can't be proxy
+                getCreator: this.getCreator.bind(this),
+                getUpdater: this.getUpdater.bind(this),
+                getExtender: this.getExtender.bind(this),
                 getDeleter: () => this.proxify('getModifier:getDeleter'),
-                getExtender: () => this.proxify('getModifier:getExtender'), // can't be proxy
                 getNotifier: () => this.proxify('getModifier:getNotifier'),
                 getUiController: () => this.proxify('getModifier:getUiController'),
                 getScheduler: () => this.proxify('getModifier:getScheduler'),
@@ -222,6 +227,30 @@ export class AppAccessors {
         }
 
         return this.http;
+    }
+
+    private getCreator() {
+        if (!this.creator) {
+            this.creator = new ModifyCreator(this.senderFn);
+        }
+
+        return this.creator;
+    }
+
+    private getUpdater() {
+        if (!this.updater) {
+            this.updater = new ModifyUpdater(this.senderFn);
+        }
+
+        return this.updater;
+    }
+
+    private getExtender() {
+        if (!this.extender) {
+            this.extender = new ModifyExtender(this.senderFn);
+        }
+
+        return this.extender;
     }
 }
 

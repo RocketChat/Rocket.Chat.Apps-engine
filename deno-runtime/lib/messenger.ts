@@ -93,6 +93,7 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
     await send(request);
 
+    // TODO: add timeout to this
     return new Promise((resolve, reject) => {
         const handler = (event: Event) => {
             if (event instanceof ErrorEvent) {
