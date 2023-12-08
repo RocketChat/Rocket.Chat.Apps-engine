@@ -83,7 +83,7 @@ export class AppCompiler {
         // TODO: Fix this type cast from to any to the right one
         const app = new ProxiedApp(manager, storage, rl as App, new Runtime(rl as App, customRequire as any));
 
-        await manager.getLogStorage().storeEntries(app.getID(), logger);
+        await manager.getLogStorage().storeEntries(AppConsole.toStorageEntry(app.getID(), logger));
 
         return app;
     }

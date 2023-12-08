@@ -5,6 +5,7 @@ import type { AppManager } from '../AppManager';
 import type { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
 import type { SchedulerBridge } from '../bridges/SchedulerBridge';
 import type { AppAccessorManager } from '.';
+import { AppConsole } from '../logging';
 
 function createProcessorId(jobId: string, appId: string): string {
     return jobId.includes(`_${appId}`) ? jobId : `${jobId}_${appId}`;
@@ -84,7 +85,7 @@ export class AppSchedulerManager {
 
                 throw e;
             } finally {
-                await this.manager.getLogStorage().storeEntries(appId, logger);
+                await this.manager.getLogStorage().storeEntries(AppConsole.toStorageEntry(appId, logger));
             }
         };
     }
