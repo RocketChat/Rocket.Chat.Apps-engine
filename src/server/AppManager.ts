@@ -31,12 +31,12 @@ import type { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
-import { AppsEngineEmptyRuntime } from './runtime/AppsEngineEmptyRuntime';
 import type { IAppStorageItem } from './storage';
 import { AppLogStorage, AppMetadataStorage } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
-import { AppsEngineDenoRuntime } from './runtime/AppsEngineDenoRuntime';
+import { AppRuntimeManager } from './managers/AppRuntimeManager';
+import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -100,7 +100,7 @@ export class AppManager {
 
     private readonly signatureManager: AppSignatureManager;
 
-    private readonly runtime: AppsEngineDenoRuntime;
+    private readonly runtime: AppRuntimeManager;
 
     private isLoaded: boolean;
 
@@ -149,7 +149,7 @@ export class AppManager {
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
         this.signatureManager = new AppSignatureManager(this);
-        this.runtime = new AppsEngineDenoRuntime(this);
+        this.runtime = new AppRuntimeManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -230,7 +230,7 @@ export class AppManager {
         return this.signatureManager;
     }
 
-    public getRuntime(): AppsEngineDenoRuntime {
+    public getRuntime(): AppRuntimeManager {
         return this.runtime;
     }
 
@@ -273,7 +273,7 @@ export class AppManager {
                 app.getLogger().error(e);
                 await this.logStorage.storeEntries(app.getID(), app.getLogger());
 
-                const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
+                const prl = new ProxiedApp(this, item, {} as DenoRuntimeSubprocessController);
                 this.apps.set(item.id, prl);
             }
         }

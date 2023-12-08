@@ -103,7 +103,7 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
     const { id, method, params } = payload;
 
     switch (method) {
-        case 'construct': {
+        case 'app:construct': {
             const [appPackage] = params as [IParseAppPackageResult];
 
             if (!appPackage?.info?.id || !appPackage?.info?.classFile || !appPackage?.files) {
@@ -142,7 +142,7 @@ function handleResponse(response: Messenger.JsonRpcResponse): void {
 }
 
 async function main() {
-    setTimeout(() => Messenger.sendNotification({ method: 'ready' }), 1_780);
+    Messenger.sendNotification({ method: 'ready' });
 
     const decoder = new TextDecoder();
 

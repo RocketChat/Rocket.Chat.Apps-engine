@@ -15,7 +15,6 @@ import { TestSourceStorage } from './storage/TestSourceStorage';
 import type { IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { ApiSecurity, ApiVisibility } from '../../src/definition/api';
 import type { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
-import type { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
 import type { AppVideoConference } from '../../src/definition/videoConferences/AppVideoConference';
 import type { VideoConference } from '../../src/definition/videoConferences/IVideoConference';
@@ -34,6 +33,7 @@ import type {
     AppVideoConfProviderManager,
 } from '../../src/server/managers';
 import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
+import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/AppsEngineDenoRuntime';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -418,22 +418,7 @@ export class TestData {
     }
 
     public static getMockApp(id: string, name: string): ProxiedApp {
-        return new ProxiedApp(
-            {} as AppManager,
-            { status: AppStatus.UNKNOWN } as IAppStorageItem,
-            {
-                getName() {
-                    return name;
-                },
-                getID() {
-                    return id;
-                },
-                getRuntime() {
-                    return { runInSandbox: (mod: string) => mod };
-                },
-            } as unknown as App,
-            { runInSandbox: (mod: string) => mod } as any,
-        );
+        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN, info: { id, name } } as IAppStorageItem, {} as DenoRuntimeSubprocessController);
     }
 }
 

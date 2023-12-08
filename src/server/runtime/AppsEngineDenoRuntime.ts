@@ -4,18 +4,13 @@ import { EventEmitter } from 'stream';
 
 import * as jsonrpc from 'jsonrpc-lite';
 
-import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
 import type { AppBridges } from '../bridges';
 import type { IParseAppPackageResult } from '../compiler';
 import type { AppStatus } from '../../definition/AppStatus';
+import type { AppAccessorManager, AppApiManager } from '../managers';
 
-export type AppRuntimeParams = {
-    appId: string;
-    appSource: string;
-};
-
-const ALLOWED_ACCESSOR_METHODS = [
+export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
     'getEnvironmentRead',
     'getEnvironmentWrite',
@@ -38,7 +33,7 @@ const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
-function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
+export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
     return ALLOWED_ACCESSOR_METHODS.includes(accessor as any);
 }
 
@@ -65,7 +60,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
     private readonly options = {
-        timeout: 10_000,
+        timeout: 10000,
     };
 
     private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown';
@@ -77,7 +72,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly bridges: AppBridges;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
-    constructor(private readonly appPackage: IParseAppPackageResult, manager: AppManager) {
+    constructor(manager: AppManager, private readonly appPackage: IParseAppPackageResult) {
         super();
 
         this.state = 'uninitialized';
@@ -114,13 +109,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async getStatus(): Promise<AppStatus> {
-        return this.sendRequest({ method: 'getStatus', params: [] }) as Promise<AppStatus>;
+        return this.sendRequest({ method: 'app:getStatus', params: [] }) as Promise<AppStatus>;
     }
 
     public async setupApp() {
         await this.waitUntilReady();
 
-        this.sendRequest({ method: 'construct', params: [this.appPackage] });
+        this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
@@ -198,7 +193,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
          * const accessorMethods = ['getEnvironmentReader', 'getEnvironmentVariables']
          * ```
          **/
-
         // Prevent app from trying to get properties from the manager that
         // are not intended for public access
         if (!isValidOrigin(managerOrigin)) {
@@ -348,44 +342,5 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private async parseError(chunk: Buffer): Promise<void> {
         console.error(chunk.toString());
-    }
-}
-
-export type ExecRequestContext = {
-    method: string;
-    params: unknown[];
-};
-
-export type ExecRequestOptions = {
-    timeout?: number;
-};
-
-export class AppsEngineDenoRuntime {
-    private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
-
-    constructor(private readonly manager: AppManager) {}
-
-    public async startRuntimeForApp(appPackage: IParseAppPackageResult, options = { force: false }): Promise<DenoRuntimeSubprocessController> {
-        const { id: appId } = appPackage.info;
-
-        if (appId in this.subprocesses && !options.force) {
-            throw new Error('App already has an associated runtime');
-        }
-
-        this.subprocesses[appId] = new DenoRuntimeSubprocessController(appPackage, this.manager);
-
-        await this.subprocesses[appId].setupApp();
-
-        return this.subprocesses[appId];
-    }
-
-    public async runInSandbox(appId: string, execRequest: ExecRequestContext, options?: ExecRequestOptions): Promise<unknown> {
-        const subprocess = this.subprocesses[appId];
-
-        if (!subprocess) {
-            throw new Error('App does not have an associated runtime');
-        }
-
-        return subprocess.sendRequest(execRequest);
     }
 }

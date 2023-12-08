@@ -5,6 +5,7 @@ import { TestData, TestInfastructureSetup } from '../../test-data/utilities';
 import { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
 import type { AppManager } from '../../../src/server/AppManager';
 import { UserStatusConnection, UserType } from '../../../src/definition/users';
+import { AppImplements } from '../../../src/server/compiler';
 
 @TestFixture('DenoRuntimeSubprocessController')
 export class DenuRuntimeSubprocessControllerTestFixture {
@@ -32,7 +33,12 @@ export class DenuRuntimeSubprocessControllerTestFixture {
     public setup() {
         const app = TestData.getMockApp('deno-controller', 'Deno Controller test');
 
-        this.controller = new DenoRuntimeSubprocessController(app.getID(), this.simpleAppSource, this.manager);
+        this.controller = new DenoRuntimeSubprocessController(this.manager, {
+            info: app.getInfo(),
+            files: { 'main.ts': this.simpleAppSource },
+            languageContent: {},
+            implemented: new AppImplements(),
+        });
     }
 
     @AsyncTest('correctly identifies a call to the HTTP accessor')
