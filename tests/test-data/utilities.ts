@@ -34,6 +34,7 @@ import type {
 } from '../../src/server/managers';
 import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
 import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/AppsEngineDenoRuntime';
+import { AppPackageParser } from '../../src/server/compiler';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -53,6 +54,13 @@ export class TestInfastructureSetup {
         this.sourceStorage = new TestSourceStorage();
 
         this.appManager = {
+            getParser() {
+                if (!this.parser) {
+                    this.parser = new AppPackageParser();
+                }
+
+                return this.parser;
+            },
             getBridges: () => {
                 return this.bridges as AppBridges;
             },
