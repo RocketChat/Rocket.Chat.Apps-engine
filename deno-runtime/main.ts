@@ -64,7 +64,6 @@ async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<v
     // deno-lint-ignore no-explicit-any
     const appClass = Object.values(exports)[0] as any;
 
-    // What do I do here? D:
     const app = new appClass(appPackage.info, console, AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
