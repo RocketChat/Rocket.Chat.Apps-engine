@@ -1,4 +1,3 @@
-// deno-lint-ignore-file no-explicit-any
 import * as stackTrace from 'npm:stack-trace'
 import { StackFrame } from 'npm:stack-trace'
 
@@ -16,7 +15,7 @@ type Entry = {
     severity: LogMessageSeverity;
     method: string;
     timestamp: Date;
-    args: Array<any>;
+    args: Array<unknown>;
 }
 
 interface ILoggerStorageEntry {
@@ -42,40 +41,44 @@ export class Logger {
         this.start = new Date();
     }
 
-    public debug(...args: Array<any>): void {
+    public debug(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.DEBUG, this.getStack(stackTrace.get()), ...args)
     }
 
-    public info(...args: Array<any>): void {
+    public info(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.INFORMATION, this.getStack(stackTrace.get()), ...args)
     }
 
-    public log(...args: Array<any>): void {
+    public log(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.LOG, this.getStack(stackTrace.get()), ...args)
     }
 
-    public warning(...args: Array<any>): void {
+    public warning(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.WARNING, this.getStack(stackTrace.get()), ...args)
     }
 
-    public error(...args: Array<any>): void {
+    public error(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.ERROR, this.getStack(stackTrace.get()), ...args)
     }
 
-    public success(...args: Array<any>): void {
+    public success(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.SUCCESS, this.getStack(stackTrace.get()), ...args)
     }
 
-    private addEntry(severity: LogMessageSeverity, caller: string,...items: Array<any>): void {
-        const i = items.map((v) => {
-            if (v instanceof Error) {
-                return JSON.stringify(v, Object.getOwnPropertyNames(v));
+    private addEntry(severity: LogMessageSeverity, caller: string, ...items: Array<unknown>): void {
+        const i = items.map((args) => {
+            if (args instanceof Error) {
+                return JSON.stringify(args, Object.getOwnPropertyNames(args));
             }
-            if (typeof v === 'object' && typeof v.stack === 'string' && typeof v.message === 'string') {
-                return JSON.stringify(v, Object.getOwnPropertyNames(v));
+            if (typeof args === 'object' && args !== null && 'stack' in args) {
+                return JSON.stringify(args, Object.getOwnPropertyNames(args));
             }
-            const str = JSON.stringify(v, null, 2);
+            if (typeof args === 'object' && args !== null && 'message' in args) {
+                return JSON.stringify(args, Object.getOwnPropertyNames(args));
+            }
+            const str = JSON.stringify(args, null, 2);
             return str ? JSON.parse(str) : str; // force call toJSON to prevent circular references
+            
         });
 
         this.entries.push({
