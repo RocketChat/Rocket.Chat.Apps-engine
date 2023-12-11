@@ -100,9 +100,7 @@ export class AppVideoConfProviderManager {
     }
 
     public async isFullyConfigured(providerName: string): Promise<boolean> {
-        console.log(1)
         const providerInfo = this.retrieveProviderInfo(providerName);
-        console.log(2)
         if (!providerInfo) {
             throw new VideoConfProviderNotRegisteredError(providerName);
         }
