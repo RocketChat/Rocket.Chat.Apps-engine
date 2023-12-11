@@ -15,9 +15,6 @@ import * as Messenger from './lib/messenger.ts';
 import { AppObjectRegistry } from './AppObjectRegistry.ts';
 
 import type { IParseAppPackageResult } from '@rocket.chat/apps-engine/server/compiler/IParseAppPackageResult.ts';
-import type { App as AbstractApp } from '@rocket.chat/apps-engine/definition/App.ts';
-
-type App = typeof AbstractApp;
 
 const require = createRequire(import.meta.url);
 
@@ -61,8 +58,12 @@ async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<v
 
     const require = buildRequire();
     const exports = await wrapAppCode(source)(require);
+
     // This is the same naive logic we've been using in the App Compiler
-    const appClass = Object.values(exports)[0] as App;
+    // Applying the correct type here is quite difficult because of the dynamic nature of the code
+    // deno-lint-ignore no-explicit-any
+    const appClass = Object.values(exports)[0] as any;
+
     // What do I do here? D:
     const app = new appClass(appPackage.info, console, AppAccessorsInstance.getDefaultAppAccessors());
 
