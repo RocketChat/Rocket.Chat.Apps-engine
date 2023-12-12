@@ -118,6 +118,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
+    public async stopApp() {
+        if (!this.deno.killed) {
+            this.deno.kill();
+        }
+    }
+
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
         const id = String(Math.random()).substring(2);
 

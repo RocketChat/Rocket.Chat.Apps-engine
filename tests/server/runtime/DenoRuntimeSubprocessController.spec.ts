@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs/promises';
 
-import { TestFixture, Setup, Expect, AsyncTest, SpyOn, Any, AsyncSetupFixture } from 'alsatian';
+import { TestFixture, Setup, Expect, AsyncTest, SpyOn, Any, AsyncSetupFixture, Teardown } from 'alsatian';
 
 import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { TestInfastructureSetup } from '../../test-data/utilities';
@@ -39,6 +39,11 @@ export class DenuRuntimeSubprocessControllerTestFixture {
     @Setup
     public setup() {
         this.controller = new DenoRuntimeSubprocessController(this.manager, this.appPackage);
+    }
+
+    @Teardown
+    public teardown() {
+        this.controller.stopApp();
     }
 
     @AsyncTest('correctly identifies a call to the HTTP accessor')
