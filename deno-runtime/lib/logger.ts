@@ -78,7 +78,7 @@ export class Logger {
             }
             const str = JSON.stringify(args, null, 2);
             return str ? JSON.parse(str) : str; // force call toJSON to prevent circular references
-            
+
         });
 
         this.entries.push({
@@ -114,6 +114,10 @@ export class Logger {
 
     private getTotalTime(): number {
         return new Date().getTime() - this.start.getTime();
+    }
+
+    public hasEntries(): boolean {
+        return this.entries.length > 0;
     }
 
     public getLogs(): ILoggerStorageEntry {

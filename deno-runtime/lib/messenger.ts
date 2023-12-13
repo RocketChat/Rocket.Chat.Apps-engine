@@ -73,17 +73,26 @@ export async function sendMethodNotFound(id: jsonrpc.ID): Promise<void> {
 }
 
 export async function errorResponse({ error: { message, code = -32000, data }, id }: ErrorResponseDescriptor): Promise<void> {
-    const logger = AppObjectRegistry.get('logger') as Logger;
-    const logs = logger.getLogs();
-    const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, {logs, ...data}));
+    const logger = AppObjectRegistry.get<Logger>('logger');
+
+    if (logger?.hasEntries()) {
+        data.logs = logger.getLogs();
+    }
+
+    const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
 
     await send(rpc);
 }
 
 export async function successResponse({ id, result }: SuccessResponseDescriptor): Promise<void> {
-    const logger = AppObjectRegistry.get('logger') as Logger;
-    const logs = logger.getLogs();
-    const rpc = jsonrpc.success(id, {value: result, logs});
+    const payload = { value: result } as Record<string, unknown>;
+    const logger = AppObjectRegistry.get<Logger>('logger');
+
+    if (logger?.hasEntries()) {
+        payload.logs = logger.getLogs();
+    }
+
+    const rpc = jsonrpc.success(id, payload);
 
     await send(rpc);
 }
