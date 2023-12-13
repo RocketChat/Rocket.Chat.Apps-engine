@@ -29,6 +29,36 @@ export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.Er
 const encoder = new TextEncoder();
 export const RPCResponseObserver = new EventTarget();
 
+export const Transport = new class Transporter {
+    private selectedTransport: Transporter["stdoutTransport"] | Transporter["noopTransport"];
+
+    constructor() {
+        this.selectedTransport = this.stdoutTransport.bind(this);
+    }
+
+    private async stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
+        const encoded = encoder.encode(message.serialize());
+        await Deno.stdout.write(encoded);
+    }
+
+    private async noopTransport(_message: jsonrpc.JsonRpc): Promise<void> { }
+
+    public selectTransport(transport: 'stdout' | 'noop'): void {
+        switch (transport) {
+            case 'stdout':
+                this.selectedTransport = this.stdoutTransport.bind(this);
+                break;
+            case 'noop':
+                this.selectedTransport = this.noopTransport.bind(this);
+                break;
+        }
+    }
+
+    public send(message: jsonrpc.JsonRpc): Promise<void> {
+        return this.selectedTransport(message);
+    }
+}
+
 export function parseMessage(message: string) {
     const parsed = jsonrpc.parse(message);
 
@@ -43,36 +73,31 @@ export function parseMessage(message: string) {
     return parsed;
 }
 
-export async function send(message: jsonrpc.JsonRpc): Promise<void> {
-    const encoded = encoder.encode(message.serialize());
-    await Deno.stdout.write(encoded);
-}
-
 export async function sendInvalidRequestError(): Promise<void> {
     const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
 export async function sendInvalidParamsError(id: jsonrpc.ID): Promise<void> {
     const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.invalidParams(null));
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
 export async function sendParseError(): Promise<void> {
     const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.parseError(null));
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
 export async function sendMethodNotFound(id: jsonrpc.ID): Promise<void> {
     const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.methodNotFound(null));
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
-export async function errorResponse({ error: { message, code = -32000, data }, id }: ErrorResponseDescriptor): Promise<void> {
+export async function errorResponse({ error: { message, code = -32000, data = {} }, id }: ErrorResponseDescriptor): Promise<void> {
     const logger = AppObjectRegistry.get<Logger>('logger');
 
     if (logger?.hasEntries()) {
@@ -81,7 +106,7 @@ export async function errorResponse({ error: { message, code = -32000, data }, i
 
     const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
 export async function successResponse({ id, result }: SuccessResponseDescriptor): Promise<void> {
@@ -94,13 +119,13 @@ export async function successResponse({ id, result }: SuccessResponseDescriptor)
 
     const rpc = jsonrpc.success(id, payload);
 
-    await send(rpc);
+    await Transport.send(rpc);
 }
 
 export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<jsonrpc.SuccessObject> {
     const request = jsonrpc.request(Math.random().toString(36).slice(2), requestDescriptor.method, requestDescriptor.params);
 
-    await send(request);
+    await Transport.send(request);
 
     // TODO: add timeout to this
     return new Promise((resolve, reject) => {
@@ -123,5 +148,5 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 export function sendNotification({ method, params }: NotificationDescriptor) {
     const request = jsonrpc.notification(method, params);
 
-    send(request);
+    Transport.send(request);
 }
