@@ -1,7 +1,8 @@
 <!--
---- Readme.md Snippet without images Start ---
+&lt;--- Readme.md Snippet without images Start ---&gt;
 ## Tech Stack
 RocketChat/Rocket.Chat.Apps-engine is built on the following main stack:
+
 - [gulp](http://gulpjs.com/) – JS Build Tools / JS Task Runners
 - [Browserify](http://browserify.org/) – Front End Package Manager
 - [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
@@ -10,14 +11,17 @@ RocketChat/Rocket.Chat.Apps-engine is built on the following main stack:
 - [TypeScript](http://www.typescriptlang.org) – Languages
 - [ESLint](http://eslint.org/) – Code Review
 - [Visual Studio Code](https://code.visualstudio.com/) – Text Editor
+- [NeDB](https://github.com/louischatriot/nedb) – Databases
 - [GitHub Actions](https://github.com/features/actions) – Continuous Integration
 
 Full tech stack [here](/techstack.md)
---- Readme.md Snippet without images End ---
 
---- Readme.md Snippet with images Start ---
+&lt;--- Readme.md Snippet without images End ---&gt;
+
+&lt;--- Readme.md Snippet with images Start ---&gt;
 ## Tech Stack
 RocketChat/Rocket.Chat.Apps-engine is built on the following main stack:
+
 - <img width='25' height='25' src='https://img.stackshare.io/service/844/iruTC031.png' alt='gulp'/> [gulp](http://gulpjs.com/) – JS Build Tools / JS Task Runners
 - <img width='25' height='25' src='https://img.stackshare.io/service/849/9esmqty2.png' alt='Browserify'/> [Browserify](http://browserify.org/) – Front End Package Manager
 - <img width='25' height='25' src='https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png' alt='Node.js'/> [Node.js](http://nodejs.org/) – Frameworks (Full Stack)
@@ -26,17 +30,19 @@ RocketChat/Rocket.Chat.Apps-engine is built on the following main stack:
 - <img width='25' height='25' src='https://img.stackshare.io/service/1612/bynNY5dJ.jpg' alt='TypeScript'/> [TypeScript](http://www.typescriptlang.org) – Languages
 - <img width='25' height='25' src='https://img.stackshare.io/service/3337/Q4L7Jncy.jpg' alt='ESLint'/> [ESLint](http://eslint.org/) – Code Review
 - <img width='25' height='25' src='https://img.stackshare.io/service/4202/Visual_Studio_Code_logo.png' alt='Visual Studio Code'/> [Visual Studio Code](https://code.visualstudio.com/) – Text Editor
+- <img width='25' height='25' src='https://img.stackshare.io/service/5859/ne.jpg' alt='NeDB'/> [NeDB](https://github.com/louischatriot/nedb) – Databases
 - <img width='25' height='25' src='https://img.stackshare.io/service/11563/actions.png' alt='GitHub Actions'/> [GitHub Actions](https://github.com/features/actions) – Continuous Integration
 
 Full tech stack [here](/techstack.md)
---- Readme.md Snippet with images End ---
+
+&lt;--- Readme.md Snippet with images End ---&gt;
 -->
 <div align="center">
 
 # Tech Stack File
 ![](https://img.stackshare.io/repo.svg "repo") [RocketChat/Rocket.Chat.Apps-engine](https://github.com/RocketChat/Rocket.Chat.Apps-engine)![](https://img.stackshare.io/public_badge.svg "public")
 <br/><br/>
-|35<br/>Tools used|11/09/23 <br/>Report generated|
+|37<br/>Tools used|12/14/23 <br/>Report generated|
 |------|------|
 </div>
 
@@ -75,6 +81,19 @@ Full tech stack [here](/techstack.md)
   <img width='36' height='36' src='https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png' alt='Node.js'>
   <br>
   <sub><a href="http://nodejs.org/">Node.js</a></sub>
+  <br>
+  <sub></sub>
+</td>
+
+</tr>
+</table>
+
+## <img src='https://img.stackshare.io/databases.svg'/> Data (1)
+<table><tr>
+  <td align='center'>
+  <img width='36' height='36' src='https://img.stackshare.io/service/5859/ne.jpg' alt='NeDB'>
+  <br>
+  <sub><a href="https://github.com/louischatriot/nedb">NeDB</a></sub>
   <br>
   <sub></sub>
 </td>
@@ -151,6 +170,19 @@ Full tech stack [here](/techstack.md)
 </tr>
 </table>
 
+## Other (1)
+<table><tr>
+  <td align='center'>
+  <img width='36' height='36' src='https://img.stackshare.io/service/2270/no-img-open-source.png' alt='HTML'>
+  <br>
+  <sub><a href="http://">HTML</a></sub>
+  <br>
+  <sub></sub>
+</td>
+
+</tr>
+</table>
+
 
 ## <img src='https://img.stackshare.io/group.svg' /> Open source packages (23)</h2>
 
@@ -173,9 +205,9 @@ Full tech stack [here](/techstack.md)
 |[http-server](https://www.npmjs.com/http-server)|v0.12.3|11/23/22|Pierre Lehnen |MIT|N/A|
 |[lodash.clonedeep](https://www.npmjs.com/lodash.clonedeep)|v4.5.0|11/23/22|Pierre Lehnen |MIT|N/A|
 |[merge2](https://www.npmjs.com/merge2)|v1.4.1|11/23/22|Pierre Lehnen |MIT|N/A|
-|[nedb](https://www.npmjs.com/nedb)|v1.8.0|11/23/22|Pierre Lehnen |MIT|[CVE-2021-23395](https://github.com/advisories/GHSA-339j-hqgx-qrrx) (High)|
 |[nyc](https://www.npmjs.com/nyc)|v14.1.1|07/03/17|Bradley Hilton |ISC|N/A|
 |[pre-push](https://www.npmjs.com/pre-push)|v0.1.2|11/23/22|Pierre Lehnen |MIT|N/A|
+|[semver](https://www.npmjs.com/semver)|v6.3.1|11/23/22|Pierre Lehnen |ISC|N/A|
 |[stack-trace](https://www.npmjs.com/stack-trace)|v0.0.10|11/23/22|Pierre Lehnen |MIT|N/A|
 |[ts-node](https://www.npmjs.com/ts-node)|v7.0.1|08/31/23|Tasso Evangelista |MIT|N/A|
 |[typedoc](https://www.npmjs.com/typedoc)|v0.24.8|08/31/23|Tasso Evangelista |Apache-2.0|N/A|
@@ -185,4 +217,4 @@ Full tech stack [here](/techstack.md)
 <br/>
 <div align='center'>
 
-Generated via [Stack File](https://github.com/apps/stack-file)
+Generated via [Stack File](https://github.com/marketplace/stack-file)
