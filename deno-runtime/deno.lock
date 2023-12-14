@@ -7,6 +7,7 @@
       "npm:acorn@8.10.0": "npm:acorn@8.10.0",
       "npm:astring@1.8.6": "npm:astring@1.8.6",
       "npm:jsonrpc-lite@2.2.0": "npm:jsonrpc-lite@2.2.0",
+      "npm:stack-trace": "npm:stack-trace@0.0.10",
       "npm:uuid@8.3.2": "npm:uuid@8.3.2"
     },
     "npm": {
@@ -34,6 +35,10 @@
       },
       "jsonrpc-lite@2.2.0": {
         "integrity": "sha512-/cbbSxtZWs1O7R4tWqabrCM/t3N8qKUZMAg9IUqpPvUs6UyRvm6pCNYkskyKN/XU0UgffW+NY2ZRr8t0AknX7g==",
+        "dependencies": {}
+      },
+      "stack-trace@0.0.10": {
+        "integrity": "sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==",
         "dependencies": {}
       },
       "uuid@8.3.2": {

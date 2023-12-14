@@ -13,6 +13,7 @@ import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
 import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
 import * as Messenger from "./lib/messenger.ts";
 import { AppObjectRegistry } from "./AppObjectRegistry.ts";
+import { Logger } from "./lib/logger.ts";
 
 const require = createRequire(import.meta.url);
 
@@ -60,7 +61,8 @@ async function handlInitializeApp({ id, source }: { id: string; source: string }
     const exports = await wrapAppCode(source)(require);
     // This is the same naive logic we've been using in the App Compiler
     const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, console, AppAccessorsInstance.getDefaultAppAccessors());
+    const logger = AppObjectRegistry.get('logger');
+    const app = new appClass({ author: {} }, logger, AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
@@ -97,6 +99,11 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
     }
 
     const { id, method, params } = payload;
+
+    const appId: string = method === 'construct' ? (params as Array<string>)[0] : AppObjectRegistry.get('id') as string;
+
+    const logger = new Logger(method, appId);
+    AppObjectRegistry.set('logger', logger);
 
     switch (method) {
         case 'construct': {

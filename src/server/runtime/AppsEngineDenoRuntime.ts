@@ -6,6 +6,7 @@ import * as jsonrpc from 'jsonrpc-lite';
 
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { AppManager } from '../AppManager';
+import type { AppLogStorage } from '../storage';
 import type { AppBridges } from '../bridges';
 
 export type AppRuntimeParams = {
@@ -72,6 +73,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly api: AppApiManager;
 
+    private readonly logStorage: AppLogStorage;
+
     private readonly bridges: AppBridges;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
@@ -94,6 +97,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.accessors = manager.getAccessorManager();
         this.api = manager.getApiManager();
+        this.logStorage = manager.getLogStorage();
         this.bridges = manager.getBridges();
     }
 
@@ -309,6 +313,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         if (message.type === 'success') {
             param = message.payload.result;
+            const { value, logs } = param as any;
+            param = value;
+
+            this.logStorage.storeEntries(logs);
         } else {
             param = message.payload.error;
         }
@@ -356,7 +364,9 @@ type ExecRequestContext = {
 export class AppsEngineDenoRuntime {
     private readonly subprocesses: Record<string, DenoRuntimeSubprocessController> = {};
 
-    constructor(private readonly manager: AppManager) {}
+    private manager: AppManager;
+
+    // constructor(private readonly manager: AppManager) {}
 
     public async startRuntimeForApp({ appId, appSource }: AppRuntimeParams, options = { force: false }): Promise<void> {
         if (appId in this.subprocesses && !options.force) {
