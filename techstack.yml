@@ -1,11 +1,11 @@
 repo_name: RocketChat/Rocket.Chat.Apps-engine
-report_id: 82d774f21b741d9e2934679c77a58464
+report_id: c2847c1a8de7ef0f89bcbf4eff02e20e
 repo_type: Public
-timestamp: '2023-11-09T14:41:16+00:00'
+timestamp: '2023-12-14T09:31:02+00:00'
 requested_by: d-gubert
 provider: github
 branch: alpha
-detected_tools_count: 35
+detected_tools_count: 37
 tools:
 - name: JavaScript
   description: Lightweight, interpreted, object-oriented language with first-class
@@ -52,6 +52,18 @@ tools:
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
+- name: NeDB
+  description: Simple in-app or in-browser pure javascript database
+  website_url: https://github.com/louischatriot/nedb
+  license: MIT
+  open_source: true
+  hosted_saas: false
+  category: Data Stores
+  sub_category: Databases
+  image_url: https://img.stackshare.io/service/5859/ne.jpg
+  detection_source: package.json
+  last_updated_by: Bradley Hilton
+  last_updated_on: 2017-07-03 18:24:22.000000000 Z
 - name: Browserify
   description: Browser-side require() the node.js way
   website_url: http://browserify.org/
@@ -62,7 +74,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Front End Package Manager
   image_url: https://img.stackshare.io/service/849/9esmqty2.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -95,7 +107,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Continuous Integration
   image_url: https://img.stackshare.io/service/11563/actions.png
-  detection_source: ".github/workflows/codeql-analysis.yml"
+  detection_source: ".github/workflows/build_and_test.yml"
   last_updated_by: Rodrigo Nascimento
   last_updated_on: 2022-08-18 00:38:08.000000000 Z
 - name: NuGet
@@ -131,7 +143,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: JS Build Tools / JS Task Runners
   image_url: https://img.stackshare.io/service/844/iruTC031.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -146,6 +158,15 @@ tools:
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
+- name: HTML
+  description: Hypertext Markup Language for creating web pages.
+  website_url: http://
+  open_source: false
+  hosted_saas: false
+  image_url: https://img.stackshare.io/service/2270/no-img-open-source.png
+  detection_source: docs/classes/App.App.html
+  last_updated_by: Tasso Evangelista
+  last_updated_on: 2023-08-31 17:55:12.000000000 Z
 - name: "@types/node"
   description: TypeScript definitions for Node.js
   package_url: https://www.npmjs.com/@types/node
@@ -156,7 +177,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15809/default_5e5e8ac63beda29f31f1844df64d4b8247570a66.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -170,7 +191,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16694/default_4b738bf1758d38dddd276589bbea47fca5a990df.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -184,7 +205,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16257/default_ab17554b7e80af3d234b14168ed61e75d43f8eee.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -198,7 +219,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15982/default_8b5680d4e916298d08363c291a0d6e34c07ceb15.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -212,7 +233,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15980/default_732016a20524708efe7a4c77497fe9bfeea19ba6.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -227,7 +248,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16663/default_e654289254bcb9b55e3dca992739e962dc0c7297.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -241,7 +262,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/18519/default_322e81fd717d0d158a53deaa1bfac3577d9fc2b2.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -255,7 +276,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15907/default_a582b9fecca65f37fe68520c8f84d3bcae35db24.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -269,7 +290,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16313/default_f130429ee56156823c8c6e94da6fb7aa07f07ba5.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -283,7 +304,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16370/default_22cf6cee54c697b5a223902962cc57a55ee80be9.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -297,7 +318,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15958/default_4040fefea2f98006727f63d042275b96a275ab2d.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -311,7 +332,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16141/default_73326c44fbfa7369fd17573edb113e5d849468bc.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -325,7 +346,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16118/default_f905d9556a0330de59b502a579c1f5c4be2b48bf.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -339,7 +360,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16539/default_50be6a65e5f7390c20dda2f19371abc1271db012.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -353,31 +374,10 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16389/default_f1e46d83300118af569c79b07f85830bc788c2d1.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
-- name: nedb
-  description: File-based embedded data store for node.js
-  package_url: https://www.npmjs.com/nedb
-  version: 1.8.0
-  license: MIT
-  open_source: true
-  hosted_saas: false
-  category: Libraries
-  sub_category: npm Packages
-  image_url: https://img.stackshare.io/package/17153/default_0ffbf6d9ee2940fe94be8424fd9afff068fff458.png
-  detection_source_url: package-lock.json
-  detection_source: package.json
-  last_updated_by: Pierre Lehnen
-  last_updated_on: 2022-11-23 16:42:32.000000000 Z
-  vulnerabilities:
-  - name: Prototype Pollution in nedb
-    cve_id: CVE-2021-23395
-    cve_url: https://github.com/advisories/GHSA-339j-hqgx-qrrx
-    detected_date: Aug 22
-    severity: high
-    first_patched: 
 - name: nyc
   description: The Istanbul command line interface
   package_url: https://www.npmjs.com/nyc
@@ -388,7 +388,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15837/default_1d65e37e65b7f80761374f0202776043277d505d.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -402,7 +402,21 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/18373/default_6da9f8de2035c7ad69ecf412df9fe80b73f9797a.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
+  detection_source: package.json
+  last_updated_by: Pierre Lehnen
+  last_updated_on: 2022-11-23 16:42:32.000000000 Z
+- name: semver
+  description: The semantic version parser used by npm
+  package_url: https://www.npmjs.com/semver
+  version: 6.3.1
+  license: ISC
+  open_source: true
+  hosted_saas: false
+  category: Libraries
+  sub_category: npm Packages
+  image_url: https://img.stackshare.io/package/18809/default_dad3dc9dde4b82dc2a7bd32aa091165887abe57b.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -416,7 +430,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/17627/default_a2ed0e6920692a262585bcb41289d278d6e5223e.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -430,7 +444,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15830/default_6743ba96cf149a3c3c68a185199f9705d6eff80e.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -444,7 +458,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15983/default_8b5680d4e916298d08363c291a0d6e34c07ceb15.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
@@ -458,7 +472,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/16242/default_380ae3d73e22c7ca1f42b96479bcd0095dabc0d3.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Pierre Lehnen
   last_updated_on: 2022-11-23 16:42:32.000000000 Z
@@ -472,7 +486,7 @@ tools:
   category: Libraries
   sub_category: npm Packages
   image_url: https://img.stackshare.io/package/15916/default_e0a4fb1126d7400f419f0931cf1669947a5bc552.png
-  detection_source_url: package-lock.json
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package-lock.json
   detection_source: package.json
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
