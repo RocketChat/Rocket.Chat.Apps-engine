@@ -13,6 +13,7 @@ import { sanitizeDeprecatedUsage } from './lib/sanitizeDeprecatedUsage.ts';
 import { AppAccessorsInstance } from './lib/accessors/mod.ts';
 import * as Messenger from './lib/messenger.ts';
 import { AppObjectRegistry } from './AppObjectRegistry.ts';
+import { Logger } from "./lib/logger.ts";
 
 import type { IParseAppPackageResult } from '@rocket.chat/apps-engine/server/compiler/IParseAppPackageResult.ts';
 
@@ -63,8 +64,9 @@ async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<v
     // Applying the correct type here is quite difficult because of the dynamic nature of the code
     // deno-lint-ignore no-explicit-any
     const appClass = Object.values(exports)[0] as any;
+    const logger = AppObjectRegistry.get('logger');
 
-    const app = new appClass(appPackage.info, console, AppAccessorsInstance.getDefaultAppAccessors());
+    const app = new appClass(appPackage.info, logger, AppAccessorsInstance.getDefaultAppAccessors());
 
     if (typeof app.getName !== 'function') {
         throw new Error('App must contain a getName function');
@@ -101,6 +103,11 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
     }
 
     const { id, method, params } = payload;
+
+    const appId: string = method === 'construct' ? (params as Array<string>)[0] : AppObjectRegistry.get('id') as string;
+
+    const logger = new Logger(method, appId);
+    AppObjectRegistry.set('logger', logger);
 
     switch (method) {
         case 'app:construct': {

@@ -37,6 +37,7 @@ import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
 import { AppRuntimeManager } from './managers/AppRuntimeManager';
 import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
+import { AppConsole } from './logging';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -271,7 +272,7 @@ export class AppManager {
 
                 const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
                 app.getLogger().error(e);
-                await this.logStorage.storeEntries(app.getID(), app.getLogger());
+                await this.logStorage.storeEntries(AppConsole.toStorageEntry(app.getID(), app.getLogger()));
 
                 const prl = new ProxiedApp(this, item, {} as DenoRuntimeSubprocessController);
                 this.apps.set(item.id, prl);

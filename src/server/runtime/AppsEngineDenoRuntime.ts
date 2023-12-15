@@ -5,6 +5,7 @@ import { EventEmitter } from 'stream';
 import * as jsonrpc from 'jsonrpc-lite';
 
 import type { AppManager } from '../AppManager';
+import type { AppLogStorage } from '../storage';
 import type { AppBridges } from '../bridges';
 import type { IParseAppPackageResult } from '../compiler';
 import type { AppStatus } from '../../definition/AppStatus';
@@ -69,6 +70,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly api: AppApiManager;
 
+    private readonly logStorage: AppLogStorage;
+
     private readonly bridges: AppBridges;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
@@ -91,6 +94,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.accessors = manager.getAccessorManager();
         this.api = manager.getApiManager();
+        this.logStorage = manager.getLogStorage();
         this.bridges = manager.getBridges();
     }
 
@@ -313,6 +317,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         if (message.type === 'success') {
             param = message.payload.result;
+            const { value, logs } = param as any;
+            param = value;
+
+            this.logStorage.storeEntries(logs);
         } else {
             param = message.payload.error;
         }

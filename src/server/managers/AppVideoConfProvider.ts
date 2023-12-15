@@ -3,6 +3,7 @@ import type { IBlock } from '../../definition/uikit';
 import type { VideoConference } from '../../definition/videoConferences';
 import type { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
+import { AppConsole } from '../logging';
 import type { ProxiedApp } from '../ProxiedApp';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
@@ -116,7 +117,7 @@ export class AppVideoConfProvider {
         }
 
         try {
-            await logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(AppConsole.toStorageEntry(this.app.getID(), logger));
         } catch (e) {
             // Don't care, at the moment.
             // TODO: Evaluate to determine if we do care

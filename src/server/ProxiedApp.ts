@@ -63,6 +63,8 @@ export class ProxiedApp implements IApp {
             logger.error('Error:', e);
 
             throw e;
+        } finally {
+            await this.manager.getLogStorage().storeEntries(AppConsole.toStorageEntry(this.getID(), logger));
         }
     }
 

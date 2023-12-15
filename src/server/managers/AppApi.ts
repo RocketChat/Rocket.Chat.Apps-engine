@@ -6,6 +6,7 @@ import type { IApiEndpointInfo } from '../../definition/api/IApiEndpointInfo';
 import type { ProxiedApp } from '../ProxiedApp';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
+import { AppConsole } from '../logging';
 
 export class AppApi {
     public readonly computedPath: string;
@@ -83,12 +84,12 @@ export class AppApi {
                 ],
             });
             logger.debug(`${path}'s ${method} was successfully executed.`);
-            await logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(AppConsole.toStorageEntry(this.app.getID(), logger));
             return result;
         } catch (e) {
             logger.error(e);
             logger.debug(`${path}'s ${method} was unsuccessful.`);
-            await logStorage.storeEntries(this.app.getID(), logger);
+            await logStorage.storeEntries(AppConsole.toStorageEntry(this.app.getID(), logger));
             throw e;
         }
     }
