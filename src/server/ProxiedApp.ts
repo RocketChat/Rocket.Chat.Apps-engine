@@ -1,15 +1,13 @@
 import type { IAppAccessors, ILogger } from '../definition/accessors';
-import type { App } from '../definition/App';
-import type { AppStatus } from '../definition/AppStatus';
-import { AppsEngineException } from '../definition/exceptions';
+import { AppStatus } from '../definition/AppStatus';
 import type { IApp } from '../definition/IApp';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppMethod } from '../definition/metadata';
 import type { AppManager } from './AppManager';
-import { NotEnoughMethodArgumentsError } from './errors';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
+import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
 import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import type { IAppStorageItem } from './storage';
 
@@ -18,21 +16,12 @@ export class ProxiedApp implements IApp {
 
     private latestLicenseValidationResult: AppLicenseValidationResult;
 
-    constructor(
-        private readonly manager: AppManager,
-        private storageItem: IAppStorageItem,
-        private readonly app: App,
-        private readonly runtime: AppsEngineRuntime,
-    ) {
+    constructor(private readonly manager: AppManager, private storageItem: IAppStorageItem, private readonly appRuntime: DenoRuntimeSubprocessController) {
         this.previousStatus = storageItem.status;
     }
 
     public getRuntime(): AppsEngineRuntime {
-        return this.runtime;
-    }
-
-    public getApp(): App {
-        return this.app;
+        return this.manager.getRuntime();
     }
 
     public getStorageItem(): IAppStorageItem {
@@ -52,51 +41,36 @@ export class ProxiedApp implements IApp {
     }
 
     public hasMethod(method: AppMethod): boolean {
-        return typeof (this.app as any)[method] === 'function';
+        return true; // TODO: needs refactor, remove usages
     }
 
     public setupLogger(method: `${AppMethod}`): AppConsole {
         const logger = new AppConsole(method);
-        // Set the logger to our new one
-        (this.app as any).logger = logger;
 
         return logger;
     }
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
-        if (typeof (this.app as any)[method] !== 'function') {
-            throw new Error(`The App ${this.app.getName()} (${this.app.getID()} does not have the method: "${method}"`);
-        }
-
-        const methodDeclartion = (this.app as any)[method] as (...args: any[]) => any;
-        if (args.length < methodDeclartion.length) {
-            throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
-        }
-
         const logger = this.setupLogger(method);
-        logger.debug(`${method} is being called...`);
 
-        let result;
         try {
-            result = await this.runtime.runInSandbox(`module.exports = app.${method}.apply(app, args)`, { app: this.app, args });
-            logger.debug(`'${method}' was successfully called! The result is:`, result);
-        } catch (e) {
-            logger.error(e);
-            logger.debug(`'${method}' was unsuccessful.`);
+            const result = await this.appRuntime.sendRequest({ method, params: args });
 
-            const errorInfo = new AppsEngineException(e.message).getErrorInfo();
-            if (e.name === errorInfo.name) {
-                throw e;
-            }
+            logger.debug('Result:', result);
+
+            return result;
+        } catch (e) {
+            logger.error('Error:', e);
+
+            throw e;
         } finally {
             await this.manager.getLogStorage().storeEntries(AppConsole.toStorageEntry(this.getID(), logger));
         }
-
-        return result;
     }
 
     public getStatus(): AppStatus {
-        return this.app.getStatus();
+        // return this.appRuntime.getStatus();
+        return AppStatus.UNKNOWN; // TODO: need to circle back on this one
     }
 
     public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {
@@ -108,47 +82,50 @@ export class ProxiedApp implements IApp {
     }
 
     public getName(): string {
-        return this.app.getName();
+        return this.storageItem.info.name;
     }
 
     public getNameSlug(): string {
-        return this.app.getNameSlug();
+        return this.storageItem.info.nameSlug;
     }
 
     public getAppUserUsername(): string {
-        return this.app.getAppUserUsername();
+        // return this.app.getAppUserUsername();
+        return 'some-username'; // TODO: need to circle back on this one
     }
 
     public getID(): string {
-        return this.app.getID();
+        return this.storageItem.id;
     }
 
     public getVersion(): string {
-        return this.app.getVersion();
+        return this.storageItem.info.version;
     }
 
     public getDescription(): string {
-        return this.app.getDescription();
+        return this.storageItem.info.description;
     }
 
     public getRequiredApiVersion(): string {
-        return this.app.getRequiredApiVersion();
+        return this.storageItem.info.requiredApiVersion;
     }
 
     public getAuthorInfo(): IAppAuthorInfo {
-        return this.app.getAuthorInfo();
+        return this.storageItem.info.author;
     }
 
     public getInfo(): IAppInfo {
-        return this.app.getInfo();
+        return this.storageItem.info;
     }
 
     public getLogger(): ILogger {
-        return this.app.getLogger();
+        // return this.app.getLogger();
+        return new AppConsole('constructor'); // TODO: need to circle back on this one
     }
 
     public getAccessors(): IAppAccessors {
-        return this.app.getAccessors();
+        // return this.app.getAccessors();
+        return {} as IAppAccessors; // TODO: need to circle back on this one
     }
 
     public getEssentials(): IAppInfo['essentials'] {

@@ -31,11 +31,12 @@ import type { IMarketplaceInfo } from './marketplace';
 import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
-import { AppsEngineEmptyRuntime } from './runtime/AppsEngineEmptyRuntime';
 import type { IAppStorageItem } from './storage';
 import { AppLogStorage, AppMetadataStorage } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
+import { AppRuntimeManager } from './managers/AppRuntimeManager';
+import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
 import { AppConsole } from './logging';
 
 export interface IAppInstallParameters {
@@ -100,6 +101,8 @@ export class AppManager {
 
     private readonly signatureManager: AppSignatureManager;
 
+    private readonly runtime: AppRuntimeManager;
+
     private isLoaded: boolean;
 
     constructor({ metadataStorage, logStorage, bridges, sourceStorage }: IAppManagerDeps) {
@@ -147,6 +150,7 @@ export class AppManager {
         this.uiActionButtonManager = new UIActionButtonManager(this);
         this.videoConfProviderManager = new AppVideoConfProviderManager(this);
         this.signatureManager = new AppSignatureManager(this);
+        this.runtime = new AppRuntimeManager(this);
 
         this.isLoaded = false;
         AppManager.Instance = this;
@@ -227,6 +231,10 @@ export class AppManager {
         return this.signatureManager;
     }
 
+    public getRuntime(): AppRuntimeManager {
+        return this.runtime;
+    }
+
     /** Gets whether the Apps have been loaded or not. */
     public areAppsLoaded(): boolean {
         return this.isLoaded;
@@ -266,7 +274,7 @@ export class AppManager {
                 app.getLogger().error(e);
                 await this.logStorage.storeEntries(AppConsole.toStorageEntry(app.getID(), app.getLogger()));
 
-                const prl = new ProxiedApp(this, item, app, new AppsEngineEmptyRuntime(app));
+                const prl = new ProxiedApp(this, item, {} as DenoRuntimeSubprocessController);
                 this.apps.set(item.id, prl);
             }
         }
