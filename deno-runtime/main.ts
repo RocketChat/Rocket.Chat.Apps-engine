@@ -55,6 +55,7 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
 }
 
 async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<void> {
+    AppObjectRegistry.set('id', appPackage.info.id);
     const source = sanitizeDeprecatedUsage(appPackage.files[appPackage.info.classFile]);
 
     const require = buildRequire();
@@ -93,7 +94,6 @@ async function handlInitializeApp(appPackage: IParseAppPackageResult): Promise<v
     }
 
     AppObjectRegistry.set('app', app);
-    AppObjectRegistry.set('id', appPackage.info.id);
 }
 
 async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
@@ -104,13 +104,11 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
 
     const { id, method, params } = payload;
 
-    const appId: string = method === 'construct' ? (params as Array<string>)[0] : AppObjectRegistry.get('id') as string;
-
-    const logger = new Logger(method, appId);
+    const logger = new Logger(method);
     AppObjectRegistry.set('logger', logger);
 
-    switch (method) {
-        case 'app:construct': {
+    switch (true) {
+        case method.includes('app:construct'): {
             const [appPackage] = params as [IParseAppPackageResult];
 
             if (!appPackage?.info?.id || !appPackage?.info?.classFile || !appPackage?.files) {
@@ -162,7 +160,7 @@ async function main() {
             JSONRPCMessage = Messenger.parseMessage(message);
         } catch (error) {
             if (Messenger.isErrorResponse(error)) {
-                await Messenger.send(error);
+                await Messenger.Transport.send(error);
             } else {
                 await Messenger.sendParseError();
             }

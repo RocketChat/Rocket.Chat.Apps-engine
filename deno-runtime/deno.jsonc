@@ -7,5 +7,6 @@
         "astring": "npm:astring@1.8.6",
         "jsonrpc-lite": "npm:jsonrpc-lite@2.2.0",
         "uuid": "npm:uuid@8.3.2",
+        "stack-trace": "npm:stack-trace@0.0.10",
     }
 }

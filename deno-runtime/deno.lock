@@ -8,6 +8,7 @@
       "npm:astring@1.8.6": "npm:astring@1.8.6",
       "npm:jsonrpc-lite@2.2.0": "npm:jsonrpc-lite@2.2.0",
       "npm:stack-trace": "npm:stack-trace@0.0.10",
+      "npm:stack-trace@0.0.10": "npm:stack-trace@0.0.10",
       "npm:uuid@8.3.2": "npm:uuid@8.3.2"
     },
     "npm": {

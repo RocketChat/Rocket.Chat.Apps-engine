@@ -1,5 +1,16 @@
-import * as stackTrace from 'npm:stack-trace'
-import { StackFrame } from 'npm:stack-trace'
+import stackTrace from 'stack-trace';
+import { AppObjectRegistry } from '../AppObjectRegistry.ts';
+
+export interface StackFrame {
+    getTypeName(): string;
+    getFunctionName(): string;
+    getMethodName(): string;
+    getFileName(): string;
+    getLineNumber(): number;
+    getColumnNumber(): number;
+    isNative(): boolean;
+    isConstructor(): boolean;
+}
 
 enum LogMessageSeverity {
     DEBUG = 'debug',
@@ -16,7 +27,7 @@ type Entry = {
     method: string;
     timestamp: Date;
     args: Array<unknown>;
-}
+};
 
 interface ILoggerStorageEntry {
     appId: string;
@@ -29,40 +40,38 @@ interface ILoggerStorageEntry {
 }
 
 export class Logger {
-    private appId: string;
     private entries: Array<Entry>;
     private start: Date;
     private method: string;
 
-    constructor(method: string, appId: string) {
-        this.appId = appId;
+    constructor(method: string) {
         this.method = method;
         this.entries = [];
         this.start = new Date();
     }
 
     public debug(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.DEBUG, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.DEBUG, this.getStack(stackTrace.get()), ...args);
     }
 
     public info(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.INFORMATION, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.INFORMATION, this.getStack(stackTrace.get()), ...args);
     }
 
     public log(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.LOG, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.LOG, this.getStack(stackTrace.get()), ...args);
     }
 
     public warning(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.WARNING, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.WARNING, this.getStack(stackTrace.get()), ...args);
     }
 
     public error(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.ERROR, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.ERROR, this.getStack(stackTrace.get()), ...args);
     }
 
     public success(...args: Array<unknown>): void {
-        this.addEntry(LogMessageSeverity.SUCCESS, this.getStack(stackTrace.get()), ...args)
+        this.addEntry(LogMessageSeverity.SUCCESS, this.getStack(stackTrace.get()), ...args);
     }
 
     private addEntry(severity: LogMessageSeverity, caller: string, ...items: Array<unknown>): void {
@@ -78,7 +87,6 @@ export class Logger {
             }
             const str = JSON.stringify(args, null, 2);
             return str ? JSON.parse(str) : str; // force call toJSON to prevent circular references
-
         });
 
         this.entries.push({
@@ -122,7 +130,7 @@ export class Logger {
 
     public getLogs(): ILoggerStorageEntry {
         return {
-            appId: this.appId,
+            appId: AppObjectRegistry.get('id')!,
             method: this.method,
             entries: this.entries,
             startTime: this.start,
