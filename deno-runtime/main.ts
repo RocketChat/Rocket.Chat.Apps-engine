@@ -8,16 +8,15 @@ if (!Deno.args.includes('--subprocess')) {
     Deno.exit(1001);
 }
 
-import { createRequire } from 'node:module';
 import { sanitizeDeprecatedUsage } from './lib/sanitizeDeprecatedUsage.ts';
 import { AppAccessorsInstance } from './lib/accessors/mod.ts';
 import * as Messenger from './lib/messenger.ts';
 import { AppObjectRegistry } from './AppObjectRegistry.ts';
-import { Logger } from "./lib/logger.ts";
+import { Logger } from './lib/logger.ts';
+import { require } from './lib/require.ts';
 
 import type { IParseAppPackageResult } from '@rocket.chat/apps-engine/server/compiler/IParseAppPackageResult.ts';
-
-const require = createRequire(import.meta.url);
+import { slashcommandHandler } from './handlers/slashcommand-handler.ts';
 
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
@@ -117,7 +116,14 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
 
             await handlInitializeApp(appPackage);
 
-            Messenger.successResponse({ id, result: 'logs should go here as a response' });
+            Messenger.successResponse({
+                id,
+                result: 'logs should go here as a response',
+            });
+            break;
+        }
+        case method.includes('slashcommand:'): {
+            await slashcommandHandler(method, params);
             break;
         }
         default: {
