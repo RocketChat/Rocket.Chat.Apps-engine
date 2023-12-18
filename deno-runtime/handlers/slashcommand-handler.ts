@@ -1,13 +1,14 @@
 import { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
+import { SlashCommandContext as _SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.ts';
+import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
 import { require } from '../lib/require.ts';
 import { AppAccessors, AppAccessorsInstance } from '../lib/accessors/mod.ts';
 
 // For some reason Deno couldn't understand the typecast to the original interfaces and said it wasn't a constructor type
-// So we're rolling with `any` for now
-const SlashCommandContext = require('@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.js');
-const Room = require('@rocket.chat/apps-engine/server/rooms/Room.js');
+const { SlashCommandContext } = require('@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.js') as { SlashCommandContext: typeof _SlashCommandContext };
+const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as { Room: typeof _Room } ;
 
 const getMockAppManager = (senderFn: AppAccessors['senderFn']) => ({
     getBridges: () => ({
@@ -48,7 +49,7 @@ export default function slashCommandHandler(call: string, params: unknown[]) {
  * @param method The method that is being executed
  * @param params The parameters that are being passed to the method
  */
-function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, method: 'executor' | 'previewer', params: unknown[]) {
+export function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, method: 'executor' | 'previewer', params: unknown[]) {
     const executor = command[method];
 
     if (typeof executor !== 'function') {
@@ -61,7 +62,13 @@ function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: I
 
     const { sender, room, params: args, threadId, triggerId } = params[0] as Record<string, unknown>;
 
-    const context = new SlashCommandContext(sender, new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())), args, threadId, triggerId);
+    const context = new SlashCommandContext(
+        sender as _SlashCommandContext['sender'],
+        new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())),
+        args as _SlashCommandContext['params'],
+        threadId as _SlashCommandContext['threadId'],
+        triggerId as _SlashCommandContext['triggerId'],
+    );
 
     return executor.apply(command, [
         context,
@@ -77,7 +84,7 @@ function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: I
  * @param command The slashcommand that is being executed
  * @param params The parameters that are being passed to the method
  */
-function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, params: unknown[]) {
+export function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, params: unknown[]) {
     if (typeof command.executePreviewItem !== 'function') {
         throw new Error(`Method  not found on slashcommand ${command.command}`);
     }
@@ -88,7 +95,13 @@ function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, command
 
     const [previewItem, { sender, room, params: args, threadId, triggerId }] = params as [Record<string, unknown>, Record<string, unknown>];
 
-    const context = new SlashCommandContext(sender, new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())), args, threadId, triggerId);
+    const context = new SlashCommandContext(
+        sender as _SlashCommandContext['sender'],
+        new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())),
+        args as _SlashCommandContext['params'],
+        threadId as _SlashCommandContext['threadId'],
+        triggerId as _SlashCommandContext['triggerId'],
+    );
 
     return command.executePreviewItem(
         previewItem,
