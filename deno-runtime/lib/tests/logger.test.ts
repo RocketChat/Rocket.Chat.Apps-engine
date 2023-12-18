@@ -4,7 +4,7 @@ import { Logger } from "../logger.ts";
 
 describe('Logger', () => {
     it('getLogs should return an array of entries', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.info('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -12,7 +12,7 @@ describe('Logger', () => {
     })
 
     it('should be able to add entries of different severity', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.info('test');
         logger.debug('test');
         logger.error('test');
@@ -24,7 +24,7 @@ describe('Logger', () => {
     })
 
     it('should be able to add an info entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.info('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -34,7 +34,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an debug entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.debug('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -44,7 +44,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an error entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.error('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -54,7 +54,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an success entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.success('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -64,7 +64,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an warning entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.warning('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -74,7 +74,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an log entry', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.log('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -84,7 +84,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an entry with multiple arguments', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.log('test', 'test', 'test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
@@ -96,7 +96,7 @@ describe('Logger', () => {
     });
 
     it('should be able to add an entry with multiple arguments of different types', () => {
-        const logger = new Logger('test', 'test');
+        const logger = new Logger('test');
         logger.log('test', 1, true, { foo: 'bar' });
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
