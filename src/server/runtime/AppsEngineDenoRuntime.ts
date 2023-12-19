@@ -10,6 +10,7 @@ import type { AppBridges } from '../bridges';
 import type { IParseAppPackageResult } from '../compiler';
 import type { AppStatus } from '../../definition/AppStatus';
 import type { AppAccessorManager, AppApiManager } from '../managers';
+import type { ILoggerStorageEntry } from '../logging';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -133,26 +134,38 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.deno.stdin.write(jsonrpc.request(id, message.method, message.params).serialize());
 
-        return this.waitForResult(id);
+        return this.waitForResponse(id);
     }
 
     private waitUntilReady(): Promise<void> {
         return new Promise((resolve, reject) => {
+            const timeoutId = setTimeout(() => reject(new Error('Timeout: app process not ready')), this.options.timeout);
+
             if (this.state === 'ready') {
+                clearTimeout(timeoutId);
                 return resolve();
             }
 
-            this.once('ready', resolve);
-
-            setTimeout(() => reject(new Error('Timeout: app process not ready')), this.options.timeout);
+            this.once('ready', () => {
+                clearTimeout(timeoutId);
+                return resolve();
+            });
         });
     }
 
-    private waitForResult(id: string): Promise<unknown> {
+    private waitForResponse(id: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            this.once(`result:${id}`, (result: unknown[]) => resolve(result));
+            const timeoutId = setTimeout(() => reject(new Error('Request timed out')), this.options.timeout);
 
-            setTimeout(() => reject(new Error('Request timed out')), this.options.timeout);
+            this.once(`result:${id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
+                clearTimeout(timeoutId);
+
+                if (error) {
+                    reject(error);
+                }
+
+                resolve(result);
+            });
         });
     }
 
@@ -313,19 +326,22 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private async handleResultMessage(message: jsonrpc.IParsedObjectError | jsonrpc.IParsedObjectSuccess): Promise<void> {
         const { id } = message.payload;
 
-        let param;
+        let result: unknown;
+        let error: jsonrpc.IParsedObjectError['payload']['error'] | undefined;
+        let logs: ILoggerStorageEntry;
 
         if (message.type === 'success') {
-            param = message.payload.result;
-            const { value, logs } = param as any;
-            param = value;
-
-            this.logStorage.storeEntries(logs);
+            const params = message.payload.result as { value: unknown; logs: ILoggerStorageEntry };
+            result = params.value;
+            logs = params.logs as ILoggerStorageEntry;
         } else {
-            param = message.payload.error;
+            error = message.payload.error;
+            logs = message.payload.error.data?.logs as ILoggerStorageEntry;
         }
 
-        this.emit(`result:${id}`, param);
+        this.logStorage.storeEntries(logs);
+
+        this.emit(`result:${id}`, result, error);
     }
 
     private async parseOutput(chunk: Buffer): Promise<void> {
