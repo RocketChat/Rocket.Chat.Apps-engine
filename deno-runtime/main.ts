@@ -16,7 +16,8 @@ import { Logger } from './lib/logger.ts';
 import { require } from './lib/require.ts';
 
 import type { IParseAppPackageResult } from '@rocket.chat/apps-engine/server/compiler/IParseAppPackageResult.ts';
-import { slashcommandHandler } from './handlers/slashcommand-handler.ts';
+import slashcommandHandler from './handlers/slashcommand-handler.ts';
+import { JsonRpcError } from "jsonrpc-lite";
 
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
@@ -123,8 +124,13 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
             break;
         }
         case method.includes('slashcommand:'): {
-            await slashcommandHandler(method, params);
-            break;
+            const result = await slashcommandHandler(method, params);
+
+            if (result instanceof JsonRpcError) {
+                return Messenger.errorResponse({ id, error: result });
+            }
+
+            return Messenger.successResponse({ id, result });
         }
         default: {
             Messenger.errorResponse({

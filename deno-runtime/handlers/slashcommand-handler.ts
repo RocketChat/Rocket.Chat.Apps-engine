@@ -5,6 +5,7 @@ import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
 import { require } from '../lib/require.ts';
 import { AppAccessors, AppAccessorsInstance } from '../lib/accessors/mod.ts';
+import { Defined, JsonRpcError } from "jsonrpc-lite";
 
 // For some reason Deno couldn't understand the typecast to the original interfaces and said it wasn't a constructor type
 const { SlashCommandContext } = require('@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.js') as { SlashCommandContext: typeof _SlashCommandContext };
@@ -23,24 +24,30 @@ const getMockAppManager = (senderFn: AppAccessors['senderFn']) => ({
     }),
 });
 
-export default function slashCommandHandler(call: string, params: unknown[]) {
+export default async function slashCommandHandler(call: string, params: unknown): Promise<JsonRpcError | Defined> {
     const [, commandName, method] = call.split(':');
 
     const command = AppObjectRegistry.get<ISlashCommand>(`slashcommand:${commandName}`);
 
     if (!command) {
-        throw new Error(`Slashcommand ${command} not found`, { cause: [1, 2, 3] });
+        return new JsonRpcError(`Slashcommand ${commandName} not found`, -32000);
     }
 
-    if (method === 'executor' || method === 'previewer') {
-        return handleExecutor({ AppAccessorsInstance }, command, method, params);
+    let result: Awaited<ReturnType<typeof handleExecutor>> | Awaited<ReturnType<typeof handlePreviewItem>>;
+
+    try {
+        if (method === 'executor' || method === 'previewer') {
+            result = await handleExecutor({ AppAccessorsInstance }, command, method, params);
+        } else if (method === 'executePreviewItem') {
+            result = await handlePreviewItem({ AppAccessorsInstance }, command, params);
+        } else {
+            return new JsonRpcError(`Method ${method} not found on slashcommand ${commandName}`, -32000);
+        }
+    } catch (error) {
+        return new JsonRpcError(error.message, -32000);
     }
 
-    if (method === 'executePreviewItem') {
-        return handlePreviewItem({ AppAccessorsInstance }, command, params);
-    }
-
-    throw new Error(`Method ${method} not found on slashcommand ${commandName}`);
+    return result;
 }
 
 /**
@@ -49,14 +56,14 @@ export default function slashCommandHandler(call: string, params: unknown[]) {
  * @param method The method that is being executed
  * @param params The parameters that are being passed to the method
  */
-export function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, method: 'executor' | 'previewer', params: unknown[]) {
+export function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, method: 'executor' | 'previewer', params: unknown) {
     const executor = command[method];
 
     if (typeof executor !== 'function') {
         throw new Error(`Method ${method} not found on slashcommand ${command.command}`);
     }
 
-    if (typeof params[0] !== 'object' || !params[0]) {
+    if (!Array.isArray(params) || typeof params[0] !== 'object' || !params[0]) {
         throw new Error(`First parameter must be an object`);
     }
 
@@ -84,12 +91,12 @@ export function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, com
  * @param command The slashcommand that is being executed
  * @param params The parameters that are being passed to the method
  */
-export function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, params: unknown[]) {
+export function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, command: ISlashCommand, params: unknown) {
     if (typeof command.executePreviewItem !== 'function') {
         throw new Error(`Method  not found on slashcommand ${command.command}`);
     }
 
-    if (typeof params[0] !== 'object' || !params[0]) {
+    if (!Array.isArray(params) || typeof params[0] !== 'object' || !params[0]) {
         throw new Error(`First parameter must be an object`);
     }
 
