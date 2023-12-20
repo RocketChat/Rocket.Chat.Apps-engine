@@ -375,7 +375,7 @@ export class AppSlashCommandManager {
         return result;
     }
 
-    public async executePreview(command: string, previewItem: ISlashCommandPreviewItem, context: SlashCommandContext): Promise<ISlashCommandPreview> {
+    public async executePreview(command: string, previewItem: ISlashCommandPreviewItem, context: SlashCommandContext): Promise<void> {
         const cmd = command.toLowerCase().trim();
 
         if (!this.shouldCommandFunctionsRun(cmd)) {

@@ -58,8 +58,8 @@ export class AppSlashCommand {
 
     private async runTheCode(
         method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
-        logStorage: AppLogStorage,
-        accessors: AppAccessorManager,
+        _logStorage: AppLogStorage,
+        _accessors: AppAccessorManager,
         context: SlashCommandContext,
         runContextArgs: Array<any>,
     ): Promise<void | ISlashCommandPreview> {
@@ -75,6 +75,7 @@ export class AppSlashCommand {
         } catch (e) {
             // @TODO this needs to be revisited
             console.error(e);
+            throw e;
         }
     }
 }
