@@ -9,7 +9,8 @@ import { Logger } from '../logger.ts';
 describe('Messenger', () => {
     beforeEach(() => {
         AppObjectRegistry.clear();
-        AppObjectRegistry.set('logger', new Logger('test', 'test'));
+        AppObjectRegistry.set('logger', new Logger('test'));
+        AppObjectRegistry.set('id', 'test');
         Messenger.Transport.selectTransport('noop');
     });
 

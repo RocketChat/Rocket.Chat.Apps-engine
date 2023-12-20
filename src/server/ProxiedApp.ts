@@ -24,6 +24,10 @@ export class ProxiedApp implements IApp {
         return this.manager.getRuntime();
     }
 
+    public getDenoRuntime(): DenoRuntimeSubprocessController {
+        return this.appRuntime;
+    }
+
     public getStorageItem(): IAppStorageItem {
         return this.storageItem;
     }

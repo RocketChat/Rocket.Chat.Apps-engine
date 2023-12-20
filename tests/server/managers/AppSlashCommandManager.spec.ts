@@ -20,6 +20,7 @@ import type { ProxiedApp } from '../../../src/server/ProxiedApp';
 import { Room } from '../../../src/server/rooms/Room';
 import type { AppsEngineRuntime } from '../../../src/server/runtime/AppsEngineRuntime';
 import type { AppLogStorage } from '../../../src/server/storage';
+import type { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
 
 export class AppSlashCommandManagerTestFixture {
     public static doThrow = false;
@@ -41,6 +42,11 @@ export class AppSlashCommandManagerTestFixture {
         this.mockApp = {
             getRuntime() {
                 return {} as AppsEngineRuntime;
+            },
+            getDenoRuntime() {
+                return {
+                    sendRequest: () => {},
+                } as unknown as DenoRuntimeSubprocessController;
             },
             getID() {
                 return 'testing';

@@ -52,6 +52,10 @@ export class AppAccessors {
             ) as T;
     }
 
+    public getSenderFn() {
+        return this.senderFn;
+    }
+
     public getEnvironmentRead(): IEnvironmentRead {
         if (!this.environmentRead) {
             this.environmentRead = {
