@@ -914,14 +914,12 @@ export class AppManager {
 
     private async initializeApp(storageItem: IAppStorageItem, app: ProxiedApp, saveToDb = true, silenceStatus = false): Promise<boolean> {
         let result: boolean;
-        const configExtend = this.getAccessorManager().getConfigurationExtend(storageItem.id);
-        const envRead = this.getAccessorManager().getEnvironmentRead(storageItem.id);
 
         try {
             await app.validateLicense();
             await app.validateInstallation();
 
-            await app.call(AppMethod.INITIALIZE, configExtend, envRead);
+            await app.call(AppMethod.INITIALIZE);
             await app.setStatus(AppStatus.INITIALIZED, silenceStatus);
 
             result = true;

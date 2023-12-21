@@ -55,21 +55,7 @@ export class ProxiedApp implements IApp {
     }
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
-        const logger = this.setupLogger(method);
-
-        try {
-            const result = await this.appRuntime.sendRequest({ method, params: args });
-
-            logger.debug('Result:', result);
-
-            return result;
-        } catch (e) {
-            logger.error('Error:', e);
-
-            throw e;
-        } finally {
-            await this.manager.getLogStorage().storeEntries(AppConsole.toStorageEntry(this.getID(), logger));
-        }
+        return this.appRuntime.sendRequest({ method: `app:${method }`, params: args });
     }
 
     public getStatus(): AppStatus {
