@@ -39,6 +39,8 @@ export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCE
     return ALLOWED_ACCESSOR_METHODS.includes(accessor as any);
 }
 
+const MESSAGE_SEPARATOR = 'OkFQUF9TRVA6';
+
 /**
  * Resolves the absolute path of the Deno executable
  * installed by deno-bin.
@@ -86,7 +88,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const denoWrapperPath = getDenoWrapperPath();
             const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess', appPackage.info.id]);
+            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess', MESSAGE_SEPARATOR]);
 
             this.setupListeners();
         } catch {
@@ -99,6 +101,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.bridges = manager.getBridges();
     }
 
+    // Debug purposes, could be deleted later
     emit(eventName: string | symbol, ...args: any[]): boolean {
         const hadListeners = super.emit(eventName, ...args);
 
@@ -132,7 +135,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
         const id = String(Math.random()).substring(2);
 
-        this.deno.stdin.write(jsonrpc.request(id, message.method, message.params).serialize());
+        const request = jsonrpc.request(id, message.method, message.params);
+
+        this.deno.stdin.write(request.serialize());
 
         return this.waitForResponse(id);
     }
@@ -339,35 +344,48 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             logs = message.payload.error.data?.logs as ILoggerStorageEntry;
         }
 
-        this.logStorage.storeEntries(logs);
+        await this.logStorage.storeEntries(logs);
 
         this.emit(`result:${id}`, result, error);
     }
 
     private async parseOutput(chunk: Buffer): Promise<void> {
-        let message;
+        // Chunk can be multiple JSONRpc messages as the stdout read stream can buffer multiple messages
+        const messages = chunk.toString().split(MESSAGE_SEPARATOR);
 
-        try {
-            message = jsonrpc.parse(chunk.toString());
-
-            if (Array.isArray(message)) {
-                throw new Error('Invalid message format');
-            }
-
-            if (message.type === 'request' || message.type === 'notification') {
-                return this.handleIncomingMessage(message);
-            }
-
-            if (message.type === 'success' || message.type === 'error') {
-                return this.handleResultMessage(message);
-            }
-
-            throw new Error();
-        } catch {
-            console.error('Invalid message format. What to do?', chunk.toString());
-        } finally {
-            console.log({ message });
+        if (messages.length < 2) {
+            console.error('Invalid message format', messages);
+            return;
         }
+
+        messages.forEach(async (m) => {
+            if (!m.length) return;
+
+            try {
+                const message = jsonrpc.parse(m);
+
+                if (Array.isArray(message)) {
+                    throw new Error('Invalid message format');
+                }
+
+                if (message.type === 'request' || message.type === 'notification') {
+                    return await this.handleIncomingMessage(message);
+                }
+
+                if (message.type === 'success' || message.type === 'error') {
+                    return await this.handleResultMessage(message);
+                }
+
+                console.error('Unrecognized message type', message);
+            } catch (e) {
+                // SyntaxError is thrown when the message is not a valid JSON
+                if (e instanceof SyntaxError) {
+                    return console.error('Failed to parse message', m);
+                }
+
+                console.error('Error executing handler', e);
+            }
+        });
     }
 
     private async parseError(chunk: Buffer): Promise<void> {
