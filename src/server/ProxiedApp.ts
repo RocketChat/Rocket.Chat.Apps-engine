@@ -55,7 +55,7 @@ export class ProxiedApp implements IApp {
     }
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
-        return this.appRuntime.sendRequest({ method: `app:${method }`, params: args });
+        return this.appRuntime.sendRequest({ method: `app:${method}`, params: args });
     }
 
     public getStatus(): AppStatus {
