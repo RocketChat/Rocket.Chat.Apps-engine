@@ -17,7 +17,7 @@ import { Logger } from './lib/logger.ts';
 import slashcommandHandler from './handlers/slashcommand-handler.ts';
 import handleApp from './handlers/app/handler.ts';
 
-async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
+async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     // We're not handling notifications at the moment
     if (type === 'notification') {
         return Messenger.sendInvalidRequestError();
@@ -97,7 +97,7 @@ async function main() {
         }
 
         if (Messenger.isRequest(JSONRPCMessage)) {
-            await handleRequest(JSONRPCMessage);
+            await requestRouter(JSONRPCMessage);
         }
 
         if (Messenger.isResponse(JSONRPCMessage)) {

@@ -40,7 +40,7 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
     ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
 }
 
-export async function handlInitializeApp(params: unknown): Promise<boolean> {
+export default async function handleConstructApp(params: unknown): Promise<boolean> {
     if (!Array.isArray(params)) {
         throw new Error('Invalid params', { cause: 'invalid_param_type' });
     }
