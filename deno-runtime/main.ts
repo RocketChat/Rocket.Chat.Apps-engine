@@ -17,6 +17,8 @@ import { Logger } from './lib/logger.ts';
 import slashcommandHandler from './handlers/slashcommand-handler.ts';
 import handleApp from './handlers/app/handler.ts';
 
+AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
+
 async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     // We're not handling notifications at the moment
     if (type === 'notification') {
