@@ -19,7 +19,7 @@ import handleApp from './handlers/app/handler.ts';
 
 AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
 
-async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
+async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     // We're not handling notifications at the moment
     if (type === 'notification') {
         return Messenger.sendInvalidRequestError();
@@ -99,7 +99,7 @@ async function main() {
         }
 
         if (Messenger.isRequest(JSONRPCMessage)) {
-            await handleRequest(JSONRPCMessage);
+            await requestRouter(JSONRPCMessage);
         }
 
         if (Messenger.isResponse(JSONRPCMessage)) {
