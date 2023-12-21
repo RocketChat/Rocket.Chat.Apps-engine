@@ -120,7 +120,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     public async setupApp() {
         await this.waitUntilReady();
 
-        this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
+        await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
     public async stopApp() {
@@ -155,7 +155,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private waitForResponse(id: string): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => reject(new Error('Request timed out')), this.options.timeout);
+            const timeoutId = setTimeout(() => reject(new Error(`Request "${id}" timed out`)), this.options.timeout);
 
             this.once(`result:${id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
@@ -169,7 +169,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         });
     }
 
-    private async onReady(): Promise<void> {
+    private onReady(): void {
         this.state = 'ready';
     }
 

@@ -19,7 +19,7 @@ function buildRequire(): (module: string) => unknown {
         }
 
         if (module.startsWith('@rocket.chat/apps-engine')) {
-            const path = module.replace('@rocket.chat/apps-engine/', new URL('..', import.meta.url).pathname).concat('.js');
+            const path = module.concat('.js');
             return require(path);
         }
 
