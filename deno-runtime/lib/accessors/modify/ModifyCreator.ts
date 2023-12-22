@@ -44,6 +44,10 @@ export class ModifyCreator implements IModifyCreator {
                         return () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
                     }
 
+                    if (prop === 'toJSON') {
+                        return () => ({});
+                    }
+
                     return (...params: unknown[]) =>
                         this.senderFn({
                             method: `accessor:getModifier:getCreator:getLivechatCreator:${prop}`,
@@ -61,10 +65,12 @@ export class ModifyCreator implements IModifyCreator {
                 get:
                     (_target: unknown, prop: string) =>
                     (...params: unknown[]) =>
-                        this.senderFn({
-                            method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
-                            params,
-                        }),
+                        prop === 'toJSON'
+                            ? {}
+                            : this.senderFn({
+                                  method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
+                                  params,
+                              }),
             },
         ) as IUploadCreator;
     }

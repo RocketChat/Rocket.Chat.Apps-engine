@@ -32,10 +32,12 @@ export class ModifyUpdater implements IModifyUpdater {
                 get:
                     (_target: unknown, prop: string) =>
                     (...params: unknown[]) =>
-                        this.senderFn({
-                            method: `accessor:getModifier:getUpdater:getLivechatUpdater:${prop}`,
-                            params,
-                        }),
+                        prop === 'toJSON'
+                            ? {}
+                            : this.senderFn({
+                                  method: `accessor:getModifier:getUpdater:getLivechatUpdater:${prop}`,
+                                  params,
+                              }),
             },
         ) as ILivechatUpdater;
     }
@@ -47,10 +49,12 @@ export class ModifyUpdater implements IModifyUpdater {
                 get:
                     (_target: unknown, prop: string) =>
                     (...params: unknown[]) =>
-                        this.senderFn({
-                            method: `accessor:getModifier:getUpdater:getUserUpdater:${prop}`,
-                            params,
-                        }),
+                        prop === 'toJSON'
+                            ? {}
+                            : this.senderFn({
+                                  method: `accessor:getModifier:getUpdater:getUserUpdater:${prop}`,
+                                  params,
+                              }),
             },
         ) as IUserUpdater;
     }

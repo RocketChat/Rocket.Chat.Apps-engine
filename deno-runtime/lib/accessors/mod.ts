@@ -14,9 +14,9 @@ import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/vid
 
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
-import { ModifyCreator } from "./modify/ModifyCreator.ts";
-import { ModifyUpdater } from "./modify/ModifyUpdater.ts";
-import { ModifyExtender } from "./modify/ModifyExtender.ts";
+import { ModifyCreator } from './modify/ModifyCreator.ts';
+import { ModifyUpdater } from './modify/ModifyUpdater.ts';
+import { ModifyExtender } from './modify/ModifyExtender.ts';
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -44,10 +44,12 @@ export class AppAccessors {
                     get:
                         (_target: unknown, prop: string) =>
                         (...params: unknown[]) =>
-                            senderFn({
-                                method: `accessor:${namespace}:${prop}`,
-                                params,
-                            }),
+                            prop === 'toJSON'
+                                ? {}
+                                : senderFn({
+                                      method: `accessor:${namespace}:${prop}`,
+                                      params,
+                                  }),
                 },
             ) as T;
     }
