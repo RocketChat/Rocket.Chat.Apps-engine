@@ -224,7 +224,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         // Prevent app from trying to get properties from the manager that
         // are not intended for public access
         if (!isValidOrigin(managerOrigin)) {
-            throw new Error('Invalid accessor namespace');
+            throw new Error(`Invalid accessor namespace "${managerOrigin}"`);
         }
 
         // Need to fix typing of return value
@@ -250,7 +250,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 const method = accessor[methodName as keyof typeof accessor] as unknown;
 
                 if (typeof method !== 'function') {
-                    throw new Error('Invalid accessor method');
+                    throw new Error(`Invalid accessor method "${methodName}"`);
                 }
 
                 accessor = method.apply(accessor);
@@ -264,7 +264,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const tailMethod = accessor[tailMethodName as keyof typeof accessor] as unknown;
 
         if (typeof tailMethod !== 'function') {
-            throw new Error('Invalid accessor method');
+            throw new Error(`Invalid accessor method "${tailMethodName}"`);
         }
 
         const result = await tailMethod.apply(accessor, params);

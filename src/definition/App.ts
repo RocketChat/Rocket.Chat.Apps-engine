@@ -220,4 +220,9 @@ export abstract class App implements IApp {
         this.logger.debug(`The status is now: ${status}`);
         this.status = status;
     }
+
+    // Avoid leaking references if object is logged or sent over IPC
+    public toJSON(): Record<string, any> {
+        return this.info;
+    }
 }
