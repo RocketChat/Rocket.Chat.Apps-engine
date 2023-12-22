@@ -221,7 +221,7 @@ export abstract class App implements IApp {
         this.status = status;
     }
 
-    // Avoid leaking references if object is logged or sent over IPC
+    // Avoid leaking references if object is serialized (e.g. to be sent over IPC)
     public toJSON(): Record<string, any> {
         return this.info;
     }
