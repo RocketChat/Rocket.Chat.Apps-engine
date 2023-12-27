@@ -48,7 +48,7 @@ export default async function handleConstructApp(params: unknown): Promise<boole
     const [appPackage] = params as [IParseAppPackageResult];
 
     if (!appPackage?.info?.id || !appPackage?.info?.classFile || !appPackage?.files) {
-        throw new Error('Invalid params', { cause: 'invalid_param_type'});
+        throw new Error('Invalid params', { cause: 'invalid_param_type' });
     }
 
     AppObjectRegistry.set('id', appPackage.info.id);
@@ -93,4 +93,3 @@ export default async function handleConstructApp(params: unknown): Promise<boole
 
     return true;
 }
-

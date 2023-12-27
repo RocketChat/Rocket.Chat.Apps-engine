@@ -16,3 +16,4 @@ export default async function handleInitialize(): Promise<boolean> {
 
     return true;
 }
+
