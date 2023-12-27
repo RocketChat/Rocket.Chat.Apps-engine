@@ -1,15 +1,15 @@
 import { Defined, JsonRpcError } from 'jsonrpc-lite';
 
 import handleConstructApp from './construct.ts';
-import handleInitialize from "./handleInitialize.ts";
-import handleGetStatus from "./handleGetStatus.ts";
-import handleSetStatus from "./handleSetStatus.ts";
-import handleOnEnable from "./handleOnEnable.ts";
-import handleOnInstall from "./handleOnInstall.ts";
-import handleOnDisable from "./handleOnDisable.ts";
-import handleOnUninstall from "./handleOnUninstall.ts";
-import handleOnPreSettingUpdate from "./handleOnPreSettingUpdate.ts";
-import handleOnSettingUpdated from "./handleOnSettingUpdated.ts";
+import handleInitialize from './handleInitialize.ts';
+import handleGetStatus from './handleGetStatus.ts';
+import handleSetStatus from './handleSetStatus.ts';
+import handleOnEnable from './handleOnEnable.ts';
+import handleOnInstall from './handleOnInstall.ts';
+import handleOnDisable from './handleOnDisable.ts';
+import handleOnUninstall from './handleOnUninstall.ts';
+import handleOnPreSettingUpdate from './handleOnPreSettingUpdate.ts';
+import handleOnSettingUpdated from './handleOnSettingUpdated.ts';
 
 export default async function handleApp(method: string, params: unknown): Promise<Defined | JsonRpcError> {
     const [, appMethod] = method.split(':');
