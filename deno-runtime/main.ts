@@ -9,6 +9,7 @@ if (!Deno.args.includes('--subprocess')) {
 }
 
 import { JsonRpcError } from 'jsonrpc-lite';
+import type { App } from "@rocket.chat/apps-engine/definition/App.ts";
 
 import * as Messenger from './lib/messenger.ts';
 import { AppObjectRegistry } from './AppObjectRegistry.ts';
@@ -29,6 +30,13 @@ async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promi
 
     const logger = new Logger(method);
     AppObjectRegistry.set('logger', logger);
+
+    const app = AppObjectRegistry.get<App>('app');
+
+    if (app) {
+        // Same logic as applied in the ProxiedApp class previously
+        (app as unknown as Record<string, unknown>).logger = logger;
+    }
 
     switch (true) {
         case method.startsWith('app:'): {
