@@ -462,9 +462,7 @@ export class AppManager {
         }
 
         if (AppStatusUtils.isEnabled(app.getStatus())) {
-            await app
-                .call(AppMethod.ONDISABLE, this.accessorManager.getConfigurationModify(app.getID()))
-                .catch((e) => console.warn('Error while disabling:', e));
+            await app.call(AppMethod.ONDISABLE).catch((e) => console.warn('Error while disabling:', e));
         }
 
         await this.purgeAppConfig(app, { keepScheduledJobs: true });
@@ -887,14 +885,10 @@ export class AppManager {
 
     private async installApp(storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
         let result: boolean;
-        const read = this.getAccessorManager().getReader(storageItem.id);
-        const http = this.getAccessorManager().getHttp(storageItem.id);
-        const persistence = this.getAccessorManager().getPersistence(storageItem.id);
-        const modifier = this.getAccessorManager().getModifier(storageItem.id);
         const context = { user };
 
         try {
-            await app.call(AppMethod.ONINSTALL, context, read, http, persistence, modifier);
+            await app.call(AppMethod.ONINSTALL, context);
 
             result = true;
         } catch (e) {
@@ -1000,11 +994,7 @@ export class AppManager {
             await app.validateLicense();
             await app.validateInstallation();
 
-            enable = (await app.call(
-                AppMethod.ONENABLE,
-                this.getAccessorManager().getEnvironmentRead(storageItem.id),
-                this.getAccessorManager().getConfigurationModify(storageItem.id),
-            )) as boolean;
+            enable = (await app.call(AppMethod.ONENABLE)) as boolean;
 
             if (enable) {
                 status = isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED;
@@ -1089,14 +1079,10 @@ export class AppManager {
 
     private async uninstallApp(app: ProxiedApp, user: IUser): Promise<boolean> {
         let result: boolean;
-        const read = this.getAccessorManager().getReader(app.getID());
-        const http = this.getAccessorManager().getHttp(app.getID());
-        const persistence = this.getAccessorManager().getPersistence(app.getID());
-        const modifier = this.getAccessorManager().getModifier(app.getID());
         const context = { user };
 
         try {
-            await app.call(AppMethod.ONUNINSTALL, context, read, http, persistence, modifier);
+            await app.call(AppMethod.ONUNINSTALL, context);
 
             result = true;
         } catch (e) {
