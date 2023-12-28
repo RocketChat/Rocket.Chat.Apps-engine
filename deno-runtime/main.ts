@@ -15,6 +15,7 @@ import { AppObjectRegistry } from './AppObjectRegistry.ts';
 import { Logger } from './lib/logger.ts';
 
 import slashcommandHandler from './handlers/slashcommand-handler.ts';
+import videoConferenceHandler from './handlers/videoconference-handler.ts';
 import handleApp from './handlers/app/handler.ts';
 
 AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
@@ -43,6 +44,15 @@ async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promi
         }
         case method.startsWith('slashcommand:'): {
             const result = await slashcommandHandler(method, params);
+
+            if (result instanceof JsonRpcError) {
+                return Messenger.errorResponse({ id, error: result });
+            }
+
+            return Messenger.successResponse({ id, result });
+        }
+        case method.startsWith('videoconference:'): {
+            const result = await videoConferenceHandler(method, params);
 
             if (result instanceof JsonRpcError) {
                 return Messenger.errorResponse({ id, error: result });
