@@ -30,6 +30,7 @@ export default async function videoConferenceHandler(call: string, params: unkno
     ];
 
     try {
+        // deno-lint-ignore ban-types
         const result = await(method as Function).apply(provider, [
             ...args,
             AppAccessorsInstance.getReader(), 
