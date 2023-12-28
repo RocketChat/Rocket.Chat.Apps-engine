@@ -20,7 +20,19 @@ import handleApp from './handlers/app/handler.ts';
 
 AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
 
+type Handlers = {
+    'app': typeof handleApp,
+    'slashcommand': typeof slashcommandHandler
+    'videoconference': typeof videoConferenceHandler
+}
+
 async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
+    const methodHandlers: Handlers = {
+        'app': handleApp,
+        'slashcommand': slashcommandHandler,
+        'videoconference': videoConferenceHandler
+    }
+
     // We're not handling notifications at the moment
     if (type === 'notification') {
         return Messenger.sendInvalidRequestError();
@@ -31,43 +43,23 @@ async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promi
     const logger = new Logger(method);
     AppObjectRegistry.set('logger', logger);
 
-    switch (true) {
-        case method.startsWith('app:'): {
-            const result = await handleApp(method, params);
+    const [methodPrefix] = method.split(':') as [keyof Handlers];
+    const handler = methodHandlers[methodPrefix]
 
-            if (result instanceof JsonRpcError) {
-                return Messenger.errorResponse({ id, error: result });
-            }
-
-            Messenger.successResponse({ id, result });
-            break;
-        }
-        case method.startsWith('slashcommand:'): {
-            const result = await slashcommandHandler(method, params);
-
-            if (result instanceof JsonRpcError) {
-                return Messenger.errorResponse({ id, error: result });
-            }
-
-            return Messenger.successResponse({ id, result });
-        }
-        case method.startsWith('videoconference:'): {
-            const result = await videoConferenceHandler(method, params);
-
-            if (result instanceof JsonRpcError) {
-                return Messenger.errorResponse({ id, error: result });
-            }
-
-            return Messenger.successResponse({ id, result });
-        }
-        default: {
-            Messenger.errorResponse({
-                error: { message: 'Method not found', code: -32601 },
-                id,
-            });
-            break;
-        }
+    if (!handler) {
+       return Messenger.errorResponse({
+            error: { message: 'Method not found', code: -32601 },
+            id,
+        });
     }
+
+    const result = await handler(method, params);
+
+    if (result instanceof JsonRpcError) {
+        return Messenger.errorResponse({ id, error: result });
+    }
+
+    return Messenger.successResponse({ id, result });
 }
 
 function handleResponse(response: Messenger.JsonRpcResponse): void {
