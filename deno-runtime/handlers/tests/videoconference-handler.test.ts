@@ -10,8 +10,11 @@ import { assertInstanceOf } from "https://deno.land/std@0.203.0/assert/assert_in
 import { JsonRpcError } from "jsonrpc-lite";
 
 describe('handlers > videoconference', () => {
+    // deno-lint-ignore no-unused-vars
     const mockMethodWithoutParam = (read: any, modify: any, http: any, persis: any): Promise<string> => Promise.resolve('ok none');
+    // deno-lint-ignore no-unused-vars
     const mockMethodWithOneParam = (user: any, read: any, modify: any, http: any, persis: any): Promise<string> => Promise.resolve('ok one');
+    // deno-lint-ignore no-unused-vars
     const mockMethodWithTwoParam = (user: any, options: any, read: any, modify: any, http: any, persis: any): Promise<string> => Promise.resolve('ok two');
     const mockProvider = {
         empty: mockMethodWithoutParam,
