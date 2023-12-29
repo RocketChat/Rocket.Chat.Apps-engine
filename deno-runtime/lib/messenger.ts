@@ -1,7 +1,7 @@
 import * as jsonrpc from 'jsonrpc-lite';
 
-import { AppObjectRegistry } from "../AppObjectRegistry.ts";
-import type { Logger } from './logger.ts'
+import { AppObjectRegistry } from '../AppObjectRegistry.ts';
+import type { Logger } from './logger.ts';
 
 export type RequestDescriptor = Pick<jsonrpc.RequestObject, 'method' | 'params'>;
 
@@ -29,8 +29,8 @@ export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.Er
 const encoder = new TextEncoder();
 export const RPCResponseObserver = new EventTarget();
 
-export const Transport = new class Transporter {
-    private selectedTransport: Transporter["stdoutTransport"] | Transporter["noopTransport"];
+export const Transport = new (class Transporter {
+    private selectedTransport: Transporter['stdoutTransport'] | Transporter['noopTransport'];
 
     constructor() {
         this.selectedTransport = this.stdoutTransport.bind(this);
@@ -41,7 +41,7 @@ export const Transport = new class Transporter {
         await Deno.stdout.write(encoded);
     }
 
-    private async noopTransport(_message: jsonrpc.JsonRpc): Promise<void> { }
+    private async noopTransport(_message: jsonrpc.JsonRpc): Promise<void> {}
 
     public selectTransport(transport: 'stdout' | 'noop'): void {
         switch (transport) {
@@ -57,7 +57,7 @@ export const Transport = new class Transporter {
     public send(message: jsonrpc.JsonRpc): Promise<void> {
         return this.selectedTransport(message);
     }
-}
+})();
 
 export function parseMessage(message: string) {
     const parsed = jsonrpc.parse(message);

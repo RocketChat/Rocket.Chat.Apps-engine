@@ -1,14 +1,18 @@
 import { Defined, JsonRpcError } from 'jsonrpc-lite';
 import type { App } from '@rocket.chat/apps-engine/definition/App.ts';
+import type { IMessage } from "@rocket.chat/apps-engine/definition/messages/IMessage.ts";
+import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
+import type { AppsEngineException as _AppsEngineException } from '@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.ts';
 
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { MessageExtender } from "../../lib/accessors/extenders/MessageExtender.ts";
-import { IMessage } from "@rocket.chat/apps-engine/definition/messages/IMessage.ts";
-import { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
 import { RoomExtender } from "../../lib/accessors/extenders/RoomExtender.ts";
 import { MessageBuilder } from "../../lib/accessors/builders/MessageBuilder.ts";
 import { RoomBuilder } from "../../lib/accessors/builders/RoomBuilder.ts";
 import { AppAccessorsInstance } from "../../lib/accessors/mod.ts";
+import { require } from '../../lib/require.ts';
+
+const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEgnineException') as { AppsEngineException: typeof _AppsEngineException };
 
 export default async function handleListener(method: string, params: unknown): Promise<Defined | JsonRpcError> {
     const [, evtInterface] = method.split(':');
@@ -18,11 +22,11 @@ export default async function handleListener(method: string, params: unknown): P
     const eventExecutor = app?.[evtInterface as keyof App];
 
     if (typeof eventExecutor !== 'function') {
-        return new JsonRpcError('Invalid event interface called on app', -32000);
+        return JsonRpcError.methodNotFound({ message: 'Invalid event interface called on app' });
     }
 
     if (!Array.isArray(params) || params.length < 1 || params.length > 2) {
-        return new JsonRpcError('Invalid params', -32602);
+        return JsonRpcError.invalidParams(null);
     }
 
     try {
@@ -33,7 +37,11 @@ export default async function handleListener(method: string, params: unknown): P
             return e;
         }
 
-        return JsonRpcError.internalError(e.message);
+        if (e instanceof AppsEngineException) {
+            return new JsonRpcError(e.message, AppsEngineException.JSONRPC_ERROR_CODE, { name: e.name });
+        }
+
+        return JsonRpcError.internalError({ message: e.message });
     }
 }
 
@@ -45,7 +53,7 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
     const [param1, param2] = params as [unknown, unknown];
 
     if (!param1) {
-        throw new JsonRpcError('Invalid params', -32000);
+        throw JsonRpcError.invalidParams(null);
     }
 
     const args: unknown[] = [param1, AppAccessorsInstance.getReader(), AppAccessorsInstance.getHttp()];
@@ -91,7 +99,7 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
     // This guy gets an extra one
     if (evtInterface === 'executePostMessageDeleted') {
         if (!param2) {
-            throw new JsonRpcError('Invalid params', -32000);
+            throw JsonRpcError.invalidParams(null);
         }
 
         args.push(param2);
