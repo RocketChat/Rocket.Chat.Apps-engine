@@ -20,11 +20,12 @@ export default async function videoConferenceHandler(call: string, params: unkno
         return new JsonRpcError(`Method ${methodName} not found on provider ${providerName}`, -32000);
     }
 
-    const [_, user, options] = params as Array<unknown>;
+    const [videoconf, user, options] = params as Array<unknown>;
 
     logger?.debug(`Executing ${methodName} on video conference provider...`);
 
     const args = [
+        ...(videoconf ? [videoconf] : []),
         ...(user ? [user] : []),
         ...(options ? [options] : []),
     ];
