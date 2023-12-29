@@ -87,19 +87,17 @@ export class AppVideoConfProvider {
         runContextArgs: Array<any>,
     ): Promise<string | boolean | Array<IBlock> | undefined> {
         const provider = this.provider.name;
-        const logger = this.app.setupLogger(method);
-        logger.debug(`Executing ${method} on video conference provider...`);
 
         try {
             const result = await this.app.getDenoRuntime().sendRequest({
                 method: `videoconference.${provider}.${method}`,
                 params: [runContextArgs],
             });
+
             return result as string;
         } catch (e) {
             // @TODO add error handling
             console.log(e);
-            throw e;
         }
     }
 }
