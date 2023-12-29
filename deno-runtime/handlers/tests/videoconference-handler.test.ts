@@ -8,6 +8,8 @@ import { AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import videoconfHandler from '../videoconference-handler.ts';
 import { assertInstanceOf } from "https://deno.land/std@0.203.0/assert/assert_instance_of.ts";
 import { JsonRpcError } from "jsonrpc-lite";
+import { assert } from "https://deno.land/std@0.203.0/assert/assert.ts";
+import { assertObjectMatch } from "https://deno.land/std@0.203.0/assert/assert_object_match.ts";
 
 describe('handlers > videoconference', () => {
     // deno-lint-ignore no-unused-vars
@@ -23,7 +25,8 @@ describe('handlers > videoconference', () => {
         one: mockMethodWithOneParam,
         two: mockMethodWithTwoParam,
         three: mockMethodWithThreeParam,
-        error: () => { throw new Error() }
+        notAFunction: true,
+        error: () => { throw new Error('Method execution error example') }
     }
 
     beforeEach(() => {
@@ -82,9 +85,36 @@ describe('handlers > videoconference', () => {
     });
 
     it('correctly handles an error on execution of a videoconf method', async () => {
-        const result = await videoconfHandler('videoconference:test-provider:error', ['_']);
+        const result = await videoconfHandler('videoconference:test-provider:error', []);
 
         assertInstanceOf(result, JsonRpcError)
+        assertObjectMatch(result, {
+            message: 'Method execution error example',
+            code: -32000
+        })
+    })
+
+    it('correctly handles an error when provider is not found', async () => {
+        const providerName = 'error-provider'
+        const result = await videoconfHandler(`videoconference:${providerName}:method`, []);
+
+        assertInstanceOf(result, JsonRpcError)
+        assertObjectMatch(result, {
+            message: `Provider ${providerName} not found`,
+            code: -32000
+        })
+    })
+
+    it('correctly handles an error if method is not a function of provider', async () => {
+        const methodName = 'notAFunction'
+        const providerName = 'test-provider'
+        const result = await videoconfHandler(`videoconference:${providerName}:${methodName}`, []);
+
+        assertInstanceOf(result, JsonRpcError)
+        assertObjectMatch(result, {
+            message: `Method ${methodName} not found on provider ${providerName}`,
+            code: -32000
+        })
     })
     
 });

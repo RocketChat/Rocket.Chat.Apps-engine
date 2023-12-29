@@ -42,7 +42,7 @@ export default async function videoConferenceHandler(call: string, params: unkno
     
         logger?.debug(`Video Conference Provider's ${methodName} was successfully executed.`);
         
-        return result as string;
+        return result;
     } catch (e) {
         logger?.debug(`Video Conference Provider's ${methodName} was unsuccessful.`);
         return new JsonRpcError(e.message, -32000);
