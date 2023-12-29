@@ -3,7 +3,6 @@ import type { IBlock } from '../../definition/uikit';
 import type { VideoConference } from '../../definition/videoConferences';
 import type { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
-import { AppConsole } from '../logging';
 import type { ProxiedApp } from '../ProxiedApp';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
@@ -83,46 +82,22 @@ export class AppVideoConfProvider {
             | AppMethod._VIDEOCONF_CHANGED
             | AppMethod._VIDEOCONF_GET_INFO
             | AppMethod._VIDEOCONF_USER_JOINED,
-        logStorage: AppLogStorage,
-        accessors: AppAccessorManager,
+        _logStorage: AppLogStorage,
+        _accessors: AppAccessorManager,
         runContextArgs: Array<any>,
     ): Promise<string | boolean | Array<IBlock> | undefined> {
-        // Ensure the provider has the property before going on
-        if (typeof this.provider[method] !== 'function') {
-            return;
-        }
-
-        const runContext = {
-            provider: this.provider,
-            args: [
-                ...runContextArgs,
-                accessors.getReader(this.app.getID()),
-                accessors.getModifier(this.app.getID()),
-                accessors.getHttp(this.app.getID()),
-                accessors.getPersistence(this.app.getID()),
-            ],
-        };
-
-        const logger = this.app.setupLogger(method);
-        logger.debug(`Executing ${method} on video conference provider...`);
-
-        let result: string | undefined;
-        try {
-            const runCode = `module.exports = provider.${method}.apply(provider, args)`;
-            result = await this.app.getRuntime().runInSandbox(runCode, runContext);
-            logger.debug(`Video Conference Provider's ${method} was successfully executed.`);
-        } catch (e) {
-            logger.error(e);
-            logger.debug(`Video Conference Provider's ${method} was unsuccessful.`);
-        }
+        const provider = this.provider.name;
 
         try {
-            await logStorage.storeEntries(AppConsole.toStorageEntry(this.app.getID(), logger));
-        } catch (e) {
-            // Don't care, at the moment.
-            // TODO: Evaluate to determine if we do care
-        }
+            const result = await this.app.getDenoRuntime().sendRequest({
+                method: `videoconference.${provider}.${method}`,
+                params: [runContextArgs],
+            });
 
-        return result;
+            return result as string;
+        } catch (e) {
+            // @TODO add error handling
+            console.log(e);
+        }
     }
 }
