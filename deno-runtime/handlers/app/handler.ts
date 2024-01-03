@@ -10,9 +10,14 @@ import handleOnDisable from './handleOnDisable.ts';
 import handleOnUninstall from './handleOnUninstall.ts';
 import handleOnPreSettingUpdate from './handleOnPreSettingUpdate.ts';
 import handleOnSettingUpdated from './handleOnSettingUpdated.ts';
+import handleListener from "../listener/handler.ts";
 
 export default async function handleApp(method: string, params: unknown): Promise<Defined | JsonRpcError> {
     const [, appMethod] = method.split(':');
+
+    if (appMethod.startsWith('check') || appMethod.startsWith('execute')) {
+        return handleListener(method, params);
+    }
 
     try {
         switch (appMethod) {
