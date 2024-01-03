@@ -1,7 +1,7 @@
 // deno-lint-ignore-file no-explicit-any
-import { assertInstanceOf, assertEquals } from 'https://deno.land/std@0.203.0/assert/mod.ts';
+import { assertEquals, assertInstanceOf } from 'https://deno.land/std@0.203.0/assert/mod.ts';
 import { beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
-import { spy } from "https://deno.land/std@0.203.0/testing/mock.ts";
+import { spy } from 'https://deno.land/std@0.203.0/testing/mock.ts';
 import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
@@ -9,7 +9,9 @@ import { AppAccessors } from '../../lib/accessors/mod.ts';
 import { handleExecutor, handlePreviewItem } from '../slashcommand-handler.ts';
 import { require } from '../../lib/require.ts';
 
-const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as { Room: typeof _Room } ;
+const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as {
+    Room: typeof _Room;
+};
 
 describe('handlers > slashcommand', () => {
     const mockAppAccessors = {
@@ -39,7 +41,7 @@ describe('handlers > slashcommand', () => {
         // deno-lint-ignore no-unused-vars
         async previewer(context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
         // deno-lint-ignore no-unused-vars
-        async executePreviewItem(previewItem: any,context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
+        async executePreviewItem(previewItem: any, context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
     };
 
     const mockCommandPreviewWithNoExecutor = {
@@ -50,7 +52,7 @@ describe('handlers > slashcommand', () => {
         // deno-lint-ignore no-unused-vars
         async previewer(context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
         // deno-lint-ignore no-unused-vars
-        async executePreviewItem(previewItem: any,context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
+        async executePreviewItem(previewItem: any, context: any, read: any, modify: any, http: any, persis: any): Promise<void> {},
     };
 
     beforeEach(() => {

@@ -11,6 +11,7 @@ import { MessageBuilder } from "../../lib/accessors/builders/MessageBuilder.ts";
 import { RoomBuilder } from "../../lib/accessors/builders/RoomBuilder.ts";
 import { AppAccessorsInstance } from "../../lib/accessors/mod.ts";
 import { require } from '../../lib/require.ts';
+import createRoom from '../../lib/roomFactory.ts';
 
 const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEgnineException') as { AppsEngineException: typeof _AppsEngineException };
 
@@ -30,7 +31,7 @@ export default async function handleListener(method: string, params: unknown): P
     }
 
     try {
-        const args = parseArgs(evtInterface, params);
+        const args = parseArgs({ AppAccessorsInstance }, evtInterface, params);
         return await (eventExecutor as (...args: unknown[]) => Promise<Defined>).apply(app, args);
     } catch (e) {
         if (e instanceof JsonRpcError) {
@@ -45,7 +46,8 @@ export default async function handleListener(method: string, params: unknown): P
     }
 }
 
-function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
+export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMethod: string, params: unknown[]): unknown[] {
+    const { AppAccessorsInstance } = deps;
     /**
      * param1 is the context for the event handler execution
      * param2 is an optional extra content that some hanlers require
@@ -56,10 +58,18 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
         throw JsonRpcError.invalidParams(null);
     }
 
-    const args: unknown[] = [param1, AppAccessorsInstance.getReader(), AppAccessorsInstance.getHttp()];
+    let context = param1;
+
+    if (evtMethod.endsWith('RoomUserJoined') || evtMethod.endsWith('RoomUserLeave')) {
+        (context as Record<string, unknown>).room = createRoom((context as Record<string, unknown>).room as IRoom, AppAccessorsInstance.getSenderFn());
+    } else if (evtMethod.includes('PreRoom')) {
+        context = createRoom(context as IRoom, AppAccessorsInstance.getSenderFn());
+    }
+
+    const args: unknown[] = [context, AppAccessorsInstance.getReader(), AppAccessorsInstance.getHttp()];
 
     // "check" events will only go this far - (context, reader, http)
-    if (evtInterface.startsWith('check')) {
+    if (evtMethod.startsWith('check')) {
         // "checkPostMessageDeleted" has an extra param - (context, reader, http, extraContext)
         if (param2) {
             args.push(param2);
@@ -72,10 +82,10 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
     args.push(AppAccessorsInstance.getPersistence());
 
     // "extend" events have an additional "Extender" param - (context, extender, reader, http, persistence)
-    if (evtInterface.endsWith('Extend')) {
-        if (evtInterface.includes('Message')) {
+    if (evtMethod.endsWith('Extend')) {
+        if (evtMethod.includes('Message')) {
             args.splice(1, 0, new MessageExtender(param1 as IMessage));
-        } else if (evtInterface.includes('Room')) {
+        } else if (evtMethod.includes('Room')) {
             args.splice(1, 0, new RoomExtender(param1 as IRoom));
         }
 
@@ -83,10 +93,10 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
     }
 
     // "Modify" events have an additional "Builder" param - (context, builder, reader, http, persistence)
-    if (evtInterface.endsWith('Modify')) {
-        if (evtInterface.includes('Message')) {
+    if (evtMethod.endsWith('Modify')) {
+        if (evtMethod.includes('Message')) {
             args.splice(1, 0, new MessageBuilder(param1 as IMessage));
-        } else if (evtInterface.includes('Room')) {
+        } else if (evtMethod.includes('Room')) {
             args.splice(1, 0, new RoomBuilder(param1 as IRoom));
         }
 
@@ -97,7 +107,7 @@ function parseArgs(evtInterface: string, params: unknown[]): unknown[] {
     args.push(AppAccessorsInstance.getModifier());
 
     // This guy gets an extra one
-    if (evtInterface === 'executePostMessageDeleted') {
+    if (evtMethod === 'executePostMessageDeleted') {
         if (!param2) {
             throw JsonRpcError.invalidParams(null);
         }
