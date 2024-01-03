@@ -1,19 +1,21 @@
 import { Defined, JsonRpcError } from 'jsonrpc-lite';
 import type { App } from '@rocket.chat/apps-engine/definition/App.ts';
-import type { IMessage } from "@rocket.chat/apps-engine/definition/messages/IMessage.ts";
-import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
+import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
+import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { AppsEngineException as _AppsEngineException } from '@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.ts';
 
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
-import { MessageExtender } from "../../lib/accessors/extenders/MessageExtender.ts";
-import { RoomExtender } from "../../lib/accessors/extenders/RoomExtender.ts";
-import { MessageBuilder } from "../../lib/accessors/builders/MessageBuilder.ts";
-import { RoomBuilder } from "../../lib/accessors/builders/RoomBuilder.ts";
-import { AppAccessorsInstance } from "../../lib/accessors/mod.ts";
+import { MessageExtender } from '../../lib/accessors/extenders/MessageExtender.ts';
+import { RoomExtender } from '../../lib/accessors/extenders/RoomExtender.ts';
+import { MessageBuilder } from '../../lib/accessors/builders/MessageBuilder.ts';
+import { RoomBuilder } from '../../lib/accessors/builders/RoomBuilder.ts';
+import { AppAccessors, AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import { require } from '../../lib/require.ts';
 import createRoom from '../../lib/roomFactory.ts';
 
-const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEgnineException') as { AppsEngineException: typeof _AppsEngineException };
+const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.js') as {
+    AppsEngineException: typeof _AppsEngineException;
+};
 
 export default async function handleListener(method: string, params: unknown): Promise<Defined | JsonRpcError> {
     const [, evtInterface] = method.split(':');
@@ -23,7 +25,9 @@ export default async function handleListener(method: string, params: unknown): P
     const eventExecutor = app?.[evtInterface as keyof App];
 
     if (typeof eventExecutor !== 'function') {
-        return JsonRpcError.methodNotFound({ message: 'Invalid event interface called on app' });
+        return JsonRpcError.methodNotFound({
+            message: 'Invalid event interface called on app',
+        });
     }
 
     if (!Array.isArray(params) || params.length < 1 || params.length > 2) {
