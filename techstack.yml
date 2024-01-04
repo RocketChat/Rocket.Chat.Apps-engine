@@ -1,7 +1,8 @@
 repo_name: RocketChat/Rocket.Chat.Apps-engine
-report_id: c2847c1a8de7ef0f89bcbf4eff02e20e
+report_id: 82d774f21b741d9e2934679c77a58464
+version: 0.1
 repo_type: Public
-timestamp: '2023-12-14T09:31:02+00:00'
+timestamp: '2024-01-04T14:56:23+00:00'
 requested_by: d-gubert
 provider: github
 branch: alpha
@@ -16,6 +17,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1209/javascript.jpeg
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine
   detection_source: Repo Metadata
 - name: TypeScript
   description: A superset of JavaScript that compiles to clean JavaScript output
@@ -26,6 +28,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Languages
   image_url: https://img.stackshare.io/service/1612/bynNY5dJ.jpg
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine
   detection_source: Repo Metadata
 - name: ".NET"
   description: A free, cross-platform, open source developer platform for building
@@ -37,6 +40,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Frameworks (Full Stack)
   image_url: https://img.stackshare.io/service/1014/IoPy1dce_400x400.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -49,6 +53,7 @@ tools:
   category: Languages & Frameworks
   sub_category: Frameworks (Full Stack)
   image_url: https://img.stackshare.io/service/1011/n1JRsFeB_400x400.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -61,6 +66,7 @@ tools:
   category: Data Stores
   sub_category: Databases
   image_url: https://img.stackshare.io/service/5859/ne.jpg
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -87,6 +93,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Code Review
   image_url: https://img.stackshare.io/service/3337/Q4L7Jncy.jpg
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -98,6 +105,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Version Control System
   image_url: https://img.stackshare.io/service/1046/git.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine
   detection_source: Repo Metadata
 - name: GitHub Actions
   description: Automate your workflow from idea to production
@@ -107,6 +115,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Continuous Integration
   image_url: https://img.stackshare.io/service/11563/actions.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/.github/workflows/build_and_test.yml
   detection_source: ".github/workflows/build_and_test.yml"
   last_updated_by: Rodrigo Nascimento
   last_updated_on: 2022-08-18 00:38:08.000000000 Z
@@ -118,6 +127,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Package Managers
   image_url: https://img.stackshare.io/service/2637/6I3oEOP4_400x400.jpg
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -130,6 +140,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Text Editor
   image_url: https://img.stackshare.io/service/4202/Visual_Studio_Code_logo.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/.vscode/tasks.json
   detection_source: ".vscode/tasks.json"
   last_updated_by: Bradley Hilton
   last_updated_on: 2018-01-10 22:19:48.000000000 Z
@@ -155,6 +166,7 @@ tools:
   category: Build, Test, Deploy
   sub_category: Front End Package Manager
   image_url: https://img.stackshare.io/service/1120/lejvzrnlpb308aftn31u.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/package.json
   detection_source: package.json
   last_updated_by: Bradley Hilton
   last_updated_on: 2017-07-03 18:24:22.000000000 Z
@@ -164,6 +176,7 @@ tools:
   open_source: false
   hosted_saas: false
   image_url: https://img.stackshare.io/service/2270/no-img-open-source.png
+  detection_source_url: https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/alpha/docs/classes/App.App.html
   detection_source: docs/classes/App.App.html
   last_updated_by: Tasso Evangelista
   last_updated_on: 2023-08-31 17:55:12.000000000 Z
