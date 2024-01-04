@@ -1,5 +1,6 @@
 import type { IAppAccessors, ILogger } from '../definition/accessors';
 import { AppStatus } from '../definition/AppStatus';
+import { AppsEngineException } from '../definition/exceptions';
 import type { IApp } from '../definition/IApp';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppMethod } from '../definition/metadata';
@@ -55,7 +56,13 @@ export class ProxiedApp implements IApp {
     }
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
-        return this.appRuntime.sendRequest({ method: `app:${method}`, params: args });
+        try {
+            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args });
+        } catch (e) {
+            if (e.code === AppsEngineException.JSONRPC_ERROR_CODE) {
+                throw new AppsEngineException(e.message);
+            }
+        }
     }
 
     public getStatus(): AppStatus {

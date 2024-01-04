@@ -1,28 +1,19 @@
-import { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
+import { Defined, JsonRpcError } from 'jsonrpc-lite';
+
+import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
+import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
 import { SlashCommandContext as _SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.ts';
 import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
-import { require } from '../lib/require.ts';
 import { AppAccessors, AppAccessorsInstance } from '../lib/accessors/mod.ts';
-import { Defined, JsonRpcError } from "jsonrpc-lite";
+import { require } from '../lib/require.ts';
+import createRoom from '../lib/roomFactory.ts';
 
 // For some reason Deno couldn't understand the typecast to the original interfaces and said it wasn't a constructor type
-const { SlashCommandContext } = require('@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.js') as { SlashCommandContext: typeof _SlashCommandContext };
-const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as { Room: typeof _Room } ;
-
-const getMockAppManager = (senderFn: AppAccessors['senderFn']) => ({
-    getBridges: () => ({
-        getInternalBridge: () => ({
-            doGetUsernamesOfRoomById: (roomId: string) => {
-                senderFn({
-                    method: 'bridges:getInternalBridge:doGetUsernamesOfRoomById',
-                    params: [roomId],
-                });
-            },
-        }),
-    }),
-});
+const { SlashCommandContext } = require('@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.js') as {
+    SlashCommandContext: typeof _SlashCommandContext;
+};
 
 export default async function slashCommandHandler(call: string, params: unknown): Promise<JsonRpcError | Defined> {
     const [, commandName, method] = call.split(':');
@@ -71,7 +62,7 @@ export function handleExecutor(deps: { AppAccessorsInstance: AppAccessors }, com
 
     const context = new SlashCommandContext(
         sender as _SlashCommandContext['sender'],
-        new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())),
+        createRoom(room as IRoom, deps.AppAccessorsInstance.getSenderFn()),
         args as _SlashCommandContext['params'],
         threadId as _SlashCommandContext['threadId'],
         triggerId as _SlashCommandContext['triggerId'],
@@ -104,7 +95,7 @@ export function handlePreviewItem(deps: { AppAccessorsInstance: AppAccessors }, 
 
     const context = new SlashCommandContext(
         sender as _SlashCommandContext['sender'],
-        new Room(room, getMockAppManager(deps.AppAccessorsInstance.getSenderFn())),
+        createRoom(room as IRoom, deps.AppAccessorsInstance.getSenderFn()),
         args as _SlashCommandContext['params'],
         threadId as _SlashCommandContext['threadId'],
         triggerId as _SlashCommandContext['triggerId'],
