@@ -24,12 +24,6 @@ import type {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
 } from '../../definition/uikit/UIKitIncomingInteractionContainer';
-import {
-    UIKitActionButtonInteractionContext,
-    UIKitBlockInteractionContext,
-    UIKitViewCloseInteractionContext,
-    UIKitViewSubmitInteractionContext,
-} from '../../definition/uikit/UIKitInteractionContext';
 import type { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
 import type { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
 import type { AppManager } from '../AppManager';
@@ -786,126 +780,74 @@ export class AppListenerManager {
     }
 
     private async executeUIKitInteraction(data: UIKitIncomingInteraction): Promise<IUIKitResponse> {
-        const { appId, type } = data;
-
-        const method = ((interactionType: string) => {
-            switch (interactionType) {
-                case UIKitIncomingInteractionType.BLOCK:
-                    return AppMethod.UIKIT_BLOCK_ACTION;
-                case UIKitIncomingInteractionType.VIEW_SUBMIT:
-                    return AppMethod.UIKIT_VIEW_SUBMIT;
-                case UIKitIncomingInteractionType.VIEW_CLOSED:
-                    return AppMethod.UIKIT_VIEW_CLOSE;
-                case UIKitIncomingInteractionType.ACTION_BUTTON:
-                    return AppMethod.UIKIT_ACTION_BUTTON;
-            }
-        })(type);
+        const { appId } = data;
 
         const app = this.manager.getOneById(appId);
-        if (!app?.hasMethod(method)) {
-            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
-            return;
-        }
 
         const { actionId, user, triggerId } = data;
 
         switch (data.type) {
             case UIKitIncomingInteractionType.BLOCK: {
                 const { value, blockId } = data.payload as { value: string; blockId: string };
-                return app.call(
-                    'executeBlockActionHandler',
-                    new UIKitBlockInteractionContext({
-                        appId,
-                        actionId,
-                        blockId,
-                        user,
-                        room: data.room,
-                        triggerId,
-                        value,
-                        message: data.message,
-                        container: data.container,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                return app.call('executeBlockActionHandler', {
+                    appId,
+                    actionId,
+                    blockId,
+                    user,
+                    room: data.room,
+                    triggerId,
+                    value,
+                    message: data.message,
+                    container: data.container,
+                });
             }
             case UIKitIncomingInteractionType.VIEW_SUBMIT: {
                 const { view } = data.payload as { view: IUIKitSurface };
 
-                return app.call(
-                    'executeViewSubmitHandler',
-                    new UIKitViewSubmitInteractionContext({
-                        appId,
-                        actionId,
-                        view,
-                        room: data.room,
-                        triggerId,
-                        user,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                return app.call('executeViewSubmitHandler', {
+                    appId,
+                    actionId,
+                    view,
+                    room: data.room,
+                    triggerId,
+                    user,
+                });
             }
             case UIKitIncomingInteractionType.VIEW_CLOSED: {
                 const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
 
-                return app.call(
-                    'executeViewClosedHandler',
-                    new UIKitViewCloseInteractionContext({
-                        appId,
-                        actionId,
-                        view,
-                        room: data.room,
-                        isCleared,
-                        user,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                return app.call('executeViewClosedHandler', {
+                    appId,
+                    actionId,
+                    view,
+                    room: data.room,
+                    isCleared,
+                    user,
+                });
             }
             case 'actionButton': {
                 if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
-                    return app.call(
-                        'executeActionButtonHandler',
-                        new UIKitActionButtonInteractionContext({
-                            appId,
-                            actionId,
-                            buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
-                            room: data.room,
-                            triggerId,
-                            user,
-                            threadId: data.tmid,
-                            ...('message' in data.payload && { text: data.payload.message }),
-                        }),
-                        this.am.getReader(appId),
-                        this.am.getHttp(appId),
-                        this.am.getPersistence(appId),
-                        this.am.getModifier(appId),
-                    );
-                }
-
-                return app.call(
-                    'executeActionButtonHandler',
-                    new UIKitActionButtonInteractionContext({
+                    return app.call('executeActionButtonHandler', {
                         appId,
                         actionId,
+                        buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
+                        room: data.room,
                         triggerId,
-                        buttonContext: data.payload.context as UIActionButtonContext,
-                        room: ('room' in data && data.room) || undefined,
                         user,
-                        ...('message' in data && { message: data.message }),
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                        threadId: data.tmid,
+                        ...('message' in data.payload && { text: data.payload.message }),
+                    });
+                }
+
+                return app.call('executeActionButtonHandler', {
+                    appId,
+                    actionId,
+                    triggerId,
+                    buttonContext: data.payload.context as UIActionButtonContext,
+                    room: ('room' in data && data.room) || undefined,
+                    user,
+                    ...('message' in data && { message: data.message }),
+                });
             }
         }
     }
@@ -947,14 +889,7 @@ export class AppListenerManager {
             }
         })(type, data);
 
-        return app.call(
-            method,
-            interactionContext,
-            this.am.getReader(appId),
-            this.am.getHttp(appId),
-            this.am.getPersistence(appId),
-            this.am.getModifier(appId),
-        );
+        return app.call(method, interactionContext);
     }
 
     // Livechat
