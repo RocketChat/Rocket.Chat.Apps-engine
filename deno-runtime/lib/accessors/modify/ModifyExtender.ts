@@ -6,13 +6,18 @@ import type { IVideoConferenceExtender } from "@rocket.chat/apps-engine/definiti
 import type { IUser } from "@rocket.chat/apps-engine/definition/users/IUser.ts";
 import type { VideoConference } from "@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts";
 import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
-import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
 
 import * as Messenger from '../../messenger.ts';
 import { AppObjectRegistry } from "../../../AppObjectRegistry.ts";
 import { MessageExtender } from "../extenders/MessageExtender.ts";
 import { RoomExtender } from "../extenders/RoomExtender.ts";
 import { VideoConferenceExtender } from "../extenders/VideoConferenceExtend.ts";
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class ModifyExtender implements IModifyExtender {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}

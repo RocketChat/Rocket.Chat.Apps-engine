@@ -1,10 +1,16 @@
-import { IMessageExtender } from '@rocket.chat/apps-engine/definition/accessors/IMessageExtender.ts';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
-import { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
-import { IMessageAttachment } from '@rocket.chat/apps-engine/definition/messages/IMessageAttachment.ts';
+import type { IMessageExtender } from '@rocket.chat/apps-engine/definition/accessors/IMessageExtender.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
+import type { IMessageAttachment } from '@rocket.chat/apps-engine/definition/messages/IMessageAttachment.ts';
+
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class MessageExtender implements IMessageExtender {
-    public readonly kind: RocketChatAssociationModel.MESSAGE;
+    public readonly kind: _RocketChatAssociationModel.MESSAGE;
 
     constructor(private msg: IMessage) {
         this.kind = RocketChatAssociationModel.MESSAGE;
