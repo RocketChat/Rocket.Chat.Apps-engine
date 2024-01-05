@@ -68,6 +68,7 @@ export class AppApi {
 
             return result as IApiResponse;
         } catch (e) {
+            console.error(e);
             throw e;
         }
     }
