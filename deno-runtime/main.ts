@@ -17,12 +17,14 @@ import { Logger } from './lib/logger.ts';
 
 import slashcommandHandler from './handlers/slashcommand-handler.ts';
 import videoConferenceHandler from './handlers/videoconference-handler.ts';
+import apiHandler from './handlers/api-handler.ts'
 import handleApp from './handlers/app/handler.ts';
 
 AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
 
 type Handlers = {
     'app': typeof handleApp,
+    'api': typeof apiHandler,
     'slashcommand': typeof slashcommandHandler
     'videoconference': typeof videoConferenceHandler
 }
@@ -30,6 +32,7 @@ type Handlers = {
 async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     const methodHandlers: Handlers = {
         'app': handleApp,
+        'api': apiHandler,
         'slashcommand': slashcommandHandler,
         'videoconference': videoConferenceHandler
     }
