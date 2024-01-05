@@ -5,7 +5,7 @@ import { Defined, JsonRpcError } from "jsonrpc-lite";
 import { AppAccessorsInstance } from "../lib/accessors/mod.ts";
 
 export default async function apiHandler(call: string, params: unknown): Promise<JsonRpcError | Defined> {
-    const [, path, methodName] = call.split(':');
+    const [, path, httpMethod] = call.split(':');
 
     const endpoint = AppObjectRegistry.get<IApiEndpoint>(`api:${path}`);
     const logger = AppObjectRegistry.get<Logger>('logger');
@@ -14,10 +14,10 @@ export default async function apiHandler(call: string, params: unknown): Promise
         return new JsonRpcError(`Endpoint ${path} not found`, -32000);
     }
 
-    const method = endpoint[methodName as keyof IApiEndpoint];
+    const method = endpoint[httpMethod as keyof IApiEndpoint];
 
     if (typeof method !== 'function') {
-        return new JsonRpcError(`Method ${methodName} not found`, -32000);
+        return new JsonRpcError(`${path}'s ${httpMethod} not exists`, -32000);
     }
 
     const [ request, endpointInfo ] = params as Array<unknown>;
