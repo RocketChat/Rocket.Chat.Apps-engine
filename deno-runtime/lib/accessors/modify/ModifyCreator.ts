@@ -1,20 +1,17 @@
-import { createRequire } from 'node:module';
-
 import type { IModifyCreator } from '@rocket.chat/apps-engine/definition/accessors/IModifyCreator.ts';
 import type { IUploadCreator } from '@rocket.chat/apps-engine/definition/accessors/IUploadCreator.ts';
 import type { ILivechatCreator } from '@rocket.chat/apps-engine/definition/accessors/ILivechatCreator.ts';
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { IBotUser } from '@rocket.chat/apps-engine/definition/users/IBotUser.ts';
-
-import { UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
-import { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
-import { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
-import { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
-import { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
-import { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
-import { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
+import type { UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
+import type { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+import type { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
+import type { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
+import type { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
+import type { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
+import type { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
+import type { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
 
 import * as Messenger from '../../messenger.ts';
 
@@ -26,11 +23,10 @@ import { RoomBuilder } from '../builders/RoomBuilder.ts';
 import { UserBuilder } from '../builders/UserBuilder.ts';
 import { AppVideoConference, VideoConferenceBuilder } from '../builders/VideoConferenceBuilder.ts';
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
-
-const require = createRequire(import.meta.url);
+import { require } from '../../../lib/require.ts';
 
 // @deno-types="../../../../server/misc/UIHelper.d.ts"
-const UIHelper = require(import.meta.resolve('@rocket.chat/apps-engine/server/misc/UIHelper.js').replace('file://', '').replace('src/', ''));
+const { UIHelper } = require('@rocket.chat/apps-engine/server/misc/UIHelper.js');
 
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
