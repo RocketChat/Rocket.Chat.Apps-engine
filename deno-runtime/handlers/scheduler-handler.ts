@@ -19,7 +19,7 @@ export default async function handleScheduler(method: string, params: unknown): 
     }
 
     // AppSchedulerManager will append the appId to the processor name to avoid conflicts
-    const processor = AppObjectRegistry.get<IProcessor>(method.replace(`_${app.getID()}`, ''));
+    const processor = AppObjectRegistry.get<IProcessor>(`scheduler:${method}`);
 
     if (!processor) {
         return JsonRpcError.methodNotFound({
