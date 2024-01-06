@@ -55,9 +55,6 @@ export class AppApiManagerTestFixture {
             getStatus() {
                 return AppStatus.AUTO_ENABLED;
             },
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);
             },

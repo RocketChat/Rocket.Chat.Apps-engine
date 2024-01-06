@@ -34,10 +34,6 @@ export class AppSlashCommand {
         this.isRegistered = true;
     }
 
-    public canBeRan(method: AppMethod): boolean {
-        return this.app.hasMethod(method);
-    }
-
     public async runExecutorOrPreviewer(
         method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
         context: SlashCommandContext,
