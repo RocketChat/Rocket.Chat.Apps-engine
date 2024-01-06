@@ -4,14 +4,15 @@ import type { ILivechatCreator } from '@rocket.chat/apps-engine/definition/acces
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { IBotUser } from '@rocket.chat/apps-engine/definition/users/IBotUser.ts';
-import type { UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
-import type { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+import type { UserType as _UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
 import type { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
 import type { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
 import type { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
 import type { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
-import type { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
+import type { RoomType as _RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
 import type { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
+import type { UIHelper as _UIHelper } from '@rocket.chat/apps-engine/server/misc/UIHelper.ts';
 
 import * as Messenger from '../../messenger.ts';
 
@@ -25,8 +26,12 @@ import { AppVideoConference, VideoConferenceBuilder } from '../builders/VideoCon
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 import { require } from '../../../lib/require.ts';
 
-// @deno-types="../../../../server/misc/UIHelper.d.ts"
-const { UIHelper } = require('@rocket.chat/apps-engine/server/misc/UIHelper.js');
+const { UIHelper } = require('@rocket.chat/apps-engine/server/misc/UIHelper.js') as { UIHelper: typeof _UIHelper };
+const { RoomType } = require('@rocket.chat/apps-engine/definition/rooms/RoomType.js') as { RoomType: typeof _RoomType };
+const { UserType } = require('@rocket.chat/apps-engine/definition/users/UserType.js') as { UserType: typeof _UserType };
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
@@ -178,7 +183,7 @@ export class ModifyCreator implements IModifyCreator {
 
         if (result.blocks?.length) {
             // Can we move this elsewhere? This AppObjectRegistry usage doesn't really belong here, but where?
-            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId'));
+            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId') || '');
         }
 
         const response = await this.senderFn({
