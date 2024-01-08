@@ -295,7 +295,7 @@ export class AppManager {
             aff.setApp(rl);
             affs.push(aff);
 
-            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+            if (AppStatusUtils.isDisabled(await rl.getStatus())) {
                 // Usually if an App is disabled before it's initialized,
                 // then something (such as an error) occured while
                 // it was compiled or something similar.
@@ -310,7 +310,7 @@ export class AppManager {
 
         // Let's ensure the required settings are all set
         for (const rl of this.apps.values()) {
-            if (AppStatusUtils.isDisabled(rl.getStatus())) {
+            if (AppStatusUtils.isDisabled(await rl.getStatus())) {
                 continue;
             }
 
@@ -322,9 +322,10 @@ export class AppManager {
         // Now let's enable the apps which were once enabled
         // but are not currently disabled.
         for (const app of this.apps.values()) {
-            if (!AppStatusUtils.isDisabled(app.getStatus()) && AppStatusUtils.isEnabled(app.getPreviousStatus())) {
+            const status = await app.getStatus();
+            if (!AppStatusUtils.isDisabled(status) && AppStatusUtils.isEnabled(app.getPreviousStatus())) {
                 await this.enableApp(app.getStorageItem(), app, true, app.getPreviousStatus() === AppStatus.MANUALLY_ENABLED).catch(console.error);
-            } else if (!AppStatusUtils.isError(app.getStatus())) {
+            } else if (!AppStatusUtils.isError(status)) {
                 this.listenerManager.lockEssentialEvents(app);
                 this.uiActionButtonManager.clearAppActionButtons(app.getID());
             }
@@ -341,9 +342,10 @@ export class AppManager {
         }
 
         for (const app of this.apps.values()) {
-            if (app.getStatus() === AppStatus.INITIALIZED) {
+            const status = await app.getStatus();
+            if (status === AppStatus.INITIALIZED) {
                 await this.purgeAppConfig(app);
-            } else if (!AppStatusUtils.isDisabled(app.getStatus())) {
+            } else if (!AppStatusUtils.isDisabled(status)) {
                 await this.disable(app.getID(), isManual ? AppStatus.MANUALLY_DISABLED : AppStatus.DISABLED);
             }
 
@@ -357,7 +359,7 @@ export class AppManager {
     }
 
     /** Gets the Apps which match the filter passed in. */
-    public get(filter?: IGetAppsFilter): Array<ProxiedApp> {
+    public async get(filter?: IGetAppsFilter): Promise<ProxiedApp[]> {
         let rls: Array<ProxiedApp> = [];
 
         if (typeof filter === 'undefined') {
@@ -369,20 +371,22 @@ export class AppManager {
         let nothing = true;
 
         if (typeof filter.enabled === 'boolean' && filter.enabled) {
-            this.apps.forEach((rl) => {
-                if (AppStatusUtils.isEnabled(rl.getStatus())) {
+            for (const rl of this.apps.values()) {
+                if (AppStatusUtils.isEnabled(await rl.getStatus())) {
                     rls.push(rl);
                 }
-            });
+            }
+
             nothing = false;
         }
 
         if (typeof filter.disabled === 'boolean' && filter.disabled) {
-            this.apps.forEach((rl) => {
-                if (AppStatusUtils.isDisabled(rl.getStatus())) {
+            for (const rl of this.apps.values()) {
+                if (AppStatusUtils.isDisabled(await rl.getStatus())) {
                     rls.push(rl);
                 }
-            });
+            }
+
             nothing = false;
         }
 
@@ -426,22 +430,26 @@ export class AppManager {
             throw new Error(`No App by the id "${id}" exists.`);
         }
 
-        if (AppStatusUtils.isEnabled(rl.getStatus())) {
+        const status = await rl.getStatus();
+
+        if (AppStatusUtils.isEnabled(status)) {
             return true;
         }
 
-        if (rl.getStatus() === AppStatus.COMPILER_ERROR_DISABLED) {
+        if (status === AppStatus.COMPILER_ERROR_DISABLED) {
             throw new Error('The App had compiler errors, can not enable it.');
         }
 
         const storageItem = await this.appMetadataStorage.retrieveOne(id);
+
         if (!storageItem) {
             throw new Error(`Could not enable an App with the id of "${id}" as it doesn't exist.`);
         }
 
         const isSetup = await this.runStartUpProcess(storageItem, rl, true, false);
+
         if (isSetup) {
-            storageItem.status = rl.getStatus();
+            storageItem.status = await rl.getStatus();
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
             await this.appMetadataStorage.update(storageItem).catch();
@@ -461,7 +469,7 @@ export class AppManager {
             throw new Error(`No App by the id "${id}" exists.`);
         }
 
-        if (AppStatusUtils.isEnabled(app.getStatus())) {
+        if (AppStatusUtils.isEnabled(await app.getStatus())) {
             await app.call(AppMethod.ONDISABLE).catch((e) => console.warn('Error while disabling:', e));
         }
 
@@ -476,7 +484,7 @@ export class AppManager {
 
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
-        storageItem.status = app.getStatus();
+        storageItem.status = await app.getStatus();
         await this.appMetadataStorage.update(storageItem).catch();
 
         return true;
@@ -618,7 +626,7 @@ export class AppManager {
     public async removeLocal(id: string): Promise<void> {
         const app = this.apps.get(id);
 
-        if (AppStatusUtils.isEnabled(app.getStatus())) {
+        if (AppStatusUtils.isEnabled(await app.getStatus())) {
             await this.disable(id);
         }
 
@@ -653,7 +661,7 @@ export class AppManager {
             createdAt: old.createdAt,
             id: result.info.id,
             info: result.info,
-            status: this.apps.get(old.id)?.getStatus() || old.status,
+            status: (await this.apps.get(old.id)?.getStatus()) || old.status,
             languageContent: result.languageContent,
             settings: old.settings,
             implemented: result.implemented.getValues(),
@@ -759,13 +767,13 @@ export class AppManager {
 
         if (AppStatusUtils.isEnabled(status)) {
             // Then enable it
-            if (AppStatusUtils.isEnabled(rl.getStatus())) {
+            if (AppStatusUtils.isEnabled(await rl.getStatus())) {
                 throw new Error('Can not enable an App which is already enabled.');
             }
 
             await this.enable(rl.getID());
         } else {
-            if (!AppStatusUtils.isEnabled(rl.getStatus())) {
+            if (!AppStatusUtils.isEnabled(await rl.getStatus())) {
                 throw new Error('Can not disable an App which is not enabled.');
             }
 
@@ -789,7 +797,7 @@ export class AppManager {
                 }
 
                 const appStorageItem = app.getStorageItem();
-                const subscriptionInfo = appStorageItem.marketplaceInfo && appStorageItem.marketplaceInfo.subscriptionInfo;
+                const subscriptionInfo = appStorageItem.marketplaceInfo?.subscriptionInfo;
 
                 if (subscriptionInfo && subscriptionInfo.license.license === appInfo.subscriptionInfo.license.license) {
                     return;
@@ -807,8 +815,8 @@ export class AppManager {
             queue.push(
                 app
                     .validateLicense()
-                    .then(() => {
-                        if (app.getStatus() !== AppStatus.INVALID_LICENSE_DISABLED) {
+                    .then(async () => {
+                        if ((await app.getStatus()) !== AppStatus.INVALID_LICENSE_DISABLED) {
                             return;
                         }
 
@@ -824,13 +832,14 @@ export class AppManager {
 
                         return app.setStatus(AppStatus.INVALID_LICENSE_DISABLED);
                     })
-                    .then(() => {
-                        if (app.getStatus() === app.getPreviousStatus()) {
+                    .then(async () => {
+                        const status = await app.getStatus();
+                        if (status === app.getPreviousStatus()) {
                             return;
                         }
 
                         const storageItem = app.getStorageItem();
-                        storageItem.status = app.getStatus();
+                        storageItem.status = status;
 
                         return this.appMetadataStorage.update(storageItem).catch(console.error) as Promise<void>;
                     }),
@@ -860,7 +869,7 @@ export class AppManager {
             await rl.setStatus(AppStatus.INVALID_SETTINGS_DISABLED);
         }
 
-        if (!AppStatusUtils.isDisabled(rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
+        if (!AppStatusUtils.isDisabled(await rl.getStatus()) && AppStatusUtils.isEnabled(rl.getPreviousStatus())) {
             await this.enableApp(item, rl, false, rl.getPreviousStatus() === AppStatus.MANUALLY_ENABLED);
         }
 
@@ -868,7 +877,7 @@ export class AppManager {
     }
 
     private async runStartUpProcess(storageItem: IAppStorageItem, app: ProxiedApp, isManual: boolean, silenceStatus: boolean): Promise<boolean> {
-        if (app.getStatus() !== AppStatus.INITIALIZED) {
+        if ((await app.getStatus()) !== AppStatus.INITIALIZED) {
             const isInitialized = await this.initializeApp(storageItem, app, true, silenceStatus);
             if (!isInitialized) {
                 return false;
@@ -883,7 +892,7 @@ export class AppManager {
         return this.enableApp(storageItem, app, true, isManual, silenceStatus);
     }
 
-    private async installApp(storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
+    private async installApp(_storageItem: IAppStorageItem, app: ProxiedApp, user: IUser): Promise<boolean> {
         let result: boolean;
         const context = { user };
 
@@ -941,7 +950,7 @@ export class AppManager {
         if (saveToDb) {
             // This is async, but we don't care since it only updates in the database
             // and it should not mutate any properties we care about
-            storageItem.status = app.getStatus();
+            storageItem.status = await app.getStatus();
             await this.appMetadataStorage.update(storageItem).catch();
         }
 
