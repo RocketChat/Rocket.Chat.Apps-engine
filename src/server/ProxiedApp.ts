@@ -1,7 +1,6 @@
-import type { IAppAccessors, ILogger } from '../definition/accessors';
+import type { ILogger } from '../definition/accessors';
 import type { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
-import type { IApp } from '../definition/IApp';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppMethod } from '../definition/metadata';
 import type { AppManager } from './AppManager';
@@ -12,7 +11,7 @@ import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRu
 import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import type { IAppStorageItem } from './storage';
 
-export class ProxiedApp implements IApp {
+export class ProxiedApp {
     private previousStatus: AppStatus;
 
     private latestLicenseValidationResult: AppLicenseValidationResult;
@@ -113,11 +112,6 @@ export class ProxiedApp implements IApp {
     public getLogger(): ILogger {
         // return this.app.getLogger();
         return new AppConsole('constructor'); // TODO: need to circle back on this one
-    }
-
-    public getAccessors(): IAppAccessors {
-        // return this.app.getAccessors();
-        return {} as IAppAccessors; // TODO: need to circle back on this one
     }
 
     public getEssentials(): IAppInfo['essentials'] {
