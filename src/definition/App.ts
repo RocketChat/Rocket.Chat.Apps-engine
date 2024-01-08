@@ -37,7 +37,7 @@ export abstract class App implements IApp {
         this.setStatus(AppStatus.CONSTRUCTED);
     }
 
-    public getStatus(): AppStatus {
+    public async getStatus(): Promise<AppStatus> {
         return this.status;
     }
 
