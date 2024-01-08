@@ -1,4 +1,3 @@
-import type { ILogger } from '../definition/accessors';
 import type { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
@@ -107,11 +106,6 @@ export class ProxiedApp {
 
     public getInfo(): IAppInfo {
         return this.storageItem.info;
-    }
-
-    public getLogger(): ILogger {
-        // return this.app.getLogger();
-        return new AppConsole('constructor'); // TODO: need to circle back on this one
     }
 
     public getEssentials(): IAppInfo['essentials'] {
