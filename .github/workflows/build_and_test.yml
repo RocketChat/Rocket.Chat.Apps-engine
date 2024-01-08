@@ -8,6 +8,7 @@ on:
         branches:
             - 'alpha'
             - 'beta'
+            - 'feat/deno-runtime'
 
 jobs:
     prepare:
@@ -138,8 +139,8 @@ jobs:
 
     publish:
         runs-on: ubuntu-latest
-        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta'
-        needs: build
+        if: github.event_name == 'release' || github.ref == 'refs/heads/alpha' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/feat/deno-runtime'
+        needs: test
 
         steps:
             - name: Use Node.js 14.19.3
@@ -173,6 +174,8 @@ jobs:
                       GIT_BRANCH="${GITHUB_REF#*heads/}"
                       if [[ $GIT_BRANCH == 'alpha' ]]; then
                           npm run go-publish-alpha
+                      elif [[ $GIT_BRANCH == 'feat/deno-runtime' ]]; then
+                          npm publish --access public --tag deno
                       else
                           npm run go-publish-beta
                       fi;

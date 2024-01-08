@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.42.0-alpha",
+    "version": "1.42.0-deno",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
@@ -33,7 +33,8 @@
         "client/**",
         "server/**",
         "definition/**",
-        "lib/**"
+        "lib/**",
+        "deno-runtime/**"
     ],
     "author": {
         "name": "Rocket.Chat",
