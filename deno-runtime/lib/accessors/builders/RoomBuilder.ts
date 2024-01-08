@@ -1,11 +1,18 @@
-import { IRoomBuilder } from "@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts";
-import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
-import { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
-import { RoomType } from "@rocket.chat/apps-engine/definition/rooms/RoomType.ts";
-import { IUser } from "@rocket.chat/apps-engine/definition/users/IUser.ts";
+import type { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
+import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
+import type { IUser } from '@rocket.chat/apps-engine/definition/users/IUser.ts';
+
+import type { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class RoomBuilder implements IRoomBuilder {
-    public kind: RocketChatAssociationModel.ROOM | RocketChatAssociationModel.DISCUSSION;
+    public kind: _RocketChatAssociationModel.ROOM | _RocketChatAssociationModel.DISCUSSION;
 
     protected room: IRoom;
 
@@ -154,4 +161,3 @@ export class RoomBuilder implements IRoomBuilder {
         return this.room;
     }
 }
-
