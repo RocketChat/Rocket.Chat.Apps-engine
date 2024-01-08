@@ -28,7 +28,6 @@ import {
 import { AppSignatureManager } from './managers/AppSignatureManager';
 import { UIActionButtonManager } from './managers/UIActionButtonManager';
 import type { IMarketplaceInfo } from './marketplace';
-import { DisabledApp } from './misc/DisabledApp';
 import { defaultPermissions } from './permissions/AppPermissions';
 import { ProxiedApp } from './ProxiedApp';
 import type { IAppStorageItem } from './storage';
@@ -37,7 +36,6 @@ import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
 import { AppRuntimeManager } from './managers/AppRuntimeManager';
 import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
-import { AppConsole } from './logging';
 
 export interface IAppInstallParameters {
     enable: boolean;
@@ -269,10 +267,6 @@ export class AppManager {
             } catch (e) {
                 console.warn(`Error while compiling the App "${item.info.name} (${item.id})":`);
                 console.error(e);
-
-                const app = DisabledApp.createNew(item.info, AppStatus.COMPILER_ERROR_DISABLED);
-                app.getLogger().error(e);
-                await this.logStorage.storeEntries(AppConsole.toStorageEntry(app.getID(), app.getLogger()));
 
                 const prl = new ProxiedApp(this, item, {} as DenoRuntimeSubprocessController);
                 this.apps.set(item.id, prl);
@@ -904,7 +898,7 @@ export class AppManager {
             const status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
-                app.getLogger().warn('Please report the following error:');
+                console.warn('Please report the following error:');
             }
 
             result = false;
@@ -1009,7 +1003,7 @@ export class AppManager {
                 status = isManual ? AppStatus.MANUALLY_ENABLED : AppStatus.AUTO_ENABLED;
             } else {
                 status = AppStatus.DISABLED;
-                app.getLogger().warn(`The App (${app.getID()}) disabled itself when being enabled. \nCheck the "onEnable" implementation for details.`);
+                console.warn(`The App (${app.getID()}) disabled itself when being enabled. \nCheck the "onEnable" implementation for details.`);
             }
         } catch (e) {
             enable = false;
@@ -1098,7 +1092,7 @@ export class AppManager {
             const status = AppStatus.ERROR_DISABLED;
 
             if (e.name === 'NotEnoughMethodArgumentsError') {
-                app.getLogger().warn('Please report the following error:');
+                console.warn('Please report the following error:');
             }
 
             result = false;
