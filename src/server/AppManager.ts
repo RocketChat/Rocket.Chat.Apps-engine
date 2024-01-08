@@ -554,7 +554,7 @@ export class AppManager {
             undoSteps.push(() => this.removeAppUser(app));
         } catch (err) {
             aff.setAppUserError({
-                username: app.getAppUserUsername(),
+                username: `${result.info.nameSlug}.bot`,
                 message: 'Failed to create an app user for this app.',
             });
 
