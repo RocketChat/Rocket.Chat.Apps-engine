@@ -57,10 +57,15 @@ export class AppSchedulerManager {
                 return;
             }
 
-            await app.getDenoRuntime().sendRequest({
-                method: `scheduler:${processor.id}`,
-                params: [jobContext],
-            });
+            try {
+                await app.getDenoRuntime().sendRequest({
+                    method: `scheduler:${processor.id}`,
+                    params: [jobContext],
+                });
+            } catch (e) {
+                console.error(e);
+                throw e;
+            }
         };
     }
 
