@@ -1,5 +1,3 @@
-import { createRequire } from 'node:module';
-
 import type { IModifyUpdater } from '@rocket.chat/apps-engine/definition/accessors/IModifyUpdater.ts';
 import type { ILivechatUpdater } from '@rocket.chat/apps-engine/definition/accessors/ILivechatUpdater.ts';
 import type { IUserUpdater } from '@rocket.chat/apps-engine/definition/accessors/IUserUpdater.ts';
@@ -9,8 +7,9 @@ import type { IUser } from '@rocket.chat/apps-engine/definition/users/IUser.ts';
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 
-import { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+import type { UIHelper as _UIHelper } from '@rocket.chat/apps-engine/server/misc/UIHelper.ts';
+import type { RoomType as _RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
 
 import * as Messenger from '../../messenger.ts';
 
@@ -18,9 +17,13 @@ import { MessageBuilder } from '../builders/MessageBuilder.ts';
 import { RoomBuilder } from '../builders/RoomBuilder.ts';
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
 
-const require = createRequire(import.meta.url);
+import { require } from '../../../lib/require.ts';
 
-const UIHelper = require(import.meta.resolve('@rocket.chat/apps-engine/server/misc/UIHelper.js').replace('file://', '').replace('src/', ''));
+const { UIHelper } = require('@rocket.chat/apps-engine/server/misc/UIHelper.js') as { UIHelper: typeof _UIHelper };
+const { RoomType } = require('@rocket.chat/apps-engine/definition/rooms/RoomType.js') as { RoomType: typeof _RoomType };
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class ModifyUpdater implements IModifyUpdater {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
@@ -100,7 +103,7 @@ export class ModifyUpdater implements IModifyUpdater {
         }
 
         if (result.blocks?.length) {
-            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId'));
+            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId') || '');
         }
 
         await this.senderFn({

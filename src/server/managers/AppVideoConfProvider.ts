@@ -21,10 +21,6 @@ export class AppVideoConfProvider {
         this.isRegistered = true;
     }
 
-    public canBeRan(method: AppMethod): boolean {
-        return this.app.hasMethod(method);
-    }
-
     public async runIsFullyConfigured(logStorage: AppLogStorage, accessors: AppAccessorManager): Promise<boolean> {
         if (typeof this.provider[AppMethod._VIDEOCONF_IS_CONFIGURED] !== 'function') {
             return true;

@@ -863,9 +863,6 @@ export class AppListenerManager {
         })(type);
 
         const app = this.manager.getOneById(appId);
-        if (!app.hasMethod(method)) {
-            return;
-        }
 
         const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitLivechatIncomingInteraction) => {
             const { actionId, message, visitor, room, triggerId, container } = interactionData;

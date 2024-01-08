@@ -49,9 +49,6 @@ export class AppAccessorsTestFixture {
             getStatus() {
                 return Promise.resolve(AppStatus.AUTO_ENABLED);
             },
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);
             },

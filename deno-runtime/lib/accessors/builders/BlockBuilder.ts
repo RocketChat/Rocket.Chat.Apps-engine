@@ -1,7 +1,7 @@
 import { v1 as uuid } from 'uuid';
 
-import {
-    BlockType,
+import type {
+    BlockType as _BlockType,
     IActionsBlock,
     IBlock,
     IConditionalBlock,
@@ -10,8 +10,9 @@ import {
     IImageBlock,
     IInputBlock,
     ISectionBlock,
-} from "@rocket.chat/apps-engine/definition/uikit/blocks/Blocks.ts";
+} from '@rocket.chat/apps-engine/definition/uikit/blocks/Blocks.ts';
 import type {
+    BlockElementType as _BlockElementType,
     IBlockElement,
     IButtonElement,
     IImageElement,
@@ -23,10 +24,14 @@ import type {
     ISelectElement,
     IStaticSelectElement,
 } from '@rocket.chat/apps-engine/definition/uikit/blocks/Elements.ts';
-import { BlockElementType } from '@rocket.chat/apps-engine/definition/uikit/blocks/Elements.ts';
-import type { ITextObject } from '@rocket.chat/apps-engine/definition/uikit/blocks/Objects.ts';
-import { TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks/Objects.ts';
-import { AppObjectRegistry } from "../../../AppObjectRegistry.ts";
+import type { ITextObject, TextObjectType as _TextObjectType } from '@rocket.chat/apps-engine/definition/uikit/blocks/Objects.ts';
+
+import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
+import { require } from '../../../lib/require.ts';
+
+const { BlockType } = require('@rocket.chat/apps-engine/definition/uikit/blocks/Blocks.js') as { BlockType: typeof _BlockType };
+const { BlockElementType } = require('@rocket.chat/apps-engine/definition/uikit/blocks/Elements.js') as { BlockElementType: typeof _BlockElementType };
+const { TextObjectType } = require('@rocket.chat/apps-engine/definition/uikit/blocks/Objects.js') as { TextObjectType: typeof _TextObjectType };
 
 type BlockFunctionParameter<T extends IBlock> = Omit<T, 'type'>;
 type ElementFunctionParameter<T extends IBlockElement> = T extends IInteractiveElement
@@ -97,7 +102,11 @@ export class BlockBuilder {
     public addConditionalBlock(innerBlocks: BlockBuilder | Array<IBlock>, condition?: IConditionalBlockFilters): BlockBuilder {
         const render = innerBlocks instanceof BlockBuilder ? innerBlocks.getBlocks() : innerBlocks;
 
-        this.addBlock({ type: BlockType.CONDITIONAL, render, when: condition } as IConditionalBlock);
+        this.addBlock({
+            type: BlockType.CONDITIONAL,
+            render,
+            when: condition,
+        } as IConditionalBlock);
 
         return this;
     }
@@ -204,5 +213,4 @@ export class BlockBuilder {
     private generateActionId(): string {
         return uuid();
     }
-
 }
