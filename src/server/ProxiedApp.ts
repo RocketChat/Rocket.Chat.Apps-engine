@@ -1,5 +1,5 @@
 import type { IAppAccessors, ILogger } from '../definition/accessors';
-import { AppStatus } from '../definition/AppStatus';
+import type { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
 import type { IApp } from '../definition/IApp';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
@@ -65,9 +65,8 @@ export class ProxiedApp implements IApp {
         }
     }
 
-    public getStatus(): AppStatus {
-        // return this.appRuntime.getStatus();
-        return AppStatus.UNKNOWN; // TODO: need to circle back on this one
+    public async getStatus(): Promise<AppStatus> {
+        return this.appRuntime.getStatus();
     }
 
     public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {

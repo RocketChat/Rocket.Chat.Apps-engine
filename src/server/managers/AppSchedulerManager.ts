@@ -48,7 +48,7 @@ export class AppSchedulerManager {
             }
 
             const app = this.manager.getOneById(appId);
-            const status = app.getStatus();
+            const status = await app.getStatus();
             const previousStatus = app.getPreviousStatus();
 
             const isNotToRunJob = this.isNotToRunJob(status, previousStatus);

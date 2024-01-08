@@ -31,7 +31,7 @@ export class DisabledAppTestFixture {
         Expect(disabledApp).toBeDefined();
         Expect(disabledApp.getLogger()).toBeDefined();
         Expect(disabledApp.getInfo()).toEqual(this.expectedInfo);
-        Expect(disabledApp.getStatus()).toEqual(AppStatus.COMPILER_ERROR_DISABLED);
+        Expect(await disabledApp.getStatus()).toEqual(AppStatus.COMPILER_ERROR_DISABLED);
         Expect(() => disabledApp.onEnable()).not.toThrow();
         Expect(await disabledApp.onEnable()).toEqual(false);
     }
