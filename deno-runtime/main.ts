@@ -19,6 +19,7 @@ import slashcommandHandler from './handlers/slashcommand-handler.ts';
 import videoConferenceHandler from './handlers/videoconference-handler.ts';
 import apiHandler from './handlers/api-handler.ts'
 import handleApp from './handlers/app/handler.ts';
+import handleScheduler from "./handlers/scheduler-handler.ts";
 
 AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
 
@@ -27,6 +28,7 @@ type Handlers = {
     'api': typeof apiHandler,
     'slashcommand': typeof slashcommandHandler
     'videoconference': typeof videoConferenceHandler
+    'scheduler': typeof handleScheduler,
 }
 
 async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
@@ -34,7 +36,8 @@ async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promi
         'app': handleApp,
         'api': apiHandler,
         'slashcommand': slashcommandHandler,
-        'videoconference': videoConferenceHandler
+        'videoconference': videoConferenceHandler,
+        'scheduler': handleScheduler,
     }
 
     // We're not handling notifications at the moment
