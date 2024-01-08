@@ -897,10 +897,6 @@ export class AppManager {
         } catch (e) {
             const status = AppStatus.ERROR_DISABLED;
 
-            if (e.name === 'NotEnoughMethodArgumentsError') {
-                console.warn('Please report the following error:');
-            }
-
             result = false;
 
             await app.setStatus(status);
@@ -922,10 +918,6 @@ export class AppManager {
             result = true;
         } catch (e) {
             let status = AppStatus.ERROR_DISABLED;
-
-            if (e.name === 'NotEnoughMethodArgumentsError') {
-                console.warn('Please report the following error:');
-            }
 
             if (e instanceof InvalidLicenseError) {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
@@ -1008,10 +1000,6 @@ export class AppManager {
         } catch (e) {
             enable = false;
 
-            if (e.name === 'NotEnoughMethodArgumentsError') {
-                console.warn('Please report the following error:');
-            }
-
             if (e instanceof InvalidLicenseError) {
                 status = AppStatus.INVALID_LICENSE_DISABLED;
             }
@@ -1090,10 +1078,6 @@ export class AppManager {
             result = true;
         } catch (e) {
             const status = AppStatus.ERROR_DISABLED;
-
-            if (e.name === 'NotEnoughMethodArgumentsError') {
-                console.warn('Please report the following error:');
-            }
 
             result = false;
 
