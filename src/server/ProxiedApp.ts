@@ -81,9 +81,9 @@ export class ProxiedApp implements IApp {
         return this.storageItem.info.nameSlug;
     }
 
+    // @deprecated This method will be removed in the next major version
     public getAppUserUsername(): string {
-        // return this.app.getAppUserUsername();
-        return 'some-username'; // TODO: need to circle back on this one
+        return `${this.storageItem.info.nameSlug}.bot`;
     }
 
     public getID(): string {
