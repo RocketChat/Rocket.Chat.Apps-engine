@@ -45,10 +45,6 @@ export class ProxiedApp implements IApp {
         return this.storageItem.implemented;
     }
 
-    public hasMethod(method: AppMethod): boolean {
-        return true; // TODO: needs refactor, remove usages
-    }
-
     public setupLogger(method: `${AppMethod}`): AppConsole {
         const logger = new AppConsole(method);
 
