@@ -21,7 +21,9 @@ import apiHandler from './handlers/api-handler.ts'
 import handleApp from './handlers/app/handler.ts';
 import handleScheduler from "./handlers/scheduler-handler.ts";
 
-AppObjectRegistry.set('MESSAGE_SEPARATOR', Deno.args.at(-1));
+const MESSAGE_SEPARATOR = Deno.args.at(-1) || '\n';
+
+AppObjectRegistry.set('MESSAGE_SEPARATOR', MESSAGE_SEPARATOR);
 
 type Handlers = {
     'app': typeof handleApp,
@@ -97,13 +99,21 @@ async function main() {
 
     const decoder = new TextDecoder();
 
+    let messageBuffer = '';
+
     for await (const chunk of Deno.stdin.readable) {
         const message = decoder.decode(chunk);
+
+        messageBuffer += message;
+
+        if (!message?.endsWith(MESSAGE_SEPARATOR)) {
+            continue;
+        }
 
         let JSONRPCMessage;
 
         try {
-            JSONRPCMessage = Messenger.parseMessage(message);
+            JSONRPCMessage = Messenger.parseMessage(messageBuffer.replace(MESSAGE_SEPARATOR, ''));
         } catch (error) {
             if (Messenger.isErrorResponse(error)) {
                 await Messenger.Transport.send(error);
@@ -112,6 +122,8 @@ async function main() {
             }
 
             continue;
+        } finally {
+            messageBuffer = '';
         }
 
         if (Messenger.isRequest(JSONRPCMessage)) {
