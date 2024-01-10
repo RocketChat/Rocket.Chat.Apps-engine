@@ -133,11 +133,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
-        const id = String(Math.random()).substring(2);
+        const id = String(Math.random().toString(36)).substring(2);
 
         const request = jsonrpc.request(id, message.method, message.params);
 
-        this.deno.stdin.write(request.serialize());
+        this.deno.stdin.write(request.serialize().concat(MESSAGE_SEPARATOR));
 
         return this.waitForResponse(id);
     }
@@ -358,34 +358,36 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             return;
         }
 
-        messages.forEach(async (m) => {
-            if (!m.length) return;
+        await Promise.all(
+            messages.map(async (m) => {
+                if (!m.length) return;
 
-            try {
-                const message = jsonrpc.parse(m);
+                try {
+                    const message = jsonrpc.parse(m);
 
-                if (Array.isArray(message)) {
-                    throw new Error('Invalid message format');
+                    if (Array.isArray(message)) {
+                        throw new Error('Invalid message format');
+                    }
+
+                    if (message.type === 'request' || message.type === 'notification') {
+                        return await this.handleIncomingMessage(message);
+                    }
+
+                    if (message.type === 'success' || message.type === 'error') {
+                        return await this.handleResultMessage(message);
+                    }
+
+                    console.error('Unrecognized message type', message);
+                } catch (e) {
+                    // SyntaxError is thrown when the message is not a valid JSON
+                    if (e instanceof SyntaxError) {
+                        return console.error('Failed to parse message', m);
+                    }
+
+                    console.error('Error executing handler', e);
                 }
-
-                if (message.type === 'request' || message.type === 'notification') {
-                    return await this.handleIncomingMessage(message);
-                }
-
-                if (message.type === 'success' || message.type === 'error') {
-                    return await this.handleResultMessage(message);
-                }
-
-                console.error('Unrecognized message type', message);
-            } catch (e) {
-                // SyntaxError is thrown when the message is not a valid JSON
-                if (e instanceof SyntaxError) {
-                    return console.error('Failed to parse message', m);
-                }
-
-                console.error('Error executing handler', e);
-            }
-        });
+            }),
+        ).catch(console.error);
     }
 
     private async parseError(chunk: Buffer): Promise<void> {
