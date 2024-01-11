@@ -106,7 +106,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const hadListeners = super.emit(eventName, ...args);
 
         if (!hadListeners) {
-            console.warn('Emitted but no one listened: ', eventName);
+            console.warn('Emitted but no one listened: ', eventName, args);
         }
 
         return hadListeners;
@@ -139,7 +139,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.deno.stdin.write(request.serialize().concat(MESSAGE_SEPARATOR));
 
-        return this.waitForResponse(id);
+        return this.waitForResponse(request);
     }
 
     private waitUntilReady(): Promise<void> {
@@ -158,11 +158,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         });
     }
 
-    private waitForResponse(id: string): Promise<unknown> {
+    private waitForResponse(req: jsonrpc.RequestObject): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => reject(new Error(`Request "${id}" timed out`)), this.options.timeout);
+            const timeoutId = setTimeout(() => reject(new Error(`Request "${req.id}" from method "${req.method}" timed out`)), this.options.timeout);
 
-            this.once(`result:${id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
+            this.once(`result:${req.id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
 
                 if (error) {
@@ -269,7 +269,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const result = await tailMethod.apply(accessor, params);
 
-        return jsonrpc.success(id, result);
+        return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
 
     private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
@@ -336,15 +336,18 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         let logs: ILoggerStorageEntry;
 
         if (message.type === 'success') {
-            const params = message.payload.result as { value: unknown; logs: ILoggerStorageEntry };
+            const params = message.payload.result as { value: unknown; logs?: ILoggerStorageEntry };
             result = params.value;
-            logs = params.logs as ILoggerStorageEntry;
+            logs = params.logs;
         } else {
             error = message.payload.error;
             logs = message.payload.error.data?.logs as ILoggerStorageEntry;
         }
 
-        await this.logStorage.storeEntries(logs);
+        // Should we try to make sure all result messages have logs?
+        if (logs) {
+            await this.logStorage.storeEntries(logs);
+        }
 
         this.emit(`result:${id}`, result, error);
     }
@@ -384,13 +387,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                         return console.error('Failed to parse message', m);
                     }
 
-                    console.error('Error executing handler', e);
+                    console.error('Error executing handler', e, m);
                 }
             }),
         ).catch(console.error);
     }
 
     private async parseError(chunk: Buffer): Promise<void> {
-        console.error(chunk.toString());
+        console.error('Subprocess stderr', chunk.toString());
     }
 }
