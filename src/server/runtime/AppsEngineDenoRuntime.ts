@@ -374,6 +374,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             case 'ready':
                 this.emit('ready');
                 break;
+            case 'log':
+                console.log('SUBPROCESS LOG', message);
+                break;
             default:
                 console.warn('Unrecognized method from sub process');
                 break;

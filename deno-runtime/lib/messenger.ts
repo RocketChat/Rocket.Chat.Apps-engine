@@ -150,3 +150,7 @@ export function sendNotification({ method, params }: NotificationDescriptor) {
 
     Transport.send(request);
 }
+
+export function log(params: jsonrpc.RpcParams) {
+    sendNotification({ method: 'log', params });
+}

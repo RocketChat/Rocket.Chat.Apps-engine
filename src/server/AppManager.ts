@@ -274,6 +274,7 @@ export class AppManager {
                         return AppStatus.COMPILER_ERROR_DISABLED;
                     },
                 } as unknown as DenoRuntimeSubprocessController);
+
                 this.apps.set(item.id, prl);
             }
         }
