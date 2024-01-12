@@ -99,39 +99,47 @@ async function main() {
 
     const decoder = new TextDecoder();
 
-    let messageBuffer = '';
+    let messageBuffer: string[] = [];
 
     for await (const chunk of Deno.stdin.readable) {
-        const message = decoder.decode(chunk);
+        const decoded = decoder.decode(chunk);
 
-        messageBuffer += message;
+        const messages = decoded.split(MESSAGE_SEPARATOR);
 
-        if (!message?.endsWith(MESSAGE_SEPARATOR)) {
-            continue;
-        }
-
-        let JSONRPCMessage;
-
-        try {
-            JSONRPCMessage = Messenger.parseMessage(messageBuffer.replace(MESSAGE_SEPARATOR, ''));
-        } catch (error) {
-            if (Messenger.isErrorResponse(error)) {
-                await Messenger.Transport.send(error);
-            } else {
-                await Messenger.sendParseError();
+        // We can't run these concurrently because they'll screw up the messageBuffer
+        for (const [index, message] of messages.entries()) {
+            // If the message is empty, it means that the last chunk ended with a separator
+            if (!message.length) {
+                continue;
             }
 
-            continue;
-        } finally {
-            messageBuffer = '';
-        }
+            messageBuffer.push(message);
 
-        if (Messenger.isRequest(JSONRPCMessage)) {
-            await requestRouter(JSONRPCMessage);
-        }
+            // If the message is the last one, we need to wait for the next chunk to arrive
+            if (index === messages.length - 1) {
+                continue;
+            }
 
-        if (Messenger.isResponse(JSONRPCMessage)) {
-            handleResponse(JSONRPCMessage);
+            try {
+                const JSONRPCMessage = Messenger.parseMessage(messageBuffer.join(''));
+
+                if (Messenger.isRequest(JSONRPCMessage)) {
+                    await requestRouter(JSONRPCMessage);
+                    continue;
+                }
+
+                if (Messenger.isResponse(JSONRPCMessage)) {
+                    handleResponse(JSONRPCMessage);
+                }
+            } catch (error) {
+                if (Messenger.isErrorResponse(error)) {
+                    await Messenger.Transport.send(error);
+                } else {
+                    await Messenger.sendParseError();
+                }
+            } finally {
+                messageBuffer = [];
+            }
         }
     }
 }

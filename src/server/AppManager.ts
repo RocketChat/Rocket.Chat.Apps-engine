@@ -268,7 +268,12 @@ export class AppManager {
                 console.warn(`Error while compiling the App "${item.info.name} (${item.id})":`);
                 console.error(e);
 
-                const prl = new ProxiedApp(this, item, {} as DenoRuntimeSubprocessController);
+                const prl = new ProxiedApp(this, item, {
+                    // Maybe we should have an "EmptyRuntime" class for this?
+                    getStatus() {
+                        return AppStatus.COMPILER_ERROR_DISABLED;
+                    },
+                } as unknown as DenoRuntimeSubprocessController);
                 this.apps.set(item.id, prl);
             }
         }
