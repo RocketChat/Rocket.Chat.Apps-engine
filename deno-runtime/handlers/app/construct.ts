@@ -31,11 +31,12 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
     return new Function(
         'require',
         `
+        const Buffer = require('node:buffer');
         const exports = {};
         const module = { exports };
-        const result = (async (exports,module,require,globalThis,Deno) => {
+        const result = (async (exports,module,Buffer,require,globalThis) => {
             ${code};
-        })(exports,module,require);
+        })(exports,module,require,Buffer);
         return result.then(() => module.exports);`,
     ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
 }

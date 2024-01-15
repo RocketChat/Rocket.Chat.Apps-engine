@@ -8,6 +8,7 @@ import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors
 import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
+import type { IUpload } from '@rocket.chat/apps-engine/definition/uploads/IUpload.ts'
 import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
 import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
@@ -17,6 +18,9 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
+
+import { require } from '../../lib/require.ts';
+const Buffer = require('node:buffer')
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -189,7 +193,23 @@ export class AppAccessors {
                 getUserReader: () => this.proxify('getReader:getUserReader'),
                 getNotifier: () => this.proxify('getReader:getNotifier'),
                 getLivechatReader: () => this.proxify('getReader:getLivechatReader'),
-                getUploadReader: () => this.proxify('getReader:getUploadReader'),
+                getUploadReader: () => ({
+                    _proxy: this.proxify('getReader:getUploadReader'),
+                    getById(id: string) {
+                        return this._proxy.getById(id);
+                    },
+                    // Convert the Uint8Array to a Buffer 
+                    getBufferById(id: string) {
+                        const result = this._proxy.getBufferById(id);
+                        return Buffer.from(result);
+                    },
+                    // Convert the Uint8Array to a Buffer 
+                    getBuffer(upload: IUpload) {
+                        const result = this._proxy.getBuffer(upload);
+                        return Buffer.from(result);
+                    },
+
+                }),
                 getCloudWorkspaceReader: () => this.proxify('getReader:getCloudWorkspaceReader'),
                 getVideoConferenceReader: () => this.proxify('getReader:getVideoConferenceReader'),
                 getOAuthAppsReader: () => this.proxify('getReader:getOAuthAppsReader'),
