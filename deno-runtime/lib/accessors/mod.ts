@@ -199,13 +199,13 @@ export class AppAccessors {
                         return this._proxy.getById(id);
                     },
                     // Convert the Uint8Array to a Buffer 
-                    getBufferById(id: string) {
-                        const result = this._proxy.getBufferById(id);
+                    async getBufferById(id: string) {
+                        const result = await this._proxy.getBufferById(id);
                         return Buffer.from(result);
                     },
                     // Convert the Uint8Array to a Buffer 
-                    getBuffer(upload: IUpload) {
-                        const result = this._proxy.getBuffer(upload);
+                    async getBuffer(upload: IUpload) {
+                        const result = await this._proxy.getBuffer(upload);
                         return Buffer.from(result);
                     },
 
