@@ -35,6 +35,7 @@ import type {
 import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
 import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/AppsEngineDenoRuntime';
 import { AppPackageParser } from '../../src/server/compiler';
+import type { AppRuntimeManager } from '../../src/server/managers/AppRuntimeManager';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -47,11 +48,22 @@ export class TestInfastructureSetup {
 
     private appManager: AppManager;
 
+    private runtimeManager: AppRuntimeManager;
+
     constructor() {
         this.appStorage = new TestsAppStorage();
         this.logStorage = new TestsAppLogStorage();
         this.bridges = new TestsAppBridges();
         this.sourceStorage = new TestSourceStorage();
+        this.runtimeManager = {
+            startRuntimeForApp: async () => {
+                return {} as DenoRuntimeSubprocessController;
+            },
+            runInSandbox: async () => {
+                return {} as unknown as Promise<unknown>;
+            },
+            stopRuntime: () => {},
+        } as unknown as AppRuntimeManager;
 
         this.appManager = {
             getParser() {
@@ -88,7 +100,10 @@ export class TestInfastructureSetup {
             getSettingsManager() {
                 return {} as AppSettingsManager;
             },
-        } as AppManager;
+            getRuntime: () => {
+                return this.runtimeManager;
+            },
+        } as unknown as AppManager;
     }
 
     public getAppStorage(): AppMetadataStorage {

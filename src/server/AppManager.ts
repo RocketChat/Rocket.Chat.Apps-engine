@@ -350,6 +350,8 @@ export class AppManager {
             }
 
             this.listenerManager.releaseEssentialEvents(app);
+
+            app.getDenoRuntime().stopApp();
         }
 
         // Remove all the apps from the system now that we have unloaded everything
@@ -637,6 +639,8 @@ export class AppManager {
         await this.appMetadataStorage.remove(app.getID());
         await this.appSourceStorage.remove(app.getStorageItem()).catch();
 
+        app.getDenoRuntime().stopApp();
+
         this.apps.delete(app.getID());
     }
 
@@ -681,6 +685,8 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
+        this.apps.get(old.id).getDenoRuntime().stopApp();
+
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
         // Ensure there is an user for the app
@@ -722,6 +728,8 @@ export class AppManager {
         const app = await (async () => {
             if (appPackageOrInstance instanceof Buffer) {
                 const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
+
+                this.apps.get(stored.id).getDenoRuntime().stopApp();
 
                 return this.getCompiler().toSandBox(this, stored, parseResult);
             }
