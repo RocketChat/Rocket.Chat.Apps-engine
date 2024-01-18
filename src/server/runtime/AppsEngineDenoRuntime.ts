@@ -11,6 +11,7 @@ import type { IParseAppPackageResult } from '../compiler';
 import type { AppStatus } from '../../definition/AppStatus';
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { ILoggerStorageEntry } from '../logging';
+import type { AppRuntimeManager } from '../managers/AppRuntimeManager';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -67,7 +68,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         timeout: 10000,
     };
 
-    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown';
+    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
 
     private readonly accessors: AppAccessorManager;
 
@@ -76,6 +77,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly logStorage: AppLogStorage;
 
     private readonly bridges: AppBridges;
+
+    private readonly runtimeManager: AppRuntimeManager;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
     constructor(manager: AppManager, private readonly appPackage: IParseAppPackageResult) {
@@ -99,6 +102,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.api = manager.getApiManager();
         this.logStorage = manager.getLogStorage();
         this.bridges = manager.getBridges();
+        this.runtimeManager = manager.getRuntime();
     }
 
     // Debug purposes, could be deleted later
@@ -126,10 +130,25 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
-    public async stopApp() {
-        if (!this.deno.killed) {
-            this.deno.kill();
+    public stopApp() {
+        if (this.deno.killed) {
+            return true;
         }
+
+        // What else should we do?
+        if (!this.deno.kill('SIGKILL')) {
+            return false;
+        }
+
+        this.state = 'stopped';
+
+        this.runtimeManager.stopRuntime(this);
+
+        return true;
+    }
+
+    public getAppId(): string {
+        return this.appPackage.info.id;
     }
 
     private send(message: jsonrpc.JsonRpc) {

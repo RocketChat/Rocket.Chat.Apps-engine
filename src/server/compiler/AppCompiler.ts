@@ -23,10 +23,7 @@ export class AppCompiler {
 
         const runtime = await manager.getRuntime().startRuntimeForApp(packageResult);
 
-        // TODO: Fix this type cast from to any to the right one
         const app = new ProxiedApp(manager, storage, runtime);
-
-        // await manager.getLogStorage().storeEntries(app.getID(), logger);
 
         return app;
     }
