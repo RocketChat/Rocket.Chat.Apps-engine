@@ -34,7 +34,10 @@ function wrapAppCode(code: string): (require: (module: string) => unknown) => Pr
         const { Buffer } = require('buffer');
         const exports = {};
         const module = { exports };
+        const __error__ = console.error.bind(console);
         const result = (async (exports,module,require,Buffer,globalThis,Deno) => {
+            const console = { log: __error__ };
+            globalThis = { console };
             ${code};
         })(exports,module,require,Buffer);
         return result.then(() => module.exports);`,

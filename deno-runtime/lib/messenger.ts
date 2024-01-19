@@ -36,9 +36,9 @@ export const Transport = new (class Transporter {
         this.selectedTransport = this.stdoutTransport.bind(this);
     }
 
-    private async stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
+    private stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
         const encoded = encoder.encode(message.serialize() + AppObjectRegistry.get<string>('MESSAGE_SEPARATOR'));
-        await Deno.stdout.write(encoded);
+        Deno.stdout.writeSync(encoded);
     }
 
     private async noopTransport(_message: jsonrpc.JsonRpc): Promise<void> {}
@@ -128,6 +128,7 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
     // TODO: add timeout to this
     const responsePromise = new Promise((resolve, reject) => {
         const handler = (event: Event) => {
+            console.error('HANDLING RESPONSE', Date.now());
             if (event instanceof ErrorEvent) {
                 reject(event.error);
             }
@@ -139,10 +140,14 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
             RPCResponseObserver.removeEventListener(`response:${request.id}`, handler);
         };
 
+        console.error('OBSERVING RESPONSE');
+
         RPCResponseObserver.addEventListener(`response:${request.id}`, handler);
     });
 
     await Transport.send(request);
+
+    console.error('DATA SENT', Date.now());
 
     return responsePromise as Promise<jsonrpc.SuccessObject>;
 }

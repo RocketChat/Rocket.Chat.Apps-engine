@@ -20,6 +20,7 @@ import videoConferenceHandler from './handlers/videoconference-handler.ts';
 import apiHandler from './handlers/api-handler.ts';
 import handleApp from './handlers/app/handler.ts';
 import handleScheduler from './handlers/scheduler-handler.ts';
+import { registerLifecycleHooks, registerOSSignalHandlers } from "./lib/system.ts";
 
 const MESSAGE_SEPARATOR = Deno.args.at(-1) || '\n';
 
@@ -81,6 +82,8 @@ async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promi
 function handleResponse(response: Messenger.JsonRpcResponse): void {
     let event: Event;
 
+    console.error('handleResponse', response);
+
     if (response.type === 'error') {
         event = new ErrorEvent(`response:${response.payload.id}`, {
             error: response.payload,
@@ -102,6 +105,7 @@ async function main() {
     let messageBuffer: string[] = [];
 
     for await (const chunk of Deno.stdin.readable) {
+        console.error('RECEIVED CHUNK');
         const decoded = decoder.decode(chunk);
 
         const messages = decoded.split(MESSAGE_SEPARATOR);
@@ -142,6 +146,12 @@ async function main() {
             }
         }
     }
+
+    console.error('finished main');
 }
 
-main();
+registerOSSignalHandlers();
+registerLifecycleHooks();
+main().then(() => console.error('end?')).catch((e) => {
+    console.error('error main', e);
+});

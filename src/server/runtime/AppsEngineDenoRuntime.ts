@@ -109,7 +109,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const denoWrapperPath = getDenoWrapperPath();
             const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess', MESSAGE_SEPARATOR]);
+            this.deno = child_process.spawn(denoExePath, [
+                'run',
+                `--allow-read=${denoWrapperDir}/`,
+                '--inspect',
+                denoWrapperPath,
+                '--subprocess',
+                MESSAGE_SEPARATOR,
+            ]);
 
             this.setupListeners();
         } catch {
@@ -170,7 +177,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     private send(message: jsonrpc.JsonRpc) {
-        this.deno.stdin.write(message.serialize().concat(MESSAGE_SEPARATOR));
+        console.log('SENDING MESSAGE', message);
+        const writeResult = this.deno.stdin.write(message.serialize().concat(MESSAGE_SEPARATOR));
+        console.log('WRITE RESULT', writeResult);
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
@@ -221,6 +230,22 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private setupListeners(): void {
         this.deno.stderr.on('data', this.parseError.bind(this));
+        this.deno.on('error', (error) => {
+            console.error('Subprocess error', error);
+            this.state = 'invalid';
+        });
+        this.deno.on('exit', (code, signal) => {
+            console.error('Subprocess exit', code, signal);
+            this.state = 'invalid';
+        });
+        this.deno.on('close', (code, signal) => {
+            console.error('Subprocess close', code, signal);
+            this.state = 'invalid';
+        });
+        this.deno.on('disconnect', () => {
+            console.error('Subprocess disconnect');
+            this.state = 'invalid';
+        });
         this.on('ready', this.onReady.bind(this));
 
         let messageBuffer: string[] = [];
@@ -245,6 +270,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                     // We need to parse the JSON here because of the custom reviver function
                     const jsonParsed = parseJsonMessage(messageBuffer.join(''));
                     const JSONRPCMessage = jsonrpc.parseObject(jsonParsed);
+
+                    console.log('PARSED MESSAGE', JSONRPCMessage);
 
                     if (Array.isArray(JSONRPCMessage)) {
                         throw new Error('Invalid message format');
@@ -281,6 +308,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const accessorMethods = method.substring(9).split(':'); // First 9 characters are always 'accessor:'
         const managerOrigin = accessorMethods.shift();
         const tailMethodName = accessorMethods.pop();
+
+        // console.log('ACCESSOR MESSAGE', accessorMethods, managerOrigin, tailMethodName);
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
             const result = this.api.listApis(this.appPackage.info.id);
@@ -354,11 +383,15 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const tailMethod = accessor[tailMethodName as keyof typeof accessor] as unknown;
 
+        // console.log('ACCESSOR METHODS', accessor, tailMethod, params);
+
         if (typeof tailMethod !== 'function') {
             throw new Error(`Invalid accessor method "${tailMethodName}"`);
         }
 
         const result = await tailMethod.apply(accessor, params);
+
+        // console.log('ACCESSOR RESULT', result);
 
         return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
