@@ -30,14 +30,13 @@ export default async function handleScheduler(method: string, params: unknown): 
     app.getLogger().debug(`Job processor ${processor.id} is being executed...`);
 
     try {
-        await processor
-            .processor(
-                context,
-                AppAccessorsInstance.getReader(),
-                AppAccessorsInstance.getModifier(),
-                AppAccessorsInstance.getHttp(),
-                AppAccessorsInstance.getPersistence(),
-            );
+        await processor.processor(
+            context,
+            AppAccessorsInstance.getReader(),
+            AppAccessorsInstance.getModifier(),
+            AppAccessorsInstance.getHttp(),
+            AppAccessorsInstance.getPersistence(),
+        );
 
         app.getLogger().debug(`Job processor ${processor.id} was successfully executed`);
 
