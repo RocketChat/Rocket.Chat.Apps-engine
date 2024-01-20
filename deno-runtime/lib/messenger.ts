@@ -144,8 +144,6 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
     await Transport.send(request);
 
-    console.error('DATA SENT', Date.now());
-
     return responsePromise as Promise<jsonrpc.SuccessObject>;
 }
 
