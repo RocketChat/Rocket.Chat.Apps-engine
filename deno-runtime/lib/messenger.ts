@@ -125,10 +125,8 @@ export async function successResponse({ id, result }: SuccessResponseDescriptor)
 export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<jsonrpc.SuccessObject> {
     const request = jsonrpc.request(Math.random().toString(36).slice(2), requestDescriptor.method, requestDescriptor.params);
 
-    await Transport.send(request);
-
     // TODO: add timeout to this
-    return new Promise((resolve, reject) => {
+    const responsePromise = new Promise((resolve, reject) => {
         const handler = (event: Event) => {
             if (event instanceof ErrorEvent) {
                 reject(event.error);
@@ -143,6 +141,10 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
         RPCResponseObserver.addEventListener(`response:${request.id}`, handler);
     });
+
+    await Transport.send(request);
+
+    return responsePromise as Promise<jsonrpc.SuccessObject>;
 }
 
 export function sendNotification({ method, params }: NotificationDescriptor) {
