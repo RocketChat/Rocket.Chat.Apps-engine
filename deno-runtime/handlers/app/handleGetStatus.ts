@@ -1,4 +1,5 @@
 import type { App } from '@rocket.chat/apps-engine/definition/App.ts';
+
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 
 export default function handleGetStatus(): Promise<boolean> {
