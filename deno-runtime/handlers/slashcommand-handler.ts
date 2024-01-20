@@ -2,8 +2,8 @@ import { Defined, JsonRpcError } from 'jsonrpc-lite';
 
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
-import { SlashCommandContext as _SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.ts';
-import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
+import type { SlashCommandContext as _SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.ts';
+import type { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
 import { AppAccessors, AppAccessorsInstance } from '../lib/accessors/mod.ts';
