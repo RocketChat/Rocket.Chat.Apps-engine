@@ -124,7 +124,7 @@ async function main() {
                 const JSONRPCMessage = Messenger.parseMessage(messageBuffer.join(''));
 
                 if (Messenger.isRequest(JSONRPCMessage)) {
-                    await requestRouter(JSONRPCMessage);
+                    void requestRouter(JSONRPCMessage);
                     continue;
                 }
 
