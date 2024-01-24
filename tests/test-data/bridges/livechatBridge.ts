@@ -70,6 +70,10 @@ export class TestLivechatBridge extends LivechatBridge {
         throw new Error('Method not implemented');
     }
 
+    public findRoomsByAgentId(agentId: string, appId: string): Promise<ILivechatRoom[]> {
+        throw new Error('Method not implemented');
+    }
+
     public findDepartmentByIdOrName(value: string, appId: string): Promise<IDepartment | undefined> {
         throw new Error('Method not implemented');
     }
