@@ -20,7 +20,7 @@ describe('ModifyExtender', () => {
 
     beforeEach(() => {
         AppObjectRegistry.clear();
-        AppObjectRegistry.set('appId', 'deno-test');
+        AppObjectRegistry.set('id', 'deno-test');
         extender = new ModifyExtender(senderFn);
     });
 

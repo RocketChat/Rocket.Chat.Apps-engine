@@ -21,7 +21,7 @@ describe('ModifyUpdater', () => {
 
     beforeEach(() => {
         AppObjectRegistry.clear();
-        AppObjectRegistry.set('appId', 'deno-test');
+        AppObjectRegistry.set('id', 'deno-test');
         modifyUpdater = new ModifyUpdater(senderFn);
     });
 
