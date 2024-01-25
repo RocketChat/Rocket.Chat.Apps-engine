@@ -53,7 +53,8 @@ export class AppAccessors {
                                 : senderFn({
                                       method: `accessor:${namespace}:${prop}`,
                                       params,
-                                  }),
+                                  }).then((response) => response.result)
+                                  .catch(err => err.error),
                 },
             ) as T;
     }
