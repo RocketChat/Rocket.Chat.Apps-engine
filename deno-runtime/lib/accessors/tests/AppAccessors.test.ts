@@ -29,7 +29,7 @@ describe('AppAccessors', () => {
         const roomRead = appAccessors.getReader().getRoomReader();
         const room = await roomRead.getById('123');
 
-        assertEquals(room.result, {
+        assertEquals(room, {
             params: ['123'],
             method: 'accessor:getReader:getRoomReader:getById',
         });
@@ -39,7 +39,7 @@ describe('AppAccessors', () => {
         const reader = appAccessors.getReader().getEnvironmentReader().getEnvironmentVariables();
         const room = await reader.getValueByName('NODE_ENV');
 
-        assertEquals(room.result, {
+        assertEquals(room, {
             params: ['NODE_ENV'],
             method: 'accessor:getReader:getEnvironmentReader:getEnvironmentVariables:getValueByName',
         });
@@ -49,7 +49,7 @@ describe('AppAccessors', () => {
         const envRead = appAccessors.getEnvironmentRead();
         const env = await envRead.getServerSettings().getValueById('123');
 
-        assertEquals(env.result, {
+        assertEquals(env, {
             params: ['123'],
             method: 'accessor:getEnvironmentRead:getServerSettings:getValueById',
         });
@@ -59,7 +59,7 @@ describe('AppAccessors', () => {
         const envRead = appAccessors.getEnvironmentWrite();
         const env = await envRead.getServerSettings().incrementValue('123', 6);
 
-        assertEquals(env.result, {
+        assertEquals(env, {
             params: ['123', 6],
             method: 'accessor:getEnvironmentWrite:getServerSettings:incrementValue',
         });
@@ -74,7 +74,7 @@ describe('AppAccessors', () => {
             providesPreview: true,
         });
 
-        assertEquals(command.result, {
+        assertEquals(command, {
             params: [
                 {
                     command: 'test',
@@ -105,9 +105,9 @@ describe('AppAccessors', () => {
         assertEquals(AppObjectRegistry.get('slashcommand:test'), slashcommand);
 
         // The function will not be serialized and sent to the main process
-        delete result.result.params[0].executor;
+        delete result.params[0].executor;
 
-        assertEquals(result.result, {
+        assertEquals(result, {
             method: 'accessor:getConfigurationExtend:slashCommands:provideSlashCommand',
             params: [
                 {
