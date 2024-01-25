@@ -25,7 +25,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendMessage(messageId: string, updater: IUser): Promise<IMessageExtender> {
         const result = await this.senderFn({
             method: 'bridges:getMessageBridge:doGetById',
-            params: [messageId, AppObjectRegistry.get('appId')],
+            params: [messageId, AppObjectRegistry.get('id')],
         });
 
         const msg = result.result as IMessage;
@@ -39,7 +39,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendRoom(roomId: string, _updater: IUser): Promise<IRoomExtender> {
         const result = await this.senderFn({
             method: 'bridges:getRoomBridge:doGetById',
-            params: [roomId, AppObjectRegistry.get('appId')],
+            params: [roomId, AppObjectRegistry.get('id')],
         });
 
         const room = result.result as IRoom;
@@ -52,7 +52,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendVideoConference(id: string): Promise<IVideoConferenceExtender> {
         const result = await this.senderFn({
             method: 'bridges:getVideoConferenceBridge:doGetById',
-            params: [id, AppObjectRegistry.get('appId')],
+            params: [id, AppObjectRegistry.get('id')],
         });
 
         const call = result.result as VideoConference;
@@ -67,7 +67,7 @@ export class ModifyExtender implements IModifyExtender {
             case RocketChatAssociationModel.MESSAGE:
                 await this.senderFn({
                     method: 'bridges:getMessageBridge:doUpdate',
-                    params: [(extender as IMessageExtender).getMessage(), AppObjectRegistry.get('appId')],
+                    params: [(extender as IMessageExtender).getMessage(), AppObjectRegistry.get('id')],
                 });
                 break;
             case RocketChatAssociationModel.ROOM:
@@ -76,14 +76,14 @@ export class ModifyExtender implements IModifyExtender {
                     params: [
                         (extender as IRoomExtender).getRoom(),
                         (extender as IRoomExtender).getUsernamesOfMembersBeingAdded(),
-                        AppObjectRegistry.get('appId'),
+                        AppObjectRegistry.get('id'),
                     ],
                 });
                 break;
             case RocketChatAssociationModel.VIDEO_CONFERENCE:
                 await this.senderFn({
                     method: 'bridges:getVideoConferenceBridge:doUpdate',
-                    params: [(extender as IVideoConferenceExtender).getVideoConference(), AppObjectRegistry.get('appId')],
+                    params: [(extender as IVideoConferenceExtender).getVideoConference(), AppObjectRegistry.get('id')],
                 });
                 break;
             default:

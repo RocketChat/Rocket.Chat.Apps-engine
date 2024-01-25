@@ -65,7 +65,7 @@ export class ModifyUpdater implements IModifyUpdater {
     public async message(messageId: string, _updater: IUser): Promise<IMessageBuilder> {
         const response = await this.senderFn({
             method: 'bridges:getMessageBridge:doGetById',
-            params: [messageId, AppObjectRegistry.get('appId')],
+            params: [messageId, AppObjectRegistry.get('id')],
         });
 
         return new MessageBuilder(response.result as IMessage);
@@ -74,7 +74,7 @@ export class ModifyUpdater implements IModifyUpdater {
     public async room(roomId: string, _updater: IUser): Promise<IRoomBuilder> {
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doGetById',
-            params: [roomId, AppObjectRegistry.get('appId')],
+            params: [roomId, AppObjectRegistry.get('id')],
         });
 
         return new RoomBuilder(response.result as IRoom);
@@ -103,12 +103,12 @@ export class ModifyUpdater implements IModifyUpdater {
         }
 
         if (result.blocks?.length) {
-            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId') || '');
+            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('id') || '');
         }
 
         await this.senderFn({
             method: 'bridges:getMessageBridge:doUpdate',
-            params: [result, AppObjectRegistry.get('appId')],
+            params: [result, AppObjectRegistry.get('id')],
         });
     }
 
@@ -139,7 +139,7 @@ export class ModifyUpdater implements IModifyUpdater {
 
         await this.senderFn({
             method: 'bridges:getRoomBridge:doUpdate',
-            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
+            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('id')],
         });
     }
 }

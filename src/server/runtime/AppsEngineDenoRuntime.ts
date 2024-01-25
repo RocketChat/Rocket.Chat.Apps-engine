@@ -381,7 +381,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             return;
         }
 
-        if (method.startsWith('bridge:')) {
+        if (method.startsWith('bridges:')) {
             const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
 
             this.send(result);

@@ -60,7 +60,7 @@ export class BlockBuilder {
 
     constructor() {
         this.blocks = [];
-        this.appId = String(AppObjectRegistry.get('appId'));
+        this.appId = String(AppObjectRegistry.get('id'));
     }
 
     public addSectionBlock(block: SectionBlockParam): BlockBuilder {

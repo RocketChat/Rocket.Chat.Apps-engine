@@ -183,12 +183,12 @@ export class ModifyCreator implements IModifyCreator {
 
         if (result.blocks?.length) {
             // Can we move this elsewhere? This AppObjectRegistry usage doesn't really belong here, but where?
-            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId') || '');
+            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('id') || '');
         }
 
         const response = await this.senderFn({
             method: 'bridges:getMessageBridge:doCreate',
-            params: [result, AppObjectRegistry.get('appId')],
+            params: [result, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -210,7 +210,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getLivechatBridge:doCreateMessage',
-            params: [result, AppObjectRegistry.get('appId')],
+            params: [result, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -244,7 +244,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreate',
-            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
+            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -272,7 +272,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreateDiscussion',
-            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
+            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -295,7 +295,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getVideoConferenceBridge:doCreate',
-            params: [videoConference, AppObjectRegistry.get('appId')],
+            params: [videoConference, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -306,7 +306,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getUserBridge:doCreate',
-            params: [user, AppObjectRegistry.get('appId')],
+            params: [user, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
