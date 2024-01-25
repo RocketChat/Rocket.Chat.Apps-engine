@@ -549,6 +549,8 @@ export class AppManager {
         // the App instance from the source.
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
+        undoSteps.push(() => app.getDenoRuntime().stopApp());
+
         // Create a user for the app
         try {
             await this.createAppUser(result.info);
