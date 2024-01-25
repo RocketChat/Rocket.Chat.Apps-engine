@@ -83,11 +83,11 @@ function handleResponse(response: Messenger.JsonRpcResponse): void {
 
     if (response.type === 'error') {
         event = new ErrorEvent(`response:${response.payload.id}`, {
-            error: response.payload.error,
+            error: response.payload,
         });
     } else {
         event = new CustomEvent(`response:${response.payload.id}`, {
-            detail: response.payload.result,
+            detail: response.payload,
         });
     }
 
