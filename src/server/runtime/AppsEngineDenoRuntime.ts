@@ -36,11 +36,29 @@ export const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
+export const JSONRPC_METHOD_NOT_FOUND = -32601;
+
 export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
     return ALLOWED_ACCESSOR_METHODS.includes(accessor as any);
 }
 
 const MESSAGE_SEPARATOR = 'OkFQUF9TRVA6';
+
+// We need to parse the string manually because jj
+function parseJsonMessage(message: string): jsonrpc.Defined {
+    return JSON.parse(message, (key, value) => {
+        // This is very likely an ISO date string, let's try to parse it
+        if (typeof value === 'string' && value.length === 24 && value.endsWith('Z')) {
+            const date = new Date(value);
+
+            if (!isNaN(date.getTime())) {
+                return date;
+            }
+        }
+
+        return value;
+    });
+}
 
 /**
  * Resolves the absolute path of the Deno executable
@@ -224,7 +242,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }
 
                 try {
-                    const JSONRPCMessage = jsonrpc.parse(messageBuffer.join(''));
+                    // We need to parse the JSON here because of the custom reviver function
+                    const jsonParsed = parseJsonMessage(messageBuffer.join(''));
+                    const JSONRPCMessage = jsonrpc.parseObject(jsonParsed);
 
                     if (Array.isArray(JSONRPCMessage)) {
                         throw new Error('Invalid message format');

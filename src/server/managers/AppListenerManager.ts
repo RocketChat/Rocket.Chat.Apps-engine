@@ -30,6 +30,7 @@ import type { AppManager } from '../AppManager';
 import type { ProxiedApp } from '../ProxiedApp';
 import type { AppAccessorManager } from './AppAccessorManager';
 import { Utilities } from '../misc/Utilities';
+import { JSONRPC_METHOD_NOT_FOUND } from '../runtime/AppsEngineDenoRuntime';
 
 interface IListenerExecutor {
     [AppInterface.IPreMessageSentPrevent]: {
@@ -443,7 +444,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (!continueOn) {
                 continue;
@@ -465,7 +473,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND, msg);
@@ -481,7 +496,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentModify)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY, msg)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 msg = (await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY, msg)) as IMessage;
@@ -520,7 +542,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGESENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGESENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGESENT, data);
@@ -534,7 +563,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageDeletePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 prevented = (await app.call(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT, data)) as boolean;
@@ -555,13 +591,22 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(
-                AppMethod.CHECKPOSTMESSAGEDELETED,
-                // `context` has more information about the event, but
-                // we had to keep this `message` here for compatibility
-                message,
-                context,
-            )) as boolean;
+            const continueOn = (await app
+                .call(
+                    AppMethod.CHECKPOSTMESSAGEDELETED,
+                    // `context` has more information about the event, but
+                    // we had to keep this `message` here for compatibility
+                    message,
+                    context,
+                )
+                .catch((error) => {
+                    // This method is optional, so if it doesn't exist, we should continue
+                    if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                        return true;
+                    }
+
+                    throw error;
+                })) as boolean;
 
             if (continueOn) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED, message, context);
@@ -575,7 +620,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 prevented = (await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT, data)) as boolean;
@@ -595,7 +647,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND, msg)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND, msg);
@@ -611,7 +670,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY, msg)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 msg = (await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY, msg)) as IMessage;
@@ -625,7 +691,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED, data);
@@ -640,7 +713,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEPREVENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 prevented = (await app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT, data)) as boolean;
@@ -660,7 +740,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEEXTEND, room)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEEXTEND, room).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 room = await app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND, room);
@@ -676,7 +763,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEMODIFY, room)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEMODIFY, room).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 room = (await app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY, room)) as IRoom;
@@ -690,7 +784,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 await app.call(AppMethod.EXECUTEPOSTROOMCREATE, data);
@@ -704,7 +805,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPREROOMDELETEPREVENT, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMDELETEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 prevented = (await app.call(AppMethod.EXECUTEPREROOMDELETEPREVENT, data)) as boolean;
@@ -722,7 +830,14 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
             const app = this.manager.getOneById(appId);
 
-            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMDELETED, data)) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMDELETED, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
 
             if (continueOn) {
                 await app.call(AppMethod.EXECUTEPOSTROOMDELETED, data);
