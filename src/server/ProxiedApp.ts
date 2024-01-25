@@ -56,6 +56,11 @@ export class ProxiedApp {
             if (e.code === AppsEngineException.JSONRPC_ERROR_CODE) {
                 throw new AppsEngineException(e.message);
             }
+
+            // Range of JSON-RPC error codes: https://www.jsonrpc.org/specification#error_object
+            if (e.code >= -32999 || e.code <= -32000) {
+                throw e;
+            }
         }
     }
 
