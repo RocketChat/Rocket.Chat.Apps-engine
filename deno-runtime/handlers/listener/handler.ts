@@ -12,8 +12,8 @@ import { RoomBuilder } from '../../lib/accessors/builders/RoomBuilder.ts';
 import { AppAccessors, AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import { require } from '../../lib/require.ts';
 import createRoom from '../../lib/roomFactory.ts';
+import { Buffer } from 'node:buffer';
 
-const Buffer = require('node:buffer')
 const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.js') as {
     AppsEngineException: typeof _AppsEngineException;
 };
