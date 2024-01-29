@@ -18,6 +18,7 @@ export interface ILivechatRead {
     getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>>;
     getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>>;
     getLivechatRoomsByAgentId(agentId: string): Promise<Array<ILivechatRoom>>;
+    getLivechatTotalRoomsByAgentId(agentId: string): Promise<number>;
     /**
      * @deprecated This method does not adhere to the conversion practices applied
      * elsewhere in the Apps-Engine and will be removed in the next major version.
