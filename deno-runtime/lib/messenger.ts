@@ -37,7 +37,8 @@ export const Transport = new (class Transporter {
     }
 
     private async stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
-        const encoded = encoder.encode(message.serialize() + AppObjectRegistry.get<string>('MESSAGE_SEPARATOR'));
+        const msgId = Math.random().toString(36).substring(2, 6);
+        const encoded = encoder.encode(msgId + message.serialize() + AppObjectRegistry.get<string>('MESSAGE_SEPARATOR'));
         await Deno.stdout.write(encoded);
     }
 

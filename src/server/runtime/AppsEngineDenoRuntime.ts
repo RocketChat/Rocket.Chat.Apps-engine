@@ -227,18 +227,27 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.deno.stderr.on('data', this.parseError.bind(this));
         this.on('ready', this.onReady.bind(this));
 
-        let messageBuffer: string[] = [];
+        const messageBuffer: Record<string, string[]> = {};
 
         this.deno.stdout.on('data', async (chunk: Buffer) => {
             // Chunk can be multiple JSONRpc messages as the stdout read stream can buffer multiple messages
             const messages = chunk.toString().split(MESSAGE_SEPARATOR);
 
             // We can't run these concurrently because they'll screw up the messageBuffer
-            for (const [index, message] of messages.entries()) {
+            for (const [index, rawMessage] of messages.entries()) {
                 // If the message is empty, it means that the last chunk ended with a separator
-                if (!message.length) continue;
+                if (!rawMessage.length) continue;
 
-                messageBuffer.push(message);
+                // This does not account for a scenario where the chunk is split in the middle of a message
+                // We'll need to adapt to that soon
+                const mid = rawMessage.substring(0, 4);
+                const message = rawMessage.substring(4);
+
+                if (!messageBuffer[mid]) {
+                    messageBuffer[mid] = [];
+                }
+
+                messageBuffer[mid].push(message);
 
                 // If the message is the last one, we need to wait for the next chunk to arrive
                 if (index === messages.length - 1) {
@@ -247,7 +256,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
                 try {
                     // We need to parse the JSON here because of the custom reviver function
-                    const jsonParsed = parseJsonMessage(messageBuffer.join(''));
+                    const jsonParsed = parseJsonMessage(messageBuffer[mid].join(''));
                     const JSONRPCMessage = jsonrpc.parseObject(jsonParsed);
 
                     if (Array.isArray(JSONRPCMessage)) {
@@ -268,13 +277,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 } catch (e) {
                     // SyntaxError is thrown when the message is not a valid JSON
                     if (e instanceof SyntaxError) {
-                        console.error('Failed to parse message', message);
+                        console.error('Failed to parse message', messageBuffer[mid].join(''), chunk.toString());
                         continue;
                     }
 
-                    console.error('Error executing handler', e, message);
+                    console.error('Error executing handler', e, messageBuffer[mid].join(''));
                 } finally {
-                    messageBuffer = [];
+                    delete messageBuffer[mid];
                 }
             }
         });
