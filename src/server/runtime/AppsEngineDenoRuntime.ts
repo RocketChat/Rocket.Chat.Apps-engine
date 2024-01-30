@@ -8,10 +8,10 @@ import type { AppManager } from '../AppManager';
 import type { AppLogStorage } from '../storage';
 import type { AppBridges } from '../bridges';
 import type { IParseAppPackageResult } from '../compiler';
-import type { AppStatus } from '../../definition/AppStatus';
 import type { AppAccessorManager, AppApiManager } from '../managers';
 import type { ILoggerStorageEntry } from '../logging';
 import type { AppRuntimeManager } from '../managers/AppRuntimeManager';
+import { AppStatus } from '../../definition/AppStatus';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -139,6 +139,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async getStatus(): Promise<AppStatus> {
+        // If the process has been terminated, we can't get the status
+        if (this.deno.exitCode !== null) {
+            return AppStatus.UNKNOWN;
+        }
         return this.sendRequest({ method: 'app:getStatus', params: [] }) as Promise<AppStatus>;
     }
 
