@@ -2,6 +2,7 @@
     "imports": {
         "@rocket.chat/apps-engine/": "./../src/",
         "@rocket.chat/ui-kit": "npm:@rocket.chat/ui-kit@^0.31.22",
+        "@msgpack/msgpack": "npm:@msgpack/msgpack@3.0.0-beta2",
         "acorn": "npm:acorn@8.10.0",
         "acorn-walk": "npm:acorn-walk@8.2.0",
         "astring": "npm:astring@1.8.6",

@@ -1,8 +1,9 @@
 import * as child_process from 'child_process';
 import * as path from 'path';
-import { EventEmitter } from 'stream';
+import { type Readable, EventEmitter } from 'stream';
 
 import * as jsonrpc from 'jsonrpc-lite';
+import { Decoder, Encoder, ExtensionCodec } from '@msgpack/msgpack';
 
 import type { AppManager } from '../AppManager';
 import type { AppLogStorage } from '../storage';
@@ -36,28 +37,37 @@ export const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
+const extensionCodec = new ExtensionCodec();
+
+extensionCodec.register({
+    type: 0,
+    encode: (object: unknown) => {
+        // We don't care about functions, but also don't want to throw an error
+        if (typeof object === 'function') {
+            return new Uint8Array([0]);
+        }
+    },
+    decode: (_data: Uint8Array) => undefined,
+});
+
+// We need to handle Buffers because Deno needs its own decoding
+extensionCodec.register({
+    type: 1,
+    encode: (object: unknown) => {
+        if (object instanceof Buffer) {
+            return new Uint8Array(object.buffer, object.byteOffset, object.byteLength);
+        }
+    },
+    decode: (data: Uint8Array) => Buffer.from(data.buffer, data.byteOffset, data.byteLength),
+});
+
+const encoder = new Encoder({ extensionCodec });
+const decoder = new Decoder({ extensionCodec });
+
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
 
 export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
     return ALLOWED_ACCESSOR_METHODS.includes(accessor as any);
-}
-
-const MESSAGE_SEPARATOR = 'OkFQUF9TRVA6';
-
-// We need to parse the string manually because jj
-function parseJsonMessage(message: string): jsonrpc.Defined {
-    return JSON.parse(message, (key, value) => {
-        // This is very likely an ISO date string, let's try to parse it
-        if (typeof value === 'string' && value.length === 24 && value.endsWith('Z')) {
-            const date = new Date(value);
-
-            if (!isNaN(date.getTime())) {
-                return date;
-            }
-        }
-
-        return value;
-    });
 }
 
 /**
@@ -109,7 +119,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const denoWrapperPath = getDenoWrapperPath();
             const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess', MESSAGE_SEPARATOR]);
+            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess']);
 
             this.setupListeners();
         } catch {
@@ -174,7 +184,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     private send(message: jsonrpc.JsonRpc) {
-        this.deno.stdin.write(message.serialize().concat(MESSAGE_SEPARATOR));
+        this.deno.stdin.write(encoder.encode(message));
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
@@ -226,67 +236,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private setupListeners(): void {
         this.deno.stderr.on('data', this.parseError.bind(this));
         this.on('ready', this.onReady.bind(this));
-
-        const messageBuffer: Record<string, string[]> = {};
-
-        this.deno.stdout.on('data', async (chunk: Buffer) => {
-            // Chunk can be multiple JSONRpc messages as the stdout read stream can buffer multiple messages
-            const messages = chunk.toString().split(MESSAGE_SEPARATOR);
-
-            // We can't run these concurrently because they'll screw up the messageBuffer
-            for (const [index, rawMessage] of messages.entries()) {
-                // If the message is empty, it means that the last chunk ended with a separator
-                if (!rawMessage.length) continue;
-
-                // This does not account for a scenario where the chunk is split in the middle of a message
-                // We'll need to adapt to that soon
-                const mid = rawMessage.substring(0, 4);
-                const message = rawMessage.substring(4);
-
-                if (!messageBuffer[mid]) {
-                    messageBuffer[mid] = [];
-                }
-
-                messageBuffer[mid].push(message);
-
-                // If the message is the last one, we need to wait for the next chunk to arrive
-                if (index === messages.length - 1) {
-                    continue;
-                }
-
-                try {
-                    // We need to parse the JSON here because of the custom reviver function
-                    const jsonParsed = parseJsonMessage(messageBuffer[mid].join(''));
-                    const JSONRPCMessage = jsonrpc.parseObject(jsonParsed);
-
-                    if (Array.isArray(JSONRPCMessage)) {
-                        throw new Error('Invalid message format');
-                    }
-
-                    if (JSONRPCMessage.type === 'request' || JSONRPCMessage.type === 'notification') {
-                        await this.handleIncomingMessage(JSONRPCMessage);
-                        continue;
-                    }
-
-                    if (JSONRPCMessage.type === 'success' || JSONRPCMessage.type === 'error') {
-                        await this.handleResultMessage(JSONRPCMessage);
-                        continue;
-                    }
-
-                    console.error('Unrecognized message type', JSONRPCMessage);
-                } catch (e) {
-                    // SyntaxError is thrown when the message is not a valid JSON
-                    if (e instanceof SyntaxError) {
-                        console.error('Failed to parse message', messageBuffer[mid].join(''), chunk.toString());
-                        continue;
-                    }
-
-                    console.error('Error executing handler', e, messageBuffer[mid].join(''));
-                } finally {
-                    delete messageBuffer[mid];
-                }
-            }
-        });
+        this.parseStdout(this.deno.stdout);
     }
 
     // Probable should extract this to a separate file
@@ -373,6 +323,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const result = await tailMethod.apply(accessor, params);
 
+        if (method.includes('openSurfaceView')) {
+            const result = jsonrpc.success(id, Buffer.from('buff me daddy'));
+            return result;
+        }
+
         return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
 
@@ -457,6 +412,38 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         this.emit(`result:${id}`, result, error);
+    }
+
+    private async parseStdout(stream: Readable): Promise<void> {
+        for await (const message of decoder.decodeStream(stream)) {
+            try {
+                const JSONRPCMessage = jsonrpc.parseObject(message);
+
+                if (Array.isArray(JSONRPCMessage)) {
+                    throw new Error('Invalid message format');
+                }
+
+                if (JSONRPCMessage.type === 'request' || JSONRPCMessage.type === 'notification') {
+                    await this.handleIncomingMessage(JSONRPCMessage);
+                    continue;
+                }
+
+                if (JSONRPCMessage.type === 'success' || JSONRPCMessage.type === 'error') {
+                    await this.handleResultMessage(JSONRPCMessage);
+                    continue;
+                }
+
+                console.error('Unrecognized message type', JSONRPCMessage);
+            } catch (e) {
+                // SyntaxError is thrown when the message is not a valid JSON
+                if (e instanceof SyntaxError) {
+                    console.error('Failed to parse message');
+                    continue;
+                }
+
+                console.error('Error executing handler', e);
+            }
+        }
     }
 
     private async parseError(chunk: Buffer): Promise<void> {

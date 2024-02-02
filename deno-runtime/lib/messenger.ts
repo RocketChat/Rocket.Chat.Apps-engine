@@ -2,6 +2,7 @@ import * as jsonrpc from 'jsonrpc-lite';
 
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
 import type { Logger } from './logger.ts';
+import { encoder } from './codec.ts';
 
 export type RequestDescriptor = Pick<jsonrpc.RequestObject, 'method' | 'params'>;
 
@@ -26,7 +27,6 @@ export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.Er
     return message instanceof jsonrpc.ErrorObject;
 }
 
-const encoder = new TextEncoder();
 export const RPCResponseObserver = new EventTarget();
 
 export const Transport = new (class Transporter {
@@ -37,8 +37,7 @@ export const Transport = new (class Transporter {
     }
 
     private async stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
-        const msgId = Math.random().toString(36).substring(2, 6);
-        const encoded = encoder.encode(msgId + message.serialize() + AppObjectRegistry.get<string>('MESSAGE_SEPARATOR'));
+        const encoded = encoder.encode(message);
         await Deno.stdout.write(encoded);
     }
 
@@ -60,8 +59,14 @@ export const Transport = new (class Transporter {
     }
 })();
 
-export function parseMessage(message: string) {
-    const parsed = jsonrpc.parse(message);
+export function parseMessage(message: string | Record<string, unknown>) {
+    let parsed: jsonrpc.IParsedObject | jsonrpc.IParsedObject[];
+
+    if (typeof message === 'string') {
+        parsed = jsonrpc.parse(message);
+    } else {
+        parsed = jsonrpc.parseObject(message);
+    }
 
     if (Array.isArray(parsed)) {
         throw jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
