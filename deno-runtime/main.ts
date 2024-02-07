@@ -12,6 +12,7 @@ import { JsonRpcError } from 'jsonrpc-lite';
 import type { App } from '@rocket.chat/apps-engine/definition/App.ts';
 
 import * as Messenger from './lib/messenger.ts';
+import { decoder } from './lib/codec.ts';
 import { AppObjectRegistry } from './AppObjectRegistry.ts';
 import { Logger } from './lib/logger.ts';
 
@@ -20,10 +21,6 @@ import videoConferenceHandler from './handlers/videoconference-handler.ts';
 import apiHandler from './handlers/api-handler.ts';
 import handleApp from './handlers/app/handler.ts';
 import handleScheduler from './handlers/scheduler-handler.ts';
-
-const MESSAGE_SEPARATOR = Deno.args.at(-1) || '\n';
-
-AppObjectRegistry.set('MESSAGE_SEPARATOR', MESSAGE_SEPARATOR);
 
 type Handlers = {
     app: typeof handleApp;
@@ -97,48 +94,23 @@ function handleResponse(response: Messenger.JsonRpcResponse): void {
 async function main() {
     Messenger.sendNotification({ method: 'ready' });
 
-    const decoder = new TextDecoder();
+    for await (const message of decoder.decodeStream(Deno.stdin.readable)) {
+        try {
+            const JSONRPCMessage = Messenger.parseMessage(message as Record<string, unknown>);
 
-    let messageBuffer: string[] = [];
-
-    for await (const chunk of Deno.stdin.readable) {
-        const decoded = decoder.decode(chunk);
-
-        const messages = decoded.split(MESSAGE_SEPARATOR);
-
-        // We can't run these concurrently because they'll screw up the messageBuffer
-        for (const [index, message] of messages.entries()) {
-            // If the message is empty, it means that the last chunk ended with a separator
-            if (!message.length) {
+            if (Messenger.isRequest(JSONRPCMessage)) {
+                void requestRouter(JSONRPCMessage);
                 continue;
             }
 
-            messageBuffer.push(message);
-
-            // If the message is the last one, we need to wait for the next chunk to arrive
-            if (index === messages.length - 1) {
-                continue;
+            if (Messenger.isResponse(JSONRPCMessage)) {
+                handleResponse(JSONRPCMessage);
             }
-
-            try {
-                const JSONRPCMessage = Messenger.parseMessage(messageBuffer.join(''));
-
-                if (Messenger.isRequest(JSONRPCMessage)) {
-                    void requestRouter(JSONRPCMessage);
-                    continue;
-                }
-
-                if (Messenger.isResponse(JSONRPCMessage)) {
-                    handleResponse(JSONRPCMessage);
-                }
-            } catch (error) {
-                if (Messenger.isErrorResponse(error)) {
-                    await Messenger.Transport.send(error);
-                } else {
-                    await Messenger.sendParseError();
-                }
-            } finally {
-                messageBuffer = [];
+        } catch (error) {
+            if (Messenger.isErrorResponse(error)) {
+                await Messenger.Transport.send(error);
+            } else {
+                await Messenger.sendParseError();
             }
         }
     }
