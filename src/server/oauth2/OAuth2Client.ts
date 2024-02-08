@@ -64,7 +64,7 @@ export class OAuth2Client implements IOAuth2Client {
     }
 
     public async getUserAuthorizationUrl(user: IUser, scopes?: Array<string>): Promise<URL> {
-        const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
+        const redirectUri = (await this.app.getAccessors().providedApiEndpoints)[0].computedPath.substring(1);
 
         const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
@@ -128,7 +128,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             const siteUrl = await this.getBaseURLWithoutTrailingSlash();
 
-            const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
+            const redirectUri = (await this.app.getAccessors().providedApiEndpoints)[0].computedPath.substring(1);
 
             const url = new URL(refreshTokenUri);
 
@@ -236,7 +236,7 @@ export class OAuth2Client implements IOAuth2Client {
 
             const accessTokenUrl = this.config.accessTokenUri;
 
-            const redirectUri = this.app.getAccessors().providedApiEndpoints[0].computedPath.substring(1);
+            const redirectUri = (await this.app.getAccessors().providedApiEndpoints)[0].computedPath.substring(1);
 
             const clientId = await this.app.getAccessors().reader.getEnvironmentReader().getSettings().getValueById(`${this.config.alias}-oauth-client-id`);
 
