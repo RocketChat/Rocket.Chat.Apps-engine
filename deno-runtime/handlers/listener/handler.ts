@@ -18,9 +18,7 @@ const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exc
     AppsEngineException: typeof _AppsEngineException;
 };
 
-export default async function handleListener(method: string, params: unknown): Promise<Defined | JsonRpcError> {
-    const [, evtInterface] = method.split(':');
-
+export default async function handleListener(evtInterface: string, params: unknown): Promise<Defined | JsonRpcError> {
     const app = AppObjectRegistry.get<App>('app');
 
     const eventExecutor = app?.[evtInterface as keyof App];

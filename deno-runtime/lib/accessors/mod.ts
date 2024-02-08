@@ -1,4 +1,5 @@
 import type { IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors/IAppAccessors.ts';
+import type { IApiEndpointMetadata } from '@rocket.chat/apps-engine/definition/api/IApiEndpointMetadata.ts';
 import type { IEnvironmentWrite } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentWrite.ts';
 import type { IEnvironmentRead } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentRead.ts';
 import type { IConfigurationModify } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationModify.ts';
@@ -23,7 +24,7 @@ import { Buffer } from 'node:buffer'
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
 export class AppAccessors {
-    private defaultAppAccessors?: IAppAccessors;
+    private defaultAppAccessors?: Omit<IAppAccessors, 'providedApiEndpoints'> & { providedApiEndpoints: Promise<IApiEndpointMetadata[]> };
     private environmentRead?: IEnvironmentRead;
     private environmentWriter?: IEnvironmentWrite;
     private configModifier?: IConfigurationModify;
@@ -166,12 +167,15 @@ export class AppAccessors {
 
     public getDefaultAppAccessors() {
         if (!this.defaultAppAccessors) {
+            const senderFn = this.senderFn;
             this.defaultAppAccessors = {
                 environmentReader: this.getEnvironmentRead(),
                 environmentWriter: this.getEnvironmentWrite(),
                 reader: this.getReader(),
                 http: this.getHttp(),
-                providedApiEndpoints: this.proxify('api:listApis'),
+                get providedApiEndpoints () {
+                    return senderFn({method: 'accessor:api:listApis'}).then((response) => response.result as IApiEndpointMetadata[])
+                },
             };
         }
 

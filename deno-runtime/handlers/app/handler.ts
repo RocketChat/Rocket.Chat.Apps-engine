@@ -24,7 +24,7 @@ export default async function handleApp(method: string, params: unknown): Promis
     app?.getLogger().debug(`'${appMethod}' is being called...`);
 
     if (uikitInteractions.includes(appMethod)) {
-        return handleUIKitInteraction(method, params).then((result) => {
+        return handleUIKitInteraction(appMethod, params).then((result) => {
             if (result instanceof JsonRpcError) {
                 app?.getLogger().debug(`'${appMethod}' was unsuccessful.`, result.message);
             } else {
@@ -36,7 +36,7 @@ export default async function handleApp(method: string, params: unknown): Promis
     }
 
     if (appMethod.startsWith('check') || appMethod.startsWith('execute')) {
-        return handleListener(method, params).then((result) => {
+        return handleListener(appMethod, params).then((result) => {
             if (result instanceof JsonRpcError) {
                 app?.getLogger().debug(`'${appMethod}' was unsuccessful.`, result.message);
             } else {
