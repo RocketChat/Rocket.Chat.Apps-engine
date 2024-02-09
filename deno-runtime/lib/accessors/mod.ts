@@ -1,5 +1,5 @@
 import type { IAppAccessors } from '@rocket.chat/apps-engine/definition/accessors/IAppAccessors.ts';
-import type { IApiEndpointMetadata } from '@rocket.chat/apps-engine/definition/api/IApiEndpointMetadata.ts';
+import { IApiEndpointMetadata } from '@rocket.chat/apps-engine/definition/api/IApiEndpointMetadata.ts';
 import type { IEnvironmentWrite } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentWrite.ts';
 import type { IEnvironmentRead } from '@rocket.chat/apps-engine/definition/accessors/IEnvironmentRead.ts';
 import type { IConfigurationModify } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationModify.ts';
@@ -24,7 +24,7 @@ import { Buffer } from 'node:buffer'
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
 export class AppAccessors {
-    private defaultAppAccessors?: Omit<IAppAccessors, 'providedApiEndpoints'> & { providedApiEndpoints: Promise<IApiEndpointMetadata[]> };
+    private defaultAppAccessors?: IAppAccessors;
     private environmentRead?: IEnvironmentRead;
     private environmentWriter?: IEnvironmentWrite;
     private configModifier?: IConfigurationModify;
@@ -121,12 +121,20 @@ export class AppAccessors {
                 api: {
                     _proxy: this.proxify('getConfigurationExtend:api'),
                     provideApi(api: IApi) {
+                        const apiEndpoints: IApiEndpointMetadata[] = [];
                         api.endpoints.forEach((endpoint) => {
                             AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
+                            apiEndpoints.push({
+                                path: endpoint.path,
+                                // computedPath: endpoint.computedPath, // TODO: need to understand how to get this value
+                                methods: endpoint._availableMethods,
+                                examples: endpoint.examples,
+                            });
 
                             endpoint._availableMethods = httpMethods.filter((method) => typeof endpoint[method] === 'function');
                         });
-
+                        
+                        AppObjectRegistry.set('apiEndpoints', apiEndpoints);
                         return this._proxy.provideApi(api);
                     },
                 },
@@ -173,9 +181,7 @@ export class AppAccessors {
                 environmentWriter: this.getEnvironmentWrite(),
                 reader: this.getReader(),
                 http: this.getHttp(),
-                get providedApiEndpoints () {
-                    return senderFn({method: 'accessor:api:listApis'}).then((response) => response.result as IApiEndpointMetadata[])
-                },
+                providedApiEndpoints: AppObjectRegistry.get<IApiEndpointMetadata[]>('apiEndpoints'),
             };
         }
 
