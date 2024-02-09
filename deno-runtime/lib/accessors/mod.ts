@@ -126,14 +126,14 @@ export class AppAccessors {
                             AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
                             apiEndpoints.push({
                                 path: endpoint.path,
-                                // computedPath: endpoint.computedPath, // TODO: need to understand how to get this value
+                                computedPath: 'not implemented yet', // TODO: need to understand how to get this value
                                 methods: endpoint._availableMethods,
                                 examples: endpoint.examples,
                             });
 
                             endpoint._availableMethods = httpMethods.filter((method) => typeof endpoint[method] === 'function');
                         });
-                        
+
                         AppObjectRegistry.set('apiEndpoints', apiEndpoints);
                         return this._proxy.provideApi(api);
                     },
@@ -175,13 +175,12 @@ export class AppAccessors {
 
     public getDefaultAppAccessors() {
         if (!this.defaultAppAccessors) {
-            const senderFn = this.senderFn;
             this.defaultAppAccessors = {
                 environmentReader: this.getEnvironmentRead(),
                 environmentWriter: this.getEnvironmentWrite(),
                 reader: this.getReader(),
                 http: this.getHttp(),
-                providedApiEndpoints: AppObjectRegistry.get<IApiEndpointMetadata[]>('apiEndpoints'),
+                providedApiEndpoints: AppObjectRegistry.get<IApiEndpointMetadata[]>('apiEndpoints') as IApiEndpointMetadata[],
             };
         }
 
