@@ -9,7 +9,7 @@ import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors
 import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
-import type { IUpload } from '@rocket.chat/apps-engine/definition/uploads/IUpload.ts'
+import type { IUpload } from '@rocket.chat/apps-engine/definition/uploads/IUpload.ts';
 import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
 import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
@@ -19,9 +19,14 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
-import { Buffer } from 'node:buffer'
+import { Buffer } from 'node:buffer';
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
+
+// We need to create this object first thing, as we'll handle references to it later on
+if (!AppObjectRegistry.has('apiEndpoints')) {
+    AppObjectRegistry.set('apiEndpoints', {});
+}
 
 export class AppAccessors {
     private defaultAppAccessors?: IAppAccessors;
@@ -52,8 +57,9 @@ export class AppAccessors {
                                 : senderFn({
                                       method: `accessor:${namespace}:${prop}`,
                                       params,
-                                  }).then((response) => response.result)
-                                  .catch(err => err.error),
+                                  })
+                                      .then((response) => response.result)
+                                      .catch((err) => err.error),
                 },
             ) as T;
     }
@@ -113,6 +119,8 @@ export class AppAccessors {
 
     public getConfigurationExtend() {
         if (!this.configExtender) {
+            const senderFn = this.senderFn;
+
             this.configExtender = {
                 ui: this.proxify('getConfigurationExtend:ui'),
                 http: this.proxify('getConfigurationExtend:http'),
@@ -120,22 +128,29 @@ export class AppAccessors {
                 externalComponents: this.proxify('getConfigurationExtend:externalComponents'),
                 api: {
                     _proxy: this.proxify('getConfigurationExtend:api'),
-                    provideApi(api: IApi) {
-                        const apiEndpoints: IApiEndpointMetadata[] = [];
-                        api.endpoints.forEach((endpoint) => {
-                            AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
-                            apiEndpoints.push({
-                                path: endpoint.path,
-                                computedPath: 'not implemented yet', // TODO: need to understand how to get this value
-                                methods: endpoint._availableMethods,
-                                examples: endpoint.examples,
-                            });
+                    async provideApi(api: IApi) {
+                        const apiEndpoints = AppObjectRegistry.get<Record<string, IApiEndpointMetadata>>('apiEndpoints')!;
 
+                        api.endpoints.forEach((endpoint) => {
                             endpoint._availableMethods = httpMethods.filter((method) => typeof endpoint[method] === 'function');
+
+                            // We need to keep a reference to the endpoint around for us to call the executor later
+                            AppObjectRegistry.set(`api:${endpoint.path}`, endpoint);
                         });
 
-                        AppObjectRegistry.set('apiEndpoints', apiEndpoints);
-                        return this._proxy.provideApi(api);
+                        const result = await this._proxy.provideApi(api);
+
+                        // Let's call the listApis method to cache the info from the endpoints
+                        // Also, since this is a side-effect, we do it async so we can return to the caller
+                        senderFn({ method: 'accessor:api:listApis' })
+                            .then((response) => {
+                                const endpoints = response.result as IApiEndpointMetadata[];
+
+                                endpoints.forEach((endpoint) => (apiEndpoints[endpoint.path] = endpoint));
+                            })
+                            .catch((err) => err.error);
+
+                        return result;
                     },
                 },
                 scheduler: {
