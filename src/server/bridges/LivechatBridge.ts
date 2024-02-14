@@ -104,6 +104,18 @@ export abstract class LivechatBridge extends BaseBridge {
         }
     }
 
+    public async doCountRoomsByAgentId(agentId: string, appId: string): Promise<number> {
+        if (this.hasReadPermission(appId, 'livechat-room')) {
+            return this.countRoomsByAgentId(agentId, appId);
+        }
+    }
+
+    public async doFindRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>> {
+        if (this.hasReadPermission(appId, 'livechat-room')) {
+            return this.findRoomsByAgentId(agentId, appId);
+        }
+    }
+
     public async doFindRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>> {
         if (this.hasReadPermission(appId, 'livechat-room')) {
             return this.findRooms(visitor, departmentId, appId);
@@ -170,6 +182,10 @@ export abstract class LivechatBridge extends BaseBridge {
     protected abstract createRoom(visitor: IVisitor, agent: IUser, appId: string, extraParams?: IExtraRoomParams): Promise<ILivechatRoom>;
 
     protected abstract closeRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean>;
+
+    protected abstract countRoomsByAgentId(agentId: string, appId: string): Promise<number>;
+
+    protected abstract findRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>>;
 
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
 
