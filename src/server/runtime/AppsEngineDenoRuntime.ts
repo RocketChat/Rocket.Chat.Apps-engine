@@ -192,9 +192,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const request = jsonrpc.request(id, message.method, message.params);
 
+        const promise = this.waitForResponse(request);
+
         this.send(request);
 
-        return this.waitForResponse(request);
+        return promise;
     }
 
     private waitUntilReady(): Promise<void> {
@@ -215,7 +217,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private waitForResponse(req: jsonrpc.RequestObject): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => reject(new Error(`Request "${req.id}" from method "${req.method}" timed out`)), this.options.timeout);
+            const timeoutId = setTimeout(() => reject(new Error(`Request "${req.id}" for method "${req.method}" timed out`)), this.options.timeout);
 
             this.once(`result:${req.id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
@@ -322,11 +324,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         const result = await tailMethod.apply(accessor, params);
-
-        if (method.includes('openSurfaceView')) {
-            const result = jsonrpc.success(id, Buffer.from('buff me daddy'));
-            return result;
-        }
 
         return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
