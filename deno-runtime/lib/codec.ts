@@ -1,13 +1,20 @@
 import { Buffer } from 'node:buffer';
 import { Decoder, Encoder, ExtensionCodec } from '@msgpack/msgpack';
 
+import type { App as _App } from '@rocket.chat/apps-engine/definition/App.ts';
+import { require } from "./require.ts";
+
+const { App } = require('@rocket.chat/apps-engine/definition/App.js') as {
+    App: typeof _App;
+};
+
 const extensionCodec = new ExtensionCodec();
 
 extensionCodec.register({
     type: 0,
     encode: (object: unknown) => {
         // We don't care about functions, but also don't want to throw an error
-        if (typeof object === 'function') {
+        if (typeof object === 'function' || object instanceof App) {
             return new Uint8Array(0);
         }
 
