@@ -25,7 +25,7 @@ const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch']
 
 // We need to create this object first thing, as we'll handle references to it later on
 if (!AppObjectRegistry.has('apiEndpoints')) {
-    AppObjectRegistry.set('apiEndpoints', {});
+    AppObjectRegistry.set('apiEndpoints', []);
 }
 
 export class AppAccessors {
@@ -129,7 +129,7 @@ export class AppAccessors {
                 api: {
                     _proxy: this.proxify('getConfigurationExtend:api'),
                     async provideApi(api: IApi) {
-                        const apiEndpoints = AppObjectRegistry.get<Record<string, IApiEndpointMetadata>>('apiEndpoints')!;
+                        const apiEndpoints = AppObjectRegistry.get<IApiEndpointMetadata[]>('apiEndpoints')!;
 
                         api.endpoints.forEach((endpoint) => {
                             endpoint._availableMethods = httpMethods.filter((method) => typeof endpoint[method] === 'function');
@@ -143,11 +143,7 @@ export class AppAccessors {
                         // Let's call the listApis method to cache the info from the endpoints
                         // Also, since this is a side-effect, we do it async so we can return to the caller
                         senderFn({ method: 'accessor:api:listApis' })
-                            .then((response) => {
-                                const endpoints = response.result as IApiEndpointMetadata[];
-
-                                endpoints.forEach((endpoint) => (apiEndpoints[endpoint.path] = endpoint));
-                            })
+                            .then((response) => apiEndpoints.push(...(response.result as IApiEndpointMetadata[])))
                             .catch((err) => err.error);
 
                         return result;
