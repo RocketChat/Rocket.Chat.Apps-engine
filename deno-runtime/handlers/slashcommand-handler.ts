@@ -1,5 +1,6 @@
 import { Defined, JsonRpcError } from 'jsonrpc-lite';
 
+import type { App } from "@rocket.chat/apps-engine/definition/App.ts";
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
 import type { SlashCommandContext as _SlashCommandContext } from '@rocket.chat/apps-engine/definition/slashcommands/SlashCommandContext.ts';
@@ -26,6 +27,11 @@ export default async function slashCommandHandler(call: string, params: unknown)
 
     let result: Awaited<ReturnType<typeof handleExecutor>> | Awaited<ReturnType<typeof handlePreviewItem>>;
 
+    // If the command is registered, we're pretty safe to assume the app is not undefined
+    const app = AppObjectRegistry.get<App>('app')!;
+
+    app.getLogger().debug(`${commandName}'s ${method} is being executed...`, params);
+
     try {
         if (method === 'executor' || method === 'previewer') {
             result = await handleExecutor({ AppAccessorsInstance }, command, method, params);
@@ -34,7 +40,11 @@ export default async function slashCommandHandler(call: string, params: unknown)
         } else {
             return new JsonRpcError(`Method ${method} not found on slashcommand ${commandName}`, -32000);
         }
+
+        app.getLogger().debug(`${commandName}'s ${method} was successfully executed.`);
     } catch (error) {
+        app.getLogger().debug(`${commandName}'s ${method} was unsuccessful.`);
+
         return new JsonRpcError(error.message, -32000);
     }
 
