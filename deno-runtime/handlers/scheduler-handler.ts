@@ -6,6 +6,7 @@ import { AppObjectRegistry } from '../AppObjectRegistry.ts';
 import { AppAccessorsInstance } from '../lib/accessors/mod.ts';
 
 export default async function handleScheduler(method: string, params: unknown): Promise<Defined | JsonRpcError> {
+    const [, processorId] = method.split(':');
     if (!Array.isArray(params)) {
         return JsonRpcError.invalidParams({ message: 'Invalid params' });
     }
@@ -19,7 +20,7 @@ export default async function handleScheduler(method: string, params: unknown): 
     }
 
     // AppSchedulerManager will append the appId to the processor name to avoid conflicts
-    const processor = AppObjectRegistry.get<IProcessor>(`scheduler:${method}`);
+    const processor = AppObjectRegistry.get<IProcessor>(`scheduler:${processorId}`);
 
     if (!processor) {
         return JsonRpcError.methodNotFound({

@@ -39,7 +39,7 @@ describe('handlers > scheduler', () => {
     });
 
     it('correctly executes a request to a processor', async () => {
-        const result = await handleScheduler('mockId', [{}]);
+        const result = await handleScheduler('scheduler:mockId', [{}]);
 
         assertEquals(result, null);
     });
