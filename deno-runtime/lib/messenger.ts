@@ -1,3 +1,5 @@
+import { writeAll } from "https://deno.land/std@0.216.0/io/write_all.ts";
+
 import * as jsonrpc from 'jsonrpc-lite';
 
 import { AppObjectRegistry } from '../AppObjectRegistry.ts';
@@ -38,7 +40,7 @@ export const Transport = new (class Transporter {
 
     private async stdoutTransport(message: jsonrpc.JsonRpc): Promise<void> {
         const encoded = encoder.encode(message);
-        await Deno.stdout.write(encoded);
+        await writeAll(Deno.stdout, encoded);
     }
 
     private async noopTransport(_message: jsonrpc.JsonRpc): Promise<void> {}
