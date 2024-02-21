@@ -23,7 +23,7 @@ export default async function apiHandler(call: string, params: unknown): Promise
 
     const [request, endpointInfo] = params as Array<unknown>;
 
-    logger?.debug(`${path}'s ${method} is being executed...`, request);
+    logger?.debug(`${path}'s ${call} is being executed...`, request);
 
     try {
         // deno-lint-ignore ban-types
@@ -36,11 +36,11 @@ export default async function apiHandler(call: string, params: unknown): Promise
             AppAccessorsInstance.getPersistence(),
         ]);
 
-        logger?.debug(`${path}'s ${method} was successfully executed.`);
+        logger?.debug(`${path}'s ${call} was successfully executed.`);
 
         return result;
     } catch (e) {
-        logger?.debug(`${path}'s ${method} was unsuccessful.`);
+        logger?.debug(`${path}'s ${call} was unsuccessful.`);
         return new JsonRpcError(e.message, -32000);
     }
 }

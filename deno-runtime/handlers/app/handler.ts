@@ -18,6 +18,11 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 export default async function handleApp(method: string, params: unknown): Promise<Defined | JsonRpcError> {
     const [, appMethod] = method.split(':');
 
+    // We don't want the getStatus method to generate logs, so we handle it separately
+    if (appMethod === 'getStatus') {
+        return handleGetStatus();
+    }
+
     // `app` will be undefined if the method here is "app:construct"
     const app = AppObjectRegistry.get<App>('app');
 
@@ -56,9 +61,6 @@ export default async function handleApp(method: string, params: unknown): Promis
                 break;
             case 'initialize':
                 result = await handleInitialize();
-                break;
-            case 'getStatus':
-                result = await handleGetStatus();
                 break;
             case 'setStatus':
                 result = await handleSetStatus(params);
