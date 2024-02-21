@@ -58,6 +58,7 @@ extensionCodec.register({
             return new Uint8Array(object.buffer, object.byteOffset, object.byteLength);
         }
     },
+    // By passing byteOffset and byteLength, we're creating a view of the original buffer instead of copying it
     decode: (data: Uint8Array) => Buffer.from(data.buffer, data.byteOffset, data.byteLength),
 });
 
@@ -421,12 +422,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }
 
                 if (JSONRPCMessage.type === 'request' || JSONRPCMessage.type === 'notification') {
-                    await this.handleIncomingMessage(JSONRPCMessage);
+                    this.handleIncomingMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason));
                     continue;
                 }
 
                 if (JSONRPCMessage.type === 'success' || JSONRPCMessage.type === 'error') {
-                    await this.handleResultMessage(JSONRPCMessage);
+                    this.handleResultMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason));
                     continue;
                 }
 
