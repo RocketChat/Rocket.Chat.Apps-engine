@@ -353,7 +353,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             params.map((value: unknown) => (value === 'APP_ID' ? this.appPackage.info.id : value)),
         );
 
-        return jsonrpc.success(id, result);
+        return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
 
     private async handleIncomingMessage(message: jsonrpc.IParsedObjectNotification | jsonrpc.IParsedObjectRequest): Promise<void> {
