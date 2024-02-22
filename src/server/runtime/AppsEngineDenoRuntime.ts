@@ -422,12 +422,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }
 
                 if (JSONRPCMessage.type === 'request' || JSONRPCMessage.type === 'notification') {
-                    this.handleIncomingMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason));
+                    this.handleIncomingMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason, message));
                     continue;
                 }
 
                 if (JSONRPCMessage.type === 'success' || JSONRPCMessage.type === 'error') {
-                    this.handleResultMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason));
+                    this.handleResultMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason, message));
                     continue;
                 }
 
@@ -439,7 +439,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                     continue;
                 }
 
-                console.error('Error executing handler', e);
+                console.error('Error executing handler', e, message);
             }
         }
     }
