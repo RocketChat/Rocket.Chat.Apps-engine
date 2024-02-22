@@ -20,7 +20,7 @@ describe('Messenger', () => {
     });
 
     it('should add logs to success responses', async () => {
-        const theSpy = spy(Messenger.Transport, 'send');
+        const theSpy = spy(Messenger.Queue, 'enqueue');
 
         const logger = AppObjectRegistry.get<Logger>('logger') as Logger;
 
@@ -56,7 +56,7 @@ describe('Messenger', () => {
     });
 
     it('should add logs to error responses', async () => {
-        const theSpy = spy(Messenger.Transport, 'send');
+        const theSpy = spy(Messenger.Queue, 'enqueue');
 
         const logger = AppObjectRegistry.get<Logger>('logger') as Logger;
 
