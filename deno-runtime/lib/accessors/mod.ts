@@ -9,7 +9,6 @@ import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors
 import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
-import type { IUpload } from '@rocket.chat/apps-engine/definition/uploads/IUpload.ts';
 import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
 import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
@@ -19,7 +18,6 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
-import { Buffer } from 'node:buffer';
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
