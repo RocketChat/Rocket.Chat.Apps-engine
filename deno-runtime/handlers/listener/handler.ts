@@ -12,7 +12,6 @@ import { RoomBuilder } from '../../lib/accessors/builders/RoomBuilder.ts';
 import { AppAccessors, AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import { require } from '../../lib/require.ts';
 import createRoom from '../../lib/roomFactory.ts';
-import { Buffer } from 'node:buffer';
 
 const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.js') as {
     AppsEngineException: typeof _AppsEngineException;
@@ -108,13 +107,6 @@ export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMetho
 
     // From this point on, all events will require (reader, http, persistence, modifier) injected
     args.push(AppAccessorsInstance.getModifier());
-
-    // The content is sent as Uint8Array, but we need to convert it to Buffer
-    if (evtMethod === 'executePreFileUpload') {
-        const { content, file } = context as { content: Uint8Array, file: unknown };        
-        const bufferedContent = Buffer.from(content);
-        args[0] = { content: bufferedContent, file };
-    }
 
     // This guy gets an extra one
     if (evtMethod === 'executePostMessageDeleted') {
