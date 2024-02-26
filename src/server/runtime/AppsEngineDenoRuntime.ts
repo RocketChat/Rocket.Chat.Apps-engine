@@ -118,9 +118,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         try {
             const denoExePath = getDenoExecutablePath();
             const denoWrapperPath = getDenoWrapperPath();
-            const denoWrapperDir = path.dirname(path.join(denoWrapperPath, '..'));
+            // During development, the appsEngineDir is enough to run the deno process
+            const appsEngineDir = path.dirname(path.join(denoWrapperPath, '..'));
+            // When running in production, we're likely inside a node_modules which the Deno
+            // process must be able to read in order to include files that use NPM packages
+            const parentNodeModulesDir = path.dirname(path.join(appsEngineDir, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${denoWrapperDir}/`, denoWrapperPath, '--subprocess']);
+            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${appsEngineDir}/,${parentNodeModulesDir}/`, denoWrapperPath, '--subprocess']);
 
             this.setupListeners();
         } catch {
