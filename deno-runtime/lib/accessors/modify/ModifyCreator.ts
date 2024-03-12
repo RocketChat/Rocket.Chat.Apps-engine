@@ -1,20 +1,18 @@
-import { createRequire } from 'node:module';
-
 import type { IModifyCreator } from '@rocket.chat/apps-engine/definition/accessors/IModifyCreator.ts';
 import type { IUploadCreator } from '@rocket.chat/apps-engine/definition/accessors/IUploadCreator.ts';
 import type { ILivechatCreator } from '@rocket.chat/apps-engine/definition/accessors/ILivechatCreator.ts';
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
 import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
 import type { IBotUser } from '@rocket.chat/apps-engine/definition/users/IBotUser.ts';
-
-import { UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
-import { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
-import { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
-import { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
-import { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
-import { RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
-import { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
+import type { UserType as _UserType } from '@rocket.chat/apps-engine/definition/users/UserType.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+import type { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
+import type { IRoomBuilder } from '@rocket.chat/apps-engine/definition/accessors/IRoomBuilder.ts';
+import type { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
+import type { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
+import type { RoomType as _RoomType } from '@rocket.chat/apps-engine/definition/rooms/RoomType.ts';
+import type { ILivechatMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/ILivechatMessageBuilder.ts';
+import type { UIHelper as _UIHelper } from '@rocket.chat/apps-engine/server/misc/UIHelper.ts';
 
 import * as Messenger from '../../messenger.ts';
 
@@ -26,11 +24,14 @@ import { RoomBuilder } from '../builders/RoomBuilder.ts';
 import { UserBuilder } from '../builders/UserBuilder.ts';
 import { AppVideoConference, VideoConferenceBuilder } from '../builders/VideoConferenceBuilder.ts';
 import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
+import { require } from '../../../lib/require.ts';
 
-const require = createRequire(import.meta.url);
-
-// @deno-types="../../../../server/misc/UIHelper.d.ts"
-const UIHelper = require(import.meta.resolve('@rocket.chat/apps-engine/server/misc/UIHelper.js').replace('file://', '').replace('src/', ''));
+const { UIHelper } = require('@rocket.chat/apps-engine/server/misc/UIHelper.js') as { UIHelper: typeof _UIHelper };
+const { RoomType } = require('@rocket.chat/apps-engine/definition/rooms/RoomType.js') as { RoomType: typeof _RoomType };
+const { UserType } = require('@rocket.chat/apps-engine/definition/users/UserType.js') as { UserType: typeof _UserType };
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class ModifyCreator implements IModifyCreator {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
@@ -42,6 +43,10 @@ export class ModifyCreator implements IModifyCreator {
                 get: (_target: unknown, prop: string) => {
                     if (prop === 'createToken') {
                         return () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                    }
+
+                    if (prop === 'toJSON') {
+                        return () => ({});
                     }
 
                     return (...params: unknown[]) =>
@@ -61,10 +66,12 @@ export class ModifyCreator implements IModifyCreator {
                 get:
                     (_target: unknown, prop: string) =>
                     (...params: unknown[]) =>
-                        this.senderFn({
-                            method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
-                            params,
-                        }),
+                        prop === 'toJSON'
+                            ? {}
+                            : this.senderFn({
+                                  method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
+                                  params,
+                              }),
             },
         ) as IUploadCreator;
     }
@@ -176,12 +183,12 @@ export class ModifyCreator implements IModifyCreator {
 
         if (result.blocks?.length) {
             // Can we move this elsewhere? This AppObjectRegistry usage doesn't really belong here, but where?
-            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('appId'));
+            result.blocks = UIHelper.assignIds(result.blocks, AppObjectRegistry.get('id') || '');
         }
 
         const response = await this.senderFn({
             method: 'bridges:getMessageBridge:doCreate',
-            params: [result, AppObjectRegistry.get('appId')],
+            params: [result, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -203,7 +210,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getLivechatBridge:doCreateMessage',
-            params: [result, AppObjectRegistry.get('appId')],
+            params: [result, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -237,7 +244,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreate',
-            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
+            params: [result, builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -265,7 +272,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getRoomBridge:doCreateDiscussion',
-            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('appId')],
+            params: [room, builder.getParentMessage(), builder.getReply(), builder.getMembersToBeAddedUsernames(), AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -288,7 +295,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getVideoConferenceBridge:doCreate',
-            params: [videoConference, AppObjectRegistry.get('appId')],
+            params: [videoConference, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);
@@ -299,7 +306,7 @@ export class ModifyCreator implements IModifyCreator {
 
         const response = await this.senderFn({
             method: 'bridges:getUserBridge:doCreate',
-            params: [user, AppObjectRegistry.get('appId')],
+            params: [user, AppObjectRegistry.get('id')],
         });
 
         return String(response.result);

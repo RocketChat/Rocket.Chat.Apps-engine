@@ -1,18 +1,23 @@
 import type { IModifyExtender } from '@rocket.chat/apps-engine/definition/accessors/IModifyExtender.ts';
 import type { IMessage } from '@rocket.chat/apps-engine/definition/messages/IMessage.ts';
-import type { IMessageExtender } from "@rocket.chat/apps-engine/definition/accessors/IMessageExtender.ts";
-import type { IRoomExtender } from "@rocket.chat/apps-engine/definition/accessors/IRoomExtender.ts";
-import type { IVideoConferenceExtender } from "@rocket.chat/apps-engine/definition/accessors/IVideoConferenceExtend.ts";
-import type { IUser } from "@rocket.chat/apps-engine/definition/users/IUser.ts";
-import type { VideoConference } from "@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts";
-import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
-import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
+import type { IMessageExtender } from '@rocket.chat/apps-engine/definition/accessors/IMessageExtender.ts';
+import type { IRoomExtender } from '@rocket.chat/apps-engine/definition/accessors/IRoomExtender.ts';
+import type { IVideoConferenceExtender } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceExtend.ts';
+import type { IUser } from '@rocket.chat/apps-engine/definition/users/IUser.ts';
+import type { VideoConference } from '@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts';
+import type { IRoom } from '@rocket.chat/apps-engine/definition/rooms/IRoom.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
 
 import * as Messenger from '../../messenger.ts';
-import { AppObjectRegistry } from "../../../AppObjectRegistry.ts";
-import { MessageExtender } from "../extenders/MessageExtender.ts";
-import { RoomExtender } from "../extenders/RoomExtender.ts";
-import { VideoConferenceExtender } from "../extenders/VideoConferenceExtend.ts";
+import { AppObjectRegistry } from '../../../AppObjectRegistry.ts';
+import { MessageExtender } from '../extenders/MessageExtender.ts';
+import { RoomExtender } from '../extenders/RoomExtender.ts';
+import { VideoConferenceExtender } from '../extenders/VideoConferenceExtend.ts';
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class ModifyExtender implements IModifyExtender {
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
@@ -20,7 +25,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendMessage(messageId: string, updater: IUser): Promise<IMessageExtender> {
         const result = await this.senderFn({
             method: 'bridges:getMessageBridge:doGetById',
-            params: [messageId, AppObjectRegistry.get('appId')],
+            params: [messageId, AppObjectRegistry.get('id')],
         });
 
         const msg = result.result as IMessage;
@@ -34,7 +39,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendRoom(roomId: string, _updater: IUser): Promise<IRoomExtender> {
         const result = await this.senderFn({
             method: 'bridges:getRoomBridge:doGetById',
-            params: [roomId, AppObjectRegistry.get('appId')],
+            params: [roomId, AppObjectRegistry.get('id')],
         });
 
         const room = result.result as IRoom;
@@ -47,7 +52,7 @@ export class ModifyExtender implements IModifyExtender {
     public async extendVideoConference(id: string): Promise<IVideoConferenceExtender> {
         const result = await this.senderFn({
             method: 'bridges:getVideoConferenceBridge:doGetById',
-            params: [id, AppObjectRegistry.get('appId')],
+            params: [id, AppObjectRegistry.get('id')],
         });
 
         const call = result.result as VideoConference;
@@ -61,20 +66,24 @@ export class ModifyExtender implements IModifyExtender {
         switch (extender.kind) {
             case RocketChatAssociationModel.MESSAGE:
                 await this.senderFn({
-                  method: 'bridges:getMessageBridge:doUpdate',
-                  params: [(extender as IMessageExtender).getMessage(), AppObjectRegistry.get('appId')],
+                    method: 'bridges:getMessageBridge:doUpdate',
+                    params: [(extender as IMessageExtender).getMessage(), AppObjectRegistry.get('id')],
                 });
                 break;
             case RocketChatAssociationModel.ROOM:
                 await this.senderFn({
-                  method: 'bridges:getRoomBridge:doUpdate',
-                  params: [(extender as IRoomExtender).getRoom(), (extender as IRoomExtender).getUsernamesOfMembersBeingAdded(), AppObjectRegistry.get('appId')],
+                    method: 'bridges:getRoomBridge:doUpdate',
+                    params: [
+                        (extender as IRoomExtender).getRoom(),
+                        (extender as IRoomExtender).getUsernamesOfMembersBeingAdded(),
+                        AppObjectRegistry.get('id'),
+                    ],
                 });
                 break;
             case RocketChatAssociationModel.VIDEO_CONFERENCE:
                 await this.senderFn({
-                  method: 'bridges:getVideoConferenceBridge:doUpdate',
-                  params: [(extender as IVideoConferenceExtender).getVideoConference(), AppObjectRegistry.get('appId')],
+                    method: 'bridges:getVideoConferenceBridge:doUpdate',
+                    params: [(extender as IVideoConferenceExtender).getVideoConference(), AppObjectRegistry.get('id')],
                 });
                 break;
             default:

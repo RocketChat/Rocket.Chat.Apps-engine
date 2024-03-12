@@ -1,21 +1,25 @@
-import { TestFixture, Setup, SetupFixture, Expect, AsyncTest, SpyOn, Any } from 'alsatian';
+import * as path from 'path';
+import * as fs from 'fs/promises';
+
+import { TestFixture, Setup, Expect, AsyncTest, SpyOn, Any, AsyncSetupFixture, Teardown } from 'alsatian';
 
 import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
-import { TestData, TestInfastructureSetup } from '../../test-data/utilities';
+import { TestInfastructureSetup } from '../../test-data/utilities';
 import { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
 import type { AppManager } from '../../../src/server/AppManager';
 import { UserStatusConnection, UserType } from '../../../src/definition/users';
+import type { IParseAppPackageResult } from '../../../src/server/compiler';
 
 @TestFixture('DenoRuntimeSubprocessController')
 export class DenuRuntimeSubprocessControllerTestFixture {
-    private simpleAppSource = 'module.exports={ default: new class { constructor() { this.name = "parangarico" } } };console.log("hi from app")';
-
     private manager: AppManager;
 
     private controller: DenoRuntimeSubprocessController;
 
-    @SetupFixture
-    public fixture() {
+    private appPackage: IParseAppPackageResult;
+
+    @AsyncSetupFixture
+    public async fixture() {
         const infrastructure = new TestInfastructureSetup();
         this.manager = infrastructure.getMockManager();
 
@@ -26,13 +30,20 @@ export class DenuRuntimeSubprocessControllerTestFixture {
         const api = new AppApiManager(this.manager);
 
         this.manager.getApiManager = () => api;
+
+        const appPackage = await fs.readFile(path.join(__dirname, '../../test-data/apps/hello-world-test_0.0.1.zip'));
+
+        this.appPackage = await this.manager.getParser().unpackageApp(appPackage);
     }
 
     @Setup
     public setup() {
-        const app = TestData.getMockApp('deno-controller', 'Deno Controller test');
+        this.controller = new DenoRuntimeSubprocessController(this.manager, this.appPackage);
+    }
 
-        this.controller = new DenoRuntimeSubprocessController(app.getID(), this.simpleAppSource, this.manager);
+    @Teardown
+    public teardown() {
+        this.controller.stopApp();
     }
 
     @AsyncTest('correctly identifies a call to the HTTP accessor')
@@ -53,7 +64,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
 
         Expect(this.manager.getBridges().getHttpBridge().doCall).toHaveBeenCalledWith(
             Any(Object).thatMatches({
-                appId: 'deno-controller',
+                appId: '9c1d62ca-e40f-456f-8601-17c823a16c68',
                 method: 'get',
                 url: 'https://google.com',
             }),
@@ -105,7 +116,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
             },
         });
 
-        Expect(this.manager.getBridges().getUserBridge().doGetByUsername).toHaveBeenCalledWith('rocket.cat', 'deno-controller');
+        Expect(this.manager.getBridges().getUserBridge().doGetByUsername).toHaveBeenCalledWith('rocket.cat', '9c1d62ca-e40f-456f-8601-17c823a16c68');
 
         Expect(id).toBe('test');
         Expect((result as any).username).toEqual('rocket.cat');
@@ -163,7 +174,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
                 username: 'random username for visitor',
                 name: 'Random Visitor',
             }),
-            'deno-controller',
+            '9c1d62ca-e40f-456f-8601-17c823a16c68',
         );
 
         Expect(id).toBe('requestId');
@@ -198,7 +209,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
             },
         });
 
-        Expect(this.manager.getBridges().getMessageBridge().doCreate).toHaveBeenCalledWith(messageParam, 'deno-controller');
+        Expect(this.manager.getBridges().getMessageBridge().doCreate).toHaveBeenCalledWith(messageParam, '9c1d62ca-e40f-456f-8601-17c823a16c68');
 
         Expect(id).toBe('requestId');
         Expect(result).toEqual('random-message-id');

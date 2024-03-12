@@ -1,11 +1,17 @@
-import { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
-import { RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
-import { IUser } from '@rocket.chat/apps-engine/definition/users/IUser.ts';
-import { IUserSettings } from '@rocket.chat/apps-engine/definition/users/IUserSettings.ts';
-import { IUserEmail } from '@rocket.chat/apps-engine/definition/users/IUserEmail.ts';
+import type { IUserBuilder } from '@rocket.chat/apps-engine/definition/accessors/IUserBuilder.ts';
+import type { IUser } from '@rocket.chat/apps-engine/definition/users/IUser.ts';
+import type { IUserSettings } from '@rocket.chat/apps-engine/definition/users/IUserSettings.ts';
+import type { IUserEmail } from '@rocket.chat/apps-engine/definition/users/IUserEmail.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class UserBuilder implements IUserBuilder {
-    public kind: RocketChatAssociationModel.USER;
+    public kind: _RocketChatAssociationModel.USER;
 
     private user: Partial<IUser>;
 

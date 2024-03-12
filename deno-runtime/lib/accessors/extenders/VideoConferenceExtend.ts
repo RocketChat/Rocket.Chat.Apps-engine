@@ -1,10 +1,16 @@
-import type { IVideoConferenceExtender } from "@rocket.chat/apps-engine/definition/accessors/IVideoConferenceExtend.ts";
-import type { VideoConference, VideoConferenceMember } from "@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts";
-import type { IVideoConferenceUser } from "@rocket.chat/apps-engine/definition/videoConferences/IVideoConferenceUser.ts";
-import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
+import type { IVideoConferenceExtender } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceExtend.ts';
+import type { VideoConference, VideoConferenceMember } from '@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts';
+import type { IVideoConferenceUser } from '@rocket.chat/apps-engine/definition/videoConferences/IVideoConferenceUser.ts';
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export class VideoConferenceExtender implements IVideoConferenceExtender {
-    public kind: RocketChatAssociationModel.VIDEO_CONFERENCE;
+    public kind: _RocketChatAssociationModel.VIDEO_CONFERENCE;
 
     constructor(private videoConference: VideoConference) {
         this.kind = RocketChatAssociationModel.VIDEO_CONFERENCE;

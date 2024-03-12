@@ -1,4 +1,10 @@
+import { writeAll } from "https://deno.land/std@0.216.0/io/write_all.ts";
+
 import * as jsonrpc from 'jsonrpc-lite';
+
+import { AppObjectRegistry } from '../AppObjectRegistry.ts';
+import type { Logger } from './logger.ts';
+import { encoder } from './codec.ts';
 
 export type RequestDescriptor = Pick<jsonrpc.RequestObject, 'method' | 'params'>;
 
@@ -23,11 +29,73 @@ export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.Er
     return message instanceof jsonrpc.ErrorObject;
 }
 
-const encoder = new TextEncoder();
 export const RPCResponseObserver = new EventTarget();
 
-export function parseMessage(message: string) {
-    const parsed = jsonrpc.parse(message);
+export const Queue = new (class Queue {
+    private queue: Uint8Array[] = [];
+    private isProcessing = false;
+
+    private async processQueue() {
+        if (this.isProcessing) {
+            return;
+        }
+
+        this.isProcessing = true;
+
+        while (this.queue.length) {
+            const message = this.queue.shift();
+
+            if (message) {
+                await Transport.send(message);
+            }
+        }
+
+        this.isProcessing = false;
+    }
+
+    public enqueue(message: jsonrpc.JsonRpc) {
+        this.queue.push(encoder.encode(message));
+        this.processQueue();
+    }
+});
+
+export const Transport = new (class Transporter {
+    private selectedTransport: Transporter['stdoutTransport'] | Transporter['noopTransport'];
+
+    constructor() {
+        this.selectedTransport = this.stdoutTransport.bind(this);
+    }
+
+    private async stdoutTransport(message: Uint8Array): Promise<void> {
+        await writeAll(Deno.stdout, message);
+    }
+
+    private async noopTransport(_message: Uint8Array): Promise<void> {}
+
+    public selectTransport(transport: 'stdout' | 'noop'): void {
+        switch (transport) {
+            case 'stdout':
+                this.selectedTransport = this.stdoutTransport.bind(this);
+                break;
+            case 'noop':
+                this.selectedTransport = this.noopTransport.bind(this);
+                break;
+        }
+    }
+
+    public send(message: Uint8Array): Promise<void> {
+        return this.selectedTransport(message);
+    }
+})();
+
+export function parseMessage(message: string | Record<string, unknown>) {
+    let parsed: jsonrpc.IParsedObject | jsonrpc.IParsedObject[];
+
+    if (typeof message === 'string') {
+        parsed = jsonrpc.parse(message);
+    } else {
+        parsed = jsonrpc.parseObject(message);
+    }
 
     if (Array.isArray(parsed)) {
         throw jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
@@ -40,54 +108,60 @@ export function parseMessage(message: string) {
     return parsed;
 }
 
-export async function send(message: jsonrpc.JsonRpc): Promise<void> {
-    const encoded = encoder.encode(message.serialize());
-    await Deno.stdout.write(encoded);
-}
-
 export async function sendInvalidRequestError(): Promise<void> {
     const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.invalidRequest(null));
 
-    await send(rpc);
+    await Queue.enqueue(rpc);
 }
 
 export async function sendInvalidParamsError(id: jsonrpc.ID): Promise<void> {
     const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.invalidParams(null));
 
-    await send(rpc);
+    await Queue.enqueue(rpc);
 }
 
 export async function sendParseError(): Promise<void> {
     const rpc = jsonrpc.error(null, jsonrpc.JsonRpcError.parseError(null));
 
-    await send(rpc);
+    await Queue.enqueue(rpc);
 }
 
 export async function sendMethodNotFound(id: jsonrpc.ID): Promise<void> {
     const rpc = jsonrpc.error(id, jsonrpc.JsonRpcError.methodNotFound(null));
 
-    await send(rpc);
+    await Queue.enqueue(rpc);
 }
 
-export async function errorResponse({ error: { message, code = -32000, data }, id }: ErrorResponseDescriptor): Promise<void> {
+export async function errorResponse({ error: { message, code = -32000, data = {} }, id }: ErrorResponseDescriptor): Promise<void> {
+    const logger = AppObjectRegistry.get<Logger>('logger');
+
+    if (logger?.hasEntries()) {
+        data.logs = logger.getLogs();
+    }
+
     const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
 
-    await send(rpc);
+    await Queue.enqueue(rpc);
 }
 
 export async function successResponse({ id, result }: SuccessResponseDescriptor): Promise<void> {
-    const rpc = jsonrpc.success(id, result);
+    const payload = { value: result } as Record<string, unknown>;
+    const logger = AppObjectRegistry.get<Logger>('logger');
 
-    await send(rpc);
+    if (logger?.hasEntries()) {
+        payload.logs = logger.getLogs();
+    }
+
+    const rpc = jsonrpc.success(id, payload);
+
+    await Queue.enqueue(rpc);
 }
 
 export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<jsonrpc.SuccessObject> {
     const request = jsonrpc.request(Math.random().toString(36).slice(2), requestDescriptor.method, requestDescriptor.params);
 
-    await send(request);
-
     // TODO: add timeout to this
-    return new Promise((resolve, reject) => {
+    const responsePromise = new Promise((resolve, reject) => {
         const handler = (event: Event) => {
             if (event instanceof ErrorEvent) {
                 reject(event.error);
@@ -102,10 +176,18 @@ export async function sendRequest(requestDescriptor: RequestDescriptor): Promise
 
         RPCResponseObserver.addEventListener(`response:${request.id}`, handler);
     });
+
+    await Queue.enqueue(request);
+
+    return responsePromise as Promise<jsonrpc.SuccessObject>;
 }
 
 export function sendNotification({ method, params }: NotificationDescriptor) {
     const request = jsonrpc.notification(method, params);
 
-    send(request);
+    Queue.enqueue(request);
+}
+
+export function log(params: jsonrpc.RpcParams) {
+    sendNotification({ method: 'log', params });
 }

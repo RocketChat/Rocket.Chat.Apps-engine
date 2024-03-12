@@ -27,7 +27,7 @@ export abstract class App implements IApp {
      * Also, please use the `initialize()` method to do items instead of the constructor as the constructor
      * *might* be called more than once but the `initialize()` will only be called once.
      */
-    protected constructor(private readonly info: IAppInfo, private readonly logger: ILogger, private readonly accessors?: IAppAccessors) {
+    public constructor(private readonly info: IAppInfo, private readonly logger: ILogger, private readonly accessors?: IAppAccessors) {
         this.logger.debug(
             `Constructed the App ${this.info.name} (${this.info.id})`,
             `v${this.info.version} which depends on the API v${this.info.requiredApiVersion}!`,
@@ -37,7 +37,7 @@ export abstract class App implements IApp {
         this.setStatus(AppStatus.CONSTRUCTED);
     }
 
-    public getStatus(): AppStatus {
+    public async getStatus(): Promise<AppStatus> {
         return this.status;
     }
 
@@ -219,5 +219,10 @@ export abstract class App implements IApp {
     protected async setStatus(status: AppStatus): Promise<void> {
         this.logger.debug(`The status is now: ${status}`);
         this.status = status;
+    }
+
+    // Avoid leaking references if object is serialized (e.g. to be sent over IPC)
+    public toJSON(): Record<string, any> {
+        return this.info;
     }
 }

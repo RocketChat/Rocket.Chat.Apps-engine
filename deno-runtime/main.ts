@@ -8,89 +8,37 @@ if (!Deno.args.includes('--subprocess')) {
     Deno.exit(1001);
 }
 
-import { createRequire } from 'node:module';
-import { sanitizeDeprecatedUsage } from "./lib/sanitizeDeprecatedUsage.ts";
-import { AppAccessorsInstance } from "./lib/accessors/mod.ts";
-import * as Messenger from "./lib/messenger.ts";
-import { AppObjectRegistry } from "./AppObjectRegistry.ts";
+import { JsonRpcError } from 'jsonrpc-lite';
+import type { App } from '@rocket.chat/apps-engine/definition/App.ts';
 
-const require = createRequire(import.meta.url);
+import * as Messenger from './lib/messenger.ts';
+import { decoder } from './lib/codec.ts';
+import { AppObjectRegistry } from './AppObjectRegistry.ts';
+import { Logger } from './lib/logger.ts';
 
-// @deno-types='../definition/App.d.ts'
-const { App } = require('../definition/App');
+import slashcommandHandler from './handlers/slashcommand-handler.ts';
+import videoConferenceHandler from './handlers/videoconference-handler.ts';
+import apiHandler from './handlers/api-handler.ts';
+import handleApp from './handlers/app/handler.ts';
+import handleScheduler from './handlers/scheduler-handler.ts';
 
-const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
-const ALLOWED_EXTERNAL_MODULES = ['uuid'];
+type Handlers = {
+    app: typeof handleApp;
+    api: typeof apiHandler;
+    slashcommand: typeof slashcommandHandler;
+    videoconference: typeof videoConferenceHandler;
+    scheduler: typeof handleScheduler;
+};
 
-function buildRequire(): (module: string) => unknown {
-    return (module: string): unknown => {
-        if (ALLOWED_NATIVE_MODULES.includes(module)) {
-            return require(`node:${module}`)
-        }
-
-        if (ALLOWED_EXTERNAL_MODULES.includes(module)) {
-            return require(`npm:${module}`);
-        }
-
-        if (module.startsWith('@rocket.chat/apps-engine')) {
-            const path = module.replace('@rocket.chat/apps-engine/', new URL('..', import.meta.url).pathname).concat('.js');
-            return require(path);
-        }
-
-        throw new Error(`Module ${module} is not allowed`);
+async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
+    const methodHandlers: Handlers = {
+        app: handleApp,
+        api: apiHandler,
+        slashcommand: slashcommandHandler,
+        videoconference: videoConferenceHandler,
+        scheduler: handleScheduler,
     };
-}
 
-function wrapAppCode(code: string): (require: (module: string) => unknown) => Promise<Record<string, unknown>> {
-    return new Function(
-        'require',
-        `
-        const exports = {};
-        const module = { exports };
-        const result = (async (exports,module,require,globalThis,Deno) => {
-            ${code};
-        })(exports,module,require);
-        return result.then(() => module.exports);`,
-    ) as (require: (module: string) => unknown) => Promise<Record<string, unknown>>;
-}
-
-async function handlInitializeApp({ id, source }: { id: string; source: string }): Promise<void> {
-    source = sanitizeDeprecatedUsage(source);
-    const require = buildRequire();
-    const exports = await wrapAppCode(source)(require);
-    // This is the same naive logic we've been using in the App Compiler
-    const appClass = Object.values(exports)[0] as typeof App;
-    const app = new appClass({ author: {} }, console, AppAccessorsInstance.getDefaultAppAccessors());
-
-    if (typeof app.getName !== 'function') {
-        throw new Error('App must contain a getName function');
-    }
-
-    if (typeof app.getNameSlug !== 'function') {
-        throw new Error('App must contain a getNameSlug function');
-    }
-
-    if (typeof app.getVersion !== 'function') {
-        throw new Error('App must contain a getVersion function');
-    }
-
-    if (typeof app.getID !== 'function') {
-        throw new Error('App must contain a getID function');
-    }
-
-    if (typeof app.getDescription !== 'function') {
-        throw new Error('App must contain a getDescription function');
-    }
-
-    if (typeof app.getRequiredApiVersion !== 'function') {
-        throw new Error('App must contain a getRequiredApiVersion function');
-    }
-
-    AppObjectRegistry.set('app', app);
-    AppObjectRegistry.set('id', id);
-}
-
-async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     // We're not handling notifications at the moment
     if (type === 'notification') {
         return Messenger.sendInvalidRequestError();
@@ -98,68 +46,72 @@ async function handleRequest({ type, payload }: Messenger.JsonRpcRequest): Promi
 
     const { id, method, params } = payload;
 
-    switch (method) {
-        case 'construct': {
-            const [appId, source] = params as [string, string];
+    const logger = new Logger(method);
+    AppObjectRegistry.set('logger', logger);
 
-            if (!appId || !source) {
-                return Messenger.sendInvalidParamsError(id);
-            }
+    const app = AppObjectRegistry.get<App>('app');
 
-            await handlInitializeApp({ id: appId, source })
-
-            Messenger.successResponse({ id, result: 'hooray' });
-            break;
-        }
-        default: {
-            Messenger.errorResponse({
-                error: { message: 'Method not found', code: -32601 },
-                id,
-            });
-            break;
-        }
+    if (app) {
+        // Same logic as applied in the ProxiedApp class previously
+        (app as unknown as Record<string, unknown>).logger = logger;
     }
+
+    const [methodPrefix] = method.split(':') as [keyof Handlers];
+    const handler = methodHandlers[methodPrefix];
+
+    if (!handler) {
+        return Messenger.errorResponse({
+            error: { message: 'Method not found', code: -32601 },
+            id,
+        });
+    }
+
+    const result = await handler(method, params);
+
+    if (result instanceof JsonRpcError) {
+        return Messenger.errorResponse({ id, error: result });
+    }
+
+    return Messenger.successResponse({ id, result });
 }
 
 function handleResponse(response: Messenger.JsonRpcResponse): void {
     let event: Event;
 
     if (response.type === 'error') {
-        event = new ErrorEvent(`response:${response.payload.id}`, { error: response.payload.error });
+        event = new ErrorEvent(`response:${response.payload.id}`, {
+            error: response.payload,
+        });
     } else {
-        event = new CustomEvent(`response:${response.payload.id}`, { detail: response.payload.result });
+        event = new CustomEvent(`response:${response.payload.id}`, {
+            detail: response.payload,
+        });
     }
 
     Messenger.RPCResponseObserver.dispatchEvent(event);
 }
 
 async function main() {
-    setTimeout(() => Messenger.sendNotification({ method: 'ready' }), 1_780);
+    Messenger.sendNotification({ method: 'ready' });
 
-    const decoder = new TextDecoder();
-
-    for await (const chunk of Deno.stdin.readable) {
-        const message = decoder.decode(chunk);
-        let JSONRPCMessage;
-
+    for await (const message of decoder.decodeStream(Deno.stdin.readable)) {
         try {
-            JSONRPCMessage = Messenger.parseMessage(message);
+            const JSONRPCMessage = Messenger.parseMessage(message as Record<string, unknown>);
+
+            if (Messenger.isRequest(JSONRPCMessage)) {
+                void requestRouter(JSONRPCMessage);
+                continue;
+            }
+
+            if (Messenger.isResponse(JSONRPCMessage)) {
+                handleResponse(JSONRPCMessage);
+            }
         } catch (error) {
             if (Messenger.isErrorResponse(error)) {
-                await Messenger.send(error);
+                await Messenger.Transport.send(error);
             } else {
                 await Messenger.sendParseError();
             }
-
-            continue;
-        }
-
-        if (Messenger.isRequest(JSONRPCMessage)) {
-            await handleRequest(JSONRPCMessage);
-        }
-
-        if (Messenger.isResponse(JSONRPCMessage)) {
-            handleResponse(JSONRPCMessage);
         }
     }
 }

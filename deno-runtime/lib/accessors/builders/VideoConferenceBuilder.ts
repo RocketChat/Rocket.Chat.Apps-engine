@@ -1,13 +1,20 @@
-import { IVideoConferenceBuilder } from "@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts";
-import { RocketChatAssociationModel } from "@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts";
-import type { IGroupVideoConference } from "@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts";
+import type { IVideoConferenceBuilder } from '@rocket.chat/apps-engine/definition/accessors/IVideoConferenceBuilder.ts';
+import type { IGroupVideoConference } from '@rocket.chat/apps-engine/definition/videoConferences/IVideoConference.ts';
+
+import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
+
+import { require } from '../../../lib/require.ts';
+
+const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.js') as {
+    RocketChatAssociationModel: typeof _RocketChatAssociationModel;
+};
 
 export type AppVideoConference = Pick<IGroupVideoConference, 'rid' | 'providerName' | 'providerData' | 'title'> & {
     createdBy: IGroupVideoConference['createdBy']['_id'];
 };
 
 export class VideoConferenceBuilder implements IVideoConferenceBuilder {
-    public kind: RocketChatAssociationModel.VIDEO_CONFERENCE = RocketChatAssociationModel.VIDEO_CONFERENCE;
+    public kind: _RocketChatAssociationModel.VIDEO_CONFERENCE = RocketChatAssociationModel.VIDEO_CONFERENCE;
 
     protected call: AppVideoConference;
 
@@ -75,4 +82,3 @@ export class VideoConferenceBuilder implements IVideoConferenceBuilder {
         return this.call;
     }
 }
-

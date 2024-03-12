@@ -19,7 +19,7 @@ describe('ModifyCreator', () => {
 
     beforeEach(() => {
         AppObjectRegistry.clear();
-        AppObjectRegistry.set('appId', 'deno-test');
+        AppObjectRegistry.set('id', 'deno-test');
     });
 
     afterAll(() => {
