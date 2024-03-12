@@ -104,15 +104,15 @@ export abstract class LivechatBridge extends BaseBridge {
         }
     }
 
-    public async doCountRoomsByAgentId(agentId: string, appId: string): Promise<number> {
+    public async doCountOpenRoomsByAgentId(agentId: string, appId: string): Promise<number> {
         if (this.hasReadPermission(appId, 'livechat-room')) {
-            return this.countRoomsByAgentId(agentId, appId);
+            return this.countOpenRoomsByAgentId(agentId, appId);
         }
     }
 
-    public async doFindRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>> {
+    public async doFindOpenRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>> {
         if (this.hasReadPermission(appId, 'livechat-room')) {
-            return this.findRoomsByAgentId(agentId, appId);
+            return this.findOpenRoomsByAgentId(agentId, appId);
         }
     }
 
@@ -183,9 +183,9 @@ export abstract class LivechatBridge extends BaseBridge {
 
     protected abstract closeRoom(room: ILivechatRoom, comment: string, closer: IUser | undefined, appId: string): Promise<boolean>;
 
-    protected abstract countRoomsByAgentId(agentId: string, appId: string): Promise<number>;
+    protected abstract countOpenRoomsByAgentId(agentId: string, appId: string): Promise<number>;
 
-    protected abstract findRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>>;
+    protected abstract findOpenRoomsByAgentId(agentId: string, appId: string): Promise<Array<ILivechatRoom>>;
 
     protected abstract findRooms(visitor: IVisitor, departmentId: string | null, appId: string): Promise<Array<ILivechatRoom>>;
 
