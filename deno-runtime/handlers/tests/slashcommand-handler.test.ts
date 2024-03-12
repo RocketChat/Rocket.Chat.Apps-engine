@@ -2,16 +2,11 @@
 import { assertEquals, assertInstanceOf } from 'https://deno.land/std@0.203.0/assert/mod.ts';
 import { beforeEach, describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
 import { spy } from 'https://deno.land/std@0.203.0/testing/mock.ts';
-import { Room as _Room } from '@rocket.chat/apps-engine/server/rooms/Room.ts';
 
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { AppAccessors } from '../../lib/accessors/mod.ts';
 import { handleExecutor, handlePreviewItem } from '../slashcommand-handler.ts';
-import { require } from '../../lib/require.ts';
-
-const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as {
-    Room: typeof _Room;
-};
+import { Room } from "../../lib/room.ts";
 
 describe('handlers > slashcommand', () => {
     const mockAppAccessors = {
