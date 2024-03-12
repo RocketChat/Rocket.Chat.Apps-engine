@@ -126,6 +126,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             let hasNetworkingPermission = false;
 
+            // If the app doesn't request any permissions, it gets the default set of permissions, which includes "networking"
+            // If the app requests specific permissions, we need to check whether it requests "networking" or not
             if (!appPackage.info.permissions || appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
                 hasNetworkingPermission = true;
             }
