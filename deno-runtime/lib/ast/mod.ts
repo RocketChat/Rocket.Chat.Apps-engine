@@ -10,7 +10,8 @@ import type { WalkerState } from "./operations.ts";
 function fixAst(ast: Program): boolean {
     const pendingOperations = [
         operations.fixLivechatIsOnlineCalls,
-        operations.checkReassignmentOfModifiedIdentifiers
+        operations.checkReassignmentOfModifiedIdentifiers,
+        operations.fixRoomUsernamesCalls,
     ];
 
     // Have we touched the tree?

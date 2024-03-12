@@ -214,3 +214,29 @@ export const fixLivechatIsOnlineCalls: FullAncestorWalkerCallback<WalkerState> =
 
     state.isModified = true;
 };
+
+export const fixRoomUsernamesCalls: FullAncestorWalkerCallback<WalkerState> = (node, state, ancestors) => {
+    if (node.type !== 'MemberExpression' || node.computed) return;
+
+    if ((node.property as Identifier).name !== 'usernames') return;
+
+    let parentIndex = ancestors.length - 2;
+    let targetNode = ancestors[parentIndex];
+
+    if (targetNode.type !== 'CallExpression') {
+        targetNode = node;
+    } else {
+        parentIndex--;
+    }
+
+    // If we're already wrapped with an await, nothing to do
+    if (ancestors[parentIndex].type === 'AwaitExpression') return;
+
+    // If we're in the middle of a chained member access, we can't wrap with await
+    if (ancestors[parentIndex].type === 'MemberExpression') return;
+
+    wrapWithAwait(targetNode);
+    asyncifyScope(ancestors, state);
+
+    state.isModified = true;
+}
