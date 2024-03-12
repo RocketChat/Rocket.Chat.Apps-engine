@@ -33,8 +33,8 @@ function buildRequire(): (module: string) => unknown {
         }
 
         if (module.startsWith('@rocket.chat/apps-engine')) {
-            const path = module;
-            return require(path);
+            // Our `require` function knows how to handle these
+            return require(module);
         }
 
         throw new Error(`Module ${module} is not allowed`);
