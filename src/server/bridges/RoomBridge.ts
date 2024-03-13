@@ -49,6 +49,19 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    // TODO: check if we can use a list of user ids
+    public async doMuteUser(roomId: string, executorId: string, userId: string, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.doUnmuteUser(roomId, executorId, userId, appId);
+        }
+    }
+
+    public async doUnmuteUser(roomId: string, executorId: string, userId: string, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.doMuteUser(roomId, executorId, userId, appId);
+        }
+    }
+
     public async doUpdate(room: IRoom, members: Array<string>, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
             return this.update(room, members, appId);
@@ -91,6 +104,12 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    public async doHideRoom(roomId: string, executorId: string, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.hideRoom(roomId, executorId, appId);
+        }
+    }
+
     protected abstract create(room: IRoom, members: Array<string>, appId: string): Promise<string>;
 
     protected abstract getById(roomId: string, appId: string): Promise<IRoom>;
@@ -122,6 +141,12 @@ export abstract class RoomBridge extends BaseBridge {
     protected abstract getOwners(roomId: string, appId: string): Promise<Array<IUser>>;
 
     protected abstract getLeaders(roomId: string, appId: string): Promise<Array<IUser>>;
+
+    protected abstract muteUser(roomId: string, executorId: string, userId: string, appId: string): Promise<void>;
+
+    protected abstract unmuteUser(roomId: string, executorId: string, userId: string, appId: string): Promise<void>;
+
+    protected abstract hideRoom(roomId: string, executorId: string, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
