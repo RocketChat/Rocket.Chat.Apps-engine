@@ -4,7 +4,7 @@ import { describe, it } from 'https://deno.land/std@0.203.0/testing/bdd.ts';
 
 import { parseArgs } from '../listener/handler.ts';
 import { AppAccessors } from '../../lib/accessors/mod.ts';
-import { Room } from '../../lib/roomFactory.ts';
+import { Room } from '../../lib/room.ts';
 import { MessageExtender } from '../../lib/accessors/extenders/MessageExtender.ts';
 import { RoomExtender } from '../../lib/accessors/extenders/RoomExtender.ts';
 import { MessageBuilder } from '../../lib/accessors/builders/MessageBuilder.ts';

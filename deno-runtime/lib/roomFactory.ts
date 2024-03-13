@@ -1,19 +1,20 @@
 import type { IRoom } from "@rocket.chat/apps-engine/definition/rooms/IRoom.ts";
-import type { Room as _Room } from "@rocket.chat/apps-engine/server/rooms/Room.ts";
+import type { AppManager } from "@rocket.chat/apps-engine/server/AppManager.ts";
 
-import { require } from '../lib/require.ts';
 import { AppAccessors } from "./accessors/mod.ts";
-
-export const { Room } = require('@rocket.chat/apps-engine/server/rooms/Room.js') as { Room: typeof _Room } ;
+import { Room } from "./room.ts";
+import { JsonRpcError } from "jsonrpc-lite";
 
 const getMockAppManager = (senderFn: AppAccessors['senderFn']) => ({
     getBridges: () => ({
         getInternalBridge: () => ({
             doGetUsernamesOfRoomById: (roomId: string) => {
-                senderFn({
+                return senderFn({
                     method: 'bridges:getInternalBridge:doGetUsernamesOfRoomById',
                     params: [roomId],
-                });
+                }).then((result) => result.result).catch((err) => {
+                    throw new JsonRpcError(`Error getting usernames of room: ${err}`, -32000);
+                })
             },
         }),
     }),
@@ -22,5 +23,5 @@ const getMockAppManager = (senderFn: AppAccessors['senderFn']) => ({
 export default function createRoom(room: IRoom, senderFn: AppAccessors['senderFn']) {
     const mockAppManager = getMockAppManager(senderFn);
 
-    return new Room(room, mockAppManager);
+    return new Room(room, mockAppManager as unknown as AppManager);
 }
