@@ -232,9 +232,6 @@ export const fixRoomUsernamesCalls: FullAncestorWalkerCallback<WalkerState> = (n
     // If we're already wrapped with an await, nothing to do
     if (ancestors[parentIndex].type === 'AwaitExpression') return;
 
-    // If we're in the middle of a chained member access, we can't wrap with await
-    if (ancestors[parentIndex].type === 'MemberExpression') return;
-
     wrapWithAwait(targetNode);
     asyncifyScope(ancestors, state);
 
