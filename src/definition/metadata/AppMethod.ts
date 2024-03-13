@@ -58,6 +58,7 @@ export enum AppMethod {
     EXECUTEPREROOMCREATEMODIFY = 'executePreRoomCreateModify',
     CHECKPOSTROOMCREATE = 'checkPostRoomCreate',
     EXECUTEPOSTROOMCREATE = 'executePostRoomCreate',
+    EXECUTEBOTPOSTROOMCREATE = 'executeBotPostRoomCreate',
     CHECKPREROOMDELETEPREVENT = 'checkPreRoomDeletePrevent',
     EXECUTEPREROOMDELETEPREVENT = 'executePreRoomDeletePrevent',
     CHECKPOSTROOMDELETED = 'checkPostRoomDeleted',
