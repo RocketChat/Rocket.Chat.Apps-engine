@@ -1,3 +1,5 @@
+import { URL } from 'url';
+
 import type { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../../definition/accessors';
 import { HttpStatusCode } from '../../definition/accessors';
 import type { IApiEndpointInfo, IApiRequest, IApiResponse } from '../../definition/api';
