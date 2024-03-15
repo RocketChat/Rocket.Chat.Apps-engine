@@ -11,7 +11,7 @@ on:
             - 'feat/deno-runtime'
 
 env:
-    DENO_DIR: .deno
+    DENO_DIR: ./.deno
 
 jobs:
     prepare:
