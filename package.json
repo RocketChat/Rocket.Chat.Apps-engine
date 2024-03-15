@@ -8,7 +8,7 @@
         "start": "gulp",
         "test": "concurrently \"npm:test:node\" \"npm:test:deno\"",
         "lint:eslint": "eslint .",
-        "lint:deno": "deno lint deno-runtime/",
+        "lint:deno": "deno lint --ignore=.deno deno-runtime/",
         "lint": "concurrently \"npm:lint:eslint\" \"npm:lint:deno\"",
         "fix-lint": "eslint . --fix",
         "bundle": "gulp bundle",
