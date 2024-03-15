@@ -52,7 +52,7 @@ jobs:
                   path: |
                       ./node_modules
                       ${{ env.DENO_DIR }}
-                  key: ${{ runner.OS }}-node_modules-deno-cache-4-${{ hashFiles('./package-lock.json', './deno-runtime/deno.lock', '.github/workflows/build_and_test.yml') }}
+                  key: ${{ runner.OS }}-node_modules-deno-cache-5-${{ hashFiles('./package-lock.json', './deno-runtime/deno.lock', '.github/workflows/build_and_test.yml') }}
 
             - name: npm install
               if: steps.cache-nodemodules.outputs.cache-hit != 'true'
