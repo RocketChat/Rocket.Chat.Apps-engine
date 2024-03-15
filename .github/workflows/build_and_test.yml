@@ -11,7 +11,7 @@ on:
             - 'feat/deno-runtime'
 
 env:
-    DENO_DIR: ./.deno
+    DENO_DIR: .deno
 
 jobs:
     prepare:
@@ -51,7 +51,7 @@ jobs:
               with:
                   path: |
                       ./node_modules
-                      ${{ env.DENO_DIR }}
+                      ./deno-runtime/${{ env.DENO_DIR }}
                   key: ${{ runner.OS }}-node_modules-deno-cache-5-${{ hashFiles('./package-lock.json', './deno-runtime/deno.lock', '.github/workflows/build_and_test.yml') }}
 
             - name: npm install
