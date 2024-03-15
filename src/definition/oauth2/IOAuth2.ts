@@ -1,3 +1,5 @@
+import type { URL } from 'url';
+
 import type { IConfigurationExtend, IHttp, IModify, IPersistence, IRead } from '../accessors';
 import type { IUser } from '../users/IUser';
 
