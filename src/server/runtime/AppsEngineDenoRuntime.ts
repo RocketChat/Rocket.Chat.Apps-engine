@@ -124,7 +124,21 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             // process must be able to read in order to include files that use NPM packages
             const parentNodeModulesDir = path.dirname(path.join(appsEngineDir, '..'));
 
-            this.deno = child_process.spawn(denoExePath, ['run', `--allow-read=${appsEngineDir}/,${parentNodeModulesDir}/`, denoWrapperPath, '--subprocess']);
+            let hasNetworkingPermission = false;
+
+            // If the app doesn't request any permissions, it gets the default set of permissions, which includes "networking"
+            // If the app requests specific permissions, we need to check whether it requests "networking" or not
+            if (!appPackage.info.permissions || appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
+                hasNetworkingPermission = true;
+            }
+
+            this.deno = child_process.spawn(denoExePath, [
+                'run',
+                hasNetworkingPermission ? '--allow-net' : '',
+                `--allow-read=${appsEngineDir},${parentNodeModulesDir}`,
+                denoWrapperPath,
+                '--subprocess',
+            ]);
 
             this.setupListeners();
         } catch {

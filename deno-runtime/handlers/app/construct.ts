@@ -4,9 +4,23 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { require } from '../../lib/require.ts';
 import { sanitizeDeprecatedUsage } from '../../lib/sanitizeDeprecatedUsage.ts';
 import { AppAccessorsInstance } from '../../lib/accessors/mod.ts';
+import { Socket } from 'node:net';
 
 const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
+
+
+function prepareEnvironment() {
+    // Deno does not behave equally to Node when it comes to piping content to a socket
+    // So we intervene here
+    const originalFinal = Socket.prototype._final;
+    Socket.prototype._final = function _final(cb) {
+        // Deno closes the readable stream in the Socket earlier than Node
+        // The exact reason for that is yet unknown, so we'll need to simply delay the execution
+        // which allows data to be read in a response
+        setTimeout(() => originalFinal.call(this, cb), 1);
+    };
+}
 
 function buildRequire(): (module: string) => unknown {
     return (module: string): unknown => {
@@ -19,8 +33,8 @@ function buildRequire(): (module: string) => unknown {
         }
 
         if (module.startsWith('@rocket.chat/apps-engine')) {
-            const path = module;
-            return require(path);
+            // Our `require` function knows how to handle these
+            return require(module);
         }
 
         throw new Error(`Module ${module} is not allowed`);
@@ -61,6 +75,8 @@ export default async function handleConstructApp(params: unknown): Promise<boole
     if (!appPackage?.info?.id || !appPackage?.info?.classFile || !appPackage?.files) {
         throw new Error('Invalid params', { cause: 'invalid_param_type' });
     }
+
+    prepareEnvironment();
 
     AppObjectRegistry.set('id', appPackage.info.id);
     const source = sanitizeDeprecatedUsage(appPackage.files[appPackage.info.classFile]);
