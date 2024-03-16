@@ -13,6 +13,7 @@ import type { AppAccessorManager, AppApiManager } from '../../managers';
 import type { ILoggerStorageEntry } from '../../logging';
 import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
 import { AppStatus } from '../../../definition/AppStatus';
+import { bundleLegacyApp } from './bundler';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -148,6 +149,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async setupApp() {
+        // If there is more than one file in the package, then it is a legacy app that has not been bundled
+        if (Object.keys(this.appPackage.files).length > 1) {
+            await bundleLegacyApp(this.appPackage);
+        }
+
         await this.waitUntilReady();
 
         await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
