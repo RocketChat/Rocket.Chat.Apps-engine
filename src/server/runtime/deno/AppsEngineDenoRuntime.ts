@@ -59,7 +59,7 @@ export function getDenoWrapperPath(): string {
         return require.resolve('../../deno-runtime/main.ts');
     } catch {
         // This path is relative to the original Apps-Engine files
-        return require.resolve('../../../deno-runtime/main.ts');
+        return require.resolve('../../../../deno-runtime/main.ts');
     }
 }
 
@@ -114,8 +114,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             ]);
 
             this.setupListeners();
-        } catch {
+        } catch (e) {
             this.state = 'invalid';
+            console.error('Failed to start Deno subprocess', e);
         }
 
         this.accessors = manager.getAccessorManager();
