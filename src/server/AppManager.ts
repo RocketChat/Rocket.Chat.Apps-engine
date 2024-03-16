@@ -35,7 +35,7 @@ import { AppLogStorage, AppMetadataStorage } from './storage';
 import { AppSourceStorage } from './storage/AppSourceStorage';
 import { AppInstallationSource } from './storage/IAppStorageItem';
 import { AppRuntimeManager } from './managers/AppRuntimeManager';
-import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
+import type { DenoRuntimeSubprocessController } from './runtime/deno/AppsEngineDenoRuntime';
 
 export interface IAppInstallParameters {
     enable: boolean;

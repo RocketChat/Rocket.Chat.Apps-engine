@@ -1,6 +1,6 @@
 import type { AppManager } from '../AppManager';
 import type { IParseAppPackageResult } from '../compiler';
-import { DenoRuntimeSubprocessController } from '../runtime/AppsEngineDenoRuntime';
+import { DenoRuntimeSubprocessController } from '../runtime/deno/AppsEngineDenoRuntime';
 
 export type AppRuntimeParams = {
     appId: string;

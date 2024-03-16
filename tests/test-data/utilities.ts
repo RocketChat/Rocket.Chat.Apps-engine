@@ -33,7 +33,7 @@ import type {
     AppVideoConfProviderManager,
 } from '../../src/server/managers';
 import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
-import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/AppsEngineDenoRuntime';
+import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/deno/AppsEngineDenoRuntime';
 import { AppPackageParser } from '../../src/server/compiler';
 import type { AppRuntimeManager } from '../../src/server/managers/AppRuntimeManager';
 

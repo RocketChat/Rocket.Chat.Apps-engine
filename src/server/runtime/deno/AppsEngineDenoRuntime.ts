@@ -3,16 +3,16 @@ import * as path from 'path';
 import { type Readable, EventEmitter } from 'stream';
 
 import * as jsonrpc from 'jsonrpc-lite';
-import { Decoder, Encoder, ExtensionCodec } from '@msgpack/msgpack';
 
-import type { AppManager } from '../AppManager';
-import type { AppLogStorage } from '../storage';
-import type { AppBridges } from '../bridges';
-import type { IParseAppPackageResult } from '../compiler';
-import type { AppAccessorManager, AppApiManager } from '../managers';
-import type { ILoggerStorageEntry } from '../logging';
-import type { AppRuntimeManager } from '../managers/AppRuntimeManager';
-import { AppStatus } from '../../definition/AppStatus';
+import { encoder, decoder } from './codec';
+import type { AppManager } from '../../AppManager';
+import type { AppLogStorage } from '../../storage';
+import type { AppBridges } from '../../bridges';
+import type { IParseAppPackageResult } from '../../compiler';
+import type { AppAccessorManager, AppApiManager } from '../../managers';
+import type { ILoggerStorageEntry } from '../../logging';
+import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
+import { AppStatus } from '../../../definition/AppStatus';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -36,34 +36,6 @@ export const ALLOWED_ACCESSOR_METHODS = [
         | 'getModifier'
     >
 >;
-
-const extensionCodec = new ExtensionCodec();
-
-extensionCodec.register({
-    type: 0,
-    encode: (object: unknown) => {
-        // We don't care about functions, but also don't want to throw an error
-        if (typeof object === 'function') {
-            return new Uint8Array([0]);
-        }
-    },
-    decode: (_data: Uint8Array) => undefined,
-});
-
-// We need to handle Buffers because Deno needs its own decoding
-extensionCodec.register({
-    type: 1,
-    encode: (object: unknown) => {
-        if (object instanceof Buffer) {
-            return new Uint8Array(object.buffer, object.byteOffset, object.byteLength);
-        }
-    },
-    // By passing byteOffset and byteLength, we're creating a view of the original buffer instead of copying it
-    decode: (data: Uint8Array) => Buffer.from(data.buffer, data.byteOffset, data.byteLength),
-});
-
-const encoder = new Encoder({ extensionCodec });
-const decoder = new Decoder({ extensionCodec });
 
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
 

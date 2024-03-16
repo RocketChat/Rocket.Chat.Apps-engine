@@ -5,7 +5,7 @@ import { TestFixture, Setup, Expect, AsyncTest, SpyOn, Any, AsyncSetupFixture, T
 
 import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { TestInfastructureSetup } from '../../test-data/utilities';
-import { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
+import { DenoRuntimeSubprocessController } from '../../../src/server/runtime/deno/AppsEngineDenoRuntime';
 import type { AppManager } from '../../../src/server/AppManager';
 import { UserStatusConnection, UserType } from '../../../src/definition/users';
 import type { IParseAppPackageResult } from '../../../src/server/compiler';

@@ -7,7 +7,7 @@ import type { AppManager } from '../../../src/server/AppManager';
 import { AppFabricationFulfillment } from '../../../src/server/compiler';
 import { ProxiedApp } from '../../../src/server/ProxiedApp';
 import type { IAppStorageItem } from '../../../src/server/storage';
-import type { DenoRuntimeSubprocessController } from '../../../src/server/runtime/AppsEngineDenoRuntime';
+import type { DenoRuntimeSubprocessController } from '../../../src/server/runtime/deno/AppsEngineDenoRuntime';
 
 export class AppFabricationFulfillmentTestFixture {
     @Test()
