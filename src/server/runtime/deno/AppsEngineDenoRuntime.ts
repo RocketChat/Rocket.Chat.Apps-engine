@@ -56,7 +56,7 @@ export function getDenoExecutablePath(): string {
 export function getDenoWrapperPath(): string {
     try {
         // This path is relative to the compiled version of the Apps-Engine source
-        return require.resolve('../../deno-runtime/main.ts');
+        return require.resolve('../../../deno-runtime/main.ts');
     } catch {
         // This path is relative to the original Apps-Engine files
         return require.resolve('../../../../deno-runtime/main.ts');
