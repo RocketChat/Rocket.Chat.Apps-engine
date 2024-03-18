@@ -6,7 +6,7 @@ import type { AppManager } from './AppManager';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
-import type { DenoRuntimeSubprocessController } from './runtime/AppsEngineDenoRuntime';
+import type { DenoRuntimeSubprocessController } from './runtime/deno/AppsEngineDenoRuntime';
 import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import type { IAppStorageItem } from './storage';
 

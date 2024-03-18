@@ -30,7 +30,7 @@ import type { AppManager } from '../AppManager';
 import type { ProxiedApp } from '../ProxiedApp';
 import type { AppAccessorManager } from './AppAccessorManager';
 import { Utilities } from '../misc/Utilities';
-import { JSONRPC_METHOD_NOT_FOUND } from '../runtime/AppsEngineDenoRuntime';
+import { JSONRPC_METHOD_NOT_FOUND } from '../runtime/deno/AppsEngineDenoRuntime';
 
 interface IListenerExecutor {
     [AppInterface.IPreMessageSentPrevent]: {

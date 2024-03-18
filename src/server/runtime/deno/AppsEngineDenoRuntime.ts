@@ -3,16 +3,17 @@ import * as path from 'path';
 import { type Readable, EventEmitter } from 'stream';
 
 import * as jsonrpc from 'jsonrpc-lite';
-import { Decoder, Encoder, ExtensionCodec } from '@msgpack/msgpack';
 
-import type { AppManager } from '../AppManager';
-import type { AppLogStorage } from '../storage';
-import type { AppBridges } from '../bridges';
-import type { IParseAppPackageResult } from '../compiler';
-import type { AppAccessorManager, AppApiManager } from '../managers';
-import type { ILoggerStorageEntry } from '../logging';
-import type { AppRuntimeManager } from '../managers/AppRuntimeManager';
-import { AppStatus } from '../../definition/AppStatus';
+import { encoder, decoder } from './codec';
+import type { AppManager } from '../../AppManager';
+import type { AppLogStorage } from '../../storage';
+import type { AppBridges } from '../../bridges';
+import type { IParseAppPackageResult } from '../../compiler';
+import type { AppAccessorManager, AppApiManager } from '../../managers';
+import type { ILoggerStorageEntry } from '../../logging';
+import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
+import { AppStatus } from '../../../definition/AppStatus';
+import { bundleLegacyApp } from './bundler';
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -37,34 +38,6 @@ export const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
-const extensionCodec = new ExtensionCodec();
-
-extensionCodec.register({
-    type: 0,
-    encode: (object: unknown) => {
-        // We don't care about functions, but also don't want to throw an error
-        if (typeof object === 'function') {
-            return new Uint8Array([0]);
-        }
-    },
-    decode: (_data: Uint8Array) => undefined,
-});
-
-// We need to handle Buffers because Deno needs its own decoding
-extensionCodec.register({
-    type: 1,
-    encode: (object: unknown) => {
-        if (object instanceof Buffer) {
-            return new Uint8Array(object.buffer, object.byteOffset, object.byteLength);
-        }
-    },
-    // By passing byteOffset and byteLength, we're creating a view of the original buffer instead of copying it
-    decode: (data: Uint8Array) => Buffer.from(data.buffer, data.byteOffset, data.byteLength),
-});
-
-const encoder = new Encoder({ extensionCodec });
-const decoder = new Decoder({ extensionCodec });
-
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
 
 export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
@@ -86,7 +59,7 @@ export function getDenoWrapperPath(): string {
         return require.resolve('../../deno-runtime/main.ts');
     } catch {
         // This path is relative to the original Apps-Engine files
-        return require.resolve('../../../deno-runtime/main.ts');
+        return require.resolve('../../../../deno-runtime/main.ts');
     }
 }
 
@@ -141,8 +114,9 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             ]);
 
             this.setupListeners();
-        } catch {
+        } catch (e) {
             this.state = 'invalid';
+            console.error('Failed to start Deno subprocess', e);
         }
 
         this.accessors = manager.getAccessorManager();
@@ -176,6 +150,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async setupApp() {
+        // If there is more than one file in the package, then it is a legacy app that has not been bundled
+        if (Object.keys(this.appPackage.files).length > 1) {
+            await bundleLegacyApp(this.appPackage);
+        }
+
         await this.waitUntilReady();
 
         await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
