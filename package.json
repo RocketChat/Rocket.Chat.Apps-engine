@@ -8,7 +8,7 @@
         "start": "gulp",
         "test": "concurrently \"npm:test:node\" \"npm:test:deno\"",
         "lint:eslint": "eslint .",
-        "lint:deno": "deno lint deno-runtime/",
+        "lint:deno": "deno lint --ignore=deno-runtime/.deno deno-runtime/",
         "lint": "concurrently \"npm:lint:eslint\" \"npm:lint:deno\"",
         "fix-lint": "eslint . --fix",
         "bundle": "gulp bundle",
@@ -17,8 +17,9 @@
         "go-publish-beta": "gulp publish-beta",
         "go-publish-alpha": "gulp publish-alpha",
         "test:node": "NODE_ENV=test ts-node ./tests/runner.ts",
-        "test:deno": "cd deno-runtime && deno test --no-check --allow-read",
-        "gen-doc": "typedoc"
+        "test:deno": "cd deno-runtime && deno task test",
+        "gen-doc": "typedoc",
+        "postinstall": "cd deno-runtime && deno cache main.ts && deno test --no-check --no-run"
     },
     "repository": {
         "type": "git",
