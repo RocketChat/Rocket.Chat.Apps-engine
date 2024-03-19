@@ -30,6 +30,14 @@ export class LivechatRead implements ILivechatRead {
         return this.livechatBridge.doFindRooms(visitor, departmentId, this.appId);
     }
 
+    public getLivechatTotalOpenRoomsByAgentId(agentId: string): Promise<number> {
+        return this.livechatBridge.doCountOpenRoomsByAgentId(agentId, this.appId);
+    }
+
+    public getLivechatOpenRoomsByAgentId(agentId: string): Promise<Array<ILivechatRoom>> {
+        return this.livechatBridge.doFindOpenRoomsByAgentId(agentId, this.appId);
+    }
+
     /**
      * @deprecated This method does not adhere to the conversion practices applied
      * elsewhere in the Apps-Engine and will be removed in the next major version.

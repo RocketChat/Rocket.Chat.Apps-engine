@@ -17,6 +17,8 @@ export interface ILivechatRead {
     isOnlineAsync(departmentId?: string): Promise<boolean>;
     getDepartmentsEnabledWithAgents(): Promise<Array<IDepartment>>;
     getLivechatRooms(visitor: IVisitor, departmentId?: string): Promise<Array<ILivechatRoom>>;
+    getLivechatOpenRoomsByAgentId(agentId: string): Promise<Array<ILivechatRoom>>;
+    getLivechatTotalOpenRoomsByAgentId(agentId: string): Promise<number>;
     /**
      * @deprecated This method does not adhere to the conversion practices applied
      * elsewhere in the Apps-Engine and will be removed in the next major version.
