@@ -6,7 +6,7 @@ import { spy } from "https://deno.land/std@0.203.0/testing/mock.ts";
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { assertInstanceOf } from "https://deno.land/std@0.203.0/assert/assert_instance_of.ts";
 import { JsonRpcError } from "jsonrpc-lite";
-import { IApiEndpoint } from "@rocket.chat/apps-engine/definition/api/IApiEndpoint.ts";
+import type { IApiEndpoint } from "@rocket.chat/apps-engine/definition/api/IApiEndpoint.ts";
 import apiHandler from "../api-handler.ts";
 
 describe('handlers > api', () => {
