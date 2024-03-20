@@ -3,6 +3,7 @@ import * as path from 'path';
 import { type Readable, EventEmitter } from 'stream';
 
 import * as jsonrpc from 'jsonrpc-lite';
+import debugFactory from 'debug';
 
 import { encoder, decoder } from './codec';
 import type { AppManager } from '../../AppManager';
@@ -14,6 +15,8 @@ import type { ILoggerStorageEntry } from '../../logging';
 import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
 import { AppStatus } from '../../../definition/AppStatus';
 import { bundleLegacyApp } from './bundler';
+
+const baseDebug = debugFactory('appsEngine:runtime:deno');
 
 export const ALLOWED_ACCESSOR_METHODS = [
     'getConfigurationExtend',
@@ -66,6 +69,8 @@ export function getDenoWrapperPath(): string {
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
+    private readonly debug: debug.Debugger;
+
     private readonly options = {
         timeout: 10000,
     };
@@ -88,6 +93,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         this.state = 'uninitialized';
 
+        this.debug = baseDebug.extend(appPackage.info.id);
+
         try {
             const denoExePath = getDenoExecutablePath();
             const denoWrapperPath = getDenoWrapperPath();
@@ -105,13 +112,17 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 hasNetworkingPermission = true;
             }
 
-            this.deno = child_process.spawn(denoExePath, [
+            const options = [
                 'run',
                 hasNetworkingPermission ? '--allow-net' : '',
                 `--allow-read=${appsEngineDir},${parentNodeModulesDir}`,
                 denoWrapperPath,
                 '--subprocess',
-            ]);
+            ];
+
+            this.debug('Starting Deno subprocess for app with options %O', options);
+
+            this.deno = child_process.spawn(denoExePath, options);
 
             this.setupListeners();
         } catch (e) {
@@ -131,7 +142,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const hadListeners = super.emit(eventName, ...args);
 
         if (!hadListeners) {
-            console.warn('Emitted but no one listened: ', eventName, args);
+            this.debug('Emitted but no one listened: ', eventName, args);
         }
 
         return hadListeners;
@@ -161,6 +172,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public stopApp() {
+        this.debug('Stopping app');
+
         if (this.deno.killed) {
             return true;
         }
@@ -182,6 +195,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     private send(message: jsonrpc.JsonRpc) {
+        this.debug('Sending message to subprocess %o', message);
         this.deno.stdin.write(encoder.encode(message));
     }
 
@@ -244,6 +258,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const accessorMethods = method.substring(9).split(':'); // First 9 characters are always 'accessor:'
         const managerOrigin = accessorMethods.shift();
         const tailMethodName = accessorMethods.pop();
+
+        this.debug('Handling accessor message %o with params %o', accessorMethods, params);
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
             const result = this.api.listApis(this.appPackage.info.id);
@@ -329,6 +345,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
         const [bridgeName, bridgeMethod] = method.substring(8).split(':');
 
+        this.debug('Handling bridge message %s().%s() with params %o', bridgeName, bridgeMethod, params);
+
         const bridge = this.bridges[bridgeName as keyof typeof this.bridges];
 
         if (!bridgeMethod.startsWith('do') || typeof bridge !== 'function' || !Array.isArray(params)) {
@@ -411,6 +429,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private async parseStdout(stream: Readable): Promise<void> {
         for await (const message of decoder.decodeStream(stream)) {
+            this.debug('Received message from subprocess %o', message);
             try {
                 const JSONRPCMessage = jsonrpc.parseObject(message);
 
