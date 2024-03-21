@@ -342,7 +342,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }
 
-    private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
+    private async handleBridgeMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject | jsonrpc.ErrorObject> {
         const [bridgeName, bridgeMethod] = method.substring(8).split(':');
 
         this.debug('Handling bridge message %s().%s() with params %o', bridgeName, bridgeMethod, params);
@@ -361,12 +361,19 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             throw new Error('Invalid bridge request');
         }
 
-        const result = await methodRef.apply(
-            bridgeInstance,
-            // Should the protocol expect the placeholder APP_ID value or should the Deno process send the actual appId?
-            // If we do not expect the APP_ID, the Deno process will be able to impersonate other apps, potentially
-            params.map((value: unknown) => (value === 'APP_ID' ? this.appPackage.info.id : value)),
-        );
+        let result;
+        try {
+            result = await methodRef.apply(
+                bridgeInstance,
+                // Should the protocol expect the placeholder APP_ID value or should the Deno process send the actual appId?
+                // If we do not expect the APP_ID, the Deno process will be able to impersonate other apps, potentially
+                params.map((value: unknown) => (value === 'APP_ID' ? this.appPackage.info.id : value)),
+            );
+        } catch (error) {
+            this.debug('Error executing bridge method %s().%s() %o', bridgeName, bridgeMethod, error.message);
+            const jsonRpcError = new jsonrpc.JsonRpcError(error.message, -32000, error);
+            return jsonrpc.error(id, jsonRpcError);
+        }
 
         return jsonrpc.success(id, typeof result === 'undefined' ? null : result);
     }

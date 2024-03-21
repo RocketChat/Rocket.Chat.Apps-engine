@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 
 import { TestFixture, Setup, Expect, AsyncTest, SpyOn, Any, AsyncSetupFixture, Teardown } from 'alsatian';
+import type { SuccessObject } from 'jsonrpc-lite';
 
 import { AppAccessorManager, AppApiManager } from '../../../src/server/managers';
 import { TestInfastructureSetup } from '../../test-data/utilities';
@@ -198,7 +199,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
         };
 
         // eslint-disable-next-line
-        const { id, result } = await this.controller['handleBridgeMessage']({
+        const response = await this.controller['handleBridgeMessage']({
             type: 'request' as any,
             payload: {
                 jsonrpc: '2.0',
@@ -208,6 +209,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
                 serialize: () => '',
             },
         });
+        const { id, result } = response as SuccessObject;
 
         Expect(this.manager.getBridges().getMessageBridge().doCreate).toHaveBeenCalledWith(messageParam, '9c1d62ca-e40f-456f-8601-17c823a16c68');
 
