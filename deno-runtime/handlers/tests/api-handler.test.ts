@@ -70,10 +70,7 @@ describe('handlers > api', () => {
     it('correctly handles an error if the method execution fails', async () => {
         const result = await apiHandler(`api:/test:put`, ['request', 'endpointInfo']);
 
-        assertInstanceOf(result, JsonRpcError)
-        assertObjectMatch(result, {
-            message: `Method execution error example`,
-            code: -32000
-        })
+        assertInstanceOf(result, Object)
+        assertObjectMatch(result, { status: 500, content: 'Internal server error.'})
     });
 });
