@@ -41,7 +41,6 @@ export default async function apiHandler(call: string, params: unknown): Promise
         return result;
     } catch (e) {
         logger?.debug(`${path}'s ${call} was unsuccessful.`);
-        logger?.error(e);
-        return { status: 500, content: 'Internal server error.'}
+        return new JsonRpcError(e.message || "Internal server error", -32000);
     }
 }
