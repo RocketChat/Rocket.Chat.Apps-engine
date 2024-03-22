@@ -202,9 +202,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
         const id = String(Math.random().toString(36)).substring(2);
 
+        const start = Date.now();
+
         const request = jsonrpc.request(id, message.method, message.params);
 
-        const promise = this.waitForResponse(request);
+        const promise = this.waitForResponse(request).then((result) => {
+            this.debug('Request %s for method %s took %dms', id, message.method, Date.now() - start);
+            return result;
+        });
 
         this.send(request);
 
