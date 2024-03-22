@@ -22,10 +22,6 @@ export class AppVideoConfProvider {
     }
 
     public async runIsFullyConfigured(logStorage: AppLogStorage, accessors: AppAccessorManager): Promise<boolean> {
-        if (typeof this.provider[AppMethod._VIDEOCONF_IS_CONFIGURED] !== 'function') {
-            return true;
-        }
-
         return !!(await this.runTheCode(AppMethod._VIDEOCONF_IS_CONFIGURED, logStorage, accessors, [])) as boolean;
     }
 
@@ -86,8 +82,8 @@ export class AppVideoConfProvider {
 
         try {
             const result = await this.app.getDenoRuntime().sendRequest({
-                method: `videoconference.${provider}.${method}`,
-                params: [runContextArgs],
+                method: `videoconference:${provider}:${method}`,
+                params: runContextArgs,
             });
 
             return result as string;
