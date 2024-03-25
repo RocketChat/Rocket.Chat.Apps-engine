@@ -34,10 +34,6 @@ export class AppSlashCommand {
         this.isRegistered = true;
     }
 
-    public canBeRan(method: AppMethod): boolean {
-        return this.app.hasMethod(method);
-    }
-
     public async runExecutorOrPreviewer(
         method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER,
         context: SlashCommandContext,
@@ -58,42 +54,24 @@ export class AppSlashCommand {
 
     private async runTheCode(
         method: AppMethod._COMMAND_EXECUTOR | AppMethod._COMMAND_PREVIEWER | AppMethod._COMMAND_PREVIEW_EXECUTOR,
-        logStorage: AppLogStorage,
-        accessors: AppAccessorManager,
+        _logStorage: AppLogStorage,
+        _accessors: AppAccessorManager,
         context: SlashCommandContext,
         runContextArgs: Array<any>,
     ): Promise<void | ISlashCommandPreview> {
         const { command } = this.slashCommand;
 
-        // Ensure the slash command has the property before going on
-        if (typeof this.slashCommand[method] !== 'function') {
-            return;
-        }
-
-        const logger = this.app.setupLogger(method);
-        logger.debug(`${command}'s ${method} is being executed...`, context);
-
         try {
-            const runCode = `module.exports = slashCommand.${method}.apply(slashCommand, args)`;
-            const result = await this.app.getRuntime().runInSandbox(runCode, {
-                slashCommand: this.slashCommand,
-                args: [
-                    ...runContextArgs,
-                    context,
-                    accessors.getReader(this.app.getID()),
-                    accessors.getModifier(this.app.getID()),
-                    accessors.getHttp(this.app.getID()),
-                    accessors.getPersistence(this.app.getID()),
-                ],
+            const result = await this.app.getDenoRuntime().sendRequest({
+                method: `slashcommand:${command}:${method}`,
+                params: [...runContextArgs, context],
             });
 
-            logger.debug(`${command}'s ${method} was successfully executed.`);
-            return result;
+            return result as void | ISlashCommandPreview;
         } catch (e) {
-            logger.error(e);
-            logger.debug(`${command}'s ${method} was unsuccessful.`);
-        } finally {
-            await logStorage.storeEntries(this.app.getID(), logger);
+            // @TODO this needs to be revisited
+            console.error(e);
+            throw e;
         }
     }
 }

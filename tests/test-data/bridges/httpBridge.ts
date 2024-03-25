@@ -4,6 +4,12 @@ import { HttpBridge } from '../../../src/server/bridges';
 
 export class TestsHttpBridge extends HttpBridge {
     public call(info: IHttpBridgeRequestInfo): Promise<IHttpResponse> {
-        throw new Error('Method not implemented.');
+        return Promise.resolve({
+            url: info.url,
+            method: info.method,
+            statusCode: 200,
+            headers: info.request.headers,
+            content: info.request.content,
+        });
     }
 }

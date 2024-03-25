@@ -1,5 +1,4 @@
 import type { ILoggerStorageEntry } from '../logging';
-import type { AppConsole } from '../logging/AppConsole';
 
 export interface IAppLogStorageFindOptions {
     sort?: { [field: string]: number };
@@ -17,7 +16,7 @@ export abstract class AppLogStorage {
 
     public abstract find(query: { [field: string]: any }, options?: IAppLogStorageFindOptions): Promise<Array<ILoggerStorageEntry>>;
 
-    public abstract storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry>;
+    public abstract storeEntries(logEntry: ILoggerStorageEntry): Promise<ILoggerStorageEntry>;
 
     public abstract getEntriesFor(appId: string): Promise<Array<ILoggerStorageEntry>>;
 

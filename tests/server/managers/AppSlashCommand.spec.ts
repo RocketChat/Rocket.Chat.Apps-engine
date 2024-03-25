@@ -1,6 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
-import { AppMethod } from '../../../src/definition/metadata';
 import type { ISlashCommand } from '../../../src/definition/slashcommands';
 import { AppSlashCommand } from '../../../src/server/managers/AppSlashCommand';
 import type { ProxiedApp } from '../../../src/server/ProxiedApp';
@@ -10,11 +9,7 @@ export class AppSlashCommandRegistrationTestFixture {
 
     @SetupFixture
     public setupFixture() {
-        this.mockApp = {
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
-        } as ProxiedApp;
+        this.mockApp = {} as ProxiedApp;
     }
 
     @Test()
@@ -30,7 +25,5 @@ export class AppSlashCommandRegistrationTestFixture {
         Expect(ascr.isDisabled).toBe(false);
         Expect(ascr.isEnabled).toBe(true);
         Expect(ascr.isRegistered).toBe(true);
-
-        Expect(ascr.canBeRan(AppMethod._COMMAND_EXECUTOR)).toBe(true);
     }
 }

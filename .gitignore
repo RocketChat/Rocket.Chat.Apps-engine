@@ -37,6 +37,8 @@ jspm_packages
 # Optional npm cache directory
 .npm
 
+.deno
+
 # Optional REPL history
 .node_repl_history
 

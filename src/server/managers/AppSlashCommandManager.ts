@@ -333,7 +333,7 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
+        if (!app || AppStatusUtils.isDisabled(await app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
             return;
@@ -352,7 +352,7 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
+        if (!app || AppStatusUtils.isDisabled(await app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
             return;
@@ -375,7 +375,7 @@ export class AppSlashCommandManager {
         return result;
     }
 
-    public async executePreview(command: string, previewItem: ISlashCommandPreviewItem, context: SlashCommandContext): Promise<ISlashCommandPreview> {
+    public async executePreview(command: string, previewItem: ISlashCommandPreviewItem, context: SlashCommandContext): Promise<void> {
         const cmd = command.toLowerCase().trim();
 
         if (!this.shouldCommandFunctionsRun(cmd)) {
@@ -384,7 +384,7 @@ export class AppSlashCommandManager {
 
         const app = this.manager.getOneById(this.touchedCommandsToApps.get(cmd));
 
-        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
+        if (!app || AppStatusUtils.isDisabled(await app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
             return;

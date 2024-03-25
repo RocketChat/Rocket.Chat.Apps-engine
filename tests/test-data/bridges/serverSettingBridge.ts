@@ -1,4 +1,4 @@
-import type { ISetting } from '../../../src/definition/settings';
+import { SettingType, type ISetting } from '../../../src/definition/settings';
 import { ServerSettingBridge } from '../../../src/server/bridges';
 
 export class TestsServerSettingBridge extends ServerSettingBridge {
@@ -7,7 +7,16 @@ export class TestsServerSettingBridge extends ServerSettingBridge {
     }
 
     public getOneById(id: string, appId: string): Promise<ISetting> {
-        throw new Error('Method not implemented.');
+        return Promise.resolve({
+            id,
+            packageValue: 'packageValue',
+            value: 'value',
+            i18nLabel: 'i18nLabel',
+            i18nDescription: 'i18nDescription',
+            required: true,
+            public: true,
+            type: SettingType.STRING,
+        });
     }
 
     public hideGroup(name: string): Promise<void> {

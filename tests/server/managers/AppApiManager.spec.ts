@@ -19,6 +19,7 @@ import type { AppLogStorage } from '../../../src/server/storage';
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
 import { TestData } from '../../test-data/utilities';
+import type { DenoRuntimeSubprocessController } from '../../../src/server/runtime/deno/AppsEngineDenoRuntime';
 
 export class AppApiManagerTestFixture {
     public static doThrow = false;
@@ -43,14 +44,16 @@ export class AppApiManagerTestFixture {
                     runInSandbox: () => Promise.resolve(true),
                 } as AppsEngineRuntime;
             },
+            getDenoRuntime() {
+                return {
+                    sendRequest: () => Promise.resolve(true),
+                } as unknown as DenoRuntimeSubprocessController;
+            },
             getID() {
                 return 'testing';
             },
             getStatus() {
-                return AppStatus.AUTO_ENABLED;
-            },
-            hasMethod(method: AppMethod): boolean {
-                return true;
+                return Promise.resolve(AppStatus.AUTO_ENABLED);
             },
             setupLogger(method: AppMethod): AppConsole {
                 return new AppConsole(method);

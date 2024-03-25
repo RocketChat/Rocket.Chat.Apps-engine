@@ -7,7 +7,11 @@ import { TapBark } from 'tap-bark';
 
     const testRunner = new TestRunner();
 
-    testRunner.outputStream.pipe(TapBark.create().getPipeable()).pipe(process.stdout);
+    if (!process.argv.includes('--no-tap')) {
+        testRunner.outputStream.pipe(TapBark.create().getPipeable()).pipe(process.stdout);
+    } else {
+        testRunner.outputStream.pipe(process.stdout);
+    }
 
     await testRunner.run(testSet);
 })().catch((e) => {

@@ -1,4 +1,4 @@
-import type { AppConsole, ILoggerStorageEntry } from '../../../src/server/logging';
+import type { ILoggerStorageEntry } from '../../../src/server/logging';
 import type { IAppLogStorageFindOptions } from '../../../src/server/storage';
 import { AppLogStorage } from '../../../src/server/storage';
 
@@ -11,7 +11,7 @@ export class TestsAppLogStorage extends AppLogStorage {
         return Promise.resolve([]);
     }
 
-    public storeEntries(appId: string, logger: AppConsole): Promise<ILoggerStorageEntry> {
+    public storeEntries(logEntry: ILoggerStorageEntry): Promise<ILoggerStorageEntry> {
         return Promise.resolve({} as ILoggerStorageEntry);
     }
 

@@ -21,7 +21,8 @@
         "server",
         "client",
         "definition",
-        "examples"
+        "examples",
+        "deno-runtime"
     ],
     "include": [
         "src",

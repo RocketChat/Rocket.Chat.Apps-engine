@@ -16,5 +16,5 @@ export interface IAppInfo {
     /** Base64 string of the App's icon. */
     iconFileContent?: string;
     essentials?: Array<AppInterface>;
-    permissions: Array<IPermission>;
+    permissions?: Array<IPermission>;
 }

@@ -1,10 +1,8 @@
 import { AppStatus } from '../../definition/AppStatus';
-import { AppMethod } from '../../definition/metadata';
 import type { IJobContext, IOnetimeSchedule, IProcessor, IRecurringSchedule } from '../../definition/scheduler';
 import type { AppManager } from '../AppManager';
 import type { IInternalSchedulerBridge } from '../bridges/IInternalSchedulerBridge';
 import type { SchedulerBridge } from '../bridges/SchedulerBridge';
-import type { AppAccessorManager } from '.';
 
 function createProcessorId(jobId: string, appId: string): string {
     return jobId.includes(`_${appId}`) ? jobId : `${jobId}_${appId}`;
@@ -13,13 +11,10 @@ function createProcessorId(jobId: string, appId: string): string {
 export class AppSchedulerManager {
     private readonly bridge: SchedulerBridge;
 
-    private readonly accessors: AppAccessorManager;
-
     private registeredProcessors: Map<string, { [processorId: string]: IProcessor }>;
 
     constructor(private readonly manager: AppManager) {
         this.bridge = this.manager.getBridges().getSchedulerBridge();
-        this.accessors = this.manager.getAccessorManager();
         this.registeredProcessors = new Map();
     }
 
@@ -53,7 +48,7 @@ export class AppSchedulerManager {
             }
 
             const app = this.manager.getOneById(appId);
-            const status = app.getStatus();
+            const status = await app.getStatus();
             const previousStatus = app.getPreviousStatus();
 
             const isNotToRunJob = this.isNotToRunJob(status, previousStatus);
@@ -62,29 +57,14 @@ export class AppSchedulerManager {
                 return;
             }
 
-            const logger = app.setupLogger(AppMethod._JOB_PROCESSOR);
-            logger.debug(`Job processor ${processor.id} is being executed...`);
-
             try {
-                const codeToRun = `module.exports = processor.processor.apply(null, args)`;
-                await app.getRuntime().runInSandbox(codeToRun, {
-                    processor,
-                    args: [
-                        jobContext,
-                        this.accessors.getReader(appId),
-                        this.accessors.getModifier(appId),
-                        this.accessors.getHttp(appId),
-                        this.accessors.getPersistence(appId),
-                    ],
+                await app.getDenoRuntime().sendRequest({
+                    method: `scheduler:${processor.id}`,
+                    params: [jobContext],
                 });
-                logger.debug(`Job processor ${processor.id} was sucessfully executed`);
             } catch (e) {
-                logger.error(e);
-                logger.debug(`Job processor ${processor.id} was unsuccessful`);
-
+                console.error(e);
                 throw e;
-            } finally {
-                await this.manager.getLogStorage().storeEntries(appId, logger);
             }
         };
     }

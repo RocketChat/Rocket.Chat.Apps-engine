@@ -129,9 +129,6 @@ export class AppSettingsManagerTestFixture {
         SpyOn(this.mockApp, 'call');
         SpyOn(this.mockApp, 'setStorageItem');
         SpyOn(this.mockBridges.getAppDetailChangesBridge(), 'doOnAppSettingsChange');
-        SpyOn(this.mockAccessors, 'getConfigurationModify');
-        SpyOn(this.mockAccessors, 'getReader');
-        SpyOn(this.mockAccessors, 'getHttp');
 
         await Expect(() => asm.updateAppSetting('fake', TestData.getSetting())).toThrowErrorAsync(Error, 'No App found by the provided id.');
         await Expect(() => asm.updateAppSetting('testing', TestData.getSetting('fake'))).toThrowErrorAsync(
@@ -146,19 +143,6 @@ export class AppSettingsManagerTestFixture {
         Expect(this.mockApp.setStorageItem).toHaveBeenCalledWith(this.mockStorageItem).exactly(1);
         Expect(this.mockBridges.getAppDetailChangesBridge().doOnAppSettingsChange).toHaveBeenCalledWith('testing', set).exactly(1);
 
-        // Accessors
-        Expect(this.mockAccessors.getConfigurationModify).toHaveBeenCalledWith('testing').exactly(1);
-        Expect(this.mockAccessors.getReader).toHaveBeenCalledWith('testing').exactly(1);
-        Expect(this.mockAccessors.getHttp).toHaveBeenCalledWith('testing').exactly(1);
-
-        Expect(this.mockApp.call)
-            .toHaveBeenCalledWith(
-                AppMethod.ONSETTINGUPDATED,
-                set,
-                this.mockAccessors.getConfigurationModify('testing'),
-                this.mockAccessors.getReader('testing'),
-                this.mockAccessors.getHttp('testing'),
-            )
-            .exactly(1);
+        Expect(this.mockApp.call).toHaveBeenCalledWith(AppMethod.ONSETTINGUPDATED, set).exactly(1);
     }
 }

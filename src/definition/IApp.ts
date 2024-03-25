@@ -10,7 +10,7 @@ export interface IApp {
      *
      * @return {AppStatus} the status/state of the App
      */
-    getStatus(): AppStatus;
+    getStatus(): Promise<AppStatus>;
 
     /**
      * Get the name of this App.
