@@ -72,7 +72,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly debug: debug.Debugger;
 
     private readonly options = {
-        timeout: 10000,
+        timeout: 30000,
     };
 
     private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
