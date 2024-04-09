@@ -13,11 +13,14 @@ import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/I
 import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
 
+import { Http } from './http.ts'
+import { HttpExtend } from './extenders/HttpExtender.ts'
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
+import { IHttpExtend } from "@rocket.chat/apps-engine/definition/accessors/IHttp.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -35,10 +38,11 @@ export class AppAccessors {
     private reader?: IRead;
     private modifier?: IModify;
     private persistence?: IPersistence;
-    private http?: IHttp;
     private creator?: ModifyCreator;
     private updater?: ModifyUpdater;
     private extender?: ModifyExtender;
+    private httpExtend: IHttpExtend = new HttpExtend();
+    private http?: IHttp;
 
     private proxify: <T>(namespace: string) => T;
 
@@ -60,6 +64,7 @@ export class AppAccessors {
                                       .catch((err) => err.error),
                 },
             ) as T;
+        this.http = new Http(this.getReader(), this.getPersistence(), this.httpExtend, this.getSenderFn());
     }
 
     public getSenderFn() {
@@ -121,7 +126,7 @@ export class AppAccessors {
 
             this.configExtender = {
                 ui: this.proxify('getConfigurationExtend:ui'),
-                http: this.proxify('getConfigurationExtend:http'),
+                http: this.httpExtend,
                 settings: this.proxify('getConfigurationExtend:settings'),
                 externalComponents: this.proxify('getConfigurationExtend:externalComponents'),
                 api: {
@@ -249,10 +254,6 @@ export class AppAccessors {
     }
 
     public getHttp() {
-        if (!this.http) {
-            this.http = this.proxify('getHttp');
-        }
-
         return this.http;
     }
 

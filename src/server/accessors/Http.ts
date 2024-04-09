@@ -1,77 +1,36 @@
-import type { IHttp, IHttpExtend, IHttpRequest, IHttpResponse } from '../../definition/accessors';
+import type { IHttp, IHttpRequest, IHttpResponse } from '../../definition/accessors';
 import { RequestMethod } from '../../definition/accessors';
 import type { AppBridges } from '../bridges/AppBridges';
-import type { AppAccessorManager } from '../managers/AppAccessorManager';
 
 export class Http implements IHttp {
-    constructor(
-        private readonly accessManager: AppAccessorManager,
-        private readonly bridges: AppBridges,
-        private readonly httpExtender: IHttpExtend,
-        private readonly appId: string,
-    ) {}
+    constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
 
     public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.GET, options);
+        return this.callHttp(RequestMethod.GET, url, options);
     }
 
     public put(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.PUT, options);
+        return this.callHttp(RequestMethod.PUT, url, options);
     }
 
     public post(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.POST, options);
+        return this.callHttp(RequestMethod.POST, url, options);
     }
 
     public del(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.DELETE, options);
+        return this.callHttp(RequestMethod.DELETE, url, options);
     }
 
     public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.PATCH, options);
+        return this.callHttp(RequestMethod.PATCH, url, options);
     }
 
-    private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
-        let request = options || {};
-
-        if (typeof request.headers === 'undefined') {
-            request.headers = {};
-        }
-
-        this.httpExtender.getDefaultHeaders().forEach((value: string, key: string) => {
-            if (typeof request.headers[key] !== 'string') {
-                request.headers[key] = value;
-            }
-        });
-
-        if (typeof request.params === 'undefined') {
-            request.params = {};
-        }
-
-        this.httpExtender.getDefaultParams().forEach((value: string, key: string) => {
-            if (typeof request.params[key] !== 'string') {
-                request.params[key] = value;
-            }
-        });
-
-        const reader = this.accessManager.getReader(this.appId);
-        const persis = this.accessManager.getPersistence(this.appId);
-
-        for (const handler of this.httpExtender.getPreRequestHandlers()) {
-            request = await handler.executePreHttpRequest(url, request, reader, persis);
-        }
-
-        let response = await this.bridges.getHttpBridge().doCall({
+    private callHttp(method: RequestMethod, url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+        return this.bridges.getHttpBridge().doCall({
             appId: this.appId,
             method,
             url,
-            request,
+            request: options,
         });
-
-        for (const handler of this.httpExtender.getPreResponseHandlers()) {
-            response = await handler.executePreHttpResponse(response, reader, persis);
-        }
-
-        return response;
     }
 }
