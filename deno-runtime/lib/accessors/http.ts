@@ -24,7 +24,6 @@ export class Http implements IHttp {
     }
 
     public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        console.error('Http.GET')
         return this._processHandler(url, RequestMethod.GET, options);
     }
 
@@ -45,7 +44,6 @@ export class Http implements IHttp {
     }
 
     private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
-        console.error('Http._processHandler')
         let request = options || {};
 
         if (typeof request.headers === 'undefined') {

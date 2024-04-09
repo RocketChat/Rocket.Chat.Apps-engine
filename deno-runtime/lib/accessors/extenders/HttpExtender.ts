@@ -37,12 +37,10 @@ export class HttpExtend implements IHttpExtend {
     }
 
     public providePreRequestHandler(handler: IHttpPreRequestHandler): void {
-        console.error('providePreRequestHandler', handler)
         this.requests.push(handler);
     }
 
     public providePreResponseHandler(handler: IHttpPreResponseHandler): void {
-        console.error('providePreResponseHandler', handler)
         this.responses.push(handler);
     }
 
