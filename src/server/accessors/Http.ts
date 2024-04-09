@@ -6,26 +6,26 @@ export class Http implements IHttp {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
 
     public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this.callHttp(RequestMethod.GET, url, options);
+        return this.callHttp(url, RequestMethod.GET, options);
     }
 
     public put(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this.callHttp(RequestMethod.PUT, url, options);
+        return this.callHttp(url, RequestMethod.PUT, options);
     }
 
     public post(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this.callHttp(RequestMethod.POST, url, options);
+        return this.callHttp(url, RequestMethod.POST, options);
     }
 
     public del(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this.callHttp(RequestMethod.DELETE, url, options);
+        return this.callHttp(url, RequestMethod.DELETE, options);
     }
 
     public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this.callHttp(RequestMethod.PATCH, url, options);
+        return this.callHttp(url, RequestMethod.PATCH, options);
     }
 
-    private callHttp(method: RequestMethod, url: string, options?: IHttpRequest): Promise<IHttpResponse> {
+    private callHttp(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {
         return this.bridges.getHttpBridge().doCall({
             appId: this.appId,
             method,
