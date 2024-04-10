@@ -54,6 +54,12 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
+    public async doGetUnreadByRoomAndUser(rid: string, uid: string, appId: string): Promise<Array<IMessage>> {
+        if (this.hasReadPermission(appId)) {
+            return this.getUnreadByRoomAndUser(rid, uid, appId);
+        }
+    }
+
     protected abstract create(message: IMessage, appId: string): Promise<string>;
 
     protected abstract update(message: IMessage, appId: string): Promise<void>;
@@ -67,6 +73,8 @@ export abstract class MessageBridge extends BaseBridge {
     protected abstract getById(messageId: string, appId: string): Promise<IMessage>;
 
     protected abstract delete(message: IMessage, user: IUser, appId: string): Promise<void>;
+
+    protected abstract getUnreadByRoomAndUser(rid: string, uid: string, appId: string): Promise<Array<IMessage>>;
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {

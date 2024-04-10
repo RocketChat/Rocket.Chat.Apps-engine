@@ -44,6 +44,9 @@ export class MessageReadAccessorTestFixture {
 
         Expect(await mr.getRoom('fake')).toBeDefined();
         Expect(await mr.getRoom('fake')).toEqual(this.msg.room);
+
+        Expect(await mr.getUnreadByRoomAndUser('fake', 'fake')).toBeDefined();
+        Expect(await mr.getUnreadByRoomAndUser('fake', 'fake')).toEqual([this.msg]);
     }
 
     @AsyncTest()
@@ -54,5 +57,6 @@ export class MessageReadAccessorTestFixture {
         Expect(await nomr.getById('fake')).not.toBeDefined();
         Expect(await nomr.getSenderUser('fake')).not.toBeDefined();
         Expect(await nomr.getRoom('fake')).not.toBeDefined();
+        Expect(await nomr.getUnreadByRoomAndUser('fake', 'fake')).not.toBeDefined();
     }
 }
