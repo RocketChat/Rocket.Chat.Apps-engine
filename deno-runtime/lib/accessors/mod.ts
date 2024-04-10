@@ -6,7 +6,7 @@ import type { IConfigurationModify } from '@rocket.chat/apps-engine/definition/a
 import type { IRead } from '@rocket.chat/apps-engine/definition/accessors/IRead.ts';
 import type { IModify } from '@rocket.chat/apps-engine/definition/accessors/IModify.ts';
 import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors/IPersistence.ts';
-import type { IHttp } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
+import type { IHttp, IHttpExtend } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
 import type { ISlashCommand } from '@rocket.chat/apps-engine/definition/slashcommands/ISlashCommand.ts';
 import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/IProcessor.ts';
@@ -20,7 +20,6 @@ import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
-import { IHttpExtend } from "@rocket.chat/apps-engine/definition/accessors/IHttp.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 

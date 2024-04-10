@@ -1,14 +1,16 @@
-import {
+import type {
     IHttp,
     IHttpExtend,
     IHttpRequest,
     IHttpResponse,
-    RequestMethod
 } from "@rocket.chat/apps-engine/definition/accessors/IHttp.ts";
-import { IPersistence } from "@rocket.chat/apps-engine/definition/accessors/IPersistence.ts";
-import { IRead } from "@rocket.chat/apps-engine/definition/accessors/IRead.ts";
+import type { IPersistence } from "@rocket.chat/apps-engine/definition/accessors/IPersistence.ts";
+import type { IRead } from "@rocket.chat/apps-engine/definition/accessors/IRead.ts";
+
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
+
+type RequestMethod = 'get' | 'post' | 'put' | 'head' | 'delete' | 'patch';
 
 export class Http implements IHttp {
     private httpExtender: IHttpExtend;
@@ -25,23 +27,23 @@ export class Http implements IHttp {
     }
 
     public get(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.GET, options);
+        return this._processHandler(url, 'get', options);
     }
 
     public put(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.PUT, options);
+        return this._processHandler(url, 'put', options);
     }
 
     public post(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.POST, options);
+        return this._processHandler(url, 'post', options);
     }
 
     public del(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.DELETE, options);
+        return this._processHandler(url, 'delete', options);
     }
 
     public patch(url: string, options?: IHttpRequest): Promise<IHttpResponse> {
-        return this._processHandler(url, RequestMethod.PATCH, options);
+        return this._processHandler(url, 'patch', options);
     }
 
     private async _processHandler(url: string, method: RequestMethod, options?: IHttpRequest): Promise<IHttpResponse> {

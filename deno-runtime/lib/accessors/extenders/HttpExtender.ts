@@ -1,7 +1,7 @@
-import { 
-    IHttpExtend, 
-    IHttpPreRequestHandler, 
-    IHttpPreResponseHandler 
+import type {
+    IHttpExtend,
+    IHttpPreRequestHandler,
+    IHttpPreResponseHandler
 } from "@rocket.chat/apps-engine/definition/accessors/IHttp.ts";
 
 export class HttpExtend implements IHttpExtend {
