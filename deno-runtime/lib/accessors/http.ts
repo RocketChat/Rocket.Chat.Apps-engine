@@ -1,13 +1,14 @@
-import { 
-    IHttp, 
-    IHttpExtend, 
-    IHttpRequest, 
-    IHttpResponse, 
-    RequestMethod 
+import {
+    IHttp,
+    IHttpExtend,
+    IHttpRequest,
+    IHttpResponse,
+    RequestMethod
 } from "@rocket.chat/apps-engine/definition/accessors/IHttp.ts";
 import { IPersistence } from "@rocket.chat/apps-engine/definition/accessors/IPersistence.ts";
 import { IRead } from "@rocket.chat/apps-engine/definition/accessors/IRead.ts";
 import * as Messenger from '../messenger.ts';
+import { AppObjectRegistry } from "../../AppObjectRegistry.ts";
 
 export class Http implements IHttp {
     private httpExtender: IHttpExtend;
@@ -71,10 +72,15 @@ export class Http implements IHttp {
         }
 
         let { result: response } = await this.senderFn({
-            method: `accessor:getHttp:${method}`,
-            params: [url, request],
-
+            method: `bridges:getHttpBridge:doCall`,
+            params: [{
+                appId: AppObjectRegistry.get<string>('id'),
+                method,
+                url,
+                request,
+            }],
         })
+
         for (const handler of this.httpExtender.getPreResponseHandlers()) {
             response = await handler.executePreHttpResponse(response as IHttpResponse, this.read, this.persistence);
         }
