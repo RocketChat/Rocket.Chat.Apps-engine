@@ -23,8 +23,15 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetCreatorByName(name, this.appId);
     }
 
-    public getMessages(roomId: string): Promise<Array<IMessage>> {
-        return this.roomBridge.doGetMessages(roomId, this.appId);
+    public getMessages(
+        roomId: string,
+        options?: Partial<{
+            limit: number;
+            skip: number;
+            sort: Record<string, 1 | -1>;
+        }>,
+    ): Promise<IMessage[]> {
+        return this.roomBridge.doGetMessages(roomId, this.appId, options);
     }
 
     public getMembers(roomId: string): Promise<Array<IUser>> {
