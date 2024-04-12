@@ -13,6 +13,15 @@ export class TestsMessageBridge extends MessageBridge {
         throw new Error('Method not implemented.');
     }
 
+    public getUnreadByRoomAndUser(
+        rid: string,
+        uid: string,
+        appId: string,
+        options?: Partial<{ limit: number; skip: number; sort: Record<string, 1 | -1> }>,
+    ): Promise<IMessage[]> {
+        throw new Error('Method not implemented.');
+    }
+
     public update(message: IMessage, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
