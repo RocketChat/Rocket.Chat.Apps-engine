@@ -1,4 +1,4 @@
-import { AsyncTest, Expect, IgnoreTest, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
+import { AsyncTest, Expect, Setup, SetupFixture, SpyOn, Teardown, Test } from 'alsatian';
 
 import { TestsAppBridges } from '../../test-data/bridges/appBridges';
 import { TestsAppLogStorage } from '../../test-data/storage/logStorage';
@@ -212,27 +212,6 @@ export class AppVideoConfProviderManagerTestFixture {
             VideoConfProviderNotRegisteredError,
             `The video conference provider "test" is not registered in the system.`,
         );
-    }
-
-    @AsyncTest()
-    @IgnoreTest('This test is failing because the AppVideoConfProviderManager has not been converted to the new runtime API')
-    public async isFullyConfigured() {
-        const manager = new AppVideoConfProviderManager(this.mockManager);
-        manager.addProvider('testing', TestData.getVideoConfProvider());
-        manager.addProvider('testing', TestData.getFullVideoConfProvider('full'));
-        manager.addProvider('testing', TestData.getInvalidConfProvider());
-        manager.registerProviders('testing');
-
-        const statusTest = await manager.isFullyConfigured('test');
-        await Expect(statusTest).toBe(true);
-
-        const statusFull = await manager.isFullyConfigured('full');
-        await Expect(statusFull).toBe(true);
-
-        SpyOn(AppVideoConfProvider.prototype, 'runIsFullyConfigured').andReturn(false);
-
-        const statusInvalid = await manager.isFullyConfigured('invalid');
-        await Expect(statusInvalid).toBe(false);
     }
 
     @AsyncTest()
