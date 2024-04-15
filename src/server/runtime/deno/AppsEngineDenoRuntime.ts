@@ -125,6 +125,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.deno = child_process.spawn(denoExePath, options);
 
             this.setupListeners();
+            this.startPing();
+
+            queueMicrotask(() => {
+                if (this.deno.exitCode !== null) {
+                    this.state = 'invalid';
+                    this.debug('Deno subprocess exited with code %d, signal %s', this.deno.exitCode, this.deno.signalCode);
+                }
+            });
         } catch (e) {
             this.state = 'invalid';
             console.error('Failed to start Deno subprocess', e);
@@ -135,6 +143,24 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.logStorage = manager.getLogStorage();
         this.bridges = manager.getBridges();
         this.runtimeManager = manager.getRuntime();
+    }
+
+    private startPing() {
+        const ping = () => {
+            const start = Date.now();
+            this.sendRequest({ method: 'ping', params: [] })
+                .then((result) => {
+                    if (result !== 'pong') {
+                        this.debug(`Expected 'pong', got %s (%d ms)`, result, Date.now() - start);
+                    }
+                })
+                .catch((reason: unknown) => {
+                    this.debug('Ping failed: %s (%d ms)', reason, Date.now() - start);
+                });
+        };
+
+        ping();
+        setInterval(ping, 5000);
     }
 
     // Debug purposes, could be deleted later
