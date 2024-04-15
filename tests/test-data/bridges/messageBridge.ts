@@ -14,7 +14,7 @@ export class TestsMessageBridge extends MessageBridge {
     }
 
     public getUnreadByRoomAndUser(
-        rid: string,
+        roomId: string,
         uid: string,
         appId: string,
         options?: Partial<{ limit: number; skip: number; sort: Record<string, 1 | -1> }>,

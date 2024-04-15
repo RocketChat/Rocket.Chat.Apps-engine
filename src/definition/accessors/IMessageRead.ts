@@ -16,7 +16,7 @@ export interface IMessageRead {
     /**
      * Retrieves an array of unread messages for a specific user in a specific room.
      *
-     * @param rid The unique identifier of the room from which to retrieve unread messages.
+     * @param roomId The unique identifier of the room from which to retrieve unread messages.
      * @param uid The unique identifier of the user for whom to retrieve unread messages.
      * @param options Optional parameters for retrieving messages:
      *                - limit: The maximum number of messages to retrieve. If more than 100 is passed, it defaults to 100.
@@ -25,7 +25,7 @@ export interface IMessageRead {
      * @returns A Promise that resolves to an array of IMessage objects representing the unread messages for the specified user in the specified room.
      */
     getUnreadByRoomAndUser(
-        rid: string,
+        roomId: string,
         uid: string,
         options?: Partial<{
             limit: number;
