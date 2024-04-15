@@ -93,15 +93,15 @@ export abstract class RoomBridge extends BaseBridge {
 
     public async doGetMessages(
         roomId: string,
-        appId: string,
-        options?: Partial<{
+        options: {
             limit: number;
-            skip: number;
-            sort: Record<string, 1 | -1>;
-        }>,
+            skip?: number;
+            sort?: Record<string, 1 | -1>;
+        },
+        appId: string,
     ): Promise<IMessage[]> {
         if (this.hasReadPermission(appId)) {
-            return this.getMessages(roomId, appId, options);
+            return this.getMessages(roomId, options, appId);
         }
     }
 
@@ -139,12 +139,12 @@ export abstract class RoomBridge extends BaseBridge {
 
     protected abstract getMessages(
         roomId: string,
-        appId: string,
-        options?: Partial<{
+        options: {
             limit: number;
-            skip: number;
-            sort: Record<string, 1 | -1>;
-        }>,
+            skip?: number;
+            sort?: Record<string, 1 | -1>;
+        },
+        appId: string,
     ): Promise<IMessage[]>;
 
     private hasWritePermission(appId: string): boolean {

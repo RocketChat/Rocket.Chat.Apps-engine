@@ -31,7 +31,7 @@ export class RoomRead implements IRoomRead {
             sort: Record<string, 1 | -1>;
         }>,
     ): Promise<IMessage[]> {
-        return this.roomBridge.doGetMessages(roomId, this.appId, options);
+        return this.roomBridge.doGetMessages(roomId, { limit: 100, ...options }, this.appId);
     }
 
     public getMembers(roomId: string): Promise<Array<IUser>> {
