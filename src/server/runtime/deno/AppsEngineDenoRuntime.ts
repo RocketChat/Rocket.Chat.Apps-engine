@@ -122,7 +122,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             this.debug('Starting Deno subprocess for app with options %O', options);
 
-            this.deno = child_process.spawn(denoExePath, options);
+            this.deno = child_process.spawn(denoExePath, options, { env: null });
             // console.log(this.deno);
 
             this.setupListeners();
@@ -288,6 +288,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private setupListeners(): void {
         this.deno.stderr.on('data', this.parseError.bind(this));
+        this.deno.on('error', (err) => {
+            this.state = 'invalid';
+            console.error('Failed to startup Deno subprocess', err);
+        });
         this.on('ready', this.onReady.bind(this));
         this.parseStdout(this.deno.stdout);
     }
