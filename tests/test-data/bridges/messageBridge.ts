@@ -16,8 +16,8 @@ export class TestsMessageBridge extends MessageBridge {
     public getUnreadByRoomAndUser(
         roomId: string,
         uid: string,
+        options: { limit: number; skip?: number; sort?: Record<string, 1 | -1> },
         appId: string,
-        options?: Partial<{ limit: number; skip: number; sort: Record<string, 1 | -1> }>,
     ): Promise<IMessage[]> {
         throw new Error('Method not implemented.');
     }

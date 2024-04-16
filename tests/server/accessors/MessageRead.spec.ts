@@ -33,7 +33,7 @@ export class MessageReadAccessorTestFixture {
             doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(theMsg);
             },
-            doGetUnreadByRoomAndUser(roomId, uid, appId, options): Promise<IMessage[]> {
+            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessage[]> {
                 if (roomId === unreadRoomId && uid === unreadUserId) {
                     return Promise.resolve(theUnreadMsg);
                 }
@@ -45,7 +45,7 @@ export class MessageReadAccessorTestFixture {
             doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(undefined);
             },
-            doGetUnreadByRoomAndUser(roomId, uid, appId, options): Promise<IMessage[]> {
+            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessage[]> {
                 return Promise.resolve(undefined);
             },
         } as MessageBridge;
