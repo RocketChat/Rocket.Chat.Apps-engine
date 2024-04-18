@@ -6,7 +6,7 @@ import { sanitizeDeprecatedUsage } from '../../lib/sanitizeDeprecatedUsage.ts';
 import { AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import { Socket } from 'node:net';
 
-const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring'];
+const ALLOWED_NATIVE_MODULES = ['path', 'url', 'crypto', 'buffer', 'stream', 'net', 'http', 'https', 'zlib', 'util', 'punycode', 'os', 'querystring', 'fs'];
 const ALLOWED_EXTERNAL_MODULES = ['uuid'];
 
 
