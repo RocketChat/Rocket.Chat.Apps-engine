@@ -164,11 +164,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 })
                 .catch((reason: unknown) => {
                     this.debug('Ping failed: %s (%d ms)', reason, Date.now() - start);
-                });
+                })
+                .finally(() => setTimeout(ping, 5000));
         };
 
         ping();
-        setInterval(ping, 5000);
     }
 
     // Debug purposes, could be deleted later
