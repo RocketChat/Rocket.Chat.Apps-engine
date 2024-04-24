@@ -118,7 +118,7 @@ async function main() {
             }
         } catch (error) {
             if (Messenger.isErrorResponse(error)) {
-                await Messenger.Transport.send(error);
+                await Messenger.errorResponse(error);
             } else {
                 await Messenger.sendParseError();
             }
