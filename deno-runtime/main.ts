@@ -31,6 +31,8 @@ type Handlers = {
     ping: (method: string, params: unknown) => 'pong';
 };
 
+const COMMAND_PING = '_zPING';
+
 async function requestRouter({ type, payload }: Messenger.JsonRpcRequest): Promise<void> {
     const methodHandlers: Handlers = {
         app: handleApp,
@@ -98,6 +100,12 @@ async function main() {
 
     for await (const message of decoder.decodeStream(Deno.stdin.readable)) {
         try {
+            // Process PING command first as it is not JSON RPC
+            if (message === COMMAND_PING) {
+                Messenger.pongResponse();
+                continue;
+            }
+
             const JSONRPCMessage = Messenger.parseMessage(message as Record<string, unknown>);
 
             if (Messenger.isRequest(JSONRPCMessage)) {

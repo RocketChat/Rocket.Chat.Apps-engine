@@ -29,6 +29,8 @@ export function isErrorResponse(message: jsonrpc.JsonRpc): message is jsonrpc.Er
     return message instanceof jsonrpc.ErrorObject;
 }
 
+const COMMAND_PONG = '_zPONG';
+
 export const RPCResponseObserver = new EventTarget();
 
 export const Queue = new (class Queue {
@@ -53,7 +55,7 @@ export const Queue = new (class Queue {
         this.isProcessing = false;
     }
 
-    public enqueue(message: jsonrpc.JsonRpc) {
+    public enqueue(message: jsonrpc.JsonRpc | typeof COMMAND_PONG) {
         this.queue.push(encoder.encode(message));
         this.processQueue();
     }
@@ -155,6 +157,10 @@ export async function successResponse({ id, result }: SuccessResponseDescriptor)
     const rpc = jsonrpc.success(id, payload);
 
     await Queue.enqueue(rpc);
+}
+
+export function pongResponse(): Promise<void> {
+    return Promise.resolve(Queue.enqueue(COMMAND_PONG));
 }
 
 export async function sendRequest(requestDescriptor: RequestDescriptor): Promise<jsonrpc.SuccessObject> {

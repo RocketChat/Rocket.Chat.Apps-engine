@@ -41,6 +41,9 @@ export const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
+const COMMAND_PING = '_zPING';
+const COMMAND_PONG = '_zPONG';
+
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
 
 export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
@@ -153,19 +156,36 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.runtimeManager = manager.getRuntime();
     }
 
+    /**
+     * Start up the process of ping/pong for liveness check
+     *
+     * The message exchange does not use JSON RPC as it adds a lot of overhead
+     * with the creation and encoding of a full object for transfer. By using a
+     * string the process is less intensive.
+     */
     private startPing() {
         const ping = () => {
             const start = Date.now();
-            this.sendRequest({ method: 'ping', params: [] })
-                .then((result) => {
-                    if (result !== 'pong') {
-                        this.debug(`Expected 'pong', got %s (%d ms)`, result, Date.now() - start);
-                    }
-                })
-                .catch((reason: unknown) => {
-                    this.debug('Ping failed: %s (%d ms)', reason, Date.now() - start);
-                })
-                .finally(() => setTimeout(ping, 5000));
+
+            const responsePromise = new Promise<void>((resolve, reject) => {
+                const onceCallback = () => {
+                    clearTimeout(timeoutId);
+                    this.debug('Ping successful in %d ms', Date.now() - start);
+                    resolve();
+                };
+
+                const timeoutId = setTimeout(() => {
+                    this.debug('Ping failed in %d ms', Date.now() - start);
+                    this.off('pong', onceCallback);
+                    reject();
+                }, this.options.timeout);
+
+                this.once('pong', onceCallback);
+            });
+
+            this.send(COMMAND_PING);
+
+            responsePromise.finally(() => setTimeout(ping, 5000));
         };
 
         ping();
@@ -228,7 +248,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return this.appPackage.info.id;
     }
 
-    private send(message: jsonrpc.JsonRpc) {
+    private send(message: jsonrpc.JsonRpc | typeof COMMAND_PING) {
         this.debug('Sending message to subprocess %o', message);
         this.deno.stdin.write(encoder.encode(message));
     }
@@ -481,6 +501,12 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         for await (const message of decoder.decodeStream(stream)) {
             this.debug('Received message from subprocess %o', message);
             try {
+                // Process PONG resonse first as it is not JSON RPC
+                if (message === COMMAND_PONG) {
+                    this.emit('pong');
+                    continue;
+                }
+
                 const JSONRPCMessage = jsonrpc.parseObject(message);
 
                 if (Array.isArray(JSONRPCMessage)) {
