@@ -288,9 +288,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private waitForResponse(req: jsonrpc.RequestObject): Promise<unknown> {
         return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => reject(new Error(`Request "${req.id}" for method "${req.method}" timed out`)), this.options.timeout);
-
-            this.once(`result:${req.id}`, (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
+            const responseCallback = (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
 
                 if (error) {
@@ -298,7 +296,16 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }
 
                 resolve(result);
-            });
+            };
+
+            const eventName = `result:${req.id}`;
+
+            const timeoutId = setTimeout(() => {
+                this.off(eventName, responseCallback);
+                reject(new Error(`Request "${req.id}" for method "${req.method}" timed out`));
+            }, this.options.timeout);
+
+            this.once(eventName, responseCallback);
         });
     }
 
