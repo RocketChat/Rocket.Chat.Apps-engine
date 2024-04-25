@@ -325,10 +325,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     // Probable should extract this to a separate file
     private async handleAccessorMessage({ payload: { method, id, params } }: jsonrpc.IParsedObjectRequest): Promise<jsonrpc.SuccessObject> {
         const accessorMethods = method.substring(9).split(':'); // First 9 characters are always 'accessor:'
-        const managerOrigin = accessorMethods.shift();
-        const tailMethodName = accessorMethods.pop();
 
         this.debug('Handling accessor message %o with params %o', accessorMethods, params);
+
+        const managerOrigin = accessorMethods.shift();
+        const tailMethodName = accessorMethods.pop();
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
             const result = this.api.listApis(this.appPackage.info.id);
