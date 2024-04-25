@@ -181,7 +181,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }, this.options.timeout);
 
                 this.once('pong', onceCallback);
-            });
+            }).catch(() => {});
 
             this.send(COMMAND_PING);
 
