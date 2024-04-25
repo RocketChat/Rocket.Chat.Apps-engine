@@ -40,7 +40,9 @@ export class ModifyUpdater implements IModifyUpdater {
                             : this.senderFn({
                                   method: `accessor:getModifier:getUpdater:getLivechatUpdater:${prop}`,
                                   params,
-                              }),
+                              })
+                                  .then((response) => response.result)
+                                  .catch((err) => err.error),
             },
         ) as ILivechatUpdater;
     }
@@ -57,7 +59,9 @@ export class ModifyUpdater implements IModifyUpdater {
                             : this.senderFn({
                                   method: `accessor:getModifier:getUpdater:getUserUpdater:${prop}`,
                                   params,
-                              }),
+                              })
+                                  .then((response) => response.result)
+                                  .catch((err) => err.error),
             },
         ) as IUserUpdater;
     }

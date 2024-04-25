@@ -41,6 +41,7 @@ export class ModifyCreator implements IModifyCreator {
             { __kind: 'getLivechatCreator' },
             {
                 get: (_target: unknown, prop: string) => {
+                    // It's not worthwhile to make an asynchronous request for such a simple method
                     if (prop === 'createToken') {
                         return () => Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
                     }
@@ -53,7 +54,9 @@ export class ModifyCreator implements IModifyCreator {
                         this.senderFn({
                             method: `accessor:getModifier:getCreator:getLivechatCreator:${prop}`,
                             params,
-                        });
+                        })
+                            .then((response) => response.result)
+                            .catch((err) => err.error);
                 },
             },
         ) as ILivechatCreator;
@@ -71,7 +74,9 @@ export class ModifyCreator implements IModifyCreator {
                             : this.senderFn({
                                   method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
                                   params,
-                              }),
+                              })
+                                  .then((response) => response.result)
+                                  .catch((err) => err.error),
             },
         ) as IUploadCreator;
     }

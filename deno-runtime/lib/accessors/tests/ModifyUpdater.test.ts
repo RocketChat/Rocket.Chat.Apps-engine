@@ -111,7 +111,7 @@ describe('ModifyUpdater', () => {
     it('correctly formats requests to UserUpdater methods', async () => {
         const result = await modifyUpdater.getUserUpdater().updateStatusText({ id: '123' } as any, 'Hello World') as any;
 
-        assertEquals(result.result, {
+        assertEquals(result, {
             method: 'accessor:getModifier:getUpdater:getUserUpdater:updateStatusText',
             params: [{ id: '123' }, 'Hello World'],
         });
@@ -120,7 +120,7 @@ describe('ModifyUpdater', () => {
     it('correctly formats requests to LivechatUpdater methods', async () => {
         const result = await modifyUpdater.getLivechatUpdater().closeRoom({ id: '123' } as any, 'close it!') as any;
 
-        assertEquals(result.result, {
+        assertEquals(result, {
             method: 'accessor:getModifier:getUpdater:getLivechatUpdater:closeRoom',
             params: [{ id: '123' }, 'close it!'],
         });

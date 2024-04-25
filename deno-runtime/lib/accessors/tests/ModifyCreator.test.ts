@@ -67,7 +67,7 @@ describe('ModifyCreator', () => {
 
         const result = await modifyCreator.getUploadCreator().uploadBuffer(new Uint8Array([1, 2, 3, 4]), 'text/plain');
 
-        assertEquals(result.result, {
+        assertEquals(result, {
             method: 'accessor:getModifier:getCreator:getUploadCreator:uploadBuffer',
             params: [new Uint8Array([1, 2, 3, 4]), 'text/plain'],
         });
@@ -82,7 +82,7 @@ describe('ModifyCreator', () => {
             name: 'Random Visitor',
         })) as any; // We modified the send function so it changed the original return type of the function
 
-        assertEquals(result.result, {
+        assertEquals(result, {
             method: 'accessor:getModifier:getCreator:getLivechatCreator:createVisitor',
             params: [
                 {
