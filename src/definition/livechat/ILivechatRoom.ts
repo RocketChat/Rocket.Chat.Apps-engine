@@ -24,7 +24,7 @@ interface IOmnichannelSourceApp {
 }
 type OmnichannelSource =
     | {
-          type: Omit<OmnichannelSourceType, 'app'>;
+          type: Exclude<OmnichannelSourceType, 'app'>;
       }
     | IOmnichannelSourceApp;
 
