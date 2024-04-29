@@ -41,6 +41,12 @@ export const ALLOWED_ACCESSOR_METHODS = [
     >
 >;
 
+// Trying to access environment variables in Deno throws an error where in vm2 it simply returned `undefined`
+// So here we define the allowed envvars to prevent the process (and the compatibility) from breaking
+export const ALLOWED_ENVIRONMENT_VARIABLES = [
+    'NODE_EXTRA_CA_CERTS', // Accessed by the `https` node module
+];
+
 const COMMAND_PING = '_zPING';
 const COMMAND_PONG = '_zPONG';
 
@@ -119,6 +125,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 'run',
                 hasNetworkingPermission ? '--allow-net' : '',
                 `--allow-read=${appsEngineDir},${parentNodeModulesDir}`,
+                `--allow-env=${ALLOWED_ENVIRONMENT_VARIABLES.join(',')}`,
                 denoWrapperPath,
                 '--subprocess',
             ];
@@ -126,7 +133,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.debug('Starting Deno subprocess for app with options %O', options);
 
             this.deno = child_process.spawn(denoExePath, options, { env: null });
-            // console.log(this.deno);
 
             this.setupListeners();
             this.startPing();
