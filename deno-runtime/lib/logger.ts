@@ -62,7 +62,7 @@ export class Logger {
         this.addEntry(LogMessageSeverity.LOG, this.getStack(stackTrace.get()), ...args);
     }
 
-    public warning(...args: Array<unknown>): void {
+    public warn(...args: Array<unknown>): void {
         this.addEntry(LogMessageSeverity.WARNING, this.getStack(stackTrace.get()), ...args);
     }
 

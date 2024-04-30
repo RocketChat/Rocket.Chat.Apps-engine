@@ -65,7 +65,7 @@ describe('Logger', () => {
 
     it('should be able to add an warning entry', () => {
         const logger = new Logger('test');
-        logger.warning('test');
+        logger.warn('test');
         const logs = logger.getLogs();
         assertEquals(logs.entries.length, 1);
         assertEquals(logs.entries[0].args[0], 'test');
