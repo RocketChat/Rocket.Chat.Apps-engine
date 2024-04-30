@@ -34,6 +34,7 @@ import type { IFileUploadContext } from '../../definition/uploads/IFileUploadCon
 import type { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
 import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import type { AppManager } from '../AppManager';
+import { AppMethodNotFound } from '../errors/AppMethodNotFound';
 import { Message } from '../messages/Message';
 import { Utilities } from '../misc/Utilities';
 import type { ProxiedApp } from '../ProxiedApp';
@@ -1101,22 +1102,29 @@ export class AppListenerManager {
             }
             case UIKitIncomingInteractionType.VIEW_CLOSED: {
                 const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
-
-                return app.call(
-                    'executeViewClosedHandler',
-                    new UIKitViewCloseInteractionContext({
-                        appId,
-                        actionId,
-                        view,
-                        room: data.room,
-                        isCleared,
-                        user,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                try {
+                    return await app.call(
+                        'executeViewClosedHandler',
+                        new UIKitViewCloseInteractionContext({
+                            appId,
+                            actionId,
+                            view,
+                            room: data.room,
+                            isCleared,
+                            user,
+                        }),
+                        this.am.getReader(appId),
+                        this.am.getHttp(appId),
+                        this.am.getPersistence(appId),
+                        this.am.getModifier(appId),
+                    );
+                } catch (e: unknown) {
+                    // Special case: if this method is not implemented we will assume a "success" response
+                    if (e instanceof AppMethodNotFound) {
+                        return { success: true };
+                    }
+                    throw e;
+                }
             }
             case 'actionButton': {
                 if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {

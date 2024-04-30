@@ -7,6 +7,7 @@ import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppMethod } from '../definition/metadata';
 import type { AppManager } from './AppManager';
 import { NotEnoughMethodArgumentsError } from './errors';
+import { AppMethodNotFound } from './errors/AppMethodNotFound';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
@@ -65,7 +66,7 @@ export class ProxiedApp implements IApp {
 
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
         if (typeof (this.app as any)[method] !== 'function') {
-            throw new Error(`The App ${this.app.getName()} (${this.app.getID()} does not have the method: "${method}"`);
+            throw new AppMethodNotFound(`The App ${this.app.getName()} (${this.app.getID()} does not have the method: "${method}"`);
         }
 
         const methodDeclartion = (this.app as any)[method] as (...args: any[]) => any;
