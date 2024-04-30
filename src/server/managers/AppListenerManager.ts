@@ -1053,8 +1053,10 @@ export class AppListenerManager {
 
         const app = this.manager.getOneById(appId);
         if (!app?.hasMethod(method)) {
-            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
-            return;
+            if (method !== 'executeViewClosedHandler') {
+                console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
+                return;
+            }
         }
 
         const { actionId, user, triggerId } = data;
