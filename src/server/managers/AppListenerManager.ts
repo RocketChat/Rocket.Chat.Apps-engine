@@ -1061,7 +1061,7 @@ export class AppListenerManager {
                 return this.defaultHandlers.get(method);
             }
 
-            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method} and default handler doesn't exist.`);
+            console.warn(`App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method} and there is no default handler for it.`);
             return;
         }
 
