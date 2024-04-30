@@ -239,6 +239,8 @@ export class AppListenerManager {
 
     private listeners: Map<string, Array<string>>;
 
+    private defaultHandlers = new Map<string, any>();
+
     /**
      * Locked events are those who are listed in an app's
      * "essentials" list but the app is disabled.
@@ -256,6 +258,8 @@ export class AppListenerManager {
             this.listeners.set(intt, []);
             this.lockedEvents.set(intt, new Set<string>());
         });
+
+        this.defaultHandlers.set('executeViewClosedHandler', { success: true });
     }
 
     public registerListeners(app: ProxiedApp): void {
@@ -1052,7 +1056,12 @@ export class AppListenerManager {
 
         const app = this.manager.getOneById(appId);
         if (!app?.hasMethod(method)) {
-            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method}`);
+            if (this.defaultHandlers.has(method)) {
+                console.warn(`App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method}. Falling back to default handler.`);
+                return this.defaultHandlers.get(method);
+            }
+
+            console.warn(`App ${appId} triggered an interaction but it doen't exist or doesn't have method ${method} and default handler doesn't exist.`);
             return;
         }
 
