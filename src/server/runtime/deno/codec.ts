@@ -21,8 +21,8 @@ extensionCodec.register({
             return new Uint8Array(object.buffer, object.byteOffset, object.byteLength);
         }
     },
-    // By passing byteOffset and byteLength, we're creating a view of the original buffer instead of copying it
-    decode: (data: Uint8Array) => Buffer.from(data.buffer, data.byteOffset, data.byteLength),
+    // msgpack will reuse the Uint8Array instance, so WE NEED to copy it instead of simply creating a view
+    decode: (data: Uint8Array) => Buffer.from(data),
 });
 
 export const encoder = new Encoder({ extensionCodec });

@@ -33,8 +33,9 @@ extensionCodec.register({
 
         return null;
     },
+    // msgpack will reuse the Uint8Array instance, so WE NEED to copy it instead of simply creating a view
     decode: (data: Uint8Array) => {
-        return Buffer.from(data.buffer, data.byteOffset, data.byteLength);
+        return Buffer.from(data);
     },
 });
 
