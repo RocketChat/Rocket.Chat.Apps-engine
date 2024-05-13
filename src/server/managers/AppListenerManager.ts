@@ -231,6 +231,8 @@ export class AppListenerManager {
 
     private listeners: Map<string, Array<string>>;
 
+    private defaultHandlers = new Map<string, any>();
+
     /**
      * Locked events are those who are listed in an app's
      * "essentials" list but the app is disabled.
@@ -248,6 +250,8 @@ export class AppListenerManager {
             this.listeners.set(intt, []);
             this.lockedEvents.set(intt, new Set<string>());
         });
+
+        this.defaultHandlers.set('executeViewClosedHandler', { success: true });
     }
 
     public registerListeners(app: ProxiedApp): void {
@@ -899,70 +903,104 @@ export class AppListenerManager {
 
         const app = this.manager.getOneById(appId);
 
+        const handleError = (method: string) => (error: unknown) => {
+            if ((error as Record<string, number>)?.code === JSONRPC_METHOD_NOT_FOUND) {
+                if (this.defaultHandlers.has(method)) {
+                    console.warn(
+                        `App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method}. Falling back to default handler.`,
+                    );
+                    return this.defaultHandlers.get(method);
+                }
+
+                console.warn(
+                    `App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method} and there is no default handler for it.`,
+                );
+                return;
+            }
+
+            throw error;
+        };
+
         const { actionId, user, triggerId } = data;
 
         switch (data.type) {
             case UIKitIncomingInteractionType.BLOCK: {
+                const method = 'executeBlockActionHandler';
                 const { value, blockId } = data.payload as { value: string; blockId: string };
-                return app.call('executeBlockActionHandler', {
-                    appId,
-                    actionId,
-                    blockId,
-                    user,
-                    room: data.room,
-                    triggerId,
-                    value,
-                    message: data.message,
-                    container: data.container,
-                });
-            }
-            case UIKitIncomingInteractionType.VIEW_SUBMIT: {
-                const { view } = data.payload as { view: IUIKitSurface };
 
-                return app.call('executeViewSubmitHandler', {
-                    appId,
-                    actionId,
-                    view,
-                    room: data.room,
-                    triggerId,
-                    user,
-                });
-            }
-            case UIKitIncomingInteractionType.VIEW_CLOSED: {
-                const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
-
-                return app.call('executeViewClosedHandler', {
-                    appId,
-                    actionId,
-                    view,
-                    room: data.room,
-                    isCleared,
-                    user,
-                });
-            }
-            case 'actionButton': {
-                if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
-                    return app.call('executeActionButtonHandler', {
+                return app
+                    .call(method, {
                         appId,
                         actionId,
-                        buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
+                        blockId,
+                        user,
+                        room: data.room,
+                        triggerId,
+                        value,
+                        message: data.message,
+                        container: data.container,
+                    })
+                    .catch(handleError(method));
+            }
+            case UIKitIncomingInteractionType.VIEW_SUBMIT: {
+                const method = 'executeViewSubmitHandler';
+                const { view } = data.payload as { view: IUIKitSurface };
+
+                return app
+                    .call(method, {
+                        appId,
+                        actionId,
+                        view,
                         room: data.room,
                         triggerId,
                         user,
-                        threadId: data.tmid,
-                        ...('message' in data.payload && { text: data.payload.message }),
-                    });
+                    })
+                    .catch(handleError(method));
+            }
+            case UIKitIncomingInteractionType.VIEW_CLOSED: {
+                const method = 'executeViewClosedHandler';
+                const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
+
+                return app
+                    .call(method, {
+                        appId,
+                        actionId,
+                        view,
+                        room: data.room,
+                        isCleared,
+                        user,
+                    })
+                    .catch(handleError(method));
+            }
+            case 'actionButton': {
+                const method = 'executeActionButtonHandler';
+
+                if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
+                    return app
+                        .call(method, {
+                            appId,
+                            actionId,
+                            buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
+                            room: data.room,
+                            triggerId,
+                            user,
+                            threadId: data.tmid,
+                            ...('message' in data.payload && { text: data.payload.message }),
+                        })
+                        .catch(handleError(method));
                 }
 
-                return app.call('executeActionButtonHandler', {
-                    appId,
-                    actionId,
-                    triggerId,
-                    buttonContext: data.payload.context as UIActionButtonContext,
-                    room: ('room' in data && data.room) || undefined,
-                    user,
-                    ...('message' in data && { message: data.message }),
-                });
+                return app
+                    .call(method, {
+                        appId,
+                        actionId,
+                        triggerId,
+                        buttonContext: data.payload.context as UIActionButtonContext,
+                        room: ('room' in data && data.room) || undefined,
+                        user,
+                        ...('message' in data && { message: data.message }),
+                    })
+                    .catch(handleError(method));
             }
         }
     }
