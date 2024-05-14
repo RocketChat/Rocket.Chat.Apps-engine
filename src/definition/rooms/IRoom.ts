@@ -20,7 +20,12 @@ export interface IRoom {
     updatedAt?: Date;
     lastModifiedAt?: Date;
     description?: string;
+    /** @deprecated */
     customFields?: { [key: string]: any };
+    custom?: ICustomFields;
     parentRoom?: IRoom;
     livechatData?: { [key: string]: any };
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface ICustomFields {}
