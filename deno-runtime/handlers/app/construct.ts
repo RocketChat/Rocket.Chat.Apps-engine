@@ -22,6 +22,10 @@ function prepareEnvironment() {
     };
 }
 
+// As the apps are bundled, the only times they will call require are
+// 1. To require native modules
+// 2. To require external npm packages we may provide
+// 3. To require apps-engine files
 function buildRequire(): (module: string) => unknown {
     return (module: string): unknown => {
         if (ALLOWED_NATIVE_MODULES.includes(module)) {
