@@ -9,7 +9,7 @@ import type { IMessageReactions } from './IMessageReaction';
 export interface IMessageRaw {
     id?: string;
     threadId?: string;
-    room: Pick<IRoom, 'id'>;
+    roomId: Pick<IRoom, 'id'>;
     sender: Pick<IUser, 'id' | 'username'> & Partial<Pick<IUser, 'name'>>;
     text?: string;
     createdAt?: Date;
