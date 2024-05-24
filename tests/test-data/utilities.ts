@@ -169,7 +169,7 @@ export class TestData {
 
         return {
             id: id || '4bShvoOXqB',
-            room: TestData.getRoom(),
+            roomId: TestData.getRoom().id,
             sender: {
                 id: senderUser.id,
                 username: senderUser.username,
