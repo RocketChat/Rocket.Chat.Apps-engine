@@ -30,5 +30,4 @@ export interface IMessageRaw {
     pinned?: boolean;
     pinnedAt?: Date;
     pinnedBy?: IUserLookup;
-    _unmappedProperties_?: Record<string, any>;
 }
