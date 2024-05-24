@@ -1,5 +1,5 @@
 import type { IRoomRead } from '../../definition/accessors';
-import type { IMessage } from '../../definition/messages';
+import type { IMessageRaw } from '../../definition/messages';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import type { RoomBridge } from '../bridges';
@@ -30,7 +30,7 @@ export class RoomRead implements IRoomRead {
             skip: number;
             sort: Record<string, 1 | -1>;
         }>,
-    ): Promise<IMessage[]> {
+    ): Promise<IMessageRaw[]> {
         return this.roomBridge.doGetMessages(roomId, { limit: 100, ...options }, this.appId);
     }
 
