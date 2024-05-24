@@ -171,7 +171,7 @@ export class TestData {
             id: id || '4bShvoOXqB',
             roomId: TestData.getRoom().id,
             sender: {
-                id: senderUser.id,
+                _id: senderUser.id,
                 username: senderUser.username,
                 name: senderUser?.name,
             },
@@ -179,7 +179,7 @@ export class TestData {
             createdAt: date,
             updatedAt: new Date(),
             editor: {
-                id: editorUser.id,
+                _id: editorUser.id,
                 username: editorUser.username,
             },
             editedAt: new Date(),

@@ -1,7 +1,7 @@
 import type { IBlock, Block } from '@rocket.chat/ui-kit';
 
 import type { IRoom } from '../rooms';
-import type { IUser, IUserLookup } from '../users';
+import type { IUserLookup } from '../users';
 import type { IMessageAttachment } from './IMessageAttachment';
 import type { IMessageFile } from './IMessageFile';
 import type { IMessageReactions } from './IMessageReaction';
@@ -14,14 +14,14 @@ import type { IMessageReactions } from './IMessageReaction';
  * fields require additional queries to the database and would hit the system's performance significantly.
  */
 export interface IMessageRaw {
-    id?: string;
-    threadId?: string;
+    id: string;
     roomId: IRoom['id'];
-    sender: Pick<IUser, 'id' | 'username'> & Partial<Pick<IUser, 'name'>>;
+    sender: IUserLookup;
+    createdAt: Date;
+    threadId?: string;
     text?: string;
-    createdAt?: Date;
     updatedAt?: Date;
-    editor?: Pick<IUser, 'id' | 'username'>;
+    editor?: IUserLookup;
     editedAt?: Date;
     emoji?: string;
     avatarUrl?: string;
