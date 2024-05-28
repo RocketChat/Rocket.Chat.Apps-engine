@@ -1,4 +1,4 @@
-import type { IMessage } from '../messages/index';
+import type { IMessageRaw } from '../messages/index';
 import type { IRoom } from '../rooms/index';
 import type { IUser } from '../users/index';
 
@@ -56,7 +56,7 @@ export interface IRoomRead {
             skip: number;
             sort: Record<string, 1 | -1>;
         }>,
-    ): Promise<IMessage[]>;
+    ): Promise<IMessageRaw[]>;
 
     /**
      * Gets an iterator for all of the users in the provided room.

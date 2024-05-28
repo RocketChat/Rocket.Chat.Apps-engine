@@ -1,4 +1,4 @@
-import type { IMessage } from '../../../src/definition/messages';
+import type { IMessage, IMessageRaw } from '../../../src/definition/messages';
 import type { IRoom } from '../../../src/definition/rooms';
 import type { IUser } from '../../../src/definition/users';
 import { RoomBridge } from '../../../src/server/bridges';
@@ -32,7 +32,7 @@ export class TestsRoomBridge extends RoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    public getMessages(roomId: string, options: { limit: number; skip?: number; sort?: Record<string, 1 | -1> }, appId: string): Promise<IMessage[]> {
+    public getMessages(roomId: string, options: { limit: number; skip?: number; sort?: Record<string, 1 | -1> }, appId: string): Promise<IMessageRaw[]> {
         throw new Error('Method not implemented.');
     }
 
