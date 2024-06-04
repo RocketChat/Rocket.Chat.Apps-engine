@@ -1,4 +1,4 @@
-import type { IMessage } from '../../definition/messages';
+import type { IMessage, IMessageRaw } from '../../definition/messages';
 import { IDiscussionMessage } from '../../definition/messages/IDiscussionMessage';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
@@ -119,7 +119,7 @@ export abstract class RoomBridge extends BaseBridge {
             sort?: Record<string, 1 | -1>;
         },
         appId: string,
-    ): Promise<IMessage[]> {
+    ): Promise<IMessageRaw[]> {
         if (this.hasReadPermission(appId)) {
             return this.getMessages(roomId, options, appId);
         }
@@ -180,7 +180,7 @@ export abstract class RoomBridge extends BaseBridge {
             sort?: Record<string, 1 | -1>;
         },
         appId: string,
-    ): Promise<IMessage[]>;
+    ): Promise<IMessageRaw[]>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
