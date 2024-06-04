@@ -1,4 +1,5 @@
 import type { IMessage } from '../../definition/messages';
+import { IDiscussionMessage } from '../../definition/messages/IDiscussionMessage';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
@@ -67,6 +68,25 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
+    public async doGetDiscussions(
+        roomId: string,
+        options: {
+            limit: number;
+            skip?: number;
+            sort?: Record<string, 1 | -1>;
+        },
+        appId: string,
+    ): Promise<{
+        messages: IDiscussionMessage[];
+        count: number;
+        offset: number;
+        total: number;
+    }> {
+        if (this.hasReadPermission(appId)) {
+            return this.getDiscussions(roomId, options, appId);
+        }
+    }
+
     public async doDelete(room: string, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
             return this.delete(room, appId);
@@ -128,6 +148,21 @@ export abstract class RoomBridge extends BaseBridge {
         members: Array<string>,
         appId: string,
     ): Promise<string>;
+
+    protected abstract getDiscussions(
+        rid: string,
+        options: {
+            limit: number;
+            offset?: number;
+            sort?: Record<string, 1 | -1>;
+        },
+        _appId: string,
+    ): Promise<{
+        messages: IDiscussionMessage[];
+        count: number;
+        offset: number;
+        total: number;
+    }>;
 
     protected abstract delete(room: string, appId: string): Promise<void>;
 
