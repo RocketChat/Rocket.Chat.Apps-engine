@@ -854,6 +854,32 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
             const app = this.manager.getOneById(appId);
 
+            // Check if the dm belongs to the app
+
+            if (data.type === RoomType.DIRECT_MESSAGE && data.userIds.length > 1) {
+                if (app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENTTOBOT)) {
+                    const reader = this.am.getReader(appId);
+                    const bot = await reader.getUserReader().getAppUser();
+                    if (!bot) {
+                        continue;
+                    }
+
+                    if (!data.userIds.includes(bot.id)) {
+                        continue;
+                    }
+
+                    await app.call(
+                        AppMethod.EXECUTEBOTPOSTROOMCREATE,
+                        cfRoom,
+                        this.am.getReader(appId),
+                        this.am.getHttp(appId),
+                        this.am.getPersistence(appId),
+                        this.am.getModifier(appId),
+                    );
+                }
+            }
+
+            // executePostBotRoomCreate
             let continueOn = true;
             if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
                 continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
