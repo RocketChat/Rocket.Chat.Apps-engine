@@ -23,15 +23,8 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetCreatorByName(name, this.appId);
     }
 
-    public getMessages(
-        roomId: string,
-        options?: Partial<{
-            limit: number;
-            skip: number;
-            sort: Record<string, 1 | -1>;
-        }>,
-    ): Promise<IMessage[]> {
-        return this.roomBridge.doGetMessages(roomId, { limit: 100, ...options }, this.appId);
+    public getMessages(roomId: string): Promise<IterableIterator<IMessage>> {
+        throw new Error('Method not implemented.');
     }
 
     public getMembers(roomId: string): Promise<Array<IUser>> {

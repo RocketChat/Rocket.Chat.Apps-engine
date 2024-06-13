@@ -32,10 +32,6 @@ export class TestsRoomBridge extends RoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    public getMessages(roomId: string, options: { limit: number; skip?: number; sort?: Record<string, 1 | -1> }, appId: string): Promise<IMessage[]> {
-        throw new Error('Method not implemented.');
-    }
-
     public update(room: IRoom, members: Array<string>, appId: string): Promise<void> {
         throw new Error('Method not implemented.');
     }
