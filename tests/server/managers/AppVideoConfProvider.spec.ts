@@ -1,6 +1,5 @@
 import { Expect, SetupFixture, Test } from 'alsatian';
 
-import { AppMethod } from '../../../src/definition/metadata';
 import type { IVideoConfProvider } from '../../../src/definition/videoConfProviders';
 import { AppVideoConfProvider } from '../../../src/server/managers/AppVideoConfProvider';
 import type { ProxiedApp } from '../../../src/server/ProxiedApp';
@@ -10,11 +9,7 @@ export class AppSlashCommandRegistrationTestFixture {
 
     @SetupFixture
     public setupFixture() {
-        this.mockApp = {
-            hasMethod(method: AppMethod): boolean {
-                return true;
-            },
-        } as ProxiedApp;
+        this.mockApp = {} as ProxiedApp;
     }
 
     @Test()
@@ -26,8 +21,5 @@ export class AppSlashCommandRegistrationTestFixture {
 
         ascr.hasBeenRegistered();
         Expect(ascr.isRegistered).toBe(true);
-
-        Expect(ascr.canBeRan(AppMethod._VIDEOCONF_GENERATE_URL)).toBe(true);
-        Expect(ascr.canBeRan(AppMethod._VIDEOCONF_CUSTOMIZE_URL)).toBe(true);
     }
 }

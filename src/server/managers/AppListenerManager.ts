@@ -24,21 +24,13 @@ import type {
     IUIKitIncomingInteractionMessageContainer,
     IUIKitIncomingInteractionModalContainer,
 } from '../../definition/uikit/UIKitIncomingInteractionContainer';
-import {
-    UIKitActionButtonInteractionContext,
-    UIKitBlockInteractionContext,
-    UIKitViewCloseInteractionContext,
-    UIKitViewSubmitInteractionContext,
-} from '../../definition/uikit/UIKitInteractionContext';
 import type { IFileUploadContext } from '../../definition/uploads/IFileUploadContext';
 import type { IUser, IUserContext, IUserStatusContext, IUserUpdateContext } from '../../definition/users';
-import { MessageBuilder, MessageExtender, RoomBuilder, RoomExtender } from '../accessors';
 import type { AppManager } from '../AppManager';
-import { Message } from '../messages/Message';
-import { Utilities } from '../misc/Utilities';
 import type { ProxiedApp } from '../ProxiedApp';
-import { Room } from '../rooms/Room';
 import type { AppAccessorManager } from './AppAccessorManager';
+import { Utilities } from '../misc/Utilities';
+import { JSONRPC_METHOD_NOT_FOUND } from '../runtime/deno/AppsEngineDenoRuntime';
 
 interface IListenerExecutor {
     [AppInterface.IPreMessageSentPrevent]: {
@@ -452,28 +444,27 @@ export class AppListenerManager {
     // Messages
     private async executePreMessageSentPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentPrevent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTPREVENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
+
+                throw error;
+            })) as boolean;
+
+            if (!continueOn) {
+                continue;
             }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTPREVENT)) {
-                prevented = (await app.call(
-                    AppMethod.EXECUTEPREMESSAGESENTPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as boolean;
+            prevented = (await app.call(AppMethod.EXECUTEPREMESSAGESENTPREVENT, data)) as boolean;
 
-                if (prevented) {
-                    return prevented;
-                }
+            if (prevented) {
+                return prevented;
             }
         }
 
@@ -481,26 +472,22 @@ export class AppListenerManager {
     }
 
     private async executePreMessageSentExtend(data: IMessage): Promise<IMessage> {
-        const msg = data;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
+        let msg = data;
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentExtend)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTEXTEND)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTEXTEND, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTEXTEND)) {
-                await app.call(
-                    AppMethod.EXECUTEPREMESSAGESENTEXTEND,
-                    cfMsg,
-                    new MessageExtender(msg), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                msg = await app.call(AppMethod.EXECUTEPREMESSAGESENTEXTEND, msg);
             }
         }
 
@@ -509,108 +496,88 @@ export class AppListenerManager {
 
     private async executePreMessageSentModify(data: IMessage): Promise<IMessage> {
         let msg = data;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageSentModify)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGESENTMODIFY)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGESENTMODIFY, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGESENTMODIFY)) {
-                msg = (await app.call(
-                    AppMethod.EXECUTEPREMESSAGESENTMODIFY,
-                    cfMsg,
-                    new MessageBuilder(msg),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as IMessage;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                msg = (await app.call(AppMethod.EXECUTEPREMESSAGESENTMODIFY, msg)) as IMessage;
             }
         }
 
-        return data;
+        return msg;
     }
 
     private async executePostMessageSent(data: IMessage): Promise<void> {
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
-
         // First check if the app implements Bot DM handlers and check if the dm contains more than one user
-        if (cfMsg.room.type === RoomType.DIRECT_MESSAGE && cfMsg.room.userIds.length > 1) {
+        if (data.room.type === RoomType.DIRECT_MESSAGE && data.room.userIds.length > 1) {
             for (const appId of this.listeners.get(AppInterface.IPostMessageSentToBot)) {
                 const app = this.manager.getOneById(appId);
-                if (app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENTTOBOT)) {
-                    const reader = this.am.getReader(appId);
-                    const bot = await reader.getUserReader().getAppUser();
-                    if (!bot) {
-                        continue;
-                    }
 
-                    // if the sender is the bot just ignore it
-
-                    if (bot.id === cfMsg.sender.id) {
-                        continue;
-                    }
-                    // if the user doesnt belong to the room ignore it
-                    if (!cfMsg.room.userIds.includes(bot.id)) {
-                        continue;
-                    }
-
-                    await app.call(
-                        AppMethod.EXECUTEPOSTMESSAGESENTTOBOT,
-                        cfMsg,
-                        this.am.getReader(appId),
-                        this.am.getHttp(appId),
-                        this.am.getPersistence(appId),
-                        this.am.getModifier(appId),
-                    );
+                const reader = this.am.getReader(appId);
+                const bot = await reader.getUserReader().getAppUser();
+                if (!bot) {
+                    continue;
                 }
+
+                // if the sender is the bot just ignore it
+
+                if (bot.id === data.sender.id) {
+                    continue;
+                }
+                // if the user doesnt belong to the room ignore it
+                if (!data.room.userIds.includes(bot.id)) {
+                    continue;
+                }
+
+                await app.call(AppMethod.EXECUTEPOSTMESSAGESENTTOBOT, data);
             }
         }
 
         for (const appId of this.listeners.get(AppInterface.IPostMessageSent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGESENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGESENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGESENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGESENT)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTMESSAGESENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGESENT, data);
             }
         }
     }
 
     private async executePreMessageDeletePrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageDeletePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGEDELETEPREVENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEDELETEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT)) {
-                prevented = (await app.call(
-                    AppMethod.EXECUTEPREMESSAGEDELETEPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as boolean;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                prevented = (await app.call(AppMethod.EXECUTEPREMESSAGEDELETEPREVENT, data)) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -628,53 +595,46 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPostMessageDeleted)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEDELETED)) {
-                continueOn = (await app.call(
+            const continueOn = (await app
+                .call(
                     AppMethod.CHECKPOSTMESSAGEDELETED,
                     // `context` has more information about the event, but
                     // we had to keep this `message` here for compatibility
                     message,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
                     context,
-                )) as boolean;
-            }
+                )
+                .catch((error) => {
+                    // This method is optional, so if it doesn't exist, we should continue
+                    if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                        return true;
+                    }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEDELETED)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTMESSAGEDELETED,
-                    message,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                    context,
-                );
+                    throw error;
+                })) as boolean;
+
+            if (continueOn) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGEDELETED, message, context);
             }
         }
     }
 
     private async executePreMessageUpdatedPrevent(data: IMessage): Promise<boolean> {
         let prevented = false;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedPrevent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT)) {
-                prevented = (await app.call(
-                    AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as boolean;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                prevented = (await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDPREVENT, data)) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -686,26 +646,22 @@ export class AppListenerManager {
     }
 
     private async executePreMessageUpdatedExtend(data: IMessage): Promise<IMessage> {
-        const msg = data;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
+        let msg = data;
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedExtend)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDEXTEND, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND)) {
-                await app.call(
-                    AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND,
-                    cfMsg,
-                    new MessageExtender(msg), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                msg = await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDEXTEND, msg);
             }
         }
 
@@ -714,76 +670,64 @@ export class AppListenerManager {
 
     private async executePreMessageUpdatedModify(data: IMessage): Promise<IMessage> {
         let msg = data;
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreMessageUpdatedModify)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY)) {
-                continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREMESSAGEUPDATEDMODIFY, msg).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY)) {
-                msg = (await app.call(
-                    AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY,
-                    cfMsg,
-                    new MessageBuilder(msg),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as IMessage;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                msg = (await app.call(AppMethod.EXECUTEPREMESSAGEUPDATEDMODIFY, msg)) as IMessage;
             }
         }
 
-        return data;
+        return msg;
     }
 
     private async executePostMessageUpdated(data: IMessage): Promise<void> {
-        const cfMsg = new Message(Utilities.deepCloneAndFreeze(data), this.manager);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessageUpdated)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTMESSAGEUPDATED)) {
-                continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED, cfMsg, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPOSTMESSAGEUPDATED, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTMESSAGEUPDATED)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTMESSAGEUPDATED,
-                    cfMsg,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                await app.call(AppMethod.EXECUTEPOSTMESSAGEUPDATED, data);
             }
         }
     }
 
     // Rooms
     private async executePreRoomCreatePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreatePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEPREVENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEPREVENT, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEPREVENT)) {
-                prevented = (await app.call(
-                    AppMethod.EXECUTEPREROOMCREATEPREVENT,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as boolean;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                prevented = (await app.call(AppMethod.EXECUTEPREROOMCREATEPREVENT, data)) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -795,53 +739,45 @@ export class AppListenerManager {
     }
 
     private async executePreRoomCreateExtend(data: IRoom): Promise<IRoom> {
-        const room = data;
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
+        let room = data;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateExtend)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEEXTEND)) {
-                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEEXTEND, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEEXTEND, room).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEEXTEND)) {
-                await app.call(
-                    AppMethod.EXECUTEPREROOMCREATEEXTEND,
-                    cfRoom,
-                    new RoomExtender(room), // This mutates the passed in object
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                room = await app.call(AppMethod.EXECUTEPREROOMCREATEEXTEND, room);
             }
         }
 
-        return data;
+        return room;
     }
 
     private async executePreRoomCreateModify(data: IRoom): Promise<IRoom> {
         let room = data;
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomCreateModify)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREROOMCREATEMODIFY)) {
-                continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEMODIFY, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMCREATEMODIFY, room).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMCREATEMODIFY)) {
-                room = (await app.call(
-                    AppMethod.EXECUTEPREROOMCREATEMODIFY,
-                    cfRoom,
-                    new RoomBuilder(room),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as IRoom;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                room = (await app.call(AppMethod.EXECUTEPREROOMCREATEMODIFY, room)) as IRoom;
             }
         }
 
@@ -849,49 +785,41 @@ export class AppListenerManager {
     }
 
     private async executePostRoomCreate(data: IRoom): Promise<void> {
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
-
         for (const appId of this.listeners.get(AppInterface.IPostRoomCreate)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTROOMCREATE)) {
-                continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMCREATE, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMCREATE)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTROOMCREATE,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                await app.call(AppMethod.EXECUTEPOSTROOMCREATE, data);
             }
         }
     }
 
     private async executePreRoomDeletePrevent(data: IRoom): Promise<boolean> {
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
         let prevented = false;
 
         for (const appId of this.listeners.get(AppInterface.IPreRoomDeletePrevent)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPREROOMDELETEPREVENT)) {
-                continueOn = (await app.call(AppMethod.CHECKPREROOMDELETEPREVENT, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPREROOMDELETEPREVENT, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPREROOMDELETEPREVENT)) {
-                prevented = (await app.call(
-                    AppMethod.EXECUTEPREROOMDELETEPREVENT,
-                    cfRoom,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                )) as boolean;
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                prevented = (await app.call(AppMethod.EXECUTEPREROOMDELETEPREVENT, data)) as boolean;
 
                 if (prevented) {
                     return prevented;
@@ -903,176 +831,105 @@ export class AppListenerManager {
     }
 
     private async executePostRoomDeleted(data: IRoom): Promise<void> {
-        const cfRoom = new Room(Utilities.deepCloneAndFreeze(data), this.manager);
-
         for (const appId of this.listeners.get(AppInterface.IPostRoomDeleted)) {
             const app = this.manager.getOneById(appId);
 
-            let continueOn = true;
-            if (app.hasMethod(AppMethod.CHECKPOSTROOMDELETED)) {
-                continueOn = (await app.call(AppMethod.CHECKPOSTROOMDELETED, cfRoom, this.am.getReader(appId), this.am.getHttp(appId))) as boolean;
-            }
+            const continueOn = (await app.call(AppMethod.CHECKPOSTROOMDELETED, data).catch((error) => {
+                // This method is optional, so if it doesn't exist, we should continue
+                if (error?.code === JSONRPC_METHOD_NOT_FOUND) {
+                    return true;
+                }
 
-            if (continueOn && app.hasMethod(AppMethod.EXECUTEPOSTROOMDELETED)) {
-                await app.call(AppMethod.EXECUTEPOSTROOMDELETED, cfRoom, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
+                throw error;
+            })) as boolean;
+
+            if (continueOn) {
+                await app.call(AppMethod.EXECUTEPOSTROOMDELETED, data);
             }
         }
     }
 
     private async executePreRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
-        const data = Utilities.deepClone(externalData);
-
-        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
-        Utilities.deepFreeze(data.joiningUser);
-
-        if (data.inviter) {
-            Utilities.deepFreeze(data.inviter);
-        }
-
         for (const appId of this.listeners.get(AppInterface.IPreRoomUserJoined)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED)) {
-                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED, data, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
-            }
+            await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_JOINED, externalData);
         }
     }
 
     private async executePostRoomUserJoined(externalData: IRoomUserJoinedContext): Promise<void> {
-        const data = Utilities.deepClone(externalData);
-
-        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
-        Utilities.deepFreeze(data.joiningUser);
-
-        if (data.inviter) {
-            Utilities.deepFreeze(data.inviter);
-        }
-
         for (const appId of this.listeners.get(AppInterface.IPostRoomUserJoined)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_JOINED)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_ROOM_USER_JOINED,
-                    data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_ROOM_USER_JOINED, externalData);
         }
     }
 
     private async executePreRoomUserLeave(externalData: IRoomUserLeaveContext): Promise<void> {
-        const data = Utilities.deepClone(externalData);
-
-        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
-        Utilities.deepFreeze(data.leavingUser);
-
         for (const appId of this.listeners.get(AppInterface.IPreRoomUserLeave)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE)) {
-                await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE, data, this.am.getReader(appId), this.am.getHttp(appId), this.am.getPersistence(appId));
-            }
+            await app.call(AppMethod.EXECUTE_PRE_ROOM_USER_LEAVE, externalData);
         }
     }
 
     private async executePostRoomUserLeave(externalData: IRoomUserLeaveContext): Promise<void> {
-        const data = Utilities.deepClone(externalData);
-
-        data.room = new Room(Utilities.deepFreeze(data.room), this.manager);
-        Utilities.deepFreeze(data.leavingUser);
-
         for (const appId of this.listeners.get(AppInterface.IPostRoomUserLeave)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_ROOM_USER_LEAVE,
-                    data,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_ROOM_USER_LEAVE, externalData);
         }
     }
 
     // External Components
     private async executePostExternalComponentOpened(data: IExternalComponent): Promise<void> {
-        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostExternalComponentOpened)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED,
-                    cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTOPENED, data);
         }
     }
 
     private async executePostExternalComponentClosed(data: IExternalComponent): Promise<void> {
-        const cfExternalComponent = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostExternalComponentClosed)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED)) {
-                await app.call(
-                    AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED,
-                    cfExternalComponent,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTEPOSTEXTERNALCOMPONENTCLOSED, data);
         }
     }
 
     private async executeUIKitInteraction(data: UIKitIncomingInteraction): Promise<IUIKitResponse> {
-        const { appId, type } = data;
-
-        const method = ((interactionType: string) => {
-            switch (interactionType) {
-                case UIKitIncomingInteractionType.BLOCK:
-                    return AppMethod.UIKIT_BLOCK_ACTION;
-                case UIKitIncomingInteractionType.VIEW_SUBMIT:
-                    return AppMethod.UIKIT_VIEW_SUBMIT;
-                case UIKitIncomingInteractionType.VIEW_CLOSED:
-                    return AppMethod.UIKIT_VIEW_CLOSE;
-                case UIKitIncomingInteractionType.ACTION_BUTTON:
-                    return AppMethod.UIKIT_ACTION_BUTTON;
-            }
-        })(type);
+        const { appId } = data;
 
         const app = this.manager.getOneById(appId);
-        if (!app?.hasMethod(method)) {
-            if (this.defaultHandlers.has(method)) {
-                console.warn(`App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method}. Falling back to default handler.`);
-                return this.defaultHandlers.get(method);
+
+        const handleError = (method: string) => (error: unknown) => {
+            if ((error as Record<string, number>)?.code === JSONRPC_METHOD_NOT_FOUND) {
+                if (this.defaultHandlers.has(method)) {
+                    console.warn(
+                        `App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method}. Falling back to default handler.`,
+                    );
+                    return this.defaultHandlers.get(method);
+                }
+
+                console.warn(
+                    `App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method} and there is no default handler for it.`,
+                );
+                return;
             }
 
-            console.warn(`App ${appId} triggered an interaction but it doesn't exist or doesn't have method ${method} and there is no default handler for it.`);
-            return;
-        }
+            throw error;
+        };
 
         const { actionId, user, triggerId } = data;
 
         switch (data.type) {
             case UIKitIncomingInteractionType.BLOCK: {
+                const method = 'executeBlockActionHandler';
                 const { value, blockId } = data.payload as { value: string; blockId: string };
-                return app.call(
-                    'executeBlockActionHandler',
-                    new UIKitBlockInteractionContext({
+
+                return app
+                    .call(method, {
                         appId,
                         actionId,
                         blockId,
@@ -1082,56 +939,45 @@ export class AppListenerManager {
                         value,
                         message: data.message,
                         container: data.container,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                    })
+                    .catch(handleError(method));
             }
             case UIKitIncomingInteractionType.VIEW_SUBMIT: {
+                const method = 'executeViewSubmitHandler';
                 const { view } = data.payload as { view: IUIKitSurface };
 
-                return app.call(
-                    'executeViewSubmitHandler',
-                    new UIKitViewSubmitInteractionContext({
+                return app
+                    .call(method, {
                         appId,
                         actionId,
                         view,
                         room: data.room,
                         triggerId,
                         user,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                    })
+                    .catch(handleError(method));
             }
             case UIKitIncomingInteractionType.VIEW_CLOSED: {
+                const method = 'executeViewClosedHandler';
                 const { view, isCleared } = data.payload as { view: IUIKitSurface; isCleared: boolean };
 
-                return app.call(
-                    'executeViewClosedHandler',
-                    new UIKitViewCloseInteractionContext({
+                return app
+                    .call(method, {
                         appId,
                         actionId,
                         view,
                         room: data.room,
                         isCleared,
                         user,
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                    })
+                    .catch(handleError(method));
             }
             case 'actionButton': {
+                const method = 'executeActionButtonHandler';
+
                 if (isUIKitIncomingInteractionActionButtonMessageBox(data)) {
-                    return app.call(
-                        'executeActionButtonHandler',
-                        new UIKitActionButtonInteractionContext({
+                    return app
+                        .call(method, {
                             appId,
                             actionId,
                             buttonContext: UIActionButtonContext.MESSAGE_BOX_ACTION,
@@ -1140,17 +986,12 @@ export class AppListenerManager {
                             user,
                             threadId: data.tmid,
                             ...('message' in data.payload && { text: data.payload.message }),
-                        }),
-                        this.am.getReader(appId),
-                        this.am.getHttp(appId),
-                        this.am.getPersistence(appId),
-                        this.am.getModifier(appId),
-                    );
+                        })
+                        .catch(handleError(method));
                 }
 
-                return app.call(
-                    'executeActionButtonHandler',
-                    new UIKitActionButtonInteractionContext({
+                return app
+                    .call(method, {
                         appId,
                         actionId,
                         triggerId,
@@ -1158,12 +999,8 @@ export class AppListenerManager {
                         room: ('room' in data && data.room) || undefined,
                         user,
                         ...('message' in data && { message: data.message }),
-                    }),
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
+                    })
+                    .catch(handleError(method));
             }
         }
     }
@@ -1179,9 +1016,6 @@ export class AppListenerManager {
         })(type);
 
         const app = this.manager.getOneById(appId);
-        if (!app.hasMethod(method)) {
-            return;
-        }
 
         const interactionContext = ((interactionType: UIKitIncomingInteractionType, interactionData: IUIKitLivechatIncomingInteraction) => {
             const { actionId, message, visitor, room, triggerId, container } = interactionData;
@@ -1205,202 +1039,80 @@ export class AppListenerManager {
             }
         })(type, data);
 
-        return app.call(
-            method,
-            interactionContext,
-            this.am.getReader(appId),
-            this.am.getHttp(appId),
-            this.am.getPersistence(appId),
-            this.am.getModifier(appId),
-        );
+        return app.call(method, interactionContext);
     }
 
     // Livechat
     private async executePostLivechatRoomStarted(data: ILivechatRoom): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomStarted)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_STARTED, data);
         }
     }
 
     private async executeLivechatRoomClosedHandler(data: ILivechatRoom): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.ILivechatRoomClosedHandler)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_LIVECHAT_ROOM_CLOSED_HANDLER, data);
         }
     }
 
     private async executePostLivechatRoomClosed(data: ILivechatRoom): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomClosed)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_CLOSED, data);
         }
     }
 
     private async executePostLivechatAgentAssigned(data: ILivechatEventContext): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentAssigned)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_ASSIGNED, data);
         }
     }
 
     private async executePostLivechatAgentUnassigned(data: ILivechatEventContext): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatAgentUnassigned)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_AGENT_UNASSIGNED, data);
         }
     }
 
     private async executePostLivechatRoomTransferred(data: ILivechatTransferEventContext): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomTransferred)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_TRANSFERRED, data);
         }
     }
 
     private async executePostLivechatGuestSaved(data: IVisitor): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatGuestSaved)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_GUEST_SAVED, data);
         }
     }
 
     private async executePostLivechatRoomSaved(data: ILivechatRoom): Promise<void> {
-        const cfLivechatRoom = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostLivechatRoomSaved)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED,
-                cfLivechatRoom,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_LIVECHAT_ROOM_SAVED, data);
         }
     }
 
     // FileUpload
     private async executePreFileUpload(data: IFileUploadContext): Promise<void> {
-        const context = Object.freeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPreFileUpload)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_PRE_FILE_UPLOAD)) {
-                await app.call(
-                    AppMethod.EXECUTE_PRE_FILE_UPLOAD,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_PRE_FILE_UPLOAD, data);
         }
     }
 
@@ -1410,240 +1122,100 @@ export class AppListenerManager {
         for (const appId of this.listeners.get(AppInterface.IPreEmailSent)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_PRE_EMAIL_SENT)) {
-                descriptor = await app.call(
-                    AppMethod.EXECUTE_PRE_EMAIL_SENT,
-                    {
-                        context: data.context,
-                        email: descriptor,
-                    },
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            descriptor = await app.call(AppMethod.EXECUTE_PRE_EMAIL_SENT, {
+                context: data.context,
+                email: descriptor,
+            });
         }
 
         return descriptor;
     }
 
     private async executePostMessageReacted(data: IMessageReactionContext): Promise<void> {
-        const context = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessageReacted)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REACTED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_MESSAGE_REACTED,
-                context,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REACTED, data);
         }
     }
 
     private async executePostMessageFollowed(data: IMessageFollowContext): Promise<void> {
-        const context = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessageFollowed)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED,
-                context,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_FOLLOWED, data);
         }
     }
 
     private async executePostMessagePinned(data: IMessagePinContext): Promise<void> {
-        const context = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessagePinned)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_PINNED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_MESSAGE_PINNED,
-                context,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_PINNED, data);
         }
     }
 
     private async executePostMessageStarred(data: IMessageStarContext): Promise<void> {
-        const context = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessageStarred)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_STARRED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_MESSAGE_STARRED,
-                context,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_STARRED, data);
         }
     }
 
     private async executePostMessageReported(data: IMessageReportContext): Promise<void> {
-        const context = Utilities.deepCloneAndFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostMessageReported)) {
             const app = this.manager.getOneById(appId);
 
-            if (!app.hasMethod(AppMethod.EXECUTE_POST_MESSAGE_REPORTED)) {
-                continue;
-            }
-
-            await app.call(
-                AppMethod.EXECUTE_POST_MESSAGE_REPORTED,
-                context,
-                this.am.getReader(appId),
-                this.am.getHttp(appId),
-                this.am.getPersistence(appId),
-                this.am.getModifier(appId),
-            );
+            await app.call(AppMethod.EXECUTE_POST_MESSAGE_REPORTED, data);
         }
     }
 
     private async executePostUserCreated(data: IUserContext): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserCreated)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_CREATED)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_CREATED,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_CREATED, data);
         }
     }
 
     private async executePostUserUpdated(data: IUserUpdateContext): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserUpdated)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_UPDATED)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_UPDATED,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_UPDATED, data);
         }
     }
 
     private async executePostUserDeleted(data: IUserContext): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserDeleted)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_DELETED)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_DELETED,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_DELETED, data);
         }
     }
 
     private async executePostUserLoggedIn(data: IUser): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserLoggedIn)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_IN)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_LOGGED_IN,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_IN, data);
         }
     }
 
     private async executePostUserLoggedOut(data: IUser): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserLoggedOut)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_LOGGED_OUT)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_LOGGED_OUT,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_LOGGED_OUT, data);
         }
     }
 
     private async executePostUserStatusChanged(data: IUserStatusContext): Promise<void> {
-        const context = Utilities.deepFreeze(data);
-
         for (const appId of this.listeners.get(AppInterface.IPostUserStatusChanged)) {
             const app = this.manager.getOneById(appId);
 
-            if (app.hasMethod(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED)) {
-                await app.call(
-                    AppMethod.EXECUTE_POST_USER_STATUS_CHANGED,
-                    context,
-                    this.am.getReader(appId),
-                    this.am.getHttp(appId),
-                    this.am.getPersistence(appId),
-                    this.am.getModifier(appId),
-                );
-            }
+            await app.call(AppMethod.EXECUTE_POST_USER_STATUS_CHANGED, data);
         }
     }
 }
