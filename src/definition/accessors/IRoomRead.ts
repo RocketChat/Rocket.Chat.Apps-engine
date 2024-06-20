@@ -46,7 +46,7 @@ export interface IRoomRead {
      * @param options Optional parameters for retrieving messages:
      *                - limit: The maximum number of messages to retrieve. If more than 100 is passed, it defaults to 100.
      *                - skip: The number of messages to skip (for pagination).
-     *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either 1 for ascending order or -1 for descending order.
+     *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either asc for ascending order or desc for descending order.
      * @returns A Promise that resolves to an array of IMessage objects representing the messages in the room.
      */
     getMessages(
@@ -54,7 +54,7 @@ export interface IRoomRead {
         options?: Partial<{
             limit: number;
             skip: number;
-            sort: Record<string, 1 | -1>;
+            sort: Record<string, 'asc' | 'desc'>;
         }>,
     ): Promise<IMessageRaw[]>;
 

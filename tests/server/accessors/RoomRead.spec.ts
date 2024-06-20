@@ -44,7 +44,7 @@ export class RoomReadAccessorTestFixture {
             doGetMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
-            doGetMessages(roomId, appId, options): Promise<IMessageRaw[]> {
+            doGetMessages(roomId, options, appId): Promise<IMessageRaw[]> {
                 return Promise.resolve(theMessages);
             },
         } as RoomBridge;
