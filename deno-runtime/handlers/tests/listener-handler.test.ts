@@ -50,7 +50,15 @@ describe('handlers > listeners', () => {
     it('correctly parses the arguments for a request to trigger the "checkPreRoomCreateExtend" method', () => {
         const evtMethod = 'checkPreRoomCreateExtend';
         // For the 'checkPreRoomCreateExtend' method, the context will be a room in a real scenario
-        const evtArgs = [{ __type: 'context' }];
+        const evtArgs = [
+            {
+                id: 'fake',
+                type: 'fake',
+                slugifiedName: 'fake',
+                creator: 'fake',
+                createdAt: Date.now(),
+            },
+        ];
 
         const params = parseArgs({ AppAccessorsInstance: mockAppAccessors }, evtMethod, evtArgs);
 
@@ -136,7 +144,15 @@ describe('handlers > listeners', () => {
     it('correctly parses the arguments for a request to trigger the "executePostRoomUserJoined" method', () => {
         const evtMethod = 'executePostRoomUserJoined';
         // For the 'executePostRoomUserJoined' method, the context will be a room in a real scenario
-        const evtArgs = [{ __type: 'context', room: { __type: 'room' } }];
+        const room = {
+            id: 'fake',
+            type: 'fake',
+            slugifiedName: 'fake',
+            creator: 'fake',
+            createdAt: Date.now(),
+        };
+
+        const evtArgs = [{ __type: 'context', room }];
 
         const params = parseArgs({ AppAccessorsInstance: mockAppAccessors }, evtMethod, evtArgs);
 
@@ -151,7 +167,15 @@ describe('handlers > listeners', () => {
     it('correctly parses the arguments for a request to trigger the "executePostRoomUserLeave" method', () => {
         const evtMethod = 'executePostRoomUserLeave';
         // For the 'executePostRoomUserLeave' method, the context will be a room in a real scenario
-        const evtArgs = [{ __type: 'context', room: { __type: 'room' } }];
+        const room = {
+            id: 'fake',
+            type: 'fake',
+            slugifiedName: 'fake',
+            creator: 'fake',
+            createdAt: Date.now(),
+        };
+
+        const evtArgs = [{ __type: 'context', room }];
 
         const params = parseArgs({ AppAccessorsInstance: mockAppAccessors }, evtMethod, evtArgs);
 
@@ -177,5 +201,34 @@ describe('handlers > listeners', () => {
         assertEquals(params[3], { __type: 'persistence' });
         assertEquals(params[4], { __type: 'modifier' });
         assertEquals(params[5], { __type: 'extraContext' });
+    });
+
+    it('correctly parses the arguments for a request to trigger the "executePostMessageSent" method', () => {
+        const evtMethod = 'executePostMessageSent';
+        // For the 'executePostMessageDeleted' method, the context will be a message in a real scenario
+        const evtArgs = [
+            {
+                id: 'fake',
+                sender: 'fake',
+                createdAt: Date.now(),
+                room: {
+                    id: 'fake-room',
+                    type: 'fake',
+                    slugifiedName: 'fake',
+                    creator: 'fake',
+                    createdAt: Date.now(),
+                },
+            },
+        ];
+
+        const params = parseArgs({ AppAccessorsInstance: mockAppAccessors }, evtMethod, evtArgs);
+
+        assertEquals(params.length, 5);
+        assertObjectMatch((params[0] as Record<string, unknown>), { id: 'fake' });
+        assertInstanceOf((params[0] as any).room, Room);
+        assertEquals(params[1], { __type: 'reader' });
+        assertEquals(params[2], { __type: 'http' });
+        assertEquals(params[3], { __type: 'persistence' });
+        assertEquals(params[4], { __type: 'modifier' });
     });
 });

@@ -12,6 +12,7 @@ import { RoomBuilder } from '../../lib/accessors/builders/RoomBuilder.ts';
 import { AppAccessors, AppAccessorsInstance } from '../../lib/accessors/mod.ts';
 import { require } from '../../lib/require.ts';
 import createRoom from '../../lib/roomFactory.ts';
+import { Room } from "../../lib/room.ts";
 
 const { AppsEngineException } = require('@rocket.chat/apps-engine/definition/exceptions/AppsEngineException.js') as {
     AppsEngineException: typeof _AppsEngineException;
@@ -46,6 +47,7 @@ export default async function handleListener(evtInterface: string, params: unkno
 
         return JsonRpcError.internalError({ message: e.message });
     }
+
 }
 
 export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMethod: string, params: unknown[]): unknown[] {
@@ -62,7 +64,9 @@ export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMetho
 
     let context = param1;
 
-    if (evtMethod.endsWith('RoomUserJoined') || evtMethod.endsWith('RoomUserLeave')) {
+    if (evtMethod.includes('Message')) {
+        context = hydrateMessageObjects(context) as Record<string, unknown>;
+    } else if (evtMethod.endsWith('RoomUserJoined') || evtMethod.endsWith('RoomUserLeave')) {
         (context as Record<string, unknown>).room = createRoom((context as Record<string, unknown>).room as IRoom, AppAccessorsInstance.getSenderFn());
     } else if (evtMethod.includes('PreRoom')) {
         context = createRoom(context as IRoom, AppAccessorsInstance.getSenderFn());
@@ -74,7 +78,7 @@ export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMetho
     if (evtMethod.startsWith('check')) {
         // "checkPostMessageDeleted" has an extra param - (context, reader, http, extraContext)
         if (param2) {
-            args.push(param2);
+            args.push(hydrateMessageObjects(param2));
         }
 
         return args;
@@ -114,8 +118,33 @@ export function parseArgs(deps: { AppAccessorsInstance: AppAccessors }, evtMetho
             throw JsonRpcError.invalidParams(null);
         }
 
-        args.push(param2);
+        args.push(hydrateMessageObjects(param2));
     }
 
     return args;
+}
+
+/**
+ * Hydrate the context object with the correct IMessage
+ *
+ * Some information is lost upon serializing the data from listeners through the pipes,
+ * so here we hydrate the complete object as necessary
+ */
+function hydrateMessageObjects(context: unknown): unknown {
+    if (objectIsRawMessage(context)) {
+        context.room = createRoom(context.room as IRoom, AppAccessorsInstance.getSenderFn());
+    } else if ((context as Record<string, unknown>)?.message) {
+        (context as Record<string, unknown>).message = hydrateMessageObjects((context as Record<string, unknown>).message);
+    }
+
+    return context;
+}
+
+function objectIsRawMessage(value: unknown): value is IMessage {
+    if (!value) return false;
+
+    const { id, room, sender, createdAt } = value as Record<string, unknown>;
+
+    // Check if we have the fields of a message and the room hasn't already been hydrated
+    return !!(id && room && sender && createdAt) && !(room instanceof Room);
 }
