@@ -50,7 +50,7 @@ export abstract class LivechatBridge extends BaseBridge {
         }
     }
 
-    public async doCreateVisitor(visitor: IVisitor, appId: string): Promise<string> {
+    public async doCreateVisitor(visitor: IVisitor, appId: string): Promise<IVisitor | undefined> {
         if (this.hasWritePermission(appId, 'livechat-visitor')) {
             return this.createVisitor(visitor, appId);
         }
@@ -160,7 +160,7 @@ export abstract class LivechatBridge extends BaseBridge {
 
     protected abstract updateMessage(message: ILivechatMessage, appId: string): Promise<void>;
 
-    protected abstract createVisitor(visitor: IVisitor, appId: string): Promise<string>;
+    protected abstract createVisitor(visitor: IVisitor, appId: string): Promise<IVisitor | undefined>;
 
     /**
      * @deprecated This method does not adhere to the conversion practices applied

@@ -12,7 +12,7 @@ export class LivechatCreator implements ILivechatCreator {
         return this.bridges.getLivechatBridge().doCreateRoom(visitor, agent, this.appId, extraParams);
     }
 
-    public createVisitor(visitor: IVisitor): Promise<string> {
+    public createVisitor(visitor: IVisitor): Promise<IVisitor | undefined> {
         return this.bridges.getLivechatBridge().doCreateVisitor(visitor, this.appId);
     }
 

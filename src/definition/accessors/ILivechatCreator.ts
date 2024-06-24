@@ -21,7 +21,7 @@ export interface ILivechatCreator {
      *
      * @param visitor Data of the visitor to be created
      */
-    createVisitor(visitor: IVisitor): Promise<string>;
+    createVisitor(visitor: IVisitor): Promise<IVisitor | undefined>;
 
     /**
      * Creates a token to be used when
