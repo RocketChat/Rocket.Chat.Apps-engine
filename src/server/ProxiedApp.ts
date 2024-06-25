@@ -57,9 +57,12 @@ export class ProxiedApp {
                 throw new AppsEngineException(e.message);
             }
 
+            // We cannot throw this error as the previous implementation swallowed those
+            // and since the server is not prepared to handle those we might crash it if we throw
             // Range of JSON-RPC error codes: https://www.jsonrpc.org/specification#error_object
             if (e.code >= -32999 || e.code <= -32000) {
-                throw e;
+                // we really need to receive a logger from rocket.chat
+                console.error('JSON-RPC error received: ', e);
             }
         }
     }
