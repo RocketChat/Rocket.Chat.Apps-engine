@@ -1,4 +1,4 @@
-import { Block } from '@rocket.chat/ui-kit';
+import { LayoutBlock } from '@rocket.chat/ui-kit';
 
 import type { IMessageBuilder } from '@rocket.chat/apps-engine/definition/accessors/IMessageBuilder.ts';
 import type { RocketChatAssociationModel as _RocketChatAssociationModel } from '@rocket.chat/apps-engine/definition/metadata/RocketChatAssociations.ts';
@@ -184,7 +184,7 @@ export class MessageBuilder implements IMessageBuilder {
         return this.msg;
     }
 
-    public addBlocks(blocks: BlockBuilder | Array<IBlock | Block>) {
+    public addBlocks(blocks: BlockBuilder | Array<IBlock | LayoutBlock>) {
         if (!Array.isArray(this.msg.blocks)) {
             this.msg.blocks = [];
         }
@@ -198,7 +198,7 @@ export class MessageBuilder implements IMessageBuilder {
         return this as IMessageBuilder;
     }
 
-    public setBlocks(blocks: BlockBuilder | Array<IBlock | Block>) {
+    public setBlocks(blocks: BlockBuilder | Array<IBlock | LayoutBlock>) {
         if (blocks instanceof BlockBuilder) {
             this.msg.blocks = blocks.getBlocks();
         } else {
