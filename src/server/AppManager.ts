@@ -154,6 +154,10 @@ export class AppManager {
         AppManager.Instance = this;
     }
 
+    public getRuntimeSystemRecords() {
+        return this.runtime.getSystemRecords();
+    }
+
     /** Gets the instance of the storage connector. */
     public getStorage(): AppMetadataStorage {
         return this.appMetadataStorage;

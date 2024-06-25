@@ -75,6 +75,14 @@ export function getDenoWrapperPath(): string {
     }
 }
 
+// https://deno.land/api@v1.44.4?s=Deno.MemoryUsage
+export type DenoSystemUsageRecord = {
+    rss: number;
+    heapTotal: number;
+    heapUsed: number;
+    external: number;
+};
+
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
@@ -85,6 +93,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     };
 
     private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
+
+    private latestSystemRecord: DenoSystemUsageRecord | undefined;
 
     private readonly accessors: AppAccessorManager;
 
@@ -210,6 +220,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     public getProcessState() {
         return this.state;
+    }
+
+    public getLatestSystemRecord() {
+        return this.latestSystemRecord;
     }
 
     public async getStatus(): Promise<AppStatus> {
@@ -492,19 +506,26 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         let result: unknown;
         let error: jsonrpc.IParsedObjectError['payload']['error'] | undefined;
         let logs: ILoggerStorageEntry;
+        let system: DenoSystemUsageRecord;
 
         if (message.type === 'success') {
-            const params = message.payload.result as { value: unknown; logs?: ILoggerStorageEntry };
+            const params = message.payload.result as { value: unknown; logs?: ILoggerStorageEntry; system?: DenoSystemUsageRecord };
             result = params.value;
             logs = params.logs;
+            system = params.system;
         } else {
             error = message.payload.error;
             logs = message.payload.error.data?.logs as ILoggerStorageEntry;
+            system = message.payload.error.data?.system as DenoSystemUsageRecord;
         }
 
         // Should we try to make sure all result messages have logs?
         if (logs) {
             await this.logStorage.storeEntries(logs);
+        }
+
+        if (system) {
+            this.latestSystemRecord = system;
         }
 
         this.emit(`result:${id}`, result, error);

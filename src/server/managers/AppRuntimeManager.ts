@@ -52,4 +52,8 @@ export class AppRuntimeManager {
             delete this.subprocesses[appId];
         }
     }
+
+    public getSystemRecords() {
+        return Object.values(this.subprocesses).map((ctl) => ({ appId: ctl.getAppId(), system: ctl.getLatestSystemRecord() }));
+    }
 }
