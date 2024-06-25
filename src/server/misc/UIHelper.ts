@@ -1,4 +1,4 @@
-import type { Block } from '@rocket.chat/ui-kit';
+import type { LayoutBlock } from '@rocket.chat/ui-kit';
 import { v4 as uuid } from 'uuid';
 
 import type { IBlock } from '../../definition/uikit';
@@ -10,8 +10,8 @@ export class UIHelper {
      * @param appId the appId that will be assigned to
      * @returns the array of block with the ids properties assigned
      */
-    public static assignIds(blocks: Array<IBlock | Block>, appId: string): Array<IBlock | Block> {
-        blocks.forEach((block: (IBlock | Block) & { appId?: string; blockId?: string; elements?: Array<any> }) => {
+    public static assignIds(blocks: Array<IBlock | LayoutBlock>, appId: string): Array<IBlock | LayoutBlock> {
+        blocks.forEach((block: (IBlock | LayoutBlock) & { appId?: string; blockId?: string; elements?: Array<any> }) => {
             if (!block.appId) {
                 block.appId = appId;
             }
