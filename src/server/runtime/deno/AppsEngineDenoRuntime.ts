@@ -162,7 +162,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             });
         } catch (e) {
             this.state = 'invalid';
-            console.error('Failed to start Deno subprocess', e);
+            console.error(`Failed to start Deno subprocess for app ${this.getAppId()}`, e);
         }
 
         this.accessors = manager.getAccessorManager();
@@ -291,7 +291,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private waitUntilReady(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const timeoutId = setTimeout(() => reject(new Error('Timeout: app process not ready')), this.options.timeout);
+            const timeoutId = setTimeout(() => reject(new Error(`[${this.getAppId()}] Timeout: app process not ready`)), this.options.timeout);
 
             if (this.state === 'ready') {
                 clearTimeout(timeoutId);
@@ -321,7 +321,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             const timeoutId = setTimeout(() => {
                 this.off(eventName, responseCallback);
-                reject(new Error(`Request "${req.id}" for method "${req.method}" timed out`));
+                reject(new Error(`[${this.getAppId()}] Request "${req.id}" for method "${req.method}" timed out`));
             }, this.options.timeout);
 
             this.once(eventName, responseCallback);
@@ -548,12 +548,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 }
 
                 if (JSONRPCMessage.type === 'request' || JSONRPCMessage.type === 'notification') {
-                    this.handleIncomingMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason, message));
+                    this.handleIncomingMessage(JSONRPCMessage).catch((reason) =>
+                        console.error(`[${this.getAppId()}] Error executing handler`, reason, message),
+                    );
                     continue;
                 }
 
                 if (JSONRPCMessage.type === 'success' || JSONRPCMessage.type === 'error') {
-                    this.handleResultMessage(JSONRPCMessage).catch((reason) => console.error('Error executing handler', reason, message));
+                    this.handleResultMessage(JSONRPCMessage).catch((reason) => console.error(`[${this.getAppId()}] Error executing handler`, reason, message));
                     continue;
                 }
 
@@ -561,11 +563,11 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             } catch (e) {
                 // SyntaxError is thrown when the message is not a valid JSON
                 if (e instanceof SyntaxError) {
-                    console.error('Failed to parse message');
+                    console.error(`[${this.getAppId()}] Failed to parse message`);
                     continue;
                 }
 
-                console.error('Error executing handler', e, message);
+                console.error(`[${this.getAppId()}] Error executing handler`, e, message);
             }
         }
     }
