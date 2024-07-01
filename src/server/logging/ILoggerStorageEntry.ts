@@ -2,6 +2,7 @@ import type { ILogEntry } from '../../definition/accessors';
 import type { AppMethod } from '../../definition/metadata';
 
 export interface ILoggerStorageEntry {
+    _id: string;
     appId: string;
     method: `${AppMethod}`;
     entries: Array<ILogEntry>;
