@@ -40,6 +40,7 @@ export class DenuRuntimeSubprocessControllerTestFixture {
     @Setup
     public setup() {
         this.controller = new DenoRuntimeSubprocessController(this.manager, this.appPackage);
+        this.controller.setupApp();
     }
 
     @Teardown
