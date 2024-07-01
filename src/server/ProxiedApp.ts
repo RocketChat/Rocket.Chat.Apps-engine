@@ -49,9 +49,17 @@ export class ProxiedApp {
         return logger;
     }
 
+    // We'll need to refactor this method to remove the rest parameters so we can pass an options parameter
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
+        let options;
+
+        // Pre events need to be fast as they block the user
+        if (method.startsWith('checkPre') || method.startsWith('executePre')) {
+            options = { timeout: 1000 };
+        }
+
         try {
-            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args });
+            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args }, options);
         } catch (e) {
             if (e.code === AppsEngineException.JSONRPC_ERROR_CODE) {
                 throw new AppsEngineException(e.message);

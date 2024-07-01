@@ -83,6 +83,10 @@ export type DenoSystemUsageRecord = {
     external: number;
 };
 
+export type DenoRuntimeOptions = {
+    timeout: number;
+};
+
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly deno: child_process.ChildProcess;
 
@@ -259,14 +263,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.deno.stdin.write(encoder.encode(message));
     }
 
-    public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
+    public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>, options = this.options): Promise<unknown> {
         const id = String(Math.random().toString(36)).substring(2);
 
         const start = Date.now();
 
         const request = jsonrpc.request(id, message.method, message.params);
 
-        const promise = this.waitForResponse(request).finally(() => {
+        const promise = this.waitForResponse(request, options).finally(() => {
             this.debug('Request %s for method %s took %dms', id, message.method, Date.now() - start);
         });
 
@@ -291,7 +295,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         });
     }
 
-    private waitForResponse(req: jsonrpc.RequestObject): Promise<unknown> {
+    private waitForResponse(req: jsonrpc.RequestObject, options = this.options): Promise<unknown> {
         return new Promise((resolve, reject) => {
             const responseCallback = (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
@@ -308,7 +312,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const timeoutId = setTimeout(() => {
                 this.off(eventName, responseCallback);
                 reject(new Error(`[${this.getAppId()}] Request "${req.id}" for method "${req.method}" timed out`));
-            }, this.options.timeout);
+            }, options.timeout);
 
             this.once(eventName, responseCallback);
         });
