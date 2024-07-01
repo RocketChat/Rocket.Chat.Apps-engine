@@ -146,20 +146,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             this.setupListeners();
             this.startPing();
-
-            // Run this after the current task on the event loop so we give the OS sometime to try to spawn the process
-            queueMicrotask(() => {
-                // If the process failed to spawn, it doesn't have an exitCode, but also doesn't have a pid
-                if (this.deno.exitCode !== null || !this.deno.pid) {
-                    this.state = 'invalid';
-                    this.debug(
-                        'Deno subprocess could not be started: exit code %d, signal %s, spawnfile "%s"',
-                        this.deno.exitCode,
-                        this.deno.signalCode,
-                        this.deno.spawnfile,
-                    );
-                }
-            });
         } catch (e) {
             this.state = 'invalid';
             console.error(`Failed to start Deno subprocess for app ${this.getAppId()}`, e);
