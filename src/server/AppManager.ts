@@ -718,7 +718,7 @@ export class AppManager {
                 .catch(() => {});
         }
 
-        await this.updateApp(app)
+        await this.updateApp(app);
 
         return aff;
     }
