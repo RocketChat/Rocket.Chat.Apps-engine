@@ -5,7 +5,7 @@ import { type Readable, EventEmitter } from 'stream';
 import * as jsonrpc from 'jsonrpc-lite';
 import debugFactory from 'debug';
 
-import { encoder, decoder } from './codec';
+import { decoder } from './codec';
 import type { AppManager } from '../../AppManager';
 import type { AppLogStorage } from '../../storage';
 import type { AppBridges } from '../../bridges';
@@ -14,6 +14,8 @@ import type { AppAccessorManager, AppApiManager } from '../../managers';
 import type { ILoggerStorageEntry } from '../../logging';
 import { AppStatus } from '../../../definition/AppStatus';
 import { bundleLegacyApp } from './bundler';
+import { ProcessMessenger } from './ProcessMessenger';
+import { LivenessManager } from './LivenessManager';
 
 const baseDebug = debugFactory('appsEngine:runtime:deno');
 
@@ -46,7 +48,6 @@ export const ALLOWED_ENVIRONMENT_VARIABLES = [
     'NODE_EXTRA_CA_CERTS', // Accessed by the `https` node module
 ];
 
-const COMMAND_PING = '_zPING';
 const COMMAND_PONG = '_zPONG';
 
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
@@ -81,9 +82,7 @@ export type DenoRuntimeOptions = {
 export class DenoRuntimeSubprocessController extends EventEmitter {
     private deno: child_process.ChildProcess;
 
-    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
-
-    private pingTimeoutConsecutiveCount = 0;
+    private state: 'uninitialized' | 'ready' | 'invalid' | 'restarting' | 'unknown' | 'stopped';
 
     private readonly debug: debug.Debugger;
 
@@ -99,11 +98,23 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly bridges: AppBridges;
 
+    private readonly messenger: ProcessMessenger;
+
+    private readonly livenessManager: LivenessManager;
+
     // We need to keep the appSource around in case the Deno process needs to be restarted
     constructor(manager: AppManager, private readonly appPackage: IParseAppPackageResult) {
         super();
 
         this.debug = baseDebug.extend(appPackage.info.id);
+        this.messenger = new ProcessMessenger(this.debug);
+        this.livenessManager = new LivenessManager({
+            controller: this,
+            messenger: this.messenger,
+            debug: this.debug,
+        });
+
+        this.state = 'uninitialized';
 
         this.accessors = manager.getAccessorManager();
         this.api = manager.getApiManager();
@@ -111,9 +122,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         this.bridges = manager.getBridges();
     }
 
-    public startProcess(): void {
-        this.state = 'uninitialized';
-
+    public spawnProcess(): void {
         try {
             const denoExePath = getDenoExecutablePath();
             const denoWrapperPath = getDenoWrapperPath();
@@ -138,63 +147,35 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 `--allow-env=${ALLOWED_ENVIRONMENT_VARIABLES.join(',')}`,
                 denoWrapperPath,
                 '--subprocess',
+                this.appPackage.info.id,
             ];
 
-            this.debug('Starting Deno subprocess for app with options %O', options);
-
             this.deno = child_process.spawn(denoExePath, options, { env: null });
+            this.messenger.setReceiver(this.deno);
+            this.livenessManager.attach(this.deno);
+
+            this.debug('Started subprocess %d with options %O', this.deno.pid, options);
 
             this.setupListeners();
-            this.startPing();
         } catch (e) {
             this.state = 'invalid';
             console.error(`Failed to start Deno subprocess for app ${this.getAppId()}`, e);
         }
     }
 
-    /**
-     * Start up the process of ping/pong for liveness check
-     *
-     * The message exchange does not use JSON RPC as it adds a lot of overhead
-     * with the creation and encoding of a full object for transfer. By using a
-     * string the process is less intensive.
-     */
-    private startPing() {
-        const ping = () => {
-            const start = Date.now();
+    public killProcess(): void {
+        // This field is not populated if the process is killed by the OS
+        if (this.deno.killed) {
+            this.debug('App process was already killed');
+            return;
+        }
 
-            const responsePromise = new Promise<void>((resolve, reject) => {
-                const onceCallback = () => {
-                    clearTimeout(timeoutId);
-                    this.debug('Ping successful in %d ms', Date.now() - start);
-                    this.pingTimeoutConsecutiveCount = 0;
-                    resolve();
-                };
+        // What else should we do?
+        if (!this.deno.kill('SIGKILL')) {
+            this.debug('Tried killing the process but failed. Was it already dead?');
+        }
 
-                const timeoutId = setTimeout(() => {
-                    this.debug('Ping failed in %d ms', Date.now() - start);
-                    this.off('pong', onceCallback);
-                    this.pingTimeoutConsecutiveCount++;
-                    reject();
-                }, this.options.timeout);
-
-                this.once('pong', onceCallback);
-            }).catch(() => {});
-
-            this.send(COMMAND_PING);
-
-            responsePromise.finally(() => {
-                if (this.pingTimeoutConsecutiveCount >= 4) {
-                    this.stopApp();
-                    this.pingTimeoutConsecutiveCount = 0;
-                    return this.setupApp();
-                }
-
-                setTimeout(ping, this.options.timeout);
-            });
-        };
-
-        ping();
+        delete this.deno;
     }
 
     // Debug purposes, could be deleted later
@@ -217,11 +198,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         if (this.deno.exitCode !== null) {
             return AppStatus.UNKNOWN;
         }
+
         return this.sendRequest({ method: 'app:getStatus', params: [] }) as Promise<AppStatus>;
     }
 
     public async setupApp() {
-        this.startProcess();
+        this.debug('Setting up app subprocess');
+        this.spawnProcess();
 
         // If there is more than one file in the package, then it is a legacy app that has not been bundled
         if (Object.keys(this.appPackage.files).length > 1) {
@@ -234,29 +217,28 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public stopApp() {
-        this.debug('Stopping app');
-
-        if (this.deno.killed) {
-            return true;
-        }
-
-        // What else should we do?
-        if (!this.deno.kill('SIGKILL')) {
-            return false;
-        }
+        this.debug('Stopping app subprocess');
 
         this.state = 'stopped';
 
-        return true;
+        this.killProcess();
+    }
+
+    public restartApp() {
+        return new Promise((resolve) => {
+            this.debug('Restarting app subprocess');
+
+            this.state = 'restarting';
+
+            this.killProcess();
+
+            // The process might take a bit to fully stop due to Deno's cleanup
+            setTimeout(() => this.setupApp().then(resolve), 1000);
+        });
     }
 
     public getAppId(): string {
         return this.appPackage.info.id;
-    }
-
-    private send(message: jsonrpc.JsonRpc | typeof COMMAND_PING) {
-        this.debug('Sending message to subprocess %o', message);
-        this.deno.stdin.write(encoder.encode(message));
     }
 
     public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>, options = this.options): Promise<unknown> {
@@ -270,7 +252,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.debug('Request %s for method %s took %dms', id, message.method, Date.now() - start);
         });
 
-        this.send(request);
+        this.messenger.send(request);
 
         return promise;
     }
@@ -460,7 +442,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         if (method.startsWith('accessor:')) {
             const result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
 
-            this.send(result);
+            this.messenger.send(result);
 
             return;
         }
@@ -468,7 +450,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         if (method.startsWith('bridges:')) {
             const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
 
-            this.send(result);
+            this.messenger.send(result);
 
             return;
         }
