@@ -718,6 +718,8 @@ export class AppManager {
                 .catch(() => {});
         }
 
+        await this.updateApp(app)
+
         return aff;
     }
 
@@ -912,6 +914,24 @@ export class AppManager {
 
         try {
             await app.call(AppMethod.ONINSTALL, context);
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            result = false;
+
+            await app.setStatus(status);
+        }
+
+        return result;
+    }
+
+    private async updateApp(app: ProxiedApp): Promise<boolean> {
+        let result: boolean;
+
+        try {
+            await app.call(AppMethod.ONUPDATE, {});
 
             result = true;
         } catch (e) {
