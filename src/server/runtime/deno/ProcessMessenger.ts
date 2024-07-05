@@ -23,6 +23,12 @@ export class ProcessMessenger {
         this.switchStrategy();
     }
 
+    public clearReceiver() {
+        delete this.deno;
+
+        this.switchStrategy();
+    }
+
     private switchStrategy() {
         if (this.deno instanceof ChildProcess) {
             this._sendStrategy = this.strategySend.bind(this);

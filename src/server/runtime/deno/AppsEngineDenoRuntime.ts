@@ -176,6 +176,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         delete this.deno;
+        this.messenger.clearReceiver();
     }
 
     // Debug purposes, could be deleted later
