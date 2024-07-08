@@ -12,7 +12,6 @@ import type { AppBridges } from '../../bridges';
 import type { IParseAppPackageResult } from '../../compiler';
 import type { AppAccessorManager, AppApiManager } from '../../managers';
 import type { ILoggerStorageEntry } from '../../logging';
-import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
 import { AppStatus } from '../../../definition/AppStatus';
 import { bundleLegacyApp } from './bundler';
 
@@ -80,15 +79,17 @@ export type DenoRuntimeOptions = {
 };
 
 export class DenoRuntimeSubprocessController extends EventEmitter {
-    private readonly deno: child_process.ChildProcess;
+    private deno: child_process.ChildProcess;
+
+    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
+
+    private pingTimeoutConsecutiveCount = 0;
 
     private readonly debug: debug.Debugger;
 
     private readonly options = {
         timeout: 10000,
     };
-
-    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
 
     private readonly accessors: AppAccessorManager;
 
@@ -98,15 +99,20 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly bridges: AppBridges;
 
-    private readonly runtimeManager: AppRuntimeManager;
-
     // We need to keep the appSource around in case the Deno process needs to be restarted
     constructor(manager: AppManager, private readonly appPackage: IParseAppPackageResult) {
         super();
 
-        this.state = 'uninitialized';
-
         this.debug = baseDebug.extend(appPackage.info.id);
+
+        this.accessors = manager.getAccessorManager();
+        this.api = manager.getApiManager();
+        this.logStorage = manager.getLogStorage();
+        this.bridges = manager.getBridges();
+    }
+
+    public startProcess(): void {
+        this.state = 'uninitialized';
 
         try {
             const denoExePath = getDenoExecutablePath();
@@ -121,7 +127,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             // If the app doesn't request any permissions, it gets the default set of permissions, which includes "networking"
             // If the app requests specific permissions, we need to check whether it requests "networking" or not
-            if (!appPackage.info.permissions || appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
+            if (!this.appPackage.info.permissions || this.appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
                 hasNetworkingPermission = true;
             }
 
@@ -144,12 +150,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.state = 'invalid';
             console.error(`Failed to start Deno subprocess for app ${this.getAppId()}`, e);
         }
-
-        this.accessors = manager.getAccessorManager();
-        this.api = manager.getApiManager();
-        this.logStorage = manager.getLogStorage();
-        this.bridges = manager.getBridges();
-        this.runtimeManager = manager.getRuntime();
     }
 
     /**
@@ -167,12 +167,14 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 const onceCallback = () => {
                     clearTimeout(timeoutId);
                     this.debug('Ping successful in %d ms', Date.now() - start);
+                    this.pingTimeoutConsecutiveCount = 0;
                     resolve();
                 };
 
                 const timeoutId = setTimeout(() => {
                     this.debug('Ping failed in %d ms', Date.now() - start);
                     this.off('pong', onceCallback);
+                    this.pingTimeoutConsecutiveCount++;
                     reject();
                 }, this.options.timeout);
 
@@ -181,7 +183,15 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             this.send(COMMAND_PING);
 
-            responsePromise.finally(() => setTimeout(ping, 5000));
+            responsePromise.finally(() => {
+                if (this.pingTimeoutConsecutiveCount >= 4) {
+                    this.stopApp();
+                    this.pingTimeoutConsecutiveCount = 0;
+                    return this.setupApp();
+                }
+
+                setTimeout(ping, this.options.timeout);
+            });
         };
 
         ping();
@@ -211,6 +221,8 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     }
 
     public async setupApp() {
+        this.startProcess();
+
         // If there is more than one file in the package, then it is a legacy app that has not been bundled
         if (Object.keys(this.appPackage.files).length > 1) {
             await bundleLegacyApp(this.appPackage);
@@ -234,8 +246,6 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         this.state = 'stopped';
-
-        this.runtimeManager.stopRuntime(this);
 
         return true;
     }
@@ -314,7 +324,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.state = 'invalid';
             console.error('Failed to startup Deno subprocess', err);
         });
-        this.on('ready', this.onReady.bind(this));
+        this.once('ready', this.onReady.bind(this));
         this.parseStdout(this.deno.stdout);
     }
 
