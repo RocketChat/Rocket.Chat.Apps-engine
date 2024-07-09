@@ -16,7 +16,7 @@ export class UploadCreator implements IUploadCreator {
             name: descriptor.filename,
             size: buffer.length,
             rid: descriptor.room.id,
-            userId: descriptor.user && descriptor.user.id,
+            userId: descriptor.user?.id,
             visitorToken: descriptor.visitorToken,
         } as IUploadDetails;
 

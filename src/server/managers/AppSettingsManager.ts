@@ -39,12 +39,7 @@ export class AppSettingsManager {
             throw new Error('No setting found for the App by the provided id.');
         }
 
-        const configModify = this.manager.getAccessorManager().getConfigurationModify(rl.getID());
-        const reader = this.manager.getAccessorManager().getReader(rl.getID());
-        const http = this.manager.getAccessorManager().getHttp(rl.getID());
-        const decoratedSetting =
-            (await rl.call(AppMethod.ON_PRE_SETTING_UPDATE, { oldSetting, newSetting: setting } as ISettingUpdateContext, configModify, reader, http)) ||
-            setting;
+        const decoratedSetting = (await rl.call(AppMethod.ON_PRE_SETTING_UPDATE, { oldSetting, newSetting: setting } as ISettingUpdateContext)) || setting;
 
         decoratedSetting.updatedAt = new Date();
         rl.getStorageItem().settings[decoratedSetting.id] = decoratedSetting;
@@ -55,6 +50,6 @@ export class AppSettingsManager {
 
         this.manager.getBridges().getAppDetailChangesBridge().doOnAppSettingsChange(appId, decoratedSetting);
 
-        await rl.call(AppMethod.ONSETTINGUPDATED, decoratedSetting, configModify, reader, http);
+        await rl.call(AppMethod.ONSETTINGUPDATED, decoratedSetting);
     }
 }
