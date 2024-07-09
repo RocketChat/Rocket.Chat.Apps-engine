@@ -45,8 +45,8 @@ export class AppRuntimeManager {
         return subprocess.sendRequest(execRequest);
     }
 
-    public stopRuntime(controller: DenoRuntimeSubprocessController): void {
-        controller.stopApp();
+    public async stopRuntime(controller: DenoRuntimeSubprocessController): Promise<void> {
+        await controller.stopApp();
 
         const appId = controller.getAppId();
 

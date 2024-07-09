@@ -641,7 +641,7 @@ export class AppManager {
         await this.appMetadataStorage.remove(app.getID());
         await this.appSourceStorage.remove(app.getStorageItem()).catch();
 
-        this.getRuntime().stopRuntime(app.getDenoRuntime());
+        await this.getRuntime().stopRuntime(app.getDenoRuntime());
 
         this.apps.delete(app.getID());
     }
@@ -687,7 +687,7 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
-        this.getRuntime().stopRuntime(this.apps.get(old.id).getDenoRuntime());
+        await this.getRuntime().stopRuntime(this.apps.get(old.id).getDenoRuntime());
 
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
@@ -731,7 +731,7 @@ export class AppManager {
             if (appPackageOrInstance instanceof Buffer) {
                 const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
 
-                this.getRuntime().stopRuntime(this.apps.get(stored.id).getDenoRuntime());
+                await this.getRuntime().stopRuntime(this.apps.get(stored.id).getDenoRuntime());
 
                 return this.getCompiler().toSandBox(this, stored, parseResult);
             }

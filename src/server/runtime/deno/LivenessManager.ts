@@ -70,7 +70,7 @@ export class LivenessManager {
 
         this.pingTimeoutConsecutiveCount = 0;
 
-        this.controller.once('ready', this.ping.bind(this));
+        this.controller.once('ready', () => this.ping());
         this.subprocess.once('exit', this.handleExit.bind(this));
     }
 
@@ -84,7 +84,18 @@ export class LivenessManager {
     private ping() {
         const start = Date.now();
 
-        const responsePromise = new Promise<void>((resolve, reject) => {
+        let aborted = false;
+
+        const setAborted = () => {
+            this.debug('Ping aborted');
+
+            aborted = true;
+        };
+
+        // If we get an abort, ping should not continue
+        this.pingAbortController.once('abort', setAborted);
+
+        new Promise<void>((resolve, reject) => {
             const onceCallback = () => {
                 this.debug('Ping successful in %d ms', Date.now() - start);
                 clearTimeout(timeoutId);
@@ -92,41 +103,51 @@ export class LivenessManager {
                 resolve();
             };
 
-            const abortCallback = () => {
-                this.debug('Ping aborted');
-                clearTimeout(timeoutId);
-                this.controller.off('pong', onceCallback);
-                reject();
-            };
-
             const timeoutCallback = () => {
                 this.debug('Ping failed in %d ms (consecutive failure #%d)', Date.now() - start, this.pingTimeoutConsecutiveCount);
                 this.controller.off('pong', onceCallback);
-                this.pingAbortController.off('abort', abortCallback);
                 this.pingTimeoutConsecutiveCount++;
-                reject();
+                reject('timeout');
             };
 
             const timeoutId = setTimeout(timeoutCallback, this.options.pingRequestTimeout);
 
             this.controller.once('pong', onceCallback);
-            this.pingAbortController.once('abort', abortCallback);
-        }).catch(() => {});
+        })
+            .then(() => !aborted)
+            .catch((reason) => {
+                if (aborted) {
+                    return false;
+                }
+
+                if (reason === 'timeout' && this.pingTimeoutConsecutiveCount >= this.options.consecutiveTimeoutLimit) {
+                    this.debug('Subprocess failed to respond to pings %d consecutive times. Attempting restart...', this.options.consecutiveTimeoutLimit);
+                    this.restartProcess();
+                    return false;
+                }
+
+                return true;
+            })
+            .then((shouldContinue) => {
+                if (!shouldContinue) {
+                    this.pingAbortController.off('abort', setAborted);
+                    return;
+                }
+
+                setTimeout(() => {
+                    if (aborted) return;
+
+                    this.pingAbortController.off('abort', setAborted);
+                    this.ping();
+                }, this.options.pingFrequencyInMS);
+            });
 
         this.messenger.send(COMMAND_PING);
-
-        responsePromise.finally(() => {
-            if (this.pingTimeoutConsecutiveCount >= this.options.consecutiveTimeoutLimit) {
-                this.debug('Subprocess failed to respond to pings %d consecutive times. Attempting restart...', this.options.consecutiveTimeoutLimit);
-                this.restartProcess();
-                return;
-            }
-
-            setTimeout(this.ping.bind(this), this.options.pingFrequencyInMS);
-        });
     }
 
     private handleExit(exitCode: number, signal: string) {
+        this.pingAbortController.emit('abort');
+
         const processState = this.controller.getProcessState();
         // If the we're restarting the process, or want to stop the process, or it exited cleanly, nothing else for us to do
         if (processState === 'restarting' || processState === 'stopped' || (exitCode === 0 && !signal)) {
@@ -134,9 +155,11 @@ export class LivenessManager {
         }
 
         // Otherwise we try to restart the subprocess, if possible
-        this.debug('App has been killed (%s). Attempting restart #%d...', signal, this.restartCount + 1);
-
-        this.pingAbortController.emit('abort');
+        if (signal) {
+            this.debug('App has been killed (%s). Attempting restart #%d...', signal, this.restartCount + 1);
+        } else {
+            this.debug('App has exited with code %d. Attempting restart #%d...', exitCode, this.restartCount + 1);
+        }
 
         this.restartProcess();
     }

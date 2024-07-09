@@ -163,7 +163,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
     }
 
-    public killProcess(): void {
+    public async killProcess(): Promise<void> {
         // This field is not populated if the process is killed by the OS
         if (this.deno.killed) {
             this.debug('App process was already killed');
@@ -171,7 +171,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         // What else should we do?
-        if (!this.deno.kill('SIGKILL')) {
+        if (this.deno.kill('SIGKILL')) {
+            // Let's wait until we get confirmation the process exited
+            await new Promise<void>((r) => this.deno.on('exit', r));
+        } else {
             this.debug('Tried killing the process but failed. Was it already dead?');
         }
 
@@ -217,25 +220,29 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
-    public stopApp() {
+    public async stopApp() {
         this.debug('Stopping app subprocess');
 
         this.state = 'stopped';
 
-        this.killProcess();
+        await this.killProcess();
     }
 
-    public restartApp() {
-        return new Promise((resolve) => {
-            this.debug('Restarting app subprocess');
+    public async restartApp() {
+        this.debug('Restarting app subprocess');
 
-            this.state = 'restarting';
+        this.state = 'restarting';
 
-            this.killProcess();
+        await this.killProcess();
 
-            // The process might take a bit to fully stop due to Deno's cleanup
-            setTimeout(() => this.setupApp().then(resolve), 1000);
-        });
+        await this.setupApp();
+
+        // setupApp() changes the state to 'ready' - we'll need to workaround that for now
+        this.state = 'restarting';
+
+        await this.sendRequest({ method: 'app:initialize' });
+
+        this.state = 'ready';
     }
 
     public getAppId(): string {
@@ -319,6 +326,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const managerOrigin = accessorMethods.shift();
         const tailMethodName = accessorMethods.pop();
+
+        // If we're restarting the app, we can't register resources again, so we
+        // hijack requests for the `ConfigurationExtend` accessor and don't let them through
+        // This needs to be refactored ASAP
+        if (this.state === 'restarting' && managerOrigin === 'getConfigurationExtend') {
+            return jsonrpc.success(id, null);
+        }
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
             const result = this.api.listApis(this.appPackage.info.id);
