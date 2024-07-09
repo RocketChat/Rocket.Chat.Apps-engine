@@ -1,4 +1,4 @@
-import type { Block, ButtonElement, TextObject } from '@rocket.chat/ui-kit';
+import type { ButtonElement, LayoutBlock, TextObject } from '@rocket.chat/ui-kit';
 
 import type { IBlock, IButtonElement, ITextObject } from './blocks';
 
@@ -13,7 +13,7 @@ export interface IUIKitSurface {
     id: string;
     type: UIKitSurfaceType;
     title: ITextObject | TextObject;
-    blocks: Array<IBlock | Block>;
+    blocks: Array<IBlock | LayoutBlock>;
     close?: IButtonElement | ButtonElement;
     submit?: IButtonElement | ButtonElement;
     state?: object;

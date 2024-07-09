@@ -1,4 +1,4 @@
-import type { Block } from '@rocket.chat/ui-kit';
+import type { LayoutBlock } from '@rocket.chat/ui-kit';
 
 import type { IMessage, IMessageAttachment } from '../messages';
 import type { RocketChatAssociationModel } from '../metadata';
@@ -210,19 +210,19 @@ export interface IMessageBuilder {
      * Adds a block collection to the message's
      * own collection
      */
-    addBlocks(blocks: BlockBuilder | Array<IBlock | Block>): IMessageBuilder;
+    addBlocks(blocks: BlockBuilder | Array<IBlock | LayoutBlock>): IMessageBuilder;
 
     /**
      * Sets the block collection of the message
      *
      * @param blocks
      */
-    setBlocks(blocks: BlockBuilder | Array<IBlock | Block>): IMessageBuilder;
+    setBlocks(blocks: BlockBuilder | Array<IBlock | LayoutBlock>): IMessageBuilder;
 
     /**
      * Gets the block collection of the message
      */
-    getBlocks(): Array<IBlock | Block>;
+    getBlocks(): Array<IBlock | LayoutBlock>;
 
     /**
      * Adds a custom field to the message.

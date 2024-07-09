@@ -16,10 +16,10 @@ export class TestsVideoConferenceBridge extends VideoConferenceBridge {
     }
 
     protected registerProvider(info: IVideoConfProvider, appId: string): Promise<void> {
-        throw new Error('Method not implemented.');
+        return Promise.resolve();
     }
 
     protected unRegisterProvider(info: IVideoConfProvider, appId: string): Promise<void> {
-        throw new Error('Method not implemented.');
+        return Promise.resolve();
     }
 }

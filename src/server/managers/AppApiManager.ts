@@ -114,7 +114,7 @@ export class AppApiManager {
 
         const app = this.manager.getOneById(appId);
 
-        if (!app || AppStatusUtils.isDisabled(app.getStatus())) {
+        if (!app || AppStatusUtils.isDisabled(await app.getStatus())) {
             // Just in case someone decides to do something they shouldn't
             // let's ensure the app actually exists
             return {
