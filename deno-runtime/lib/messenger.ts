@@ -141,8 +141,6 @@ export async function errorResponse({ error: { message, code = -32000, data = {}
         data.logs = logger.getLogs();
     }
 
-    data.system = Deno.memoryUsage();
-
     const rpc = jsonrpc.error(id, new jsonrpc.JsonRpcError(message, code, data));
 
     await Queue.enqueue(rpc);
@@ -155,8 +153,6 @@ export async function successResponse({ id, result }: SuccessResponseDescriptor)
     if (logger?.hasEntries()) {
         payload.logs = logger.getLogs();
     }
-
-    payload.system = Deno.memoryUsage();
 
     const rpc = jsonrpc.success(id, payload);
 

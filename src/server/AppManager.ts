@@ -154,10 +154,6 @@ export class AppManager {
         AppManager.Instance = this;
     }
 
-    public getRuntimeSystemRecords() {
-        return this.runtime.getSystemRecords();
-    }
-
     /** Gets the instance of the storage connector. */
     public getStorage(): AppMetadataStorage {
         return this.appMetadataStorage;
@@ -488,9 +484,9 @@ export class AppManager {
         app.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
         await app.validateLicense().catch();
 
+        storageItem.status = await app.getStatus();
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
-        storageItem.status = await app.getStatus();
         await this.appMetadataStorage.update(storageItem).catch();
 
         return true;
@@ -553,7 +549,7 @@ export class AppManager {
         // the App instance from the source.
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
-        undoSteps.push(() => app.getDenoRuntime().stopApp());
+        undoSteps.push(() => this.getRuntime().stopRuntime(app.getDenoRuntime()));
 
         // Create a user for the app
         try {
@@ -645,7 +641,7 @@ export class AppManager {
         await this.appMetadataStorage.remove(app.getID());
         await this.appSourceStorage.remove(app.getStorageItem()).catch();
 
-        app.getDenoRuntime().stopApp();
+        await this.getRuntime().stopRuntime(app.getDenoRuntime());
 
         this.apps.delete(app.getID());
     }
@@ -691,7 +687,7 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
-        this.apps.get(old.id).getDenoRuntime().stopApp();
+        await this.getRuntime().stopRuntime(this.apps.get(old.id).getDenoRuntime());
 
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
@@ -735,7 +731,7 @@ export class AppManager {
             if (appPackageOrInstance instanceof Buffer) {
                 const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
 
-                this.apps.get(stored.id).getDenoRuntime().stopApp();
+                await this.getRuntime().stopRuntime(this.apps.get(stored.id).getDenoRuntime());
 
                 return this.getCompiler().toSandBox(this, stored, parseResult);
             }

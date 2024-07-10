@@ -5,16 +5,17 @@ import { type Readable, EventEmitter } from 'stream';
 import * as jsonrpc from 'jsonrpc-lite';
 import debugFactory from 'debug';
 
-import { encoder, decoder } from './codec';
+import { decoder } from './codec';
 import type { AppManager } from '../../AppManager';
 import type { AppLogStorage } from '../../storage';
 import type { AppBridges } from '../../bridges';
 import type { IParseAppPackageResult } from '../../compiler';
 import type { AppAccessorManager, AppApiManager } from '../../managers';
 import type { ILoggerStorageEntry } from '../../logging';
-import type { AppRuntimeManager } from '../../managers/AppRuntimeManager';
 import { AppStatus } from '../../../definition/AppStatus';
 import { bundleLegacyApp } from './bundler';
+import { ProcessMessenger } from './ProcessMessenger';
+import { LivenessManager } from './LivenessManager';
 
 const baseDebug = debugFactory('appsEngine:runtime:deno');
 
@@ -47,7 +48,6 @@ export const ALLOWED_ENVIRONMENT_VARIABLES = [
     'NODE_EXTRA_CA_CERTS', // Accessed by the `https` node module
 ];
 
-const COMMAND_PING = '_zPING';
 const COMMAND_PONG = '_zPONG';
 
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
@@ -75,26 +75,20 @@ export function getDenoWrapperPath(): string {
     }
 }
 
-// https://deno.land/api@v1.44.4?s=Deno.MemoryUsage
-export type DenoSystemUsageRecord = {
-    rss: number;
-    heapTotal: number;
-    heapUsed: number;
-    external: number;
+export type DenoRuntimeOptions = {
+    timeout: number;
 };
 
 export class DenoRuntimeSubprocessController extends EventEmitter {
-    private readonly deno: child_process.ChildProcess;
+    private deno: child_process.ChildProcess;
+
+    private state: 'uninitialized' | 'ready' | 'invalid' | 'restarting' | 'unknown' | 'stopped';
 
     private readonly debug: debug.Debugger;
 
     private readonly options = {
         timeout: 10000,
     };
-
-    private state: 'uninitialized' | 'ready' | 'invalid' | 'unknown' | 'stopped';
-
-    private latestSystemRecord: DenoSystemUsageRecord | undefined;
 
     private readonly accessors: AppAccessorManager;
 
@@ -104,16 +98,31 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     private readonly bridges: AppBridges;
 
-    private readonly runtimeManager: AppRuntimeManager;
+    private readonly messenger: ProcessMessenger;
+
+    private readonly livenessManager: LivenessManager;
 
     // We need to keep the appSource around in case the Deno process needs to be restarted
     constructor(manager: AppManager, private readonly appPackage: IParseAppPackageResult) {
         super();
 
+        this.debug = baseDebug.extend(appPackage.info.id);
+        this.messenger = new ProcessMessenger(this.debug);
+        this.livenessManager = new LivenessManager({
+            controller: this,
+            messenger: this.messenger,
+            debug: this.debug,
+        });
+
         this.state = 'uninitialized';
 
-        this.debug = baseDebug.extend(appPackage.info.id);
+        this.accessors = manager.getAccessorManager();
+        this.api = manager.getApiManager();
+        this.logStorage = manager.getLogStorage();
+        this.bridges = manager.getBridges();
+    }
 
+    public spawnProcess(): void {
         try {
             const denoExePath = getDenoExecutablePath();
             const denoWrapperPath = getDenoWrapperPath();
@@ -127,7 +136,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             // If the app doesn't request any permissions, it gets the default set of permissions, which includes "networking"
             // If the app requests specific permissions, we need to check whether it requests "networking" or not
-            if (!appPackage.info.permissions || appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
+            if (!this.appPackage.info.permissions || this.appPackage.info.permissions.findIndex((p) => p.name === 'networking.default')) {
                 hasNetworkingPermission = true;
             }
 
@@ -138,59 +147,39 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 `--allow-env=${ALLOWED_ENVIRONMENT_VARIABLES.join(',')}`,
                 denoWrapperPath,
                 '--subprocess',
+                this.appPackage.info.id,
             ];
 
-            this.debug('Starting Deno subprocess for app with options %O', options);
-
             this.deno = child_process.spawn(denoExePath, options, { env: null });
+            this.messenger.setReceiver(this.deno);
+            this.livenessManager.attach(this.deno);
+
+            this.debug('Started subprocess %d with options %O', this.deno.pid, options);
 
             this.setupListeners();
-            this.startPing();
         } catch (e) {
             this.state = 'invalid';
             console.error(`Failed to start Deno subprocess for app ${this.getAppId()}`, e);
         }
-
-        this.accessors = manager.getAccessorManager();
-        this.api = manager.getApiManager();
-        this.logStorage = manager.getLogStorage();
-        this.bridges = manager.getBridges();
-        this.runtimeManager = manager.getRuntime();
     }
 
-    /**
-     * Start up the process of ping/pong for liveness check
-     *
-     * The message exchange does not use JSON RPC as it adds a lot of overhead
-     * with the creation and encoding of a full object for transfer. By using a
-     * string the process is less intensive.
-     */
-    private startPing() {
-        const ping = () => {
-            const start = Date.now();
+    public async killProcess(): Promise<void> {
+        // This field is not populated if the process is killed by the OS
+        if (this.deno.killed) {
+            this.debug('App process was already killed');
+            return;
+        }
 
-            const responsePromise = new Promise<void>((resolve, reject) => {
-                const onceCallback = () => {
-                    clearTimeout(timeoutId);
-                    this.debug('Ping successful in %d ms', Date.now() - start);
-                    resolve();
-                };
+        // What else should we do?
+        if (this.deno.kill('SIGKILL')) {
+            // Let's wait until we get confirmation the process exited
+            await new Promise<void>((r) => this.deno.on('exit', r));
+        } else {
+            this.debug('Tried killing the process but failed. Was it already dead?');
+        }
 
-                const timeoutId = setTimeout(() => {
-                    this.debug('Ping failed in %d ms', Date.now() - start);
-                    this.off('pong', onceCallback);
-                    reject();
-                }, this.options.timeout);
-
-                this.once('pong', onceCallback);
-            }).catch(() => {});
-
-            this.send(COMMAND_PING);
-
-            responsePromise.finally(() => setTimeout(ping, 5000));
-        };
-
-        ping();
+        delete this.deno;
+        this.messenger.clearReceiver();
     }
 
     // Debug purposes, could be deleted later
@@ -208,19 +197,19 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         return this.state;
     }
 
-    public getLatestSystemRecord() {
-        return this.latestSystemRecord;
-    }
-
     public async getStatus(): Promise<AppStatus> {
         // If the process has been terminated, we can't get the status
         if (this.deno.exitCode !== null) {
             return AppStatus.UNKNOWN;
         }
+
         return this.sendRequest({ method: 'app:getStatus', params: [] }) as Promise<AppStatus>;
     }
 
     public async setupApp() {
+        this.debug('Setting up app subprocess');
+        this.spawnProcess();
+
         // If there is more than one file in the package, then it is a legacy app that has not been bundled
         if (Object.keys(this.appPackage.files).length > 1) {
             await bundleLegacyApp(this.appPackage);
@@ -231,46 +220,47 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         await this.sendRequest({ method: 'app:construct', params: [this.appPackage] });
     }
 
-    public stopApp() {
-        this.debug('Stopping app');
-
-        if (this.deno.killed) {
-            return true;
-        }
-
-        // What else should we do?
-        if (!this.deno.kill('SIGKILL')) {
-            return false;
-        }
+    public async stopApp() {
+        this.debug('Stopping app subprocess');
 
         this.state = 'stopped';
 
-        this.runtimeManager.stopRuntime(this);
+        await this.killProcess();
+    }
 
-        return true;
+    public async restartApp() {
+        this.debug('Restarting app subprocess');
+
+        this.state = 'restarting';
+
+        await this.killProcess();
+
+        await this.setupApp();
+
+        // setupApp() changes the state to 'ready' - we'll need to workaround that for now
+        this.state = 'restarting';
+
+        await this.sendRequest({ method: 'app:initialize' });
+
+        this.state = 'ready';
     }
 
     public getAppId(): string {
         return this.appPackage.info.id;
     }
 
-    private send(message: jsonrpc.JsonRpc | typeof COMMAND_PING) {
-        this.debug('Sending message to subprocess %o', message);
-        this.deno.stdin.write(encoder.encode(message));
-    }
-
-    public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>): Promise<unknown> {
+    public async sendRequest(message: Pick<jsonrpc.RequestObject, 'method' | 'params'>, options = this.options): Promise<unknown> {
         const id = String(Math.random().toString(36)).substring(2);
 
         const start = Date.now();
 
         const request = jsonrpc.request(id, message.method, message.params);
 
-        const promise = this.waitForResponse(request).finally(() => {
+        const promise = this.waitForResponse(request, options).finally(() => {
             this.debug('Request %s for method %s took %dms', id, message.method, Date.now() - start);
         });
 
-        this.send(request);
+        this.messenger.send(request);
 
         return promise;
     }
@@ -291,7 +281,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         });
     }
 
-    private waitForResponse(req: jsonrpc.RequestObject): Promise<unknown> {
+    private waitForResponse(req: jsonrpc.RequestObject, options = this.options): Promise<unknown> {
         return new Promise((resolve, reject) => {
             const responseCallback = (result: unknown, error: jsonrpc.IParsedObjectError['payload']['error']) => {
                 clearTimeout(timeoutId);
@@ -308,7 +298,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const timeoutId = setTimeout(() => {
                 this.off(eventName, responseCallback);
                 reject(new Error(`[${this.getAppId()}] Request "${req.id}" for method "${req.method}" timed out`));
-            }, this.options.timeout);
+            }, options.timeout);
 
             this.once(eventName, responseCallback);
         });
@@ -324,7 +314,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             this.state = 'invalid';
             console.error('Failed to startup Deno subprocess', err);
         });
-        this.on('ready', this.onReady.bind(this));
+        this.once('ready', this.onReady.bind(this));
         this.parseStdout(this.deno.stdout);
     }
 
@@ -336,6 +326,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
         const managerOrigin = accessorMethods.shift();
         const tailMethodName = accessorMethods.pop();
+
+        // If we're restarting the app, we can't register resources again, so we
+        // hijack requests for the `ConfigurationExtend` accessor and don't let them through
+        // This needs to be refactored ASAP
+        if (this.state === 'restarting' && managerOrigin === 'getConfigurationExtend') {
+            return jsonrpc.success(id, null);
+        }
 
         if (managerOrigin === 'api' && tailMethodName === 'listApis') {
             const result = this.api.listApis(this.appPackage.info.id);
@@ -460,7 +457,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         if (method.startsWith('accessor:')) {
             const result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
 
-            this.send(result);
+            this.messenger.send(result);
 
             return;
         }
@@ -468,7 +465,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         if (method.startsWith('bridges:')) {
             const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
 
-            this.send(result);
+            this.messenger.send(result);
 
             return;
         }
@@ -492,26 +489,19 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         let result: unknown;
         let error: jsonrpc.IParsedObjectError['payload']['error'] | undefined;
         let logs: ILoggerStorageEntry;
-        let system: DenoSystemUsageRecord;
 
         if (message.type === 'success') {
-            const params = message.payload.result as { value: unknown; logs?: ILoggerStorageEntry; system?: DenoSystemUsageRecord };
+            const params = message.payload.result as { value: unknown; logs?: ILoggerStorageEntry };
             result = params.value;
             logs = params.logs;
-            system = params.system;
         } else {
             error = message.payload.error;
             logs = message.payload.error.data?.logs as ILoggerStorageEntry;
-            system = message.payload.error.data?.system as DenoSystemUsageRecord;
         }
 
         // Should we try to make sure all result messages have logs?
         if (logs) {
             await this.logStorage.storeEntries(logs);
-        }
-
-        if (system) {
-            this.latestSystemRecord = system;
         }
 
         this.emit(`result:${id}`, result, error);
