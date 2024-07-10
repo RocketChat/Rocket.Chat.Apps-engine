@@ -23,7 +23,7 @@ export class ModifyDeleter implements IModifyDeleter {
      *
      * For performance reasons, it is only possible to remove 50 users in one
      * call to this method. Removing users is an expensive operation due to the
-     * amount of entities that need to be modified.
+     * amount of entity relationships that need to be modified.
      */
     public async removeUsersFromRoom(roomId: string, usernames: Array<string>) {
         if (usernames.length > 50) {
