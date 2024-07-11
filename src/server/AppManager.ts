@@ -653,7 +653,7 @@ export class AppManager {
     public async update(
         appPackage: Buffer,
         permissionsGranted: Array<IPermission>,
-        updateOptions: { loadApp?: boolean; user: IUser | null } = { loadApp: true, user: null },
+        updateOptions: { loadApp?: boolean; user?: IUser } = { loadApp: true },
     ): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
