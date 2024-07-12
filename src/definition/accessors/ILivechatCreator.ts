@@ -3,6 +3,9 @@ import type { IUser } from '../users';
 
 export interface IExtraRoomParams {
     source?: ILivechatRoom['source'];
+    customFields?: {
+        [key: string]: unknown;
+    };
 }
 
 export interface ILivechatCreator {
