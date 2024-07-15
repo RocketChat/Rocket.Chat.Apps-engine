@@ -484,9 +484,9 @@ export class AppManager {
         app.getStorageItem().marketplaceInfo = storageItem.marketplaceInfo;
         await app.validateLicense().catch();
 
+        storageItem.status = await app.getStatus();
         // This is async, but we don't care since it only updates in the database
         // and it should not mutate any properties we care about
-        storageItem.status = await app.getStatus();
         await this.appMetadataStorage.update(storageItem).catch();
 
         return true;
@@ -549,7 +549,7 @@ export class AppManager {
         // the App instance from the source.
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
-        undoSteps.push(() => app.getDenoRuntime().stopApp());
+        undoSteps.push(() => this.getRuntime().stopRuntime(app.getDenoRuntime()));
 
         // Create a user for the app
         try {
@@ -641,12 +641,16 @@ export class AppManager {
         await this.appMetadataStorage.remove(app.getID());
         await this.appSourceStorage.remove(app.getStorageItem()).catch();
 
-        app.getDenoRuntime().stopApp();
+        await this.getRuntime().stopRuntime(app.getDenoRuntime());
 
         this.apps.delete(app.getID());
     }
 
-    public async update(appPackage: Buffer, permissionsGranted: Array<IPermission>, updateOptions = { loadApp: true }): Promise<AppFabricationFulfillment> {
+    public async update(
+        appPackage: Buffer,
+        permissionsGranted: Array<IPermission>,
+        updateOptions: { loadApp?: boolean; user?: IUser } = { loadApp: true },
+    ): Promise<AppFabricationFulfillment> {
         const aff = new AppFabricationFulfillment();
         const result = await this.getParser().unpackageApp(appPackage);
 
@@ -687,7 +691,7 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
-        this.apps.get(old.id).getDenoRuntime().stopApp();
+        await this.getRuntime().stopRuntime(this.apps.get(old.id).getDenoRuntime());
 
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
@@ -714,6 +718,8 @@ export class AppManager {
                 .catch(() => {});
         }
 
+        await this.updateApp(app, updateOptions.user, old.info.version);
+
         return aff;
     }
 
@@ -731,7 +737,7 @@ export class AppManager {
             if (appPackageOrInstance instanceof Buffer) {
                 const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
 
-                this.apps.get(stored.id).getDenoRuntime().stopApp();
+                await this.getRuntime().stopRuntime(this.apps.get(stored.id).getDenoRuntime());
 
                 return this.getCompiler().toSandBox(this, stored, parseResult);
             }
@@ -908,6 +914,24 @@ export class AppManager {
 
         try {
             await app.call(AppMethod.ONINSTALL, context);
+
+            result = true;
+        } catch (e) {
+            const status = AppStatus.ERROR_DISABLED;
+
+            result = false;
+
+            await app.setStatus(status);
+        }
+
+        return result;
+    }
+
+    private async updateApp(app: ProxiedApp, user: IUser | null, oldAppVersion: string): Promise<boolean> {
+        let result: boolean;
+
+        try {
+            await app.call(AppMethod.ONUPDATE, { oldAppVersion, user });
 
             result = true;
         } catch (e) {

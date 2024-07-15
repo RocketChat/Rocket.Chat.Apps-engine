@@ -5,6 +5,7 @@ import type { IEnvironmentRead } from '@rocket.chat/apps-engine/definition/acces
 import type { IConfigurationModify } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationModify.ts';
 import type { IRead } from '@rocket.chat/apps-engine/definition/accessors/IRead.ts';
 import type { IModify } from '@rocket.chat/apps-engine/definition/accessors/IModify.ts';
+import type { INotifier } from '@rocket.chat/apps-engine/definition/accessors/INotifier.ts';
 import type { IPersistence } from '@rocket.chat/apps-engine/definition/accessors/IPersistence.ts';
 import type { IHttp, IHttpExtend } from '@rocket.chat/apps-engine/definition/accessors/IHttp.ts';
 import type { IConfigurationExtend } from '@rocket.chat/apps-engine/definition/accessors/IConfigurationExtend.ts';
@@ -13,13 +14,14 @@ import type { IProcessor } from '@rocket.chat/apps-engine/definition/scheduler/I
 import type { IApi } from '@rocket.chat/apps-engine/definition/api/IApi.ts';
 import type { IVideoConfProvider } from '@rocket.chat/apps-engine/definition/videoConfProviders/IVideoConfProvider.ts';
 
-import { Http } from './http.ts'
-import { HttpExtend } from './extenders/HttpExtender.ts'
+import { Http } from './http.ts';
+import { HttpExtend } from './extenders/HttpExtender.ts';
 import * as Messenger from '../messenger.ts';
 import { AppObjectRegistry } from '../../AppObjectRegistry.ts';
 import { ModifyCreator } from './modify/ModifyCreator.ts';
 import { ModifyUpdater } from './modify/ModifyUpdater.ts';
 import { ModifyExtender } from './modify/ModifyExtender.ts';
+import { MessageBuilder } from "./builders/MessageBuilder.ts";
 
 const httpMethods = ['get', 'post', 'put', 'delete', 'head', 'options', 'patch'] as const;
 
@@ -42,27 +44,38 @@ export class AppAccessors {
     private extender?: ModifyExtender;
     private httpExtend: IHttpExtend = new HttpExtend();
     private http?: IHttp;
+    private notifier?: INotifier;
 
-    private proxify: <T>(namespace: string) => T;
+    private proxify: <T>(namespace: string, overrides?: Record<string, (...args: unknown[]) => unknown>) => T;
 
     constructor(private readonly senderFn: typeof Messenger.sendRequest) {
-        this.proxify = <T>(namespace: string): T =>
+        this.proxify = <T>(namespace: string, overrides: Record<string, (...args: unknown[]) => unknown> = {}): T =>
             new Proxy(
                 { __kind: `accessor:${namespace}` },
                 {
                     get:
                         (_target: unknown, prop: string) =>
-                        (...params: unknown[]) =>
-                            prop === 'toJSON'
-                                ? {}
-                                : senderFn({
-                                      method: `accessor:${namespace}:${prop}`,
-                                      params,
-                                  })
-                                      .then((response) => response.result)
-                                      .catch((err) => err.error),
+                        (...params: unknown[]) => {
+                            // We don't want to send a request for this prop
+                            if (prop === 'toJSON') {
+                                return {};
+                            }
+
+                            // If the prop is inteded to be overriden by the caller
+                            if (prop in overrides) {
+                                return overrides[prop].apply(undefined, params);
+                            }
+
+                            return senderFn({
+                                method: `accessor:${namespace}:${prop}`,
+                                params,
+                            })
+                                .then((response) => response.result)
+                                .catch((err) => err.error);
+                        },
                 },
             ) as T;
+
         this.http = new Http(this.getReader(), this.getPersistence(), this.httpExtend, this.getSenderFn());
     }
 
@@ -212,7 +225,7 @@ export class AppAccessors {
                 getPersistenceReader: () => this.proxify('getReader:getPersistenceReader'),
                 getRoomReader: () => this.proxify('getReader:getRoomReader'),
                 getUserReader: () => this.proxify('getReader:getUserReader'),
-                getNotifier: () => this.proxify('getReader:getNotifier'),
+                getNotifier: () => this.getNotifier('getReader:getNotifier'),
                 getLivechatReader: () => this.proxify('getReader:getLivechatReader'),
                 getUploadReader: () => this.proxify('getReader:getUploadReader'),
                 getCloudWorkspaceReader: () => this.proxify('getReader:getCloudWorkspaceReader'),
@@ -233,7 +246,7 @@ export class AppAccessors {
                 getUpdater: this.getUpdater.bind(this),
                 getExtender: this.getExtender.bind(this),
                 getDeleter: () => this.proxify('getModifier:getDeleter'),
-                getNotifier: () => this.proxify('getModifier:getNotifier'),
+                getNotifier: () => this.getNotifier('getModifier:getNotifier'),
                 getUiController: () => this.proxify('getModifier:getUiController'),
                 getScheduler: () => this.proxify('getModifier:getScheduler'),
                 getOAuthAppsModifier: () => this.proxify('getModifier:getOAuthAppsModifier'),
@@ -278,6 +291,16 @@ export class AppAccessors {
         }
 
         return this.extender;
+    }
+
+    private getNotifier(namespace: string) {
+        if (!this.notifier) {
+            this.notifier = this.proxify(namespace, {
+                getMessageBuilder: () => new MessageBuilder(),
+            });
+        }
+
+         return this.notifier;
     }
 }
 

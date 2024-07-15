@@ -6,7 +6,7 @@ import type { AppManager } from './AppManager';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
-import type { DenoRuntimeSubprocessController } from './runtime/deno/AppsEngineDenoRuntime';
+import { JSONRPC_METHOD_NOT_FOUND, type DenoRuntimeSubprocessController } from './runtime/deno/AppsEngineDenoRuntime';
 import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import type { IAppStorageItem } from './storage';
 
@@ -49,17 +49,32 @@ export class ProxiedApp {
         return logger;
     }
 
+    // We'll need to refactor this method to remove the rest parameters so we can pass an options parameter
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
+        let options;
+
+        // Pre events need to be fast as they block the user
+        if (method.startsWith('checkPre') || method.startsWith('executePre')) {
+            options = { timeout: 1000 };
+        }
+
         try {
-            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args });
+            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args }, options);
         } catch (e) {
             if (e.code === AppsEngineException.JSONRPC_ERROR_CODE) {
                 throw new AppsEngineException(e.message);
             }
 
+            if (e.code === JSONRPC_METHOD_NOT_FOUND) {
+                throw e;
+            }
+
+            // We cannot throw this error as the previous implementation swallowed those
+            // and since the server is not prepared to handle those we might crash it if we throw
             // Range of JSON-RPC error codes: https://www.jsonrpc.org/specification#error_object
             if (e.code >= -32999 || e.code <= -32000) {
-                throw e;
+                // we really need to receive a logger from rocket.chat
+                console.error('JSON-RPC error received: ', e);
             }
         }
     }

@@ -902,7 +902,6 @@ export class AppListenerManager {
         const { appId } = data;
 
         const app = this.manager.getOneById(appId);
-
         const handleError = (method: string) => (error: unknown) => {
             if ((error as Record<string, number>)?.code === JSONRPC_METHOD_NOT_FOUND) {
                 if (this.defaultHandlers.has(method)) {
