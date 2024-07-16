@@ -15,7 +15,7 @@ export interface IVideoConferenceExtender {
 
     addUser(userId: VideoConferenceMember['_id'], ts?: VideoConferenceMember['ts']): IVideoConferenceExtender;
 
-    setDiscussionRid(rid: VideoConference['discussionRid'] | undefined): IVideoConferenceExtender;
+    setDiscussionRid(rid: VideoConference['discussionRid']): IVideoConferenceExtender;
 
     getVideoConference(): VideoConference;
 }

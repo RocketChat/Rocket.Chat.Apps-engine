@@ -79,12 +79,12 @@ export class VideoConferenceBuilder implements IVideoConferenceBuilder {
         return this.call.title;
     }
 
-    public setDiscussionRid(rid: string | undefined): IVideoConferenceBuilder {
+    public setDiscussionRid(rid: AppVideoConference['discussionRid']): IVideoConferenceBuilder {
         this.call.discussionRid = rid;
         return this;
     }
 
-    public getDiscussionRid(): string | undefined {
+    public getDiscussionRid(): AppVideoConference['discussionRid'] {
         return this.call.discussionRid;
     }
 
