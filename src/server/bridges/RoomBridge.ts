@@ -6,6 +6,14 @@ import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
+export const GetMessagesSortableFields = ['createdAt'] as const;
+
+export type GetMessagesOptions = {
+    limit: number;
+    skip: number;
+    sort: Record<typeof GetMessagesSortableFields[number], 'asc' | 'desc'>;
+};
+
 export abstract class RoomBridge extends BaseBridge {
     public async doCreate(room: IRoom, members: Array<string>, appId: string): Promise<string> {
         if (this.hasWritePermission(appId)) {
@@ -91,15 +99,7 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
-    public async doGetMessages(
-        roomId: string,
-        options: {
-            limit: number;
-            skip?: number;
-            sort?: Record<string, 1 | -1>;
-        },
-        appId: string,
-    ): Promise<IMessageRaw[]> {
+    public async doGetMessages(roomId: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
         if (this.hasReadPermission(appId)) {
             return this.getMessages(roomId, options, appId);
         }
@@ -143,15 +143,7 @@ export abstract class RoomBridge extends BaseBridge {
 
     protected abstract getLeaders(roomId: string, appId: string): Promise<Array<IUser>>;
 
-    protected abstract getMessages(
-        roomId: string,
-        options: {
-            limit: number;
-            skip?: number;
-            sort?: Record<string, 1 | -1>;
-        },
-        appId: string,
-    ): Promise<IMessageRaw[]>;
+    protected abstract getMessages(roomId: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]>;
 
     protected abstract removeUsers(roomId: string, usernames: Array<string>, appId: string): Promise<void>;
 

@@ -3,6 +3,7 @@ import type { IMessageRaw } from '../../definition/messages';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import type { RoomBridge } from '../bridges';
+import { type GetMessagesOptions, GetMessagesSortableFields } from '../bridges/RoomBridge';
 
 export class RoomRead implements IRoomRead {
     constructor(private roomBridge: RoomBridge, private appId: string) {}
@@ -23,27 +24,18 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetCreatorByName(name, this.appId);
     }
 
-    public getMessages(
-        roomId: string,
-        options?: Partial<{
-            limit: number;
-            skip: number;
-            sort: Record<string, 'asc' | 'desc'>;
-        }>,
-    ): Promise<IMessageRaw[]> {
-        const { skip, sort } = options || {};
-        let { limit } = options || {};
-        // Ensure limit is a finite number; if not, default to 100
-        limit = Number.isFinite(limit) ? Math.min(Math.max(limit, 1), 100) : 100;
+    public getMessages(roomId: string, options: Partial<GetMessagesOptions> = {}): Promise<IMessageRaw[]> {
+        if (typeof options.limit !== 'undefined' && (!Number.isFinite(options.limit) || options.limit > 100)) {
+            throw new Error(`Invalid limit provided. Expected number <= 100, got ${options.limit}`);
+        }
 
-        const coreSortOptions = this.mapSortParams(sort);
+        options.limit ??= 100;
 
-        const adjustedOptions = {
-            limit,
-            skip,
-            sort: coreSortOptions,
-        };
-        return this.roomBridge.doGetMessages(roomId, adjustedOptions, this.appId);
+        if (options.sort) {
+            this.validateSort(options.sort);
+        }
+
+        return this.roomBridge.doGetMessages(roomId, options as GetMessagesOptions, this.appId);
     }
 
     public getMembers(roomId: string): Promise<Array<IUser>> {
@@ -66,20 +58,16 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetLeaders(roomId, this.appId);
     }
 
-    private mapSortParams(userSort?: Record<string, 'asc' | 'desc'>) {
-        if (!userSort) return;
-
-        const sortMap: Record<string, string> = {
-            createdAt: 'ts',
-            updatedAt: '_updatedAt',
-        };
-
-        return Object.entries(userSort).reduce((acc, [key, value]) => {
-            const mappedKey = sortMap[key];
-            if (mappedKey) {
-                acc[mappedKey] = value === 'asc' ? 1 : -1;
+    // If there are any invalid fields or values, throw
+    private validateSort(sort: Record<string, unknown>) {
+        Object.entries(sort).forEach(([key, value]) => {
+            if (!GetMessagesSortableFields.includes(key as typeof GetMessagesSortableFields[number])) {
+                throw new Error(`Invalid key "${key}" used in sort. Available keys for sorting are ${GetMessagesSortableFields.join(', ')}`);
             }
-            return acc;
-        }, {} as Record<string, 1 | -1>);
+
+            if (value !== 'asc' && value !== 'desc') {
+                throw new Error(`Invalid sort direction for field "${key}". Expected "asc" or "desc", got ${value}`);
+            }
+        });
     }
 }

@@ -1,3 +1,4 @@
+import type { GetMessagesOptions } from '../../server/bridges/RoomBridge';
 import type { IMessageRaw } from '../messages/index';
 import type { IRoom } from '../rooms/index';
 import type { IUser } from '../users/index';
@@ -44,19 +45,12 @@ export interface IRoomRead {
      *
      * @param roomId The unique identifier of the room from which to retrieve messages.
      * @param options Optional parameters for retrieving messages:
-     *                - limit: The maximum number of messages to retrieve. If more than 100 is passed, it defaults to 100.
+     *                - limit: The maximum number of messages to retrieve. Maximum 100
      *                - skip: The number of messages to skip (for pagination).
-     *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either asc for ascending order or desc for descending order.
+     *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either "asc" for ascending order or "desc" for descending order.
      * @returns A Promise that resolves to an array of IMessage objects representing the messages in the room.
      */
-    getMessages(
-        roomId: string,
-        options?: Partial<{
-            limit: number;
-            skip: number;
-            sort: Record<string, 'asc' | 'desc'>;
-        }>,
-    ): Promise<IMessageRaw[]>;
+    getMessages(roomId: string, options?: Partial<GetMessagesOptions>): Promise<Array<IMessageRaw>>;
 
     /**
      * Gets an iterator for all of the users in the provided room.
