@@ -2,6 +2,7 @@ import type { IMessage, IMessageRaw } from '../../../src/definition/messages';
 import type { IRoom } from '../../../src/definition/rooms';
 import type { IUser } from '../../../src/definition/users';
 import { RoomBridge } from '../../../src/server/bridges';
+import type { GetMessagesOptions } from '../../../src/server/bridges/RoomBridge';
 
 export class TestsRoomBridge extends RoomBridge {
     public create(room: IRoom, members: Array<string>, appId: string): Promise<string> {
@@ -32,7 +33,7 @@ export class TestsRoomBridge extends RoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    public getMessages(roomId: string, options: { limit: number; skip?: number; sort?: Record<string, 1 | -1> }, appId: string): Promise<IMessageRaw[]> {
+    public getMessages(roomId: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
         throw new Error('Method not implemented.');
     }
 
