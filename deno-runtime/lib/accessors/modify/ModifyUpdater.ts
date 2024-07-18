@@ -26,7 +26,7 @@ const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definit
 };
 
 export class ModifyUpdater implements IModifyUpdater {
-    constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
+    constructor(private readonly senderFn: typeof Messenger.sendRequest) { }
 
     public getLivechatUpdater(): ILivechatUpdater {
         return new Proxy(
@@ -34,15 +34,17 @@ export class ModifyUpdater implements IModifyUpdater {
             {
                 get:
                     (_target: unknown, prop: string) =>
-                    (...params: unknown[]) =>
-                        prop === 'toJSON'
-                            ? {}
-                            : this.senderFn({
-                                  method: `accessor:getModifier:getUpdater:getLivechatUpdater:${prop}`,
-                                  params,
-                              })
-                                  .then((response) => response.result)
-                                  .catch((err) => err.error),
+                        (...params: unknown[]) =>
+                            prop === 'toJSON'
+                                ? {}
+                                : this.senderFn({
+                                    method: `accessor:getModifier:getUpdater:getLivechatUpdater:${prop}`,
+                                    params,
+                                })
+                                    .then((response) => response.result)
+                                    .catch((err) => {
+                                        throw new Error(err.error);
+                                    }),
             },
         ) as ILivechatUpdater;
     }
@@ -53,15 +55,17 @@ export class ModifyUpdater implements IModifyUpdater {
             {
                 get:
                     (_target: unknown, prop: string) =>
-                    (...params: unknown[]) =>
-                        prop === 'toJSON'
-                            ? {}
-                            : this.senderFn({
-                                  method: `accessor:getModifier:getUpdater:getUserUpdater:${prop}`,
-                                  params,
-                              })
-                                  .then((response) => response.result)
-                                  .catch((err) => err.error),
+                        (...params: unknown[]) =>
+                            prop === 'toJSON'
+                                ? {}
+                                : this.senderFn({
+                                    method: `accessor:getModifier:getUpdater:getUserUpdater:${prop}`,
+                                    params,
+                                })
+                                    .then((response) => response.result)
+                                    .catch((err) => {
+                                        throw new Error(err.error);
+                                    }),
             },
         ) as IUserUpdater;
     }

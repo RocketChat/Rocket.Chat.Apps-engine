@@ -71,7 +71,7 @@ export class AppAccessors {
                                 params,
                             })
                                 .then((response) => response.result)
-                                .catch((err) => err.error);
+                                .catch((err) => { throw new Error(err.error) });
                         },
                 },
             ) as T;
