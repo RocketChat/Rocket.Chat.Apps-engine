@@ -12,13 +12,17 @@ export default async function videoConferenceHandler(call: string, params: unkno
     const logger = AppObjectRegistry.get<Logger>('logger');
 
     if (!provider) {
-        return new JsonRpcError(`Provider ${providerName} not found`, -32000);
+        return JsonRpcError.methodNotFound({
+            message: `Provider ${providerName} not found`,
+        });
     }
 
     const method = provider[methodName as keyof IVideoConfProvider];
 
     if (typeof method !== 'function') {
-        return new JsonRpcError(`Method ${methodName} not found on provider ${providerName}`, -32000);
+        return JsonRpcError.methodNotFound({
+            message: `Method ${methodName} not found on provider ${providerName}`,
+        });
     }
 
     const [videoconf, user, options] = params as Array<unknown>;
