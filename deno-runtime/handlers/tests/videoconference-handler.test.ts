@@ -100,11 +100,8 @@ describe('handlers > videoconference', () => {
 
         assertInstanceOf(result, JsonRpcError);
         assertObjectMatch(result, {
-            message: 'Method not found',
-            code: -32601,
-            data: {
-                message: `Provider ${providerName} not found`,
-            },
+            message: `Provider ${providerName} not found`,
+            code: -32000,
         });
     });
 
