@@ -89,8 +89,13 @@ export class AppVideoConfProvider {
 
             return result as string | boolean | Array<IBlock> | undefined;
         } catch (e) {
-            if (method === AppMethod._VIDEOCONF_IS_CONFIGURED && e?.code === JSONRPC_METHOD_NOT_FOUND) {
-                return true;
+            if (e?.code === JSONRPC_METHOD_NOT_FOUND) {
+                if (method === AppMethod._VIDEOCONF_IS_CONFIGURED) {
+                    return true;
+                }
+                if (![AppMethod._VIDEOCONF_GENERATE_URL, AppMethod._VIDEOCONF_CUSTOMIZE_URL].includes(method)) {
+                    return undefined;
+                }
             }
 
             // @TODO add error handling
