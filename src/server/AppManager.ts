@@ -549,7 +549,11 @@ export class AppManager {
         // the App instance from the source.
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
-        undoSteps.push(() => this.getRuntime().stopRuntime(app.getDenoRuntime()));
+        undoSteps.push(() =>
+            this.getRuntime()
+                .stopRuntime(app.getDenoRuntime())
+                .catch(() => {}),
+        );
 
         // Create a user for the app
         try {
@@ -639,9 +643,12 @@ export class AppManager {
         await this.removeAppUser(app);
         await (this.bridges.getPersistenceBridge() as IInternalPersistenceBridge & PersistenceBridge).purge(app.getID());
         await this.appMetadataStorage.remove(app.getID());
-        await this.appSourceStorage.remove(app.getStorageItem()).catch();
+        await this.appSourceStorage.remove(app.getStorageItem()).catch(() => {});
 
-        await this.getRuntime().stopRuntime(app.getDenoRuntime());
+        // Errors here don't really prevent the process from dying, so we don't really need to do anything on the catch
+        await this.getRuntime()
+            .stopRuntime(app.getDenoRuntime())
+            .catch(() => {});
 
         this.apps.delete(app.getID());
     }
@@ -691,7 +698,10 @@ export class AppManager {
         descriptor.signature = await this.signatureManager.signApp(descriptor);
         const stored = await this.appMetadataStorage.update(descriptor);
 
-        await this.getRuntime().stopRuntime(this.apps.get(old.id).getDenoRuntime());
+        // Errors here don't really prevent the process from dying, so we don't really need to do anything on the catch
+        await this.getRuntime()
+            .stopRuntime(this.apps.get(old.id).getDenoRuntime())
+            .catch(() => {});
 
         const app = await this.getCompiler().toSandBox(this, descriptor, result);
 
@@ -737,7 +747,10 @@ export class AppManager {
             if (appPackageOrInstance instanceof Buffer) {
                 const parseResult = await this.getParser().unpackageApp(appPackageOrInstance);
 
-                await this.getRuntime().stopRuntime(this.apps.get(stored.id).getDenoRuntime());
+                // Errors here don't really prevent the process from dying, so we don't really need to do anything on the catch
+                await this.getRuntime()
+                    .stopRuntime(this.apps.get(stored.id).getDenoRuntime())
+                    .catch(() => {});
 
                 return this.getCompiler().toSandBox(this, stored, parseResult);
             }
