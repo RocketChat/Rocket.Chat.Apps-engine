@@ -1,6 +1,6 @@
 {
     "name": "@rocket.chat/apps-engine",
-    "version": "1.43.0",
+    "version": "1.43.1",
     "description": "The engine code for the Rocket.Chat Apps which manages, runs, translates, coordinates and all of that.",
     "main": "index",
     "typings": "index",
@@ -19,7 +19,7 @@
         "test:node": "NODE_ENV=test ts-node ./tests/runner.ts",
         "test:deno": "cd deno-runtime && deno task test",
         "gen-doc": "typedoc",
-        "postinstall": "cd deno-runtime && deno cache main.ts && deno test --no-check --no-run"
+        "postinstall": "node scripts/postinstall.js"
     },
     "repository": {
         "type": "git",
@@ -32,10 +32,11 @@
     ],
     "files": [
         "client/**",
-        "server/**",
         "definition/**",
+        "deno-runtime/**",
         "lib/**",
-        "deno-runtime/**"
+        "scripts/**",
+        "server/**"
     ],
     "author": {
         "name": "Rocket.Chat",

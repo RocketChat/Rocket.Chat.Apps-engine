@@ -128,6 +128,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             const denoWrapperPath = getDenoWrapperPath();
             // During development, the appsEngineDir is enough to run the deno process
             const appsEngineDir = path.dirname(path.join(denoWrapperPath, '..'));
+            const DENO_DIR = path.join(appsEngineDir, '.deno-cache');
             // When running in production, we're likely inside a node_modules which the Deno
             // process must be able to read in order to include files that use NPM packages
             const parentNodeModulesDir = path.dirname(path.join(appsEngineDir, '..'));
@@ -150,7 +151,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
                 this.appPackage.info.id,
             ];
 
-            this.deno = child_process.spawn(denoExePath, options, { env: null });
+            this.deno = child_process.spawn(denoExePath, options, { env: { DENO_DIR } });
             this.messenger.setReceiver(this.deno);
             this.livenessManager.attach(this.deno);
 
@@ -455,7 +456,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const { method } = message.payload;
 
         if (method.startsWith('accessor:')) {
-            const result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
+            let result: jsonrpc.SuccessObject | jsonrpc.ErrorObject;
+
+            try {
+                result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
+            } catch (e) {
+                result = jsonrpc.error((message.payload as jsonrpc.RequestObject).id, new jsonrpc.JsonRpcError(e.message, 1000));
+            }
 
             this.messenger.send(result);
 
@@ -463,7 +470,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         if (method.startsWith('bridges:')) {
-            const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
+            let result: jsonrpc.SuccessObject | jsonrpc.ErrorObject;
+
+            try {
+                result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
+            } catch (e) {
+                result = jsonrpc.error((message.payload as jsonrpc.RequestObject).id, new jsonrpc.JsonRpcError(e.message, 1000));
+            }
 
             this.messenger.send(result);
 

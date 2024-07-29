@@ -4,6 +4,7 @@ import type { VideoConference } from '../../definition/videoConferences';
 import type { IVideoConferenceUser } from '../../definition/videoConferences/IVideoConferenceUser';
 import type { IVideoConferenceOptions, IVideoConfProvider, VideoConfData, VideoConfDataExtended } from '../../definition/videoConfProviders';
 import type { ProxiedApp } from '../ProxiedApp';
+import { JSONRPC_METHOD_NOT_FOUND } from '../runtime/deno/AppsEngineDenoRuntime';
 import type { AppLogStorage } from '../storage';
 import type { AppAccessorManager } from './AppAccessorManager';
 
@@ -86,8 +87,17 @@ export class AppVideoConfProvider {
                 params: runContextArgs,
             });
 
-            return result as string;
+            return result as string | boolean | Array<IBlock> | undefined;
         } catch (e) {
+            if (e?.code === JSONRPC_METHOD_NOT_FOUND) {
+                if (method === AppMethod._VIDEOCONF_IS_CONFIGURED) {
+                    return true;
+                }
+                if (![AppMethod._VIDEOCONF_GENERATE_URL, AppMethod._VIDEOCONF_CUSTOMIZE_URL].includes(method)) {
+                    return undefined;
+                }
+            }
+
             // @TODO add error handling
             console.log(e);
         }

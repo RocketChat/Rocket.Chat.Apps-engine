@@ -34,7 +34,7 @@ const { RocketChatAssociationModel } = require('@rocket.chat/apps-engine/definit
 };
 
 export class ModifyCreator implements IModifyCreator {
-    constructor(private readonly senderFn: typeof Messenger.sendRequest) {}
+    constructor(private readonly senderFn: typeof Messenger.sendRequest) { }
 
     getLivechatCreator(): ILivechatCreator {
         return new Proxy(
@@ -56,7 +56,9 @@ export class ModifyCreator implements IModifyCreator {
                             params,
                         })
                             .then((response) => response.result)
-                            .catch((err) => err.error);
+                            .catch((err) => {
+                                throw new Error(err.error);
+                            });
                 },
             },
         ) as ILivechatCreator;
@@ -68,15 +70,17 @@ export class ModifyCreator implements IModifyCreator {
             {
                 get:
                     (_target: unknown, prop: string) =>
-                    (...params: unknown[]) =>
-                        prop === 'toJSON'
-                            ? {}
-                            : this.senderFn({
-                                  method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
-                                  params,
-                              })
-                                  .then((response) => response.result)
-                                  .catch((err) => err.error),
+                        (...params: unknown[]) =>
+                            prop === 'toJSON'
+                                ? {}
+                                : this.senderFn({
+                                    method: `accessor:getModifier:getCreator:getUploadCreator:${prop}`,
+                                    params,
+                                })
+                                    .then((response) => response.result)
+                                    .catch((err) => {
+                                        throw new Error(err.error);
+                                    }),
             },
         ) as IUploadCreator;
     }
