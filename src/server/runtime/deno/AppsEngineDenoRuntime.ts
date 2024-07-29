@@ -455,7 +455,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         const { method } = message.payload;
 
         if (method.startsWith('accessor:')) {
-            const result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
+            let result: jsonrpc.SuccessObject | jsonrpc.ErrorObject;
+
+            try {
+                result = await this.handleAccessorMessage(message as jsonrpc.IParsedObjectRequest);
+            } catch (e) {
+                result = jsonrpc.error((message.payload as jsonrpc.RequestObject).id, new jsonrpc.JsonRpcError(e.message, 1000));
+            }
 
             this.messenger.send(result);
 
@@ -463,7 +469,13 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
         }
 
         if (method.startsWith('bridges:')) {
-            const result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
+            let result: jsonrpc.SuccessObject | jsonrpc.ErrorObject;
+
+            try {
+                result = await this.handleBridgeMessage(message as jsonrpc.IParsedObjectRequest);
+            } catch (e) {
+                result = jsonrpc.error((message.payload as jsonrpc.RequestObject).id, new jsonrpc.JsonRpcError(e.message, 1000));
+            }
 
             this.messenger.send(result);
 
