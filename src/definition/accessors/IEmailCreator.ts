@@ -1,4 +1,4 @@
-export interface ISMTPOTPCreator {
+export interface IEmailCreator {
     /**
      * Sends an OTP through the configured SMTP server within Rocket.Chat
      *
