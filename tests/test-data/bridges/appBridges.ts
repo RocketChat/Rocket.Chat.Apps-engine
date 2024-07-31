@@ -22,6 +22,7 @@ import { AppBridges } from '../../../src/server/bridges';
 import type { CloudWorkspaceBridge } from '../../../src/server/bridges/CloudWorkspaceBridge';
 import type { IInternalFederationBridge } from '../../../src/server/bridges/IInternalFederationBridge';
 import type { OAuthAppsBridge } from '../../../src/server/bridges/OAuthAppsBridge';
+import type { SMTPOTPBridge } from '../../../src/server/bridges/SMTPOTPBridge';
 import type { ThreadBridge } from '../../../src/server/bridges/ThreadBridge';
 import { TestsActivationBridge } from './activationBridge';
 import { TestsApiBridge } from './apiBridge';
@@ -41,6 +42,7 @@ import { TestsRoleBridge } from './roleBridge';
 import { TestsRoomBridge } from './roomBridge';
 import { TestSchedulerBridge } from './schedulerBridge';
 import { TestsServerSettingBridge } from './serverSettingBridge';
+import { TestsSMTPOtpBridge } from './smtpOtpBridge';
 import { TestsThreadBridge } from './threadBridge';
 import { TestsUiIntegrationBridge } from './uiIntegrationBridge';
 import { TestUploadBridge } from './uploadBridge';
@@ -79,6 +81,8 @@ export class TestsAppBridges extends AppBridges {
     private readonly livechatBridge: TestLivechatBridge;
 
     private readonly uploadBridge: TestUploadBridge;
+
+    private readonly smtpOtpBridge: SMTPOTPBridge;
 
     private readonly uiIntegrationBridge: TestsUiIntegrationBridge;
 
@@ -119,6 +123,7 @@ export class TestsAppBridges extends AppBridges {
         this.oauthBridge = new TestOAuthAppsBridge();
         this.internalFederationBridge = new TestsInternalFederationBridge();
         this.threadBridge = new TestsThreadBridge();
+        this.smtpOtpBridge = new TestsSMTPOtpBridge();
     }
 
     public getCommandBridge(): TestsCommandBridge {
@@ -187,6 +192,10 @@ export class TestsAppBridges extends AppBridges {
 
     public getLivechatBridge(): LivechatBridge {
         return this.livechatBridge;
+    }
+
+    public getSMTPOTPBridge(): SMTPOTPBridge {
+        return this.smtpOtpBridge;
     }
 
     public getUploadBridge(): UploadBridge {

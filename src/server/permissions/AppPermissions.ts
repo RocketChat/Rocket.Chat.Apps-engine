@@ -25,6 +25,10 @@ export const AppPermissions = {
         read: { name: 'upload.read' },
         write: { name: 'upload.write' },
     },
+    smtp: {
+        sendOTP: { name: 'smtp.sendOTP' },
+        verifyOTP: { name: 'smtp.verifyOTP' },
+    },
     ui: {
         interaction: { name: 'ui.interact' },
         registerButtons: { name: 'ui.registerButtons' },

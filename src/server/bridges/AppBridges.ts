@@ -17,6 +17,7 @@ import type { RoleBridge } from './RoleBridge';
 import type { RoomBridge } from './RoomBridge';
 import type { SchedulerBridge } from './SchedulerBridge';
 import type { ServerSettingBridge } from './ServerSettingBridge';
+import type { SMTPOTPBridge } from './SMTPOTPBridge';
 import type { ThreadBridge } from './ThreadBridge';
 import type { UiInteractionBridge } from './UiInteractionBridge';
 import type { UploadBridge } from './UploadBridge';
@@ -37,6 +38,7 @@ export type Bridge =
     | RoomBridge
     | IInternalBridge
     | ServerSettingBridge
+    | SMTPOTPBridge
     | UploadBridge
     | UserBridge
     | UiInteractionBridge
@@ -76,6 +78,8 @@ export abstract class AppBridges {
     public abstract getServerSettingBridge(): ServerSettingBridge;
 
     public abstract getUploadBridge(): UploadBridge;
+
+    public abstract getSMTPOTPBridge(): SMTPOTPBridge;
 
     public abstract getUserBridge(): UserBridge;
 
