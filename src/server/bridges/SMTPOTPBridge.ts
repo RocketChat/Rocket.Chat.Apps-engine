@@ -17,7 +17,7 @@ export abstract class SMTPOTPBridge extends BaseBridge {
     }
 
     protected abstract sendOtpCodeThroughSMTP(email: string, appId: string): Promise<any>;
-    
+
     protected abstract verifyOTPCode(code: string, appId: string): Promise<any>;
 
     private hasWritePermission(appId: string): boolean {
@@ -48,6 +48,5 @@ export abstract class SMTPOTPBridge extends BaseBridge {
         );
 
         return false;
-
     }
 }

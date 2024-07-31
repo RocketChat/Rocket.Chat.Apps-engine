@@ -1,5 +1,5 @@
-import { ISMTPOTPReader } from '../../definition/accessors/ISMTPOTPReader';
-import { AppBridges } from '../bridges';
+import type { ISMTPOTPReader } from '../../definition/accessors/ISMTPOTPReader';
+import type { AppBridges } from '../bridges';
 
 export class SMTPOTPReader implements ISMTPOTPReader {
     constructor(private readonly bridges: AppBridges, private readonly appId: string) {}
