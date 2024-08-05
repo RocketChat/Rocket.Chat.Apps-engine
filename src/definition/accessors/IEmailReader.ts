@@ -4,6 +4,7 @@ export interface IEmailReader {
      *
      * @param code the code that is going to be verified
      * @param email the email the code was sent
+     * @param channel from which channel is the visitor verifying
      */
-    verifyOTPCode(code: string, email: string): Promise<any>;
+    verifyOTPCode(code: string, email: string, channel: string): Promise<any>;
 }
