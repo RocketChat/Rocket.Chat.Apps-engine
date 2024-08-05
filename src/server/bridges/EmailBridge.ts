@@ -4,21 +4,21 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class EmailBridge extends BaseBridge {
-    public async doSendOtpCodeThroughSMTP(email: string, channel: string, appId: string): Promise<any> {
+    public async doSendOtpCodeThroughSMTP(email: string, channel: string, visitorId: string, appId: string): Promise<any> {
         if (this.hasWritePermission(appId)) {
-            return this.sendOtpCodeThroughSMTP(email, channel, appId);
+            return this.sendOtpCodeThroughSMTP(email, channel, visitorId, appId);
         }
     }
 
-    public async doVerifyOTPCode(code: string, email: string, channel: string, appId: string): Promise<any> {
+    public async doVerifyOTPCode(code: string, email: string, channel: string, visitorId: string, appId: string): Promise<any> {
         if (this.hasReadPermission(appId)) {
-            return this.verifyOTPCode(code, email, channel, appId);
+            return this.verifyOTPCode(code, email, channel, visitorId, appId);
         }
     }
 
-    protected abstract sendOtpCodeThroughSMTP(email: string, channel: string, appId: string): Promise<any>;
+    protected abstract sendOtpCodeThroughSMTP(email: string, channel: string, visitorId: string, appId: string): Promise<any>;
 
-    protected abstract verifyOTPCode(code: string, email: string, channel: string, appId: string): Promise<any>;
+    protected abstract verifyOTPCode(code: string, email: string, channel: string, visitorId: string, appId: string): Promise<any>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.email.sendOTP)) {

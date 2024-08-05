@@ -4,6 +4,7 @@ export interface IEmailCreator {
      *
      * @param email the email that will recieve the TOTP
      * @param channel from which type of channel is the visitor verifying
+     * @param visitorId the id from the visitor
      */
-    sendOTPThroughSMTP(email: string, channel: string): Promise<any>;
+    sendOTPThroughSMTP(email: string, channel: string, visitorId: string): Promise<any>;
 }
