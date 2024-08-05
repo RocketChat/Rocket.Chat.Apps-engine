@@ -4,21 +4,13 @@ import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class EmailBridge extends BaseBridge {
-    public async doSendOtpCodeThroughSMTP(email: string, channel: string, visitorId: string, appId: string): Promise<any> {
+    public async doSendOtpCodeThroughSMTP(email: string, code: string, language: string, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
-            return this.sendOtpCodeThroughSMTP(email, channel, visitorId, appId);
+            return this.sendOtpCodeThroughSMTP(email, code, language, appId);
         }
     }
 
-    public async doVerifyOTPCode(code: string, email: string, channel: string, visitorId: string, appId: string): Promise<any> {
-        if (this.hasReadPermission(appId)) {
-            return this.verifyOTPCode(code, email, channel, visitorId, appId);
-        }
-    }
-
-    protected abstract sendOtpCodeThroughSMTP(email: string, channel: string, visitorId: string, appId: string): Promise<any>;
-
-    protected abstract verifyOTPCode(code: string, email: string, channel: string, visitorId: string, appId: string): Promise<any>;
+    protected abstract sendOtpCodeThroughSMTP(email: string, code: string, language: string, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.email.sendOTP)) {
@@ -29,21 +21,6 @@ export abstract class EmailBridge extends BaseBridge {
             new PermissionDeniedError({
                 appId,
                 missingPermissions: [AppPermissions.email.sendOTP],
-            }),
-        );
-
-        return false;
-    }
-
-    private hasReadPermission(appId: string): boolean {
-        if (AppPermissionManager.hasPermission(appId, AppPermissions.email.verifyOTP)) {
-            return true;
-        }
-
-        AppPermissionManager.notifyAboutError(
-            new PermissionDeniedError({
-                appId,
-                missingPermissions: [AppPermissions.email.verifyOTP],
             }),
         );
 

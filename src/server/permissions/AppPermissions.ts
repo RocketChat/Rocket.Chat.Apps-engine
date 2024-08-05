@@ -27,7 +27,6 @@ export const AppPermissions = {
     },
     email: {
         sendOTP: { name: 'email.sendOTP' },
-        verifyOTP: { name: 'email.verifyOTP' },
     },
     ui: {
         interaction: { name: 'ui.interact' },

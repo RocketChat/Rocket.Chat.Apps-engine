@@ -3,8 +3,8 @@ export interface IEmailCreator {
      * Sends an OTP through the configured SMTP server within Rocket.Chat
      *
      * @param email the email that will recieve the TOTP
-     * @param channel from which type of channel is the visitor verifying
-     * @param visitorId the id from the visitor
+     * @param code is the code that is going to be sent via email
+     * @param language is the language that is going to be used within Rocket.Chat
      */
-    sendOTPThroughSMTP(email: string, channel: string, visitorId: string): Promise<any>;
+    sendOTPThroughSMTP(email: string, code: string, language: string): Promise<any>;
 }
