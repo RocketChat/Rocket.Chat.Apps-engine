@@ -1,0 +1,37 @@
+name: on-push
+on: [push]
+jobs:
+  e2e-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+      - uses: meteorengineer/setup-meteor@v1
+      - name: Checkout Rocket.Chat
+        uses: actions/checkout@v2
+        with:
+          repository: RocketChat/Rocket.Chat
+          ref: 'develop'
+          token: ${{ secrets.GTHUB_PAT }}
+          path: Rocket.Chat
+      - name: Checkout Apps-Engine
+        uses: actions/checkout@v2
+        with:
+          repository: RocketChat/Rocket.Chat.Apps-engine
+          ref: 'alpha'
+          token: ${{ secrets.GTHUB_PAT }}
+          path: apps-engine
+      - name: "Setup Apps-Engine"
+        working-directory: ./apps-engine
+        run: |
+          npm install
+          npm run compile
+      - name: "Setup Rocket.Chat"
+        working-directory: ./Rocket.Chat
+        run: meteor npm install
+      - name: "Link Apps-Engine to Rocket.Chat"
+        run: |
+          rm -r ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
+          mv ./apps-engine/.github/scripts/start-e2e-testing.js ./
+          mv ./apps-engine ./Rocket.Chat/node_modules/@rocket.chat/apps-engine
+      - name: "Start Apps-Engine End-to-End Testing"
+        run: node ./start-e2e-testing.js
