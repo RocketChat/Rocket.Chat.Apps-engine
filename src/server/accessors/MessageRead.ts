@@ -30,4 +30,16 @@ export class MessageRead implements IMessageRead {
 
         return msg.room;
     }
+
+    public async getUnreadByRoomAndUser(
+        roomId: string,
+        uid: string,
+        options?: Partial<{
+            limit: number;
+            skip: number;
+            sort: Record<string, 1 | -1>;
+        }>,
+    ): Promise<IMessage[]> {
+        return this.messageBridge.doGetUnreadByRoomAndUser(roomId, uid, { limit: 100, ...options }, this.appId);
+    }
 }

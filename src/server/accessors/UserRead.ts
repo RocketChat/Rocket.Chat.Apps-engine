@@ -20,4 +20,8 @@ export class UserRead implements IUserRead {
     public getUserUnreadMessageCount(uid: string): Promise<number> {
         return this.userBridge.doGetUserUnreadMessageCount(uid, this.appId);
     }
+
+    public getUserUnreadMessageCountByRoom(uid: string, rid: string): Promise<number> {
+        return this.userBridge.doGetUserUnreadMessageCountByRoom(uid, rid, this.appId);
+    }
 }
