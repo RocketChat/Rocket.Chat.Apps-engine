@@ -1,4 +1,4 @@
-import type { IEmailDescriptor } from '../email';
+import type { IEmail } from '../email';
 
 export interface IEmailCreator {
     /**
@@ -6,5 +6,5 @@ export interface IEmailCreator {
      *
      * @param email the email data
      */
-    send(email: IEmailDescriptor): Promise<void>;
+    send(email: IEmail): Promise<void>;
 }
