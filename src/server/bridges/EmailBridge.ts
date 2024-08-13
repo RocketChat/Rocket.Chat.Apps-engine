@@ -1,17 +1,17 @@
-import type { IEmailDescriptor } from '../../definition/email';
+import type { IEmail } from '../../definition/email';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
 
 export abstract class EmailBridge extends BaseBridge {
-    public async doSendEmail(email: IEmailDescriptor, appId: string): Promise<void> {
+    public async doSendEmail(email: IEmail, appId: string): Promise<void> {
         if (this.hasWritePermission(appId)) {
             return this.sendEmail(email, appId);
         }
     }
 
-    protected abstract sendEmail(email: IEmailDescriptor, appId: string): Promise<void>;
+    protected abstract sendEmail(email: IEmail, appId: string): Promise<void>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.email.send)) {
