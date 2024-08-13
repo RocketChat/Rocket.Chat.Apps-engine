@@ -26,7 +26,7 @@ export const AppPermissions = {
         write: { name: 'upload.write' },
     },
     email: {
-        sendOTP: { name: 'email.sendOTP' },
+        send: { name: 'email.send' },
     },
     ui: {
         interaction: { name: 'ui.interact' },
