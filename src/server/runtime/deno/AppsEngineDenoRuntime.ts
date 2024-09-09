@@ -200,7 +200,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
     public async getStatus(): Promise<AppStatus> {
         // If the process has been terminated, we can't get the status
-        if (this.deno.exitCode !== null) {
+        if (!this.deno || this.deno.exitCode !== null) {
             return AppStatus.UNKNOWN;
         }
 
