@@ -12,6 +12,7 @@ import type { IRoomBuilder } from './IRoomBuilder';
 import type { IUploadCreator } from './IUploadCreator';
 import type { IUserBuilder } from './IUserBuilder';
 import type { IVideoConferenceBuilder } from './IVideoConferenceBuilder';
+import type { IEmailCreator } from './IEmailCreator';
 
 export interface IModifyCreator {
     /**
@@ -24,6 +25,11 @@ export interface IModifyCreator {
      * Get the creator object responsible for the upload.
      */
     getUploadCreator(): IUploadCreator;
+
+    /**
+     * Gets the creator object responsible for email sending
+     */
+    getEmailCreator(): IEmailCreator;
 
     /**
      * @deprecated please prefer the rocket.chat/ui-kit components
