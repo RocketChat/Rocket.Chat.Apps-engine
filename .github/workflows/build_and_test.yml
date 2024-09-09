@@ -65,7 +65,7 @@ jobs:
               run: |
                   tar czf /tmp/workspace.tar.gz .
 
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v4
               with:
                   name: workspace
                   path: /tmp/workspace.tar.gz
@@ -80,7 +80,7 @@ jobs:
               with:
                   node-version: '14.19.3'
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v4
               with:
                   name: workspace
                   path: /tmp
@@ -102,7 +102,7 @@ jobs:
               with:
                   node-version: '14.19.3'
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v4
               with:
                   name: workspace
                   path: /tmp
@@ -124,7 +124,7 @@ jobs:
               with:
                   node-version: '14.19.3'
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v4
               with:
                   name: workspace
                   path: /tmp
@@ -140,7 +140,7 @@ jobs:
               run: |
                   tar czf /tmp/workspace.tar.gz .
 
-            - uses: actions/upload-artifact@v2
+            - uses: actions/upload-artifact@v4
               with:
                   name: workspace
                   path: /tmp/workspace.tar.gz
@@ -156,7 +156,7 @@ jobs:
               with:
                   node-version: '14.19.3'
 
-            - uses: actions/download-artifact@v2
+            - uses: actions/download-artifact@v4
               with:
                   name: workspace
                   path: /tmp
