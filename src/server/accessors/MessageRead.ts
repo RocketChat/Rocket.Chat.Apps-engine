@@ -32,24 +32,20 @@ export class MessageRead implements IMessageRead {
         return msg.room;
     }
 
-    public async getUnreadByRoomAndUser(roomId: string, uid: string, options?: Partial<GetMessagesOptions>): Promise<IMessageRaw[]> {
-        if (typeof options.limit !== 'undefined' && (!Number.isFinite(options.limit) || options.limit > 100)) {
-            throw new Error(`Invalid limit provided. Expected number <= 100, got ${options.limit}`);
-        }
+    public async getUnreadByRoomAndUser(roomId: string, uid: string, options: Partial<GetMessagesOptions> = {}): Promise<IMessageRaw[]> {
+        const { limit = 100, sort = { createdAt: 'asc' }, skip = 0 } = options;
 
         if (typeof roomId !== 'string' || roomId.trim().length === 0) {
             throw new Error('Invalid roomId: must be a non-empty string');
         }
 
-        if (options.sort) {
-            this.validateSort(options.sort);
+        if (!Number.isFinite(limit) || limit <= 0 || limit > 100) {
+            throw new Error(`Invalid limit provided. Expected number between 1 and 100, got ${limit}`);
         }
 
-        const completeOptions: GetMessagesOptions = {
-            limit: options.limit ?? 100,
-            sort: options.sort ?? { createdAt: 'asc' },
-            skip: options.skip ?? 0,
-        };
+        this.validateSort(sort);
+
+        const completeOptions: GetMessagesOptions = { limit, sort, skip };
 
         return this.messageBridge.doGetUnreadByRoomAndUser(roomId, uid, completeOptions, this.appId);
     }
