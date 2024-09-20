@@ -5,14 +5,14 @@ import type { IUser } from '../../../src/definition/users';
 import { RoomRead } from '../../../src/server/accessors';
 import type { RoomBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
-import type { IMessage } from '../../../src/definition/messages';
+import type { IMessageRaw } from '../../../src/definition/messages';
 
 export class RoomReadAccessorTestFixture {
     private room: IRoom;
 
     private user: IUser;
 
-    private messages: IMessage[];
+    private messages: IMessageRaw[];
 
     private mockRoomBridgeWithRoom: RoomBridge;
 
@@ -20,7 +20,7 @@ export class RoomReadAccessorTestFixture {
     public setupFixture() {
         this.room = TestData.getRoom();
         this.user = TestData.getUser();
-        this.messages = ['507f1f77bcf86cd799439011', '507f191e810c19729de860ea'].map((id) => TestData.getMessage(id));
+        this.messages = ['507f1f77bcf86cd799439011', '507f191e810c19729de860ea'].map((id) => TestData.getMessageRaw(id));
 
         const theRoom = this.room;
         const theUser = this.user;
@@ -44,7 +44,7 @@ export class RoomReadAccessorTestFixture {
             doGetMembers(name, appId): Promise<Array<IUser>> {
                 return Promise.resolve([theUser]);
             },
-            doGetMessages(roomId, appId, options): Promise<IMessage[]> {
+            doGetMessages(roomId, options, appId): Promise<IMessageRaw[]> {
                 return Promise.resolve(theMessages);
             },
         } as RoomBridge;

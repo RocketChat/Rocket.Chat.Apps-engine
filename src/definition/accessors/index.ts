@@ -1,6 +1,7 @@
 export * from './IApiExtend';
 export * from './IAppAccessors';
 export * from './IAppInstallationContext';
+export * from './IAppUpdateContext';
 export * from './IAppUninstallationContext';
 export * from './ICloudWorkspaceRead';
 export * from './IConfigurationExtend';
@@ -20,6 +21,7 @@ export * from './ILogger';
 export * from './IMessageBuilder';
 export * from './IMessageExtender';
 export * from './IMessageRead';
+export * from './IMessageUpdater';
 export * from './IModify';
 export * from './IModifyCreator';
 export * from './IModifyDeleter';

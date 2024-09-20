@@ -1,4 +1,4 @@
-import type { Block } from '@rocket.chat/ui-kit';
+import type { LayoutBlock } from '@rocket.chat/ui-kit';
 
 import type { IMessage, IMessageAttachment, IMessageFile, IMessageReactions } from '../../definition/messages';
 import type { IUser, IUserLookup } from '../../definition/users';
@@ -40,7 +40,7 @@ export class Message implements IMessage {
 
     public file?: IMessageFile;
 
-    public blocks?: Array<Block>;
+    public blocks?: Array<LayoutBlock>;
 
     public starred?: Array<{ _id: string }>;
 

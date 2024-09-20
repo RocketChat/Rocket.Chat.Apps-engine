@@ -80,6 +80,18 @@ export class VideoConferenceBuilderAccessorTestFixture {
     }
 
     @Test()
+    public setDiscussionRid() {
+        const call = {} as AppVideoConference;
+        const builder = new VideoConferenceBuilder(call);
+
+        Expect(builder.setDiscussionRid('testId')).toBe(builder);
+        Expect(call.discussionRid).toBe('testId');
+        Expect(builder.getDiscussionRid()).toBe('testId');
+
+        Expect(builder.getVideoConference()).toBe(call);
+    }
+
+    @Test()
     public initialData() {
         const call = { providerName: 'test' } as AppVideoConference;
         const builder = new VideoConferenceBuilder(call);

@@ -24,7 +24,7 @@ interface IOmnichannelSourceApp {
 }
 type OmnichannelSource =
     | {
-          type: Omit<OmnichannelSourceType, 'app'>;
+          type: Exclude<OmnichannelSourceType, 'app'>;
       }
     | IOmnichannelSourceApp;
 
@@ -37,6 +37,8 @@ export interface ILivechatRoom extends IRoom {
     visitor: IVisitor;
     visitorChannelInfo?: IVisitorChannelInfo;
     department?: IDepartment;
+    closer: 'user' | 'visitor' | 'bot';
+    closedBy?: IUser;
     servedBy?: IUser;
     responseBy?: IUser;
     isWaitingResponse: boolean;

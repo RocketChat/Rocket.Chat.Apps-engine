@@ -1,6 +1,6 @@
 import type { IHttp, IModify, IPersistence, IRead } from '../../src/definition/accessors';
 import { HttpStatusCode } from '../../src/definition/accessors';
-import type { IMessage } from '../../src/definition/messages';
+import type { IMessage, IMessageAttachment, IMessageRaw } from '../../src/definition/messages';
 import type { IRoom } from '../../src/definition/rooms';
 import { RoomType } from '../../src/definition/rooms';
 import type { ISetting } from '../../src/definition/settings';
@@ -15,7 +15,6 @@ import { TestSourceStorage } from './storage/TestSourceStorage';
 import type { IApi, IApiRequest, IApiResponse } from '../../src/definition/api';
 import { ApiSecurity, ApiVisibility } from '../../src/definition/api';
 import type { IApiEndpointInfo } from '../../src/definition/api/IApiEndpointInfo';
-import type { App } from '../../src/definition/App';
 import { AppStatus } from '../../src/definition/AppStatus';
 import type { AppVideoConference } from '../../src/definition/videoConferences/AppVideoConference';
 import type { VideoConference } from '../../src/definition/videoConferences/IVideoConference';
@@ -26,6 +25,17 @@ import type { AppManager } from '../../src/server/AppManager';
 import type { AppBridges } from '../../src/server/bridges';
 import { ProxiedApp } from '../../src/server/ProxiedApp';
 import type { AppLogStorage, AppMetadataStorage, AppSourceStorage, IAppStorageItem } from '../../src/server/storage';
+import type {
+    AppExternalComponentManager,
+    AppSchedulerManager,
+    AppSettingsManager,
+    AppSlashCommandManager,
+    AppVideoConfProviderManager,
+} from '../../src/server/managers';
+import type { UIActionButtonManager } from '../../src/server/managers/UIActionButtonManager';
+import type { DenoRuntimeSubprocessController } from '../../src/server/runtime/deno/AppsEngineDenoRuntime';
+import { AppPackageParser } from '../../src/server/compiler';
+import type { AppRuntimeManager } from '../../src/server/managers/AppRuntimeManager';
 
 export class TestInfastructureSetup {
     private appStorage: TestsAppStorage;
@@ -36,11 +46,64 @@ export class TestInfastructureSetup {
 
     private sourceStorage: TestSourceStorage;
 
+    private appManager: AppManager;
+
+    private runtimeManager: AppRuntimeManager;
+
     constructor() {
         this.appStorage = new TestsAppStorage();
         this.logStorage = new TestsAppLogStorage();
         this.bridges = new TestsAppBridges();
         this.sourceStorage = new TestSourceStorage();
+        this.runtimeManager = {
+            startRuntimeForApp: async () => {
+                return {} as DenoRuntimeSubprocessController;
+            },
+            runInSandbox: async () => {
+                return {} as unknown as Promise<unknown>;
+            },
+            stopRuntime: () => {},
+        } as unknown as AppRuntimeManager;
+
+        this.appManager = {
+            getParser() {
+                if (!this.parser) {
+                    this.parser = new AppPackageParser();
+                }
+
+                return this.parser;
+            },
+            getBridges: () => {
+                return this.bridges as AppBridges;
+            },
+            getCommandManager() {
+                return {} as AppSlashCommandManager;
+            },
+            getExternalComponentManager() {
+                return {} as AppExternalComponentManager;
+            },
+            getOneById(appId: string): ProxiedApp {
+                return appId === 'failMePlease' ? undefined : TestData.getMockApp(appId, 'testing');
+            },
+            getLogStorage(): AppLogStorage {
+                return new TestsAppLogStorage();
+            },
+            getSchedulerManager() {
+                return {} as AppSchedulerManager;
+            },
+            getUIActionButtonManager() {
+                return {} as UIActionButtonManager;
+            },
+            getVideoConfProviderManager() {
+                return {} as AppVideoConfProviderManager;
+            },
+            getSettingsManager() {
+                return {} as AppSettingsManager;
+            },
+            getRuntime: () => {
+                return this.runtimeManager;
+            },
+        } as unknown as AppManager;
     }
 
     public getAppStorage(): AppMetadataStorage {
@@ -58,9 +121,46 @@ export class TestInfastructureSetup {
     public getSourceStorage(): AppSourceStorage {
         return this.sourceStorage;
     }
+
+    public getMockManager(): AppManager {
+        return this.appManager;
+    }
 }
 
 const date = new Date();
+
+const DEFAULT_ATTACHMENT = {
+    color: '#00b2b2',
+    collapsed: false,
+    text: 'Just an attachment that is used for testing',
+    timestampLink: 'https://google.com/',
+    thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
+    author: {
+        name: 'Author Name',
+        link: 'https://github.com/graywolf336',
+        icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
+    },
+    title: {
+        value: 'Attachment Title',
+        link: 'https://github.com/RocketChat',
+        displayDownloadLink: false,
+    },
+    imageUrl: 'https://rocket.chat/images/default/logo.svg',
+    audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
+    videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
+    fields: [
+        {
+            short: true,
+            title: 'Test',
+            value: 'Testing out something or other',
+        },
+        {
+            short: true,
+            title: 'Another Test',
+            value: '[Link](https://google.com/) something and this and that.',
+        },
+    ],
+};
 export class TestData {
     public static getDate(): Date {
         return date;
@@ -126,41 +226,42 @@ export class TestData {
             emoji: ':see_no_evil:',
             avatarUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
             alias: 'Testing Bot',
-            attachments: [
-                {
-                    collapsed: false,
-                    color: '#00b2b2',
-                    text: 'Just an attachment that is used for testing',
-                    timestamp: new Date(),
-                    timestampLink: 'https://google.com/',
-                    thumbnailUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                    author: {
-                        name: 'Author Name',
-                        link: 'https://github.com/graywolf336',
-                        icon: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
-                    },
-                    title: {
-                        value: 'Attachment Title',
-                        link: 'https://github.com/RocketChat',
-                        displayDownloadLink: false,
-                    },
-                    imageUrl: 'https://rocket.chat/images/default/logo.svg',
-                    audioUrl: 'http://www.w3schools.com/tags/horse.mp3',
-                    videoUrl: 'http://www.w3schools.com/tags/movie.mp4',
-                    fields: [
-                        {
-                            short: true,
-                            title: 'Test',
-                            value: 'Testing out something or other',
-                        },
-                        {
-                            short: true,
-                            title: 'Another Test',
-                            value: '[Link](https://google.com/) something and this and that.',
-                        },
-                    ],
-                },
-            ],
+            attachments: [this.createAttachment()],
+        };
+    }
+
+    public static getMessageRaw(id?: string, text?: string): IMessageRaw {
+        const editorUser = TestData.getUser();
+        const senderUser = TestData.getUser();
+
+        return {
+            id: id || '4bShvoOXqB',
+            roomId: TestData.getRoom().id,
+            sender: {
+                _id: senderUser.id,
+                username: senderUser.username,
+                name: senderUser?.name,
+            },
+            text: text || 'This is just a test, do not be alarmed',
+            createdAt: date,
+            updatedAt: new Date(),
+            editor: {
+                _id: editorUser.id,
+                username: editorUser.username,
+            },
+            editedAt: new Date(),
+            emoji: ':see_no_evil:',
+            avatarUrl: 'https://avatars0.githubusercontent.com/u/850391?s=88&v=4',
+            alias: 'Testing Bot',
+            attachments: [this.createAttachment()],
+        };
+    }
+
+    private static createAttachment(attachment?: IMessageAttachment): IMessageAttachment {
+        attachment = attachment || DEFAULT_ATTACHMENT;
+        return {
+            timestamp: new Date(),
+            ...attachment,
         };
     }
 
@@ -200,6 +301,8 @@ export class TestData {
             endpoints: [
                 {
                     path,
+                    // The move to the Deno runtime now requires us to manually set what methods are available
+                    _availableMethods: ['get'],
                     get(
                         request: IApiRequest,
                         endpoint: IApiEndpointInfo,
@@ -372,22 +475,7 @@ export class TestData {
     }
 
     public static getMockApp(id: string, name: string): ProxiedApp {
-        return new ProxiedApp(
-            {} as AppManager,
-            { status: AppStatus.UNKNOWN } as IAppStorageItem,
-            {
-                getName() {
-                    return 'testing';
-                },
-                getID() {
-                    return 'testing';
-                },
-                getRuntime() {
-                    return { runInSandbox: (mod: string) => mod };
-                },
-            } as unknown as App,
-            { runInSandbox: (mod: string) => mod } as any,
-        );
+        return new ProxiedApp({} as AppManager, { status: AppStatus.UNKNOWN, info: { id, name } } as IAppStorageItem, {} as DenoRuntimeSubprocessController);
     }
 }
 

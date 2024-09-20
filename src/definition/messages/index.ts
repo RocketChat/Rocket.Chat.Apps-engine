@@ -8,7 +8,8 @@ import { IMessageDeleteContext } from './IMessageDeleteContext';
 import { IMessageFile } from './IMessageFile';
 import { IMessageFollowContext } from './IMessageFollowContext';
 import { IMessagePinContext } from './IMessagePinContext';
-import { IMessageReaction, IMessageReactions } from './IMessageReaction';
+import { IMessageRaw } from './IMessageRaw';
+import { IMessageReaction, IMessageReactions, Reaction } from './IMessageReaction';
 import { IMessageReactionContext } from './IMessageReactionContext';
 import { IMessageReportContext } from './IMessageReportContext';
 import { IMessageStarContext } from './IMessageStarContext';
@@ -39,6 +40,7 @@ export {
     IMessageAttachmentField,
     IMessageAction,
     IMessageFile,
+    IMessageRaw,
     IMessageReactions,
     IMessageReaction,
     IPostMessageDeleted,
@@ -65,4 +67,5 @@ export {
     MessageActionType,
     MessageProcessingType,
     IMessageDeleteContext,
+    Reaction,
 };

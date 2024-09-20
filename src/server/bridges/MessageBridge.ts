@@ -1,5 +1,5 @@
 import type { ITypingOptions } from '../../definition/accessors/INotifier';
-import type { IMessage } from '../../definition/messages';
+import type { IMessage, Reaction } from '../../definition/messages';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
@@ -69,6 +69,18 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
+    public async doAddReaction(messageId: string, userId: string, reaction: Reaction, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.addReaction(messageId, userId, reaction);
+        }
+    }
+
+    public async doRemoveReaction(messageId: string, userId: string, reaction: Reaction, appId: string): Promise<void> {
+        if (this.hasWritePermission(appId)) {
+            return this.removeReaction(messageId, userId, reaction);
+        }
+    }
+
     protected abstract create(message: IMessage, appId: string): Promise<string>;
 
     protected abstract update(message: IMessage, appId: string): Promise<void>;
@@ -93,6 +105,10 @@ export abstract class MessageBridge extends BaseBridge {
         },
         appId: string,
     ): Promise<IMessage[]>;
+
+    protected abstract addReaction(messageId: string, userId: string, reaction: Reaction): Promise<void>;
+
+    protected abstract removeReaction(messageId: string, userId: string, reaction: Reaction): Promise<void>;
 
     private hasReadPermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.message.read)) {

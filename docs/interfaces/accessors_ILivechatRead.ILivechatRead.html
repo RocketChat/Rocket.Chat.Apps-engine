@@ -32,7 +32,9 @@
 <div class="tsd-index-list"><a href="accessors_ILivechatRead.ILivechatRead.html#_fetchLivechatRoomMessages" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>_fetch<wbr/>Livechat<wbr/>Room<wbr/>Messages</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getDepartmentsEnabledWithAgents" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Departments<wbr/>Enabled<wbr/>With<wbr/>Agents</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatDepartmentByIdOrName" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Department<wbr/>By<wbr/>Id<wbr/>Or<wbr/>Name</span></a>
+<a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatOpenRoomsByAgentId" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatRooms" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Rooms</span></a>
+<a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatTotalOpenRoomsByAgentId" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Total<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatVisitorByEmail" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Email</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatVisitorById" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Id</span></a>
 <a href="accessors_ILivechatRead.ILivechatRead.html#getLivechatVisitorByPhoneNumber" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Phone<wbr/>Number</span></a>
@@ -59,7 +61,7 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="messages_IMessage.IMessage.html" class="tsd-signature-type tsd-kind-interface">IMessage</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L35">src/definition/accessors/ILivechatRead.ts:35</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L37">src/definition/accessors/ILivechatRead.ts:37</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getDepartmentsEnabledWithAgents" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Departments<wbr/>Enabled<wbr/>With<wbr/>Agents</span><a href="#getDepartmentsEnabledWithAgents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -80,7 +82,20 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_IDepartment.IDepartment.html" class="tsd-signature-type tsd-kind-interface">IDepartment</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L30">src/definition/accessors/ILivechatRead.ts:30</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L32">src/definition/accessors/ILivechatRead.ts:32</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="getLivechatOpenRoomsByAgentId" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span><a href="#getLivechatOpenRoomsByAgentId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="getLivechatOpenRoomsByAgentId.getLivechatOpenRoomsByAgentId-1"><span class="tsd-kind-call-signature">get<wbr/>Livechat<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">agentId</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_ILivechatRoom.ILivechatRoom.html" class="tsd-signature-type tsd-kind-interface">ILivechatRoom</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getLivechatOpenRoomsByAgentId.getLivechatOpenRoomsByAgentId-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">agentId</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_ILivechatRoom.ILivechatRoom.html" class="tsd-signature-type tsd-kind-interface">ILivechatRoom</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L20">src/definition/accessors/ILivechatRead.ts:20</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatRooms" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Rooms</span><a href="#getLivechatRooms" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -96,6 +111,19 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_ILivechatRoom.ILivechatRoom.html" class="tsd-signature-type tsd-kind-interface">ILivechatRoom</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
 <li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L19">src/definition/accessors/ILivechatRead.ts:19</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="getLivechatTotalOpenRoomsByAgentId" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Total<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span><a href="#getLivechatTotalOpenRoomsByAgentId" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="getLivechatTotalOpenRoomsByAgentId.getLivechatTotalOpenRoomsByAgentId-1"><span class="tsd-kind-call-signature">get<wbr/>Livechat<wbr/>Total<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">agentId</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span><a href="#getLivechatTotalOpenRoomsByAgentId.getLivechatTotalOpenRoomsByAgentId-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">agentId</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L21">src/definition/accessors/ILivechatRead.ts:21</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatVisitorByEmail" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Email</span><a href="#getLivechatVisitorByEmail" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -108,7 +136,7 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h5><span class="tsd-kind-parameter">email</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_IVisitor.IVisitor.html" class="tsd-signature-type tsd-kind-interface">IVisitor</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L27">src/definition/accessors/ILivechatRead.ts:27</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L29">src/definition/accessors/ILivechatRead.ts:29</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatVisitorById" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Id</span><a href="#getLivechatVisitorById" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -121,7 +149,7 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h5><span class="tsd-kind-parameter">id</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_IVisitor.IVisitor.html" class="tsd-signature-type tsd-kind-interface">IVisitor</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L26">src/definition/accessors/ILivechatRead.ts:26</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L28">src/definition/accessors/ILivechatRead.ts:28</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatVisitorByPhoneNumber" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Phone<wbr/>Number</span><a href="#getLivechatVisitorByPhoneNumber" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -134,7 +162,7 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h5><span class="tsd-kind-parameter">phoneNumber</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_IVisitor.IVisitor.html" class="tsd-signature-type tsd-kind-interface">IVisitor</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L29">src/definition/accessors/ILivechatRead.ts:29</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L31">src/definition/accessors/ILivechatRead.ts:31</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatVisitorByToken" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Token</span><a href="#getLivechatVisitorByToken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -147,7 +175,7 @@ as we&#39;re evaluating its performance and fit for the API.</p>
 <h5><span class="tsd-kind-parameter">token</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="livechat_IVisitor.IVisitor.html" class="tsd-signature-type tsd-kind-interface">IVisitor</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L28">src/definition/accessors/ILivechatRead.ts:28</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L30">src/definition/accessors/ILivechatRead.ts:30</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getLivechatVisitors" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Livechat<wbr/>Visitors</span><a href="#getLivechatVisitors" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -165,7 +193,7 @@ elsewhere in the Apps-Engine and will be removed in the next major version.
 Prefer the alternative methods to fetch visitors.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L25">src/definition/accessors/ILivechatRead.ts:25</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/RocketChat/Rocket.Chat.Apps-engine/blob/master/src/definition/accessors/ILivechatRead.ts#L27">src/definition/accessors/ILivechatRead.ts:27</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isOnline" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>is<wbr/>Online</span><a href="#isOnline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -227,7 +255,9 @@ Prefer the alternative methods to fetch visitors.</p>
 <li><a href="#_fetchLivechatRoomMessages" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_fetch<wbr/>Livechat<wbr/>Room<wbr/>Messages</span></a></li>
 <li><a href="#getDepartmentsEnabledWithAgents" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Departments<wbr/>Enabled<wbr/>With<wbr/>Agents</span></a></li>
 <li><a href="#getLivechatDepartmentByIdOrName" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Department<wbr/>By<wbr/>Id<wbr/>Or<wbr/>Name</span></a></li>
+<li><a href="#getLivechatOpenRoomsByAgentId" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span></a></li>
 <li><a href="#getLivechatRooms" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Rooms</span></a></li>
+<li><a href="#getLivechatTotalOpenRoomsByAgentId" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Total<wbr/>Open<wbr/>Rooms<wbr/>By<wbr/>Agent<wbr/>Id</span></a></li>
 <li><a href="#getLivechatVisitorByEmail" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Email</span></a></li>
 <li><a href="#getLivechatVisitorById" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Id</span></a></li>
 <li><a href="#getLivechatVisitorByPhoneNumber" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Livechat<wbr/>Visitor<wbr/>By<wbr/>Phone<wbr/>Number</span></a></li>
@@ -246,6 +276,7 @@ Prefer the alternative methods to fetch visitors.</p>
 <li><a href="../modules/accessors_IAppAccessors.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IApp<wbr/>Accessors</span></a></li>
 <li><a href="../modules/accessors_IAppInstallationContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IApp<wbr/>Installation<wbr/>Context</span></a></li>
 <li><a href="../modules/accessors_IAppUninstallationContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IApp<wbr/>Uninstallation<wbr/>Context</span></a></li>
+<li><a href="../modules/accessors_IAppUpdateContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IApp<wbr/>Update<wbr/>Context</span></a></li>
 <li><a href="../modules/accessors_ICloudWorkspaceRead.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/ICloud<wbr/>Workspace<wbr/>Read</span></a></li>
 <li><a href="../modules/accessors_IConfigurationExtend.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IConfiguration<wbr/>Extend</span></a></li>
 <li><a href="../modules/accessors_IConfigurationModify.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IConfiguration<wbr/>Modify</span></a></li>
@@ -268,6 +299,7 @@ Prefer the alternative methods to fetch visitors.</p>
 <li><a href="../modules/accessors_IMessageBuilder.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IMessage<wbr/>Builder</span></a></li>
 <li><a href="../modules/accessors_IMessageExtender.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IMessage<wbr/>Extender</span></a></li>
 <li><a href="../modules/accessors_IMessageRead.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IMessage<wbr/>Read</span></a></li>
+<li><a href="../modules/accessors_IMessageUpdater.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IMessage<wbr/>Updater</span></a></li>
 <li><a href="../modules/accessors_IModerationModify.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IModeration<wbr/>Modify</span></a></li>
 <li><a href="../modules/accessors_IModify.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IModify</span></a></li>
 <li><a href="../modules/accessors_IModifyCreator.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>accessors/IModify<wbr/>Creator</span></a></li>
@@ -366,6 +398,7 @@ Prefer the alternative methods to fetch visitors.</p>
 <li><a href="../modules/messages_IMessageFile.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>File</span></a></li>
 <li><a href="../modules/messages_IMessageFollowContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Follow<wbr/>Context</span></a></li>
 <li><a href="../modules/messages_IMessagePinContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Pin<wbr/>Context</span></a></li>
+<li><a href="../modules/messages_IMessageRaw.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Raw</span></a></li>
 <li><a href="../modules/messages_IMessageReaction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Reaction</span></a></li>
 <li><a href="../modules/messages_IMessageReactionContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Reaction<wbr/>Context</span></a></li>
 <li><a href="../modules/messages_IMessageReportContext.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>messages/IMessage<wbr/>Report<wbr/>Context</span></a></li>

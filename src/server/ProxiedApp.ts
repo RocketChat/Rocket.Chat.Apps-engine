@@ -1,38 +1,30 @@
-import type { IAppAccessors, ILogger } from '../definition/accessors';
-import type { App } from '../definition/App';
 import type { AppStatus } from '../definition/AppStatus';
 import { AppsEngineException } from '../definition/exceptions';
-import type { IApp } from '../definition/IApp';
 import type { IAppAuthorInfo, IAppInfo } from '../definition/metadata';
 import { AppMethod } from '../definition/metadata';
 import type { AppManager } from './AppManager';
-import { NotEnoughMethodArgumentsError } from './errors';
 import { InvalidInstallationError } from './errors/InvalidInstallationError';
 import { AppConsole } from './logging';
 import { AppLicenseValidationResult } from './marketplace/license';
+import { JSONRPC_METHOD_NOT_FOUND, type DenoRuntimeSubprocessController } from './runtime/deno/AppsEngineDenoRuntime';
 import type { AppsEngineRuntime } from './runtime/AppsEngineRuntime';
 import type { IAppStorageItem } from './storage';
 
-export class ProxiedApp implements IApp {
+export class ProxiedApp {
     private previousStatus: AppStatus;
 
     private latestLicenseValidationResult: AppLicenseValidationResult;
 
-    constructor(
-        private readonly manager: AppManager,
-        private storageItem: IAppStorageItem,
-        private readonly app: App,
-        private readonly runtime: AppsEngineRuntime,
-    ) {
+    constructor(private readonly manager: AppManager, private storageItem: IAppStorageItem, private readonly appRuntime: DenoRuntimeSubprocessController) {
         this.previousStatus = storageItem.status;
     }
 
     public getRuntime(): AppsEngineRuntime {
-        return this.runtime;
+        return this.manager.getRuntime();
     }
 
-    public getApp(): App {
-        return this.app;
+    public getDenoRuntime(): DenoRuntimeSubprocessController {
+        return this.appRuntime;
     }
 
     public getStorageItem(): IAppStorageItem {
@@ -51,52 +43,44 @@ export class ProxiedApp implements IApp {
         return this.storageItem.implemented;
     }
 
-    public hasMethod(method: AppMethod): boolean {
-        return typeof (this.app as any)[method] === 'function';
-    }
-
     public setupLogger(method: `${AppMethod}`): AppConsole {
         const logger = new AppConsole(method);
-        // Set the logger to our new one
-        (this.app as any).logger = logger;
 
         return logger;
     }
 
+    // We'll need to refactor this method to remove the rest parameters so we can pass an options parameter
     public async call(method: `${AppMethod}`, ...args: Array<any>): Promise<any> {
-        if (typeof (this.app as any)[method] !== 'function') {
-            throw new Error(`The App ${this.app.getName()} (${this.app.getID()} does not have the method: "${method}"`);
+        let options;
+
+        // Pre events need to be fast as they block the user
+        if (method.startsWith('checkPre') || method.startsWith('executePre')) {
+            options = { timeout: 1000 };
         }
 
-        const methodDeclartion = (this.app as any)[method] as (...args: any[]) => any;
-        if (args.length < methodDeclartion.length) {
-            throw new NotEnoughMethodArgumentsError(method, methodDeclartion.length, args.length);
-        }
-
-        const logger = this.setupLogger(method);
-        logger.debug(`${method} is being called...`);
-
-        let result;
         try {
-            result = await this.runtime.runInSandbox(`module.exports = app.${method}.apply(app, args)`, { app: this.app, args });
-            logger.debug(`'${method}' was successfully called! The result is:`, result);
+            return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args }, options);
         } catch (e) {
-            logger.error(e);
-            logger.debug(`'${method}' was unsuccessful.`);
+            if (e.code === AppsEngineException.JSONRPC_ERROR_CODE) {
+                throw new AppsEngineException(e.message);
+            }
 
-            const errorInfo = new AppsEngineException(e.message).getErrorInfo();
-            if (e.name === errorInfo.name) {
+            if (e.code === JSONRPC_METHOD_NOT_FOUND) {
                 throw e;
             }
-        } finally {
-            await this.manager.getLogStorage().storeEntries(this.getID(), logger);
-        }
 
-        return result;
+            // We cannot throw this error as the previous implementation swallowed those
+            // and since the server is not prepared to handle those we might crash it if we throw
+            // Range of JSON-RPC error codes: https://www.jsonrpc.org/specification#error_object
+            if (e.code >= -32999 || e.code <= -32000) {
+                // we really need to receive a logger from rocket.chat
+                console.error('JSON-RPC error received: ', e);
+            }
+        }
     }
 
-    public getStatus(): AppStatus {
-        return this.app.getStatus();
+    public async getStatus(): Promise<AppStatus> {
+        return this.appRuntime.getStatus();
     }
 
     public async setStatus(status: AppStatus, silent?: boolean): Promise<void> {
@@ -108,47 +92,40 @@ export class ProxiedApp implements IApp {
     }
 
     public getName(): string {
-        return this.app.getName();
+        return this.storageItem.info.name;
     }
 
     public getNameSlug(): string {
-        return this.app.getNameSlug();
+        return this.storageItem.info.nameSlug;
     }
 
+    // @deprecated This method will be removed in the next major version
     public getAppUserUsername(): string {
-        return this.app.getAppUserUsername();
+        return `${this.storageItem.info.nameSlug}.bot`;
     }
 
     public getID(): string {
-        return this.app.getID();
+        return this.storageItem.id;
     }
 
     public getVersion(): string {
-        return this.app.getVersion();
+        return this.storageItem.info.version;
     }
 
     public getDescription(): string {
-        return this.app.getDescription();
+        return this.storageItem.info.description;
     }
 
     public getRequiredApiVersion(): string {
-        return this.app.getRequiredApiVersion();
+        return this.storageItem.info.requiredApiVersion;
     }
 
     public getAuthorInfo(): IAppAuthorInfo {
-        return this.app.getAuthorInfo();
+        return this.storageItem.info.author;
     }
 
     public getInfo(): IAppInfo {
-        return this.app.getInfo();
-    }
-
-    public getLogger(): ILogger {
-        return this.app.getLogger();
-    }
-
-    public getAccessors(): IAppAccessors {
-        return this.app.getAccessors();
+        return this.storageItem.info;
     }
 
     public getEssentials(): IAppInfo['essentials'] {
