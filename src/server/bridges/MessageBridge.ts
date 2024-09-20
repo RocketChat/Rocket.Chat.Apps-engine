@@ -1,11 +1,12 @@
 import type { ITypingOptions } from '../../definition/accessors/INotifier';
-import type { IMessage, Reaction } from '../../definition/messages';
+import type { IMessage, IMessageRaw, Reaction } from '../../definition/messages';
 import type { IRoom } from '../../definition/rooms';
 import type { IUser } from '../../definition/users';
 import { PermissionDeniedError } from '../errors/PermissionDeniedError';
 import { AppPermissionManager } from '../managers/AppPermissionManager';
 import { AppPermissions } from '../permissions/AppPermissions';
 import { BaseBridge } from './BaseBridge';
+import type { GetMessagesOptions } from './RoomBridge';
 
 export interface ITypingDescriptor extends ITypingOptions {
     isTyping: boolean;
@@ -54,16 +55,7 @@ export abstract class MessageBridge extends BaseBridge {
         }
     }
 
-    public async doGetUnreadByRoomAndUser(
-        roomId: string,
-        uid: string,
-        options: {
-            limit: number;
-            skip?: number;
-            sort?: Record<string, 1 | -1>;
-        },
-        appId: string,
-    ): Promise<IMessage[]> {
+    public async doGetUnreadByRoomAndUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
         if (this.hasReadPermission(appId)) {
             return this.getUnreadByRoomAndUser(roomId, uid, options, appId);
         }
@@ -95,16 +87,7 @@ export abstract class MessageBridge extends BaseBridge {
 
     protected abstract delete(message: IMessage, user: IUser, appId: string): Promise<void>;
 
-    protected abstract getUnreadByRoomAndUser(
-        roomId: string,
-        uid: string,
-        options: {
-            limit: number;
-            skip?: number;
-            sort?: Record<string, 1 | -1>;
-        },
-        appId: string,
-    ): Promise<IMessage[]>;
+    protected abstract getUnreadByRoomAndUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]>;
 
     protected abstract addReaction(messageId: string, userId: string, reaction: Reaction): Promise<void>;
 

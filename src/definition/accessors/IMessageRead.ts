@@ -1,4 +1,5 @@
-import type { IMessage } from '../messages/index';
+import type { GetMessagesOptions } from '../../server/bridges/RoomBridge';
+import type { IMessage, IMessageRaw } from '../messages/index';
 import type { IRoom } from '../rooms/IRoom';
 import type { IUser } from '../users/IUser';
 
@@ -24,13 +25,5 @@ export interface IMessageRead {
      *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either 1 for ascending order or -1 for descending order.
      * @returns A Promise that resolves to an array of IMessage objects representing the unread messages for the specified user in the specified room.
      */
-    getUnreadByRoomAndUser(
-        roomId: string,
-        uid: string,
-        options?: Partial<{
-            limit: number;
-            skip: number;
-            sort: Record<string, 1 | -1>;
-        }>,
-    ): Promise<IMessage[]>;
+    getUnreadByRoomAndUser(roomId: string, uid: string, options?: Partial<GetMessagesOptions>): Promise<IMessageRaw[]>;
 }

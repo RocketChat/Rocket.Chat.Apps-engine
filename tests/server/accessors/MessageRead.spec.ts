@@ -1,6 +1,6 @@
 import { AsyncTest, Expect, SetupFixture } from 'alsatian';
 
-import type { IMessage } from '../../../src/definition/messages';
+import type { IMessage, IMessageRaw } from '../../../src/definition/messages';
 import { MessageRead } from '../../../src/server/accessors';
 import type { MessageBridge } from '../../../src/server/bridges';
 import { TestData } from '../../test-data/utilities';
@@ -8,7 +8,7 @@ import { TestData } from '../../test-data/utilities';
 export class MessageReadAccessorTestFixture {
     private msg: IMessage;
 
-    private unreadMsgs: IMessage[];
+    private unreadMsgs: IMessageRaw[];
 
     private unreadRoomId: string;
 
@@ -21,9 +21,9 @@ export class MessageReadAccessorTestFixture {
     @SetupFixture
     public setupFixture() {
         this.msg = TestData.getMessage();
-        this.unreadMsgs = ['507f1f77bcf86cd799439011', '507f191e810c19729de860ea'].map((id) => TestData.getMessage(id));
-        this.unreadRoomId = this.unreadMsgs[0].room.id;
-        this.unreadUserId = this.unreadMsgs[0].sender.id;
+        this.unreadMsgs = ['507f1f77bcf86cd799439011', '507f191e810c19729de860ea'].map((id) => TestData.getMessageRaw(id));
+        this.unreadRoomId = this.unreadMsgs[0].roomId;
+        this.unreadUserId = this.unreadMsgs[0].sender._id;
 
         const theMsg = this.msg;
         const theUnreadMsg = this.unreadMsgs;
@@ -33,7 +33,7 @@ export class MessageReadAccessorTestFixture {
             doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(theMsg);
             },
-            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessage[]> {
+            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessageRaw[]> {
                 if (roomId === unreadRoomId && uid === unreadUserId) {
                     return Promise.resolve(theUnreadMsg);
                 }
@@ -45,7 +45,7 @@ export class MessageReadAccessorTestFixture {
             doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(undefined);
             },
-            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessage[]> {
+            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessageRaw[]> {
                 return Promise.resolve(undefined);
             },
         } as MessageBridge;
