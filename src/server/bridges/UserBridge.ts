@@ -45,12 +45,6 @@ export abstract class UserBridge extends BaseBridge {
         }
     }
 
-    public async doGetUserUnreadMessageCountByRoom(uid: string, roomId: string, appId: string): Promise<number> {
-        if (this.hasReadPermission(appId)) {
-            return this.getUserUnreadMessageCountByRoom(uid, roomId, appId);
-        }
-    }
-
     public async doDeleteUsersCreatedByApp(appId: string, type: UserType.BOT | UserType.APP): Promise<boolean> {
         if (this.hasWritePermission(appId)) {
             return this.deleteUsersCreatedByApp(appId, type);
@@ -72,8 +66,6 @@ export abstract class UserBridge extends BaseBridge {
     protected abstract getActiveUserCount(): Promise<number>;
 
     protected abstract getUserUnreadMessageCount(uid: string, appId: string): Promise<number>;
-
-    protected abstract getUserUnreadMessageCountByRoom(uid: string, roomId: string, appId: string): Promise<number>;
 
     /**
      * Creates a user.

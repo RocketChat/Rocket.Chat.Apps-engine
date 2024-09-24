@@ -103,4 +103,11 @@ export interface IRoomRead {
      * @returns A Promise that resolves to an array of IMessage objects representing the unread messages for the specified user in the specified room.
      */
     getUnreadByRoomAndUser(roomId: string, uid: string, options?: Partial<GetMessagesOptions>): Promise<IMessageRaw[]>;
+
+    /**
+     * Gets the user's unread messages count in a room.
+     * @param uid user's id
+     * @param roomId room's id
+     */
+    getUserUnreadMessageCountByRoom(uid: string, roomId: string): Promise<number | undefined>;
 }
