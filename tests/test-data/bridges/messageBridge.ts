@@ -1,9 +1,8 @@
-import type { IMessage, IMessageRaw, Reaction } from '../../../src/definition/messages';
+import type { IMessage, Reaction } from '../../../src/definition/messages';
 import type { IRoom } from '../../../src/definition/rooms';
 import type { IUser } from '../../../src/definition/users';
 import { MessageBridge } from '../../../src/server/bridges';
 import type { ITypingDescriptor } from '../../../src/server/bridges/MessageBridge';
-import type { GetMessagesOptions } from '../../../src/server/bridges/RoomBridge';
 
 export class TestsMessageBridge extends MessageBridge {
     public create(message: IMessage, appId: string): Promise<string> {
@@ -11,10 +10,6 @@ export class TestsMessageBridge extends MessageBridge {
     }
 
     public getById(messageId: string, appId: string): Promise<IMessage> {
-        throw new Error('Method not implemented.');
-    }
-
-    public getUnreadByRoomAndUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
         throw new Error('Method not implemented.');
     }
 
