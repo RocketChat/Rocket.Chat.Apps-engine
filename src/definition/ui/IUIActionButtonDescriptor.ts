@@ -28,18 +28,13 @@ export interface IUActionButtonWhen {
     hasAllRoles?: Array<string>;
 }
 
-export enum UIActionButtonCategory {
-    AI = 'ai',
-    DEFAULT = 'default',
-}
-
 export interface IUIActionButtonDescriptor {
     actionId: string;
     context: UIActionButtonContext;
     labelI18n: string;
     variant?: 'danger';
     when?: IUActionButtonWhen;
-    category?: UIActionButtonCategory;
+    category?: 'default' | 'ai';
 }
 export interface IUIActionButton extends IUIActionButtonDescriptor {
     appId: string;
