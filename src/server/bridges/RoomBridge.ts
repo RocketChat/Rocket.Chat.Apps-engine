@@ -117,9 +117,9 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
-    public async doGetUserUnreadMessageCount(uid: string, roomId: string, appId: string): Promise<number> {
+    public async doGetUserUnreadMessageCount(roomId: string, uid: string, appId: string): Promise<number> {
         if (this.hasReadPermission(appId)) {
-            return this.getUserUnreadMessageCount(uid, roomId, appId);
+            return this.getUserUnreadMessageCount(roomId, uid, appId);
         }
     }
 
@@ -161,7 +161,7 @@ export abstract class RoomBridge extends BaseBridge {
 
     protected abstract getUnreadByUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]>;
 
-    protected abstract getUserUnreadMessageCount(uid: string, roomId: string, appId: string): Promise<number>;
+    protected abstract getUserUnreadMessageCount(roomId: string, uid: string, appId: string): Promise<number>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {

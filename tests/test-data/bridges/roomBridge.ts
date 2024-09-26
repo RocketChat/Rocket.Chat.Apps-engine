@@ -69,7 +69,7 @@ export class TestsRoomBridge extends RoomBridge {
         throw new Error('Method not implemented.');
     }
 
-    protected getUserUnreadMessageCount(uid: string, roomId: string, appId: string): Promise<number> {
+    protected getUserUnreadMessageCount(roomId: string, uid: string, appId: string): Promise<number> {
         throw new Error('Method not implemented.');
     }
 }

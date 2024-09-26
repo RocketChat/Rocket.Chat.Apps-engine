@@ -76,8 +76,8 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetUnreadByUser(roomId, uid, completeOptions, this.appId);
     }
 
-    public getUserUnreadMessageCount(uid: string, rid: string): Promise<number> {
-        return this.roomBridge.doGetUserUnreadMessageCount(uid, rid, this.appId);
+    public getUserUnreadMessageCount(roomId: string, uid: string): Promise<number> {
+        return this.roomBridge.doGetUserUnreadMessageCount(roomId, uid, this.appId);
     }
 
     // If there are any invalid fields or values, throw
