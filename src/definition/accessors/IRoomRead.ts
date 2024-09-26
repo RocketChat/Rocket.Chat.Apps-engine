@@ -102,12 +102,12 @@ export interface IRoomRead {
      *                - sort: An object defining the sorting order of the messages. Each key is a field to sort by, and the value is either 'asc' for ascending order or 'desc' for descending order.
      * @returns A Promise that resolves to an array of IMessage objects representing the unread messages for the specified user in the specified room.
      */
-    getUnreadByRoomAndUser(roomId: string, uid: string, options?: Partial<GetMessagesOptions>): Promise<IMessageRaw[]>;
+    getUnreadByUser(roomId: string, uid: string, options?: Partial<GetMessagesOptions>): Promise<IMessageRaw[]>;
 
     /**
      * Gets the user's unread messages count in a room.
      * @param uid user's id
      * @param roomId room's id
      */
-    getUserUnreadMessageCountByRoom(uid: string, roomId: string): Promise<number | undefined>;
+    getUserUnreadMessageCount(uid: string, roomId: string): Promise<number | undefined>;
 }

@@ -58,7 +58,7 @@ export class RoomRead implements IRoomRead {
         return this.roomBridge.doGetLeaders(roomId, this.appId);
     }
 
-    public async getUnreadByRoomAndUser(roomId: string, uid: string, options: Partial<GetMessagesOptions> = {}): Promise<IMessageRaw[]> {
+    public async getUnreadByUser(roomId: string, uid: string, options: Partial<GetMessagesOptions> = {}): Promise<IMessageRaw[]> {
         const { limit = 100, sort = { createdAt: 'asc' }, skip = 0 } = options;
 
         if (typeof roomId !== 'string' || roomId.trim().length === 0) {
@@ -73,11 +73,11 @@ export class RoomRead implements IRoomRead {
 
         const completeOptions: GetMessagesOptions = { limit, sort, skip };
 
-        return this.roomBridge.doGetUnreadByRoomAndUser(roomId, uid, completeOptions, this.appId);
+        return this.roomBridge.doGetUnreadByUser(roomId, uid, completeOptions, this.appId);
     }
 
-    public getUserUnreadMessageCountByRoom(uid: string, rid: string): Promise<number> {
-        return this.roomBridge.doGetUserUnreadMessageCountByRoom(uid, rid, this.appId);
+    public getUserUnreadMessageCount(uid: string, rid: string): Promise<number> {
+        return this.roomBridge.doGetUserUnreadMessageCount(uid, rid, this.appId);
     }
 
     // If there are any invalid fields or values, throw

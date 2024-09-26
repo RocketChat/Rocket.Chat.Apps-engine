@@ -57,7 +57,7 @@ export class RoomReadAccessorTestFixture {
             doGetMessages(roomId, options, appId): Promise<IMessageRaw[]> {
                 return Promise.resolve(theMessages);
             },
-            doGetUnreadByRoomAndUser(roomId, uid, options, appId): Promise<IMessageRaw[]> {
+            doGetUnreadByUser(roomId, uid, options, appId): Promise<IMessageRaw[]> {
                 if (roomId === unreadRoomId && uid === unreadUserId) {
                     return Promise.resolve(theUnreadMsg);
                 }
@@ -84,11 +84,11 @@ export class RoomReadAccessorTestFixture {
         Expect(await rr.getDirectByUsernames([this.user.username])).toBe(this.room);
         Expect(await rr.getMessages('testing')).toBeDefined();
         Expect(await rr.getMessages('testing')).toBe(this.messages);
-        Expect(await rr.getUnreadByRoomAndUser(this.unreadRoomId, this.unreadUserId)).toBeDefined();
-        Expect(await rr.getUnreadByRoomAndUser(this.unreadRoomId, this.unreadUserId)).toEqual(this.messages);
+        Expect(await rr.getUnreadByUser(this.unreadRoomId, this.unreadUserId)).toBeDefined();
+        Expect(await rr.getUnreadByUser(this.unreadRoomId, this.unreadUserId)).toEqual(this.messages);
 
-        Expect(await rr.getUnreadByRoomAndUser('fake', 'fake')).toBeDefined();
-        Expect(await rr.getUnreadByRoomAndUser('fake', 'fake')).toEqual([]);
+        Expect(await rr.getUnreadByUser('fake', 'fake')).toBeDefined();
+        Expect(await rr.getUnreadByUser('fake', 'fake')).toEqual([]);
     }
 
     @AsyncTest()

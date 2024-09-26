@@ -111,15 +111,15 @@ export abstract class RoomBridge extends BaseBridge {
         }
     }
 
-    public async doGetUnreadByRoomAndUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
+    public async doGetUnreadByUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]> {
         if (this.hasReadPermission(appId)) {
-            return this.getUnreadByRoomAndUser(roomId, uid, options, appId);
+            return this.getUnreadByUser(roomId, uid, options, appId);
         }
     }
 
-    public async doGetUserUnreadMessageCountByRoom(uid: string, roomId: string, appId: string): Promise<number> {
+    public async doGetUserUnreadMessageCount(uid: string, roomId: string, appId: string): Promise<number> {
         if (this.hasReadPermission(appId)) {
-            return this.getUserUnreadMessageCountByRoom(uid, roomId, appId);
+            return this.getUserUnreadMessageCount(uid, roomId, appId);
         }
     }
 
@@ -159,9 +159,9 @@ export abstract class RoomBridge extends BaseBridge {
 
     protected abstract removeUsers(roomId: string, usernames: Array<string>, appId: string): Promise<void>;
 
-    protected abstract getUnreadByRoomAndUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]>;
+    protected abstract getUnreadByUser(roomId: string, uid: string, options: GetMessagesOptions, appId: string): Promise<IMessageRaw[]>;
 
-    protected abstract getUserUnreadMessageCountByRoom(uid: string, roomId: string, appId: string): Promise<number>;
+    protected abstract getUserUnreadMessageCount(uid: string, roomId: string, appId: string): Promise<number>;
 
     private hasWritePermission(appId: string): boolean {
         if (AppPermissionManager.hasPermission(appId, AppPermissions.room.write)) {
