@@ -109,5 +109,5 @@ export interface IRoomRead {
      * @param roomId room's id
      * @param uid user's id
      */
-    getUserUnreadMessageCount(roomId: string, uid: string): Promise<number | undefined>;
+    getUserUnreadMessageCount(roomId: string, uid: string): Promise<number>;
 }
