@@ -17,6 +17,7 @@ export class MessageReadAccessorTestFixture {
         this.msg = TestData.getMessage();
 
         const theMsg = this.msg;
+
         this.mockMsgBridgeWithMsg = {
             doGetById(id, appId): Promise<IMessage> {
                 return Promise.resolve(theMsg);
