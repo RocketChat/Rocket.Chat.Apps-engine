@@ -1,6 +1,6 @@
 ## Public Archive
 
-The Apps-Engine has been moved into the (Rocket.Chat core monorepo)[https://github.com/RocketChat/Rocket.Chat]. This enhances the overall developer experience of improving the Apps-Engine in tandem with Rocket.Chat. We will keep working on the framework, just in another place. If you want to contribute, please head over to https://github.com/RocketChat/Rocket.Chat/tree/develop/packages/apps-engine.
+The Apps-Engine has been moved into the [Rocket.Chat core monorepo](https://github.com/RocketChat/Rocket.Chat). This enhances the overall developer experience of improving the Apps-Engine in tandem with Rocket.Chat. We will keep working on the framework, just in another place. If you want to contribute, please head over to https://github.com/RocketChat/Rocket.Chat/tree/develop/packages/apps-engine.
 
 ## Thoughts While Working (for docs)
 - Apps which don't provide a valid uuid4 id will be assigned one, but this is not recommended and your App should provide an id
