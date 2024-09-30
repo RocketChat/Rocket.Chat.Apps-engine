@@ -1,3 +1,7 @@
+## Public Archive
+
+The Apps-Engine has been moved into the (Rocket.Chat core monorepo)[https://github.com/RocketChat/Rocket.Chat]. This enhances the overall developer experience of improving the Apps-Engine in tandem with Rocket.Chat. We will keep working on the framework, just in another place. If you want to contribute, please head over to https://github.com/RocketChat/Rocket.Chat/tree/develop/packages/apps-engine.
+
 ## Thoughts While Working (for docs)
 - Apps which don't provide a valid uuid4 id will be assigned one, but this is not recommended and your App should provide an id
 - The language strings are only done on the clients (`TAPi18next.addResourceBundle(lang, projectName, translations);`)
@@ -70,7 +74,7 @@ npm ERR! dest PATH_TO_ROCKETCHAT/node_modules/.staging/@babel/code-frame-f369782
 npm ERR! errno -2
 npm ERR! enoent ENOENT: no such file or directory, rename 'PATH_TO_ROCKETCHAT/node_modules/.staging/@rocket.chat/apps-engine-c7135600/node_modules/@babel/code-frame' -> 'PATH_TO_ROCKETCHAT/node_modules/.staging/@babel/code-frame-f3697825'
 npm ERR! enoent This is related to npm not being able to find a file.
-npm ERR! enoent 
+npm ERR! enoent
 ```
 Here `PATH_TO_ROCKETCHAT` is the path to the main rocketchat server repo in your system
 To correct this we reinstall the package once again deleting the previous package
