@@ -271,7 +271,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             // When an app has just been installed, the status in the storageItem passed to this controller will be "initialized"
             // So, whenever we get that value here, let's just make it 'auto_enabled'
-            let status = this.storageItem.status;
+            let { status } = this.storageItem;
 
             if (status === AppStatus.INITIALIZED) {
                 logger.info('Stored status was "initialized". Changing to "auto_enabled"');
