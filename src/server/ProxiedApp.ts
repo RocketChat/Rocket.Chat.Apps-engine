@@ -54,9 +54,9 @@ export class ProxiedApp {
         let options;
 
         // Pre events need to be fast as they block the user
-        if (method.startsWith('checkPre') || method.startsWith('executePre')) {
-            options = { timeout: 1000 };
-        }
+        // if (method.startsWith('checkPre') || method.startsWith('executePre')) {
+        //     options = { timeout: 1000 };
+        // }
 
         try {
             return await this.appRuntime.sendRequest({ method: `app:${method}`, params: args }, options);

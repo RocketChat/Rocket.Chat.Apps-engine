@@ -13,6 +13,7 @@ import type { IParseAppPackageResult } from '../../compiler';
 import { AppConsole, type ILoggerStorageEntry } from '../../logging';
 import type { AppAccessorManager, AppApiManager } from '../../managers';
 import { AppStatus } from '../../../definition/AppStatus';
+import type { AppMethod } from '../../../definition/metadata';
 import { bundleLegacyApp } from './bundler';
 import { ProcessMessenger } from './ProcessMessenger';
 import { LivenessManager } from './LivenessManager';
@@ -52,6 +53,18 @@ const COMMAND_PONG = '_zPONG';
 
 export const JSONRPC_METHOD_NOT_FOUND = -32601;
 
+export function getRuntimeTimeout() {
+    const defaultTimeout = 30000;
+    const envValue = isFinite(process.env.APPS_ENGINE_RUNTIME_TIMEOUT as any) ? Number(process.env.APPS_ENGINE_RUNTIME_TIMEOUT) : defaultTimeout;
+
+    if (envValue < 0) {
+        console.log('Environment variable APPS_ENGINE_RUNTIME_TIMEOUT has a negative value, ignoring...');
+        return defaultTimeout;
+    }
+
+    return envValue;
+}
+
 export function isValidOrigin(accessor: string): accessor is typeof ALLOWED_ACCESSOR_METHODS[number] {
     return ALLOWED_ACCESSOR_METHODS.includes(accessor as any);
 }
@@ -87,7 +100,7 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
     private readonly debug: debug.Debugger;
 
     private readonly options = {
-        timeout: 10000,
+        timeout: getRuntimeTimeout(),
     };
 
     private readonly accessors: AppAccessorManager;
@@ -535,10 +548,27 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
             case 'log':
                 console.log('SUBPROCESS LOG', message);
                 break;
+            case 'unhandledRejection':
+            case 'uncaughtException':
+                await this.logUnhandledError(`runtime:${method}`, message);
+                break;
+
             default:
                 console.warn('Unrecognized method from sub process');
                 break;
         }
+    }
+
+    private async logUnhandledError(
+        method: `${AppMethod.RUNTIME_UNCAUGHT_EXCEPTION | AppMethod.RUNTIME_UNHANDLED_REJECTION}`,
+        message: jsonrpc.IParsedObjectRequest | jsonrpc.IParsedObjectNotification,
+    ) {
+        this.debug('Unhandled error of type "%s" caught in subprocess', method);
+
+        const logger = new AppConsole(method);
+        logger.error(message.payload);
+
+        await this.logStorage.storeEntries(AppConsole.toStorageEntry(this.getAppId(), logger));
     }
 
     private async handleResultMessage(message: jsonrpc.IParsedObjectError | jsonrpc.IParsedObjectSuccess): Promise<void> {
