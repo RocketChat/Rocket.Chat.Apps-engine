@@ -12,7 +12,7 @@ import type { AppBridges } from '../../bridges';
 import type { IParseAppPackageResult } from '../../compiler';
 import { AppConsole, type ILoggerStorageEntry } from '../../logging';
 import type { AppAccessorManager, AppApiManager } from '../../managers';
-import { AppStatus } from '../../../definition/AppStatus';
+import { AppStatus, AppStatusUtils } from '../../../definition/AppStatus';
 import type { AppMethod } from '../../../definition/metadata';
 import { bundleLegacyApp } from './bundler';
 import { ProcessMessenger } from './ProcessMessenger';
@@ -293,6 +293,10 @@ export class DenoRuntimeSubprocessController extends EventEmitter {
 
             await this.sendRequest({ method: 'app:initialize' });
             await this.sendRequest({ method: 'app:setStatus', params: [status] });
+
+            if (AppStatusUtils.isEnabled(this.storageItem.status)) {
+                await this.sendRequest({ method: 'app:onEnable' });
+            }
 
             this.state = 'ready';
 
