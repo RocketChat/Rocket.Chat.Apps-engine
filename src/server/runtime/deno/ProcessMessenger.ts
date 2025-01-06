@@ -5,7 +5,7 @@ import type { JsonRpc } from 'jsonrpc-lite';
 import { encoder } from './codec';
 
 export class ProcessMessenger {
-    private deno: ChildProcess;
+    private deno: ChildProcess | undefined;
 
     private _sendStrategy: (message: JsonRpc) => void;
 
@@ -30,7 +30,7 @@ export class ProcessMessenger {
     }
 
     private switchStrategy() {
-        if (this.deno instanceof ChildProcess) {
+        if (this.deno?.stdin?.writable) {
             this._sendStrategy = this.strategySend.bind(this);
         } else {
             this._sendStrategy = this.strategyError.bind(this);
