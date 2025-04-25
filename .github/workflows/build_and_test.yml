@@ -63,7 +63,7 @@ jobs:
 
             - name: Prepare workspace
               run: |
-                  tar czf /tmp/workspace.tar.gz .
+                  tar czf /tmp/workspace.tar.gz --exclude='.git' .
 
             - uses: actions/upload-artifact@v4
               with:
