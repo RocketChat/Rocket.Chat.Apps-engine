@@ -1,6 +1,7 @@
 import { RoomType } from '../rooms';
 import type { IRoom } from '../rooms/IRoom';
 import type { IUser } from '../users';
+import type { IMessage } from '../messages';
 import type { IDepartment } from './IDepartment';
 import type { IVisitor } from './IVisitor';
 
@@ -36,6 +37,7 @@ export interface IVisitorChannelInfo {
 export interface ILivechatRoom extends IRoom {
     visitor: IVisitor;
     visitorChannelInfo?: IVisitorChannelInfo;
+    lastMessageFromVisitor?: IMessage;
     department?: IDepartment;
     closer: 'user' | 'visitor' | 'bot';
     closedBy?: IUser;

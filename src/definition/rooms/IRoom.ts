@@ -1,4 +1,5 @@
 import type { IUser } from '../users';
+import type { IMessage } from '../messages';
 import type { RoomType } from './RoomType';
 
 export interface IRoom {
@@ -23,4 +24,5 @@ export interface IRoom {
     customFields?: { [key: string]: any };
     parentRoom?: IRoom;
     livechatData?: { [key: string]: any };
+    lastMessageFromVisitor?: IMessage;
 }
